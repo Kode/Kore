@@ -1,5 +1,0 @@
-#include "event.c.h"
-#include "mutex.c.h"
-#include "semaphore.c.h"
-#include "thread.c.h"
-#include "threadlocal.c.h"
