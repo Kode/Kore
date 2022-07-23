@@ -51,9 +51,10 @@ jobs:
           # Produce a binary artifact and place it in the mounted volume
           run: |
             echo " * Make Git happy"
-            git config --global --add safe.directory /home/runner/work/Kinc/Kinc
-            git config --global --add safe.directory /home/runner/work/Kinc/Kinc/Tools/linux_arm
-            git config --global --add safe.directory /home/runner/work/Kinc/Kinc/Tools/linux_arm64
+            git config --global --add safe.directory /home/runner/work/Kore/Kore
+            git config --global --add safe.directory /home/runner/work/Kore/Kore/Kinc
+            git config --global --add safe.directory /home/runner/work/Kore/Kore/Kinc/Tools/linux_arm
+            git config --global --add safe.directory /home/runner/work/Kore/Kore/Kinc/Tools/linux_arm64
             echo " * Get Submodules"
             ./get_dlc
             echo " * Compile"
