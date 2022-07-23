@@ -16,8 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Get Submodules
-      run: git submodule update --init Tools/freebsd_x64
+    - name: Get Kinc
+      run: git submodule update --init
+    - name: Get Tools
+      run: git -C Kinc submodule update --init Tools/freebsd_x64
     - name: Compile in FreeBSD VM
       id: build
       uses: vmactions/freebsd-vm@v0.1.6
