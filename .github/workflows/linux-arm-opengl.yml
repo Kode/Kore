@@ -58,25 +58,3 @@ jobs:
             ./get_dlc
             echo " * Compile"
             ./make -g opengl --kinc . --from Tests/Empty --compile
-            echo " * Clean"
-            rm -rf build
-            echo " * Compile Test 1"
-            ./make -g opengl --kinc . --from Tests/Shader --compile
-            echo " * Copy Test 1"
-            cp build/Release/ShaderTest Tests/Shader/Deployment/ShaderTest
-            echo " * Run Test 1"
-            cd Tests/Shader/Deployment
-            xvfb-run ./ShaderTest
-            cd ../../..
-            echo " * Check Test 1"
-            compare-im6 -metric mae Tests/Shader/reference.png Tests/Shader/Deployment/test.png difference.png
-            echo " * Clean"
-            rm -rf build
-            echo " * Compile Test 2 (SIMD)"
-            ./make -g opengl --kinc . --from Tests/SIMD --compile
-            echo " * Copy Test 2"
-            cp build/Release/SIMD Tests/SIMD/Deployment/SIMD
-            echo " * Run Test 2"
-            cd Tests/SIMD/Deployment
-            ./SIMD && echo "SUCCESS" || echo "FAILED"
-            cd ../../..
