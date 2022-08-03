@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+git -C `dirname "$0"` submodule update --init --remote Kinc
+bash `dirname "$0"`/Kinc/get_dlc_dangerously
