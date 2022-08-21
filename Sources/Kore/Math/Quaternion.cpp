@@ -1,6 +1,8 @@
 #include "Quaternion.h"
 #include "Core.h"
 
+#include <cmath>
+
 using namespace Kore;
 
 Quaternion::Quaternion() : x(0), y(0), z(0), w(0) {}
@@ -8,8 +10,8 @@ Quaternion::Quaternion() : x(0), y(0), z(0), w(0) {}
 Quaternion::Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 
 Quaternion::Quaternion(const vec3 &axis, float radians) {
-	w = cos(radians / 2);
-	x = y = z = sin(radians / 2);
+	w = std::cos(radians / 2);
+	x = y = z = std::sin(radians / 2);
 	x *= axis.x();
 	y *= axis.y();
 	z *= axis.z();
@@ -33,7 +35,7 @@ Quaternion Quaternion::slerp(float t, const Quaternion &v1) const {
 	Quaternion v2 = (v1 - scaled(dot));
 	v2.normalize();
 
-	Quaternion q = scaled(cos(theta)) + v2.scaled(sin(theta));
+	Quaternion q = scaled(cos(theta)) + v2.scaled(std::sin(theta));
 	q.normalize();
 
 	return q;
@@ -130,7 +132,7 @@ bool Quaternion::operator!=(const Quaternion &q) const {
 }
 
 void Quaternion::normalize() {
-	*this = scaled(1 / sqrt(dot(*this)));
+	*this = scaled(1 / std::sqrt(dot(*this)));
 }
 
 void Quaternion::rotate(const Quaternion &q2) {

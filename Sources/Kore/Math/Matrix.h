@@ -3,6 +3,8 @@
 #include "Core.h"
 #include "Vector.h"
 
+#include <cmath>
+
 namespace Kore {
 	template <unsigned X, unsigned Y, class T> class Matrix {
 		typedef Matrix<X, Y, T> myType;
@@ -99,7 +101,7 @@ namespace Kore {
 
 		static myType Perspective(float fov, float aspect, float near, float far) {
 			myType m;
-			float uh = cot(fov / 2.0f);
+			float uh = std::cot(fov / 2.0f);
 			float uw = uh / aspect;
 			m.Set(0, 0, uw);
 			m.Set(1, 1, uh);
@@ -212,8 +214,8 @@ namespace Kore {
 		static myType RotationX(float alpha) {
 			// StaticAssert(X >= 3 && Y >= 3);
 			myType m = Identity();
-			const float ca = cos(alpha);
-			const float sa = sin(alpha);
+			const float ca = std::cos(alpha);
+			const float sa = std::sin(alpha);
 			m.Set(1, 1, ca);
 			m.Set(1, 2, -sa);
 			m.Set(2, 1, sa);
@@ -224,8 +226,8 @@ namespace Kore {
 		static myType RotationY(float alpha) {
 			// StaticAssert(X >= 3 && Y >= 3);
 			myType m = Identity();
-			const float ca = cos(alpha);
-			const float sa = sin(alpha);
+			const float ca = std::cos(alpha);
+			const float sa = std::sin(alpha);
 			m.Set(0, 0, ca);
 			m.Set(0, 2, sa);
 			m.Set(2, 0, -sa);
@@ -236,8 +238,8 @@ namespace Kore {
 		static myType RotationZ(float alpha) {
 			// StaticAssert(X >= 3 && Y >= 3);
 			myType m = Identity();
-			const float ca = cos(alpha);
-			const float sa = sin(alpha);
+			const float ca = std::cos(alpha);
+			const float sa = std::sin(alpha);
 			m.Set(0, 0, ca);
 			m.Set(0, 1, -sa);
 			m.Set(1, 0, sa);
@@ -247,12 +249,12 @@ namespace Kore {
 
 		static myType Rotation(float yaw, float pitch, float roll) {
 			myType m = Identity();
-			float sy = sin(yaw);
-			float cy = cos(yaw);
-			float sx = sin(pitch);
-			float cx = cos(pitch);
-			float sz = sin(roll);
-			float cz = cos(roll);
+			float sy = std::sin(yaw);
+			float cy = std::cos(yaw);
+			float sx = std::sin(pitch);
+			float cx = std::cos(pitch);
+			float sz = std::sin(roll);
+			float cz = std::cos(roll);
 			m.Set(0, 0, cx * cy);
 			m.Set(0, 1, cx * sy * sz - sx * cz);
 			m.Set(0, 2, cx * sy * cz + sx * sz);

@@ -2,6 +2,8 @@
 
 #include "Core.h"
 
+#include <cmath>
+
 namespace Kore {
 	template <class Type, unsigned count, class LengthType = float> class Vector {
 	public:
@@ -189,7 +191,7 @@ namespace Kore {
 		}
 
 		LengthType getLength() const {
-			return sqrt(squareLength());
+			return std::sqrt(squareLength());
 		}
 
 		void setLength(LengthType length) {
