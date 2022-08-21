@@ -34,8 +34,6 @@ int Kore::abs(int value) {
 	return value < 0 ? -value : value;
 }
 
-#include <math.h>
-
 double Kore::round(double value) {
-	return ::floor(value + 0.5);
+	return std::floor(value + 0.5);
 }
