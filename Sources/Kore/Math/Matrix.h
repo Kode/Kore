@@ -101,7 +101,7 @@ namespace Kore {
 
 		static myType Perspective(float fov, float aspect, float near, float far) {
 			myType m;
-			float uh = std::cot(fov / 2.0f);
+			float uh = Kore::cot(fov / 2.0f);
 			float uw = uh / aspect;
 			m.Set(0, 0, uw);
 			m.Set(1, 1, uh);

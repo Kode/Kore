@@ -2,8 +2,14 @@
 
 #include <kinc/math/core.h>
 
+#include <cmath>
+
 float Kore::cot(float x) {
-	return kinc_cot(x);
+	return std::cos(x) / std::sin(x);
+}
+
+double Kore::cot(double x) {
+	return std::cos(x) / std::sin(x);
 }
 
 float Kore::round(float value) {

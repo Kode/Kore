@@ -4,6 +4,7 @@ namespace Kore {
 	const float pi = 3.141592654f;
 	const float tau = 6.283185307f;
 	float cot(float x);
+	double cot(double x);
 	double round(double value);
 	float round(float value);
 	unsigned pow(unsigned value, unsigned exponent);
