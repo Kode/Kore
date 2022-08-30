@@ -126,8 +126,8 @@ void CommandList::execute() {
 	kinc_g5_command_list_execute(&kincCommandList);
 }
 
-void CommandList::executeAndWait() {
-	kinc_g5_command_list_execute_and_wait(&kincCommandList);
+void CommandList::waitForExecutionToFinish() {
+	kinc_g5_command_list_wait_for_execution_to_finish(&kincCommandList);
 }
 
 void CommandList::setTexture(TextureUnit unit, Texture *texture) {

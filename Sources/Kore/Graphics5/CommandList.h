@@ -43,7 +43,7 @@ namespace Kore {
 			void setFragmentConstantBuffer(ConstantBuffer *buffer, int offset, size_t size);
 			void setPipelineLayout();
 			void execute();
-			void executeAndWait();
+			void waitForExecutionToFinish();
 
 			void setTexture(TextureUnit unit, Texture *texture);
 			void setImageTexture(TextureUnit unit, Texture *texture);
