@@ -110,10 +110,9 @@ namespace Kore {
 
 		class RenderTarget {
 		public:
-			RenderTarget(int width, int height, int depthBufferBits, bool antialiasing = false, RenderTargetFormat format = Target32Bit,
-			             int stencilBufferBits = -1, int contextId = 0);
-			RenderTarget(int cubeMapSize, int depthBufferBits, bool antialiasing = false, RenderTargetFormat format = Target32Bit, int stencilBufferBits = -1,
-			             int contextId = 0);
+			RenderTarget(int width, int height, RenderTargetFormat format = Target32Bit, int depthBufferBits = 0, int stencilBufferBits = 0,
+			             int samplesPerPixel = 1);
+			RenderTarget(int cubeMapSize, RenderTargetFormat format = Target32Bit, int depthBufferBits = 0, int stencilBufferBits = 0, int samplesPerPixel = 1);
 			~RenderTarget();
 			int width;
 			int height;

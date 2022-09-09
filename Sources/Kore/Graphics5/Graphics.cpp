@@ -61,14 +61,14 @@ int IndexBuffer::count() {
 	return kinc_g5_index_buffer_count(&kincBuffer);
 }
 
-RenderTarget::RenderTarget(int width, int height, int depthBufferBits, bool antialiasing, RenderTargetFormat format, int stencilBufferBits, int contextId) {
-	kinc_g5_render_target_init(&kincRenderTarget, width, height, depthBufferBits, antialiasing, (kinc_g5_render_target_format_t)format, stencilBufferBits,
-	                           contextId);
+RenderTarget::RenderTarget(int width, int height, RenderTargetFormat format, int depthBufferBits, int stencilBufferBits, int samplesPerPixel) {
+	kinc_g5_render_target_init_with_multisampling(&kincRenderTarget, width, height, (kinc_g5_render_target_format_t)format, depthBufferBits, stencilBufferBits,
+	                                              samplesPerPixel);
 }
 
-RenderTarget::RenderTarget(int cubeMapSize, int depthBufferBits, bool antialiasing, RenderTargetFormat format, int stencilBufferBits, int contextId) {
-	kinc_g5_render_target_init_cube(&kincRenderTarget, cubeMapSize, depthBufferBits, antialiasing, (kinc_g5_render_target_format_t)format, stencilBufferBits,
-	                                contextId);
+RenderTarget::RenderTarget(int cubeMapSize, RenderTargetFormat format, int depthBufferBits, int stencilBufferBits, int samplesPerPixel) {
+	kinc_g5_render_target_init_cube_with_multisampling(&kincRenderTarget, cubeMapSize, (kinc_g5_render_target_format_t)format, depthBufferBits,
+	                                                   stencilBufferBits, samplesPerPixel);
 }
 
 RenderTarget::~RenderTarget() {
