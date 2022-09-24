@@ -75,14 +75,6 @@ RenderTarget::~RenderTarget() {
 	kinc_g5_render_target_destroy(&kincRenderTarget);
 }
 
-void RenderTarget::useColorAsTexture(TextureUnit unit) {
-	kinc_g5_render_target_use_color_as_texture(&kincRenderTarget, unit.kincTextureUnit);
-}
-
-void RenderTarget::useDepthAsTexture(TextureUnit unit) {
-	kinc_g5_render_target_use_depth_as_texture(&kincRenderTarget, unit.kincTextureUnit);
-}
-
 void RenderTarget::setDepthStencilFrom(RenderTarget *source) {
 	kinc_g5_render_target_set_depth_stencil_from(&kincRenderTarget, &source->kincRenderTarget);
 }

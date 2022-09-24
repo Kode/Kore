@@ -41,7 +41,6 @@ namespace Kore {
 			void upload(Texture *texture);
 			void setVertexConstantBuffer(ConstantBuffer *buffer, int offset, size_t size);
 			void setFragmentConstantBuffer(ConstantBuffer *buffer, int offset, size_t size);
-			void setPipelineLayout();
 			void execute();
 			void waitForExecutionToFinish();
 
@@ -52,6 +51,8 @@ namespace Kore {
 			void setTextureMagnificationFilter(TextureUnit texunit, TextureFilter filter);
 			void setTextureMinificationFilter(TextureUnit texunit, TextureFilter filter);
 			void setTextureMipmapFilter(TextureUnit texunit, MipmapFilter filter);
+			void setTextureFromRenderTarget(TextureUnit unit, RenderTarget *target);
+			void setTextureFromRenderTargetDepth(TextureUnit unit, RenderTarget *target);
 
 			// Occlusion Query
 			bool initOcclusionQuery(uint *occlusionQuery);

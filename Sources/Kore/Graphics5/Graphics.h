@@ -122,8 +122,6 @@ namespace Kore {
 			int contextId;
 			bool isCubeMap;
 			bool isDepthAttachment;
-			void useColorAsTexture(TextureUnit unit);
-			void useDepthAsTexture(TextureUnit unit);
 			void setDepthStencilFrom(RenderTarget *source);
 
 			kinc_g5_render_target_t kincRenderTarget;

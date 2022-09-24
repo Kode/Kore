@@ -118,10 +118,6 @@ void CommandList::setFragmentConstantBuffer(ConstantBuffer *buffer, int offset, 
 	kinc_g5_command_list_set_fragment_constant_buffer(&kincCommandList, &buffer->kincBuffer, offset, size);
 }
 
-void CommandList::setPipelineLayout() {
-	kinc_g5_command_list_set_pipeline_layout(&kincCommandList);
-}
-
 void CommandList::execute() {
 	kinc_g5_command_list_execute(&kincCommandList);
 }
@@ -157,6 +153,14 @@ void CommandList::setTextureMinificationFilter(TextureUnit texunit, TextureFilte
 
 void CommandList::setTextureMipmapFilter(TextureUnit texunit, MipmapFilter filter) {
 	kinc_g5_command_list_set_texture_mipmap_filter(&kincCommandList, texunit.kincTextureUnit, (kinc_g5_mipmap_filter_t)filter);
+}
+
+void CommandList::setTextureFromRenderTarget(TextureUnit unit, RenderTarget *target) {
+	kinc_g5_command_list_set_texture_from_render_target(&kincCommandList, unit.kincTextureUnit, &target->kincRenderTarget);
+}
+
+void CommandList::setTextureFromRenderTargetDepth(TextureUnit unit, RenderTarget *target) {
+	kinc_g5_command_list_set_texture_from_render_target_depth(&kincCommandList, unit.kincTextureUnit, &target->kincRenderTarget);
 }
 
 bool CommandList::initOcclusionQuery(uint *occlusionQuery) {
