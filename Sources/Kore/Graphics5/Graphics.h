@@ -140,7 +140,11 @@ namespace Kore {
 
 		int maxBoundTextures();
 
-		bool nonPow2TexturesSupported();
+		bool supportsRaytracing();
+		bool supportsInstancedRendering();
+		bool supportsComputeShaders();
+		bool supportsBlendConstants();
+		bool supportsNonPow2Textures();
 
 		const uint ClearColorFlag = 1;
 		const uint ClearDepthFlag = 2;

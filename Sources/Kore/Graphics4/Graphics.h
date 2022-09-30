@@ -198,7 +198,10 @@ namespace Kore {
 		void setCubeMapCompareMode(TextureUnit texunit, bool enabled);
 		int maxBoundTextures();
 
-		bool nonPow2TexturesSupported();
+		bool supportsNonPow2Textures();
+		bool supportsInstancedRendering();
+		bool supportsComputeShaders();
+		bool supportsBlendConstants();
 
 		// Occlusion Query
 		bool initOcclusionQuery(uint *occlusionQuery);

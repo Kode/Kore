@@ -107,8 +107,24 @@ int Kore::Graphics5::maxBoundTextures() {
 	return kinc_g5_max_bound_textures();
 }
 
-bool Kore::Graphics5::nonPow2TexturesSupported() {
-	return kinc_g5_non_pow2_textures_qupported();
+bool Kore::Graphics5::supportsRaytracing() {
+	return kinc_g5_supports_raytracing();
+}
+
+bool Kore::Graphics5::supportsInstancedRendering() {
+	return kinc_g5_supports_instanced_rendering();
+}
+
+bool Kore::Graphics5::supportsComputeShaders() {
+	return kinc_g5_supports_compute_shaders();
+}
+
+bool Kore::Graphics5::supportsBlendConstants() {
+	return kinc_g5_supports_blend_constants();
+}
+
+bool Kore::Graphics5::supportsNonPow2Textures() {
+	return kinc_g5_supports_non_pow2_textures();
 }
 
 bool Kore::Graphics5::fullscreen = false;

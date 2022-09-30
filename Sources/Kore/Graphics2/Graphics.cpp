@@ -845,7 +845,7 @@ void Graphics2::Graphics2::setProjection() {
 		projectionMatrix = mat4::orthogonalProjection(0, static_cast<float>(width), static_cast<float>(height), 0, 0.1f, 1000);
 	}
 	else {
-		if (!Graphics4::nonPow2TexturesSupported()) {
+		if (!Graphics4::supportsNonPow2Textures()) {
 			width = upperPowerOfTwo(width);
 			height = upperPowerOfTwo(height);
 		}

@@ -146,8 +146,20 @@ void Graphics4::setTextureMipmapFilter(TextureUnit texunit, MipmapFilter filter)
 	kinc_g4_set_texture_mipmap_filter(texunit.kincUnit, (kinc_g4_mipmap_filter_t)filter);
 }
 
-bool Graphics4::nonPow2TexturesSupported() {
-	return kinc_g4_non_pow2_textures_supported();
+bool Graphics4::supportsNonPow2Textures() {
+	return kinc_g4_supports_non_pow2_textures();
+}
+
+bool Graphics4::supportsInstancedRendering() {
+	return kinc_g4_supports_instanced_rendering();
+}
+
+bool Graphics4::supportsComputeShaders() {
+	return kinc_g4_supports_compute_shaders();
+}
+
+bool Graphics4::supportsBlendConstants() {
+	return kinc_g4_supports_blend_constants();
 }
 
 void Graphics4::setFloat(ConstantLocation location, float value) {
