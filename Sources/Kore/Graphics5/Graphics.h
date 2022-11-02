@@ -95,6 +95,8 @@ namespace Kore {
 			ZCompareGreaterEqual
 		};
 
+		enum CompareMode { CompareAlways, CompareNever, CompareEqual, CompareNotEqual, CompareLess, CompareLessEqual, CompareGreater, CompareGreaterEqual };
+
 		enum CullMode { Clockwise, CounterClockwise, NoCulling };
 
 		enum TexDir { U, V, W };

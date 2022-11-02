@@ -3,6 +3,7 @@
 #include "ConstantBuffer.h"
 #include "Graphics.h"
 #include "PipelineState.h"
+#include "Sampler.h"
 
 #include <assert.h>
 
@@ -138,21 +139,8 @@ void CommandList::setRenderTargetFace(RenderTarget *texture, int face) {
 	kinc_g5_command_list_set_render_target_face(&kincCommandList, &texture->kincRenderTarget, face);
 }
 
-void CommandList::setTextureAddressing(TextureUnit unit, TexDir dir, TextureAddressing addressing) {
-	kinc_g5_command_list_set_texture_addressing(&kincCommandList, unit.kincTextureUnit, (kinc_g5_texture_direction_t)dir,
-	                                            (kinc_g5_texture_addressing_t)addressing);
-}
-
-void CommandList::setTextureMagnificationFilter(TextureUnit texunit, TextureFilter filter) {
-	kinc_g5_command_list_set_texture_magnification_filter(&kincCommandList, texunit.kincTextureUnit, (kinc_g5_texture_filter_t)filter);
-}
-
-void CommandList::setTextureMinificationFilter(TextureUnit texunit, TextureFilter filter) {
-	kinc_g5_command_list_set_texture_minification_filter(&kincCommandList, texunit.kincTextureUnit, (kinc_g5_texture_filter_t)filter);
-}
-
-void CommandList::setTextureMipmapFilter(TextureUnit texunit, MipmapFilter filter) {
-	kinc_g5_command_list_set_texture_mipmap_filter(&kincCommandList, texunit.kincTextureUnit, (kinc_g5_mipmap_filter_t)filter);
+void CommandList::setSampler(TextureUnit unit, Sampler *sampler) {
+	kinc_g5_command_list_set_sampler(&kincCommandList, unit.kincTextureUnit, &sampler->kincSampler);
 }
 
 void CommandList::setTextureFromRenderTarget(TextureUnit unit, RenderTarget *target) {

@@ -10,6 +10,7 @@ namespace Kore {
 		class IndexBuffer;
 		class PipelineState;
 		class RenderTarget;
+		class Sampler;
 		class Texture;
 		class VertexBuffer;
 
@@ -47,10 +48,7 @@ namespace Kore {
 			void setTexture(TextureUnit unit, Texture *texture);
 			void setImageTexture(TextureUnit unit, Texture *texture);
 			void setRenderTargetFace(RenderTarget *texture, int face = 0);
-			void setTextureAddressing(TextureUnit unit, TexDir dir, TextureAddressing addressing);
-			void setTextureMagnificationFilter(TextureUnit texunit, TextureFilter filter);
-			void setTextureMinificationFilter(TextureUnit texunit, TextureFilter filter);
-			void setTextureMipmapFilter(TextureUnit texunit, MipmapFilter filter);
+			void setSampler(TextureUnit unit, Sampler *sampler);
 			void setTextureFromRenderTarget(TextureUnit unit, RenderTarget *target);
 			void setTextureFromRenderTargetDepth(TextureUnit unit, RenderTarget *target);
 
