@@ -4,7 +4,6 @@ on:
   push:
     branches:
     - main
-    - FreeBSD  # REMEMBER TO DELETE THIS LINE BEFORE PRRRRRRing!!!!!
   pull_request:
     branches:
     - main
