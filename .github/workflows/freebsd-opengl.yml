@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - main
+    - FreeBSD  # REMEMBER TO DELETE THIS LINE BEFORE PRRRRRRing!!!!!
   pull_request:
     branches:
     - main
@@ -30,4 +31,6 @@ jobs:
         prepare: pkg install -y bash alsa-lib libXinerama mesa-libs libXi xorg-vfbserver libXrandr libXi libXcursor evdev-proto libinotify ImageMagick7-nox11 libxkbcommon
         run: |
           echo " * Compile"
+          echo `ls`
+          echo `pwd`
           ./make -g opengl --kinc . --from Tests/Empty --compile
