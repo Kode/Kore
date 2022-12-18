@@ -1,5 +1,5 @@
 @pushd "%~dp0"
-@if exist Tools\windows_x64\kmake.exe (
+@if exist Kinc\get_dlc_dangerously (
 @git submodule update --remote --merge Kinc
 ) else (
 @git submodule update --init --remote Kinc
