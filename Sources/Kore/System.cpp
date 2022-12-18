@@ -17,54 +17,54 @@ double Kore::System::time() {
 	return kinc_time();
 }
 
-void Kore::System::setCallback(void (*value)()) {
-	kinc_set_update_callback(value);
+void Kore::System::setCallback(void (*callback)(void *), void *data) {
+	kinc_set_update_callback(callback, data);
 }
 
-void Kore::System::setForegroundCallback(void (*value)()) {
-	kinc_set_foreground_callback(value);
+void Kore::System::setForegroundCallback(void (*callback)(void *), void *data) {
+	kinc_set_foreground_callback(callback, data);
 }
 
-void Kore::System::setResumeCallback(void (*value)()) {
-	kinc_set_resume_callback(value);
+void Kore::System::setResumeCallback(void (*callback)(void *), void *data) {
+	kinc_set_resume_callback(callback, data);
 }
 
-void Kore::System::setPauseCallback(void (*value)()) {
-	kinc_set_pause_callback(value);
+void Kore::System::setPauseCallback(void (*callback)(void *), void *data) {
+	kinc_set_pause_callback(callback, data);
 }
 
-void Kore::System::setBackgroundCallback(void (*value)()) {
-	kinc_set_background_callback(value);
+void Kore::System::setBackgroundCallback(void (*callback)(void *), void *data) {
+	kinc_set_background_callback(callback, data);
 }
 
-void Kore::System::setShutdownCallback(void (*value)()) {
-	kinc_set_shutdown_callback(value);
+void Kore::System::setShutdownCallback(void (*callback)(void *), void *data) {
+	kinc_set_shutdown_callback(callback, data);
 }
 
-void Kore::System::setOrientationCallback(void (*value)(Orientation)) {}
+void Kore::System::setOrientationCallback(void (*callback)(Orientation, void *), void *data) {}
 
-void Kore::System::setDropFilesCallback(void (*value)(wchar_t *)) {
-	kinc_set_drop_files_callback(value);
+void Kore::System::setDropFilesCallback(void (*callback)(wchar_t *, void *), void *data) {
+	kinc_set_drop_files_callback(callback, data);
 }
 
-void Kore::System::setCutCallback(char *(*value)()) {
-	kinc_set_cut_callback(value);
+void Kore::System::setCutCallback(char *(*callback)(void *), void *data) {
+	kinc_set_cut_callback(callback, data);
 }
 
-void Kore::System::setCopyCallback(char *(*value)()) {
-	kinc_set_copy_callback(value);
+void Kore::System::setCopyCallback(char *(*callback)(void *), void *data) {
+	kinc_set_copy_callback(callback, data);
 }
 
-void Kore::System::setPasteCallback(void (*value)(char *)) {
-	kinc_set_paste_callback(value);
+void Kore::System::setPasteCallback(void (*callback)(char *, void *), void *data) {
+	kinc_set_paste_callback(callback, data);
 }
 
-void Kore::System::setLoginCallback(void (*value)()) {
-	kinc_set_login_callback(value);
+void Kore::System::setLoginCallback(void (*callback)(void *), void *data) {
+	kinc_set_login_callback(callback, data);
 }
 
-void Kore::System::setLogoutCallback(void (*value)()) {
-	kinc_set_logout_callback(value);
+void Kore::System::setLogoutCallback(void (*callback)(void *), void *data) {
+	kinc_set_logout_callback(callback, data);
 }
 
 void Kore::System::_callback() {

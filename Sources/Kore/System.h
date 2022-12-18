@@ -46,19 +46,19 @@ namespace Kore {
 		bool waitingForLogin();
 		void unlockAchievement(int id);
 
-		void setCallback(void (*value)());
-		void setForegroundCallback(void (*value)());
-		void setResumeCallback(void (*value)());
-		void setPauseCallback(void (*value)());
-		void setBackgroundCallback(void (*value)());
-		void setShutdownCallback(void (*value)());
-		void setOrientationCallback(void (*value)(Orientation));
-		void setDropFilesCallback(void (*value)(wchar_t *));
-		void setCutCallback(char *(*value)());
-		void setCopyCallback(char *(*value)());
-		void setPasteCallback(void (*value)(char *));
-		void setLoginCallback(void (*value)());
-		void setLogoutCallback(void (*value)());
+		void setCallback(void (*callback)(void *), void *data);
+		void setForegroundCallback(void (*callback)(void *), void *data);
+		void setResumeCallback(void (*callback)(void *), void *data);
+		void setPauseCallback(void (*callback)(void *), void *data);
+		void setBackgroundCallback(void (*callback)(void *), void *data);
+		void setShutdownCallback(void (*callback)(void *), void *data);
+		void setOrientationCallback(void (*callback)(Orientation, void *), void *data);
+		void setDropFilesCallback(void (*callback)(wchar_t *, void *), void *data);
+		void setCutCallback(char *(*callback)(void *), void *data);
+		void setCopyCallback(char *(*callback)(void *), void *data);
+		void setPasteCallback(void (*callback)(char *, void *), void *data);
+		void setLoginCallback(void (*callback)(void *), void *data);
+		void setLogoutCallback(void (*callback)(void *), void *data);
 
 		void _shutdown();
 		void _callback();
