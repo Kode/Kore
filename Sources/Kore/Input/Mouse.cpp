@@ -8,31 +8,31 @@ namespace {
 	Mouse mouse;
 	bool initialized = false;
 
-	void move(int window, int x, int y, int movementX, int movementY) {
+	void move(int window, int x, int y, int movementX, int movementY, void *data) {
 		if (mouse.Move != nullptr) {
 			mouse.Move(window, x, y, movementX, movementY);
 		}
 	}
 
-	void press(int window, int button, int x, int y) {
+	void press(int window, int button, int x, int y, void *data) {
 		if (mouse.Press != nullptr) {
 			mouse.Press(window, button, x, y);
 		}
 	}
 
-	void release(int window, int button, int x, int y) {
+	void release(int window, int button, int x, int y, void *data) {
 		if (mouse.Release != nullptr) {
 			mouse.Release(window, button, x, y);
 		}
 	}
 
-	void scroll(int window, int delta) {
+	void scroll(int window, int delta, void *data) {
 		if (mouse.Scroll != nullptr) {
 			mouse.Scroll(window, delta);
 		}
 	}
 
-	void leave(int window) {
+	void leave(int window, void *data) {
 		if (mouse.Leave != nullptr) {
 			mouse.Leave(window);
 		}
@@ -41,11 +41,11 @@ namespace {
 
 Mouse *Mouse::the() {
 	if (!initialized) {
-		kinc_mouse_set_move_callback(move);
-		kinc_mouse_set_press_callback(press);
-		kinc_mouse_set_release_callback(release);
-		kinc_mouse_set_scroll_callback(scroll);
-		kinc_mouse_set_leave_window_callback(leave);
+		kinc_mouse_set_move_callback(move, nullptr);
+		kinc_mouse_set_press_callback(press, nullptr);
+		kinc_mouse_set_release_callback(release, nullptr);
+		kinc_mouse_set_scroll_callback(scroll, nullptr);
+		kinc_mouse_set_leave_window_callback(leave, nullptr);
 		initialized = true;
 	}
 	return &mouse;
