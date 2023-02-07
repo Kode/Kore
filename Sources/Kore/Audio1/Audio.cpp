@@ -125,6 +125,8 @@ void Audio1::init() {
 		streams[i].position = 0;
 	}
 	mutex.create();
+
+	Audio2::init();
 	Audio2::audioCallback = mix;
 }
 
