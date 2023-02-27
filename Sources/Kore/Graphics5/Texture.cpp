@@ -148,7 +148,7 @@ void Texture::upload(u8 *data, int stride) {
 }
 #endif
 
-void Texture::clear(int x, int y, int z, int width, int height, int depth, uint color) {
+void Texture::clear(int x, int y, int z, int width, int height, int depth, Kore::uint color) {
 	kinc_g5_texture_clear(&kincTexture, x, y, z, width, height, depth, color);
 }
 

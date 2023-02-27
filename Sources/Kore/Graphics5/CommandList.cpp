@@ -25,7 +25,7 @@ void CommandList::end() {
 	kinc_g5_command_list_end(&kincCommandList);
 }
 
-void CommandList::clear(RenderTarget *renderTarget, uint flags, uint color, float depth, int stencil) {
+void CommandList::clear(RenderTarget *renderTarget, Kore::uint flags, Kore::uint color, float depth, int stencil) {
 	kinc_g5_command_list_clear(&kincCommandList, &renderTarget->kincRenderTarget, flags, color, depth, stencil);
 }
 
@@ -151,22 +151,22 @@ void CommandList::setTextureFromRenderTargetDepth(TextureUnit unit, RenderTarget
 	kinc_g5_command_list_set_texture_from_render_target_depth(&kincCommandList, unit.kincTextureUnit, &target->kincRenderTarget);
 }
 
-bool CommandList::initOcclusionQuery(uint *occlusionQuery) {
+bool CommandList::initOcclusionQuery(Kore::uint *occlusionQuery) {
 	return kinc_g5_command_list_init_occlusion_query(&kincCommandList, occlusionQuery);
 }
 
-void CommandList::deleteOcclusionQuery(uint occlusionQuery) {
+void CommandList::deleteOcclusionQuery(Kore::uint occlusionQuery) {
 	kinc_g5_command_list_delete_occlusion_query(&kincCommandList, occlusionQuery);
 }
 
-void CommandList::renderOcclusionQuery(uint occlusionQuery, int triangles) {
+void CommandList::renderOcclusionQuery(Kore::uint occlusionQuery, int triangles) {
 	kinc_g5_command_list_render_occlusion_query(&kincCommandList, occlusionQuery, triangles);
 }
 
-bool CommandList::isQueryResultsAvailable(uint occlusionQuery) {
+bool CommandList::isQueryResultsAvailable(Kore::uint occlusionQuery) {
 	return kinc_g5_command_list_are_query_results_available(&kincCommandList, occlusionQuery);
 }
 
-void CommandList::getQueryResults(uint occlusionQuery, uint *pixelCount) {
+void CommandList::getQueryResults(Kore::uint occlusionQuery, Kore::uint *pixelCount) {
 	kinc_g5_command_list_get_query_result(&kincCommandList, occlusionQuery, pixelCount);
 }
