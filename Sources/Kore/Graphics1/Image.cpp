@@ -138,6 +138,16 @@ int Graphics1::Image::at(int x, int y) {
 	}
 }
 
+void *Graphics1::Image::atRaw(int x, int y) {
+	if (data == nullptr) {
+		kinc_log(KINC_LOG_LEVEL_WARNING, "Attempting to read a non-readable image.");
+		return nullptr;
+	}
+	else {
+		return &((u8 *)data)[width * sizeOf(format) * y + x * sizeOf(format)];
+	}
+}
+
 u8 *Graphics1::Image::getPixels() {
 	return (u8 *)data;
 }
