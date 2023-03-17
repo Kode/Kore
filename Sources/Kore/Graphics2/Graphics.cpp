@@ -79,7 +79,7 @@ void Graphics2::ImageShaderPainter::initBuffers() {
 	rectVertices = rectVertexBuffer->lock();
 
 	indexBuffer = new Graphics4::IndexBuffer(bufferSize * 3 * 2);
-	int *indices = indexBuffer->lock();
+	uint32_t *indices = (uint32_t *)indexBuffer->lock();
 	for (int i = 0; i < bufferSize; ++i) {
 		indices[i * 3 * 2 + 0] = i * 4 + 0;
 		indices[i * 3 * 2 + 1] = i * 4 + 1;
@@ -357,7 +357,7 @@ void Graphics2::ColoredShaderPainter::initBuffers() {
 	rectVertices = rectVertexBuffer->lock();
 
 	indexBuffer = new Graphics4::IndexBuffer(bufferSize * 3 * 2);
-	int *indices = indexBuffer->lock();
+	uint32_t *indices = (uint32_t *)indexBuffer->lock();
 	for (int i = 0; i < bufferSize; ++i) {
 		indices[i * 3 * 2 + 0] = i * 4 + 0;
 		indices[i * 3 * 2 + 1] = i * 4 + 1;
@@ -372,7 +372,7 @@ void Graphics2::ColoredShaderPainter::initBuffers() {
 	triangleVertices = triangleVertexBuffer->lock();
 
 	triangleIndexBuffer = new Graphics4::IndexBuffer(triangleBufferSize * 3);
-	int *triIndices = triangleIndexBuffer->lock();
+	uint32_t *triIndices = (uint32_t *)triangleIndexBuffer->lock();
 	for (int i = 0; i < bufferSize; ++i) {
 		triIndices[i * 3 + 0] = i * 3 + 0;
 		triIndices[i * 3 + 1] = i * 3 + 1;
@@ -620,7 +620,7 @@ void Graphics2::TextShaderPainter::initBuffers() {
 	rectVertices = rectVertexBuffer->lock();
 
 	indexBuffer = new Graphics4::IndexBuffer(bufferSize * 3 * 2);
-	int *indices = indexBuffer->lock();
+	uint32_t *indices = (uint32_t *)indexBuffer->lock();
 	for (int i = 0; i < bufferSize; ++i) {
 		indices[i * 3 * 2 + 0] = i * 4 + 0;
 		indices[i * 3 * 2 + 1] = i * 4 + 1;

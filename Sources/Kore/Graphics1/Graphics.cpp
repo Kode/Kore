@@ -108,7 +108,7 @@ void Graphics1::init(int width, int height) {
 	vb->unlock();
 
 	ib = new Graphics4::IndexBuffer(6);
-	int *ii = ib->lock();
+	uint32_t *ii = (uint32_t *)ib->lock();
 	{
 		int i = 0;
 		ii[i++] = 0;

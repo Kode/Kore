@@ -49,12 +49,20 @@ IndexBuffer::~IndexBuffer() {
 	kinc_g5_index_buffer_destroy(&kincBuffer);
 }
 
-int *IndexBuffer::lock() {
-	return kinc_g5_index_buffer_lock(&kincBuffer);
+void *IndexBuffer::lock() {
+	return kinc_g5_index_buffer_lock_all(&kincBuffer);
+}
+
+void *IndexBuffer::lock(int start, int count) {
+	return kinc_g5_index_buffer_lock(&kincBuffer, start, count);
 }
 
 void IndexBuffer::unlock() {
-	kinc_g5_index_buffer_unlock(&kincBuffer);
+	kinc_g5_index_buffer_unlock_all(&kincBuffer);
+}
+
+void IndexBuffer::unlock(int count) {
+	kinc_g5_index_buffer_unlock(&kincBuffer, count);
 }
 
 int IndexBuffer::count() {

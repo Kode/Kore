@@ -39,8 +39,10 @@ namespace Kore {
 		public:
 			IndexBuffer(int count, bool gpuMemory);
 			virtual ~IndexBuffer();
-			int *lock();
+			void *lock();
+			void *lock(int start, int count);
 			void unlock();
+			void unlock(int count);
 			int count();
 			// void _set();
 
