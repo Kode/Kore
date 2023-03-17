@@ -63,7 +63,7 @@ int kickstart(int argc, char **argv) {
 	vertices->unlock();
 
 	indices = new Graphics4::IndexBuffer(3);
-	int *i = indices->lock();
+	uint32_t *i = (uint32_t *)indices->lock();
 	i[0] = 0;
 	i[1] = 1;
 	i[2] = 2;
