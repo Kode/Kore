@@ -22,7 +22,7 @@ namespace Kore {
 
 		class VertexBuffer {
 		public:
-			VertexBuffer(int count, const VertexStructure &structure, bool gpuMemory, int instanceDataStepRate = 0);
+			VertexBuffer(int count, const VertexStructure &structure, bool gpuMemory = true, int instanceDataStepRate = 0);
 			virtual ~VertexBuffer();
 			float *lock();
 			float *lock(int start, int count);
@@ -35,9 +35,11 @@ namespace Kore {
 			kinc_g5_vertex_buffer_t kincBuffer;
 		};
 
+		enum IndexBufferFormat { Uint32, Uint16 };
+
 		class IndexBuffer {
 		public:
-			IndexBuffer(int count, bool gpuMemory);
+			IndexBuffer(int count, IndexBufferFormat format = Uint32, bool gpuMemory = true);
 			virtual ~IndexBuffer();
 			void *lock();
 			void *lock(int start, int count);

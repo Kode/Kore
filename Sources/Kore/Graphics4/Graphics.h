@@ -33,16 +33,17 @@ namespace Kore {
 			kinc_g4_vertex_buffer_t kincBuffer;
 		};
 
+		enum IndexBufferFormat { Uint32, Uint16 };
+
 		class IndexBuffer {
 		public:
-			IndexBuffer(int count, Usage usage = StaticUsage);
+			IndexBuffer(int count, IndexBufferFormat format = IndexBufferFormat::Uint32, Usage usage = StaticUsage);
 			virtual ~IndexBuffer();
 			void *lock();
 			void *lock(int start, int count);
 			void unlock();
 			void unlock(int count);
 			int count();
-			void _set();
 
 			kinc_g4_index_buffer_t kincBuffer;
 		};

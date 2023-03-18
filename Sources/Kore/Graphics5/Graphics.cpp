@@ -41,8 +41,8 @@ int VertexBuffer::stride() {
 	return kinc_g5_vertex_buffer_stride(&kincBuffer);
 }
 
-IndexBuffer::IndexBuffer(int count, bool gpuMemory) {
-	kinc_g5_index_buffer_init(&kincBuffer, count, KINC_G5_INDEX_BUFFER_FORMAT_32BIT, gpuMemory);
+IndexBuffer::IndexBuffer(int count, IndexBufferFormat format, bool gpuMemory) {
+	kinc_g5_index_buffer_init(&kincBuffer, count, format == Uint32 ? KINC_G5_INDEX_BUFFER_FORMAT_32BIT : KINC_G5_INDEX_BUFFER_FORMAT_16BIT, gpuMemory);
 }
 
 IndexBuffer::~IndexBuffer() {
