@@ -1,4 +1,5 @@
 #include "Connection.h"
+
 #include "Socket.h"
 
 #include <cassert>
@@ -23,8 +24,8 @@ Connection::Connection(int receivePort, int maxConns, double timeout, double png
 	Kore::SocketOptions options;
 	options.nonBlocking = true;
 
-	socket.init();
-	socket.open(KINC_SOCKET_PROTOCOL_UDP, receivePort, &options);
+	socket.set("127.0.0.1", receivePort, SocketFamily::IP4, SocketProtocol::UDP);
+	socket.open(&options);
 
 	sndBuff = new u8[buffSize];
 	sndCache = new u8[(buffSize + 12) * cacheCount];
@@ -178,7 +179,7 @@ int Connection::receive(u8 *data, int &id) {
 	// Receive pending packets
 	{
 		int size = 0;
-		while ((size = socket.receive(recBuff, buffSize, recAddr, recPort)) > 0) {
+		while ((size = socket.receive(recBuff, buffSize, &recAddr, &recPort)) > 0) {
 			assert(size < buffSize);
 
 			id = getID(recAddr, recPort);
