@@ -83,8 +83,9 @@ Graphics4::Texture *Kravur::getTexture() {
 	return texture;
 }
 
-AlignedQuad Kravur::getBakedQuad(int char_index, float xpos, float ypos) {
-	if (char_index >= static_cast<int>(chars.size())) return AlignedQuad();
+AlignedQuad Kravur::getBakedQuad(char ch, float xpos, float ypos) {
+	int char_index = ((unsigned char)ch) - 32;
+	if (char_index < 0 || char_index >= static_cast<int>(chars.size())) return AlignedQuad();
 	float ipw = 1.0f / width;
 	float iph = 1.0f / height;
 	BakedChar b = chars[char_index];
@@ -108,18 +109,14 @@ AlignedQuad Kravur::getBakedQuad(int char_index, float xpos, float ypos) {
 	return q;
 }
 
-float Kravur::getCharWidth(int charIndex) {
-	if (charIndex < 32) return 0;
-	if (charIndex - 32 >= static_cast<int>(chars.size())) return 0;
-	return chars[charIndex - 32].xadvance;
+float Kravur::getCharWidth(char ch) {
+	int char_index = ((unsigned char)ch) - 32;
+	if (char_index < 0 || char_index >= static_cast<int>(chars.size())) return 0;
+	return chars[char_index].xadvance;
 }
 
 float Kravur::getHeight() {
 	return size;
-}
-
-float Kravur::charWidth(char ch) {
-	return getCharWidth(ch);
 }
 
 float Kravur::charsWidth(const char *ch, int offset, int length) {
