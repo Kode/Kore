@@ -4,9 +4,9 @@
 
 namespace Kore {
 	namespace Random {
-		void init(int seed);
-		s32 get();
-		s32 get(s32 max);
-		s32 get(s32 min, s32 max);
+		void init(int64_t seed);
+		int64_t get();
+		int64_t get(int64_t max);
+		int64_t get(int64_t min, int64_t max);
 	}
 }
