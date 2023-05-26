@@ -62,8 +62,7 @@ namespace Kore {
 		std::vector<BakedChar> chars;
 		Graphics4::Texture *texture;
 		float baseline;
-		float getCharWidth(int charIndex);
-		float charWidth(char ch);
+		float getCharWidth(char ch);
 
 	public:
 		int width;
@@ -72,7 +71,7 @@ namespace Kore {
 		static Kravur *load(const char *name, FontStyle style, float size);
 
 		Graphics4::Texture *getTexture();
-		AlignedQuad getBakedQuad(int char_index, float xpos, float ypos);
+		AlignedQuad getBakedQuad(char ch, float xpos, float ypos);
 
 		float getHeight();
 		float charsWidth(const char *ch, int offset, int length);
