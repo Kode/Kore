@@ -10,13 +10,13 @@ namespace {
 	bool padInitialized[maxGamepads] = {0};
 	bool callbacksInitialized = false;
 
-	void axisCallback(int gamepad, int axis, float value) {
+	void axisCallback(int gamepad, int axis, float value, void *data) {
 		if (gamepad < maxGamepads && padInitialized[gamepad] && pads[gamepad].Axis != nullptr) {
 			pads[gamepad].Axis(axis, value);
 		}
 	}
 
-	void buttonCallback(int gamepad, int button, float value) {
+	void buttonCallback(int gamepad, int button, float value, void *data) {
 		if (gamepad < maxGamepads && padInitialized[gamepad] && pads[gamepad].Button != nullptr) {
 			pads[gamepad].Button(button, value);
 		}
@@ -28,8 +28,8 @@ Gamepad *Gamepad::get(int num) {
 		return nullptr;
 	}
 	if (!callbacksInitialized) {
-		kinc_gamepad_set_axis_callback(axisCallback);
-		kinc_gamepad_set_button_callback(buttonCallback);
+		kinc_gamepad_set_axis_callback(axisCallback, nullptr);
+		kinc_gamepad_set_button_callback(buttonCallback, nullptr);
 	}
 	if (!padInitialized[num]) {
 		pads[num].vendor = kinc_gamepad_vendor(num);
