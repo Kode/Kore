@@ -6,6 +6,7 @@
 
 #include <kinc/graphics4/graphics.h>
 
+#include <Kore/Graphics4/Compute.h>
 #include <Kore/Graphics4/TextureArray.h>
 
 #include <assert.h>
@@ -283,6 +284,20 @@ extern "C" void kinc_internal_change_framebuffer(int window, struct kinc_framebu
 
 void Graphics4::_changeFramebuffer(int window, struct kinc_framebuffer_options *frame) {
 	kinc_internal_change_framebuffer(window, frame);
+}
+
+#ifdef KORE_OPENGL
+void Graphics4::setShaderStorageBuffer(ShaderStorageBuffer *buffer, int index) {
+	kinc_g4_set_shader_storage_buffer(&buffer->kincImpl, index);
+}
+#endif
+
+void Graphics4::setComputeShader(ComputeShader *shader) {
+	kinc_g4_set_compute_shader(&shader->kincImpl);
+}
+
+void Graphics4::compute(int x, int y, int z) {
+	kinc_g4_compute(x, y, z);
 }
 
 #endif

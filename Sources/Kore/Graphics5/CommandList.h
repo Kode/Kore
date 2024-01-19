@@ -6,6 +6,7 @@
 
 namespace Kore {
 	namespace Graphics5 {
+		class ComputeShader;
 		class ConstantBuffer;
 		class IndexBuffer;
 		class PipelineState;
@@ -13,6 +14,9 @@ namespace Kore {
 		class Sampler;
 		class Texture;
 		class VertexBuffer;
+#ifdef KORE_OPENGL
+		class ShaderStorageBuffer;
+#endif
 
 		class CommandList {
 		public:
@@ -51,6 +55,9 @@ namespace Kore {
 			void setSampler(TextureUnit unit, Sampler *sampler);
 			void setTextureFromRenderTarget(TextureUnit unit, RenderTarget *target);
 			void setTextureFromRenderTargetDepth(TextureUnit unit, RenderTarget *target);
+
+			void setComputeShader(ComputeShader *shader);
+			void compute(int x, int y, int z);
 
 			// Occlusion Query
 			bool initOcclusionQuery(uint *occlusionQuery);

@@ -15,8 +15,12 @@ struct kinc_framebuffer_options;
 
 namespace Kore {
 	namespace Graphics4 {
+		class ComputeShader;
 		class PipelineState;
 		class TextureArray;
+#ifdef KORE_OPENGL
+		class ShaderStorageBuffer;
+#endif
 
 		class VertexBuffer {
 		public:
@@ -177,6 +181,12 @@ namespace Kore {
 		void setRenderTarget(RenderTarget *target);
 		void setRenderTargetFace(RenderTarget *texture, int face = 0);
 		void restoreRenderTarget();
+
+#ifdef KORE_OPENGL
+		void setShaderStorageBuffer(ShaderStorageBuffer *buffer, int index);
+#endif
+		void setComputeShader(ComputeShader *shader);
+		void compute(int x, int y, int z);
 
 		void begin(int window = 0);
 		void end(int window = 0);

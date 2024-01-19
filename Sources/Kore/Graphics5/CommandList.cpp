@@ -1,5 +1,6 @@
 #include "CommandList.h"
 
+#include "Compute.h"
 #include "ConstantBuffer.h"
 #include "Graphics.h"
 #include "PipelineState.h"
@@ -169,4 +170,12 @@ bool CommandList::isQueryResultsAvailable(Kore::uint occlusionQuery) {
 
 void CommandList::getQueryResults(Kore::uint occlusionQuery, Kore::uint *pixelCount) {
 	kinc_g5_command_list_get_query_result(&kincCommandList, occlusionQuery, pixelCount);
+}
+
+void CommandList::setComputeShader(ComputeShader *shader) {
+	kinc_g5_command_list_set_compute_shader(&kincCommandList, &shader->kincImpl);
+}
+
+void CommandList::compute(int x, int y, int z) {
+	kinc_g5_command_list_compute(&kincCommandList, x, y, z);
 }
