@@ -2,28 +2,23 @@
 
 #include <Kore/global.h>
 
+#include <kinc/audio2/audio.h>
+
 namespace Kore {
 	namespace Audio2 {
 		void init();
 		void update();
 		void shutdown();
+		uint32_t samplesPerSecond();
 
-		extern int samplesPerSecond;
-
-		extern void (*audioCallback)(int samples);
-
-		struct BufferFormat {
-			int channels;
-			int samplesPerSecond;
-			int bitsPerSample;
-		};
+		extern void (*audioCallback)(uint32_t samples);
 
 		struct Buffer {
-			BufferFormat format;
-			u8 *data;
-			int dataSize;
-			int readLocation;
-			int writeLocation;
+			uint8_t channelCount;
+			float *channels[KINC_A2_MAX_CHANNELS];
+			uint32_t dataSize;
+			uint32_t readLocation;
+			uint32_t writeLocation;
 		};
 
 		extern Buffer buffer;

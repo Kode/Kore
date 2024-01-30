@@ -7,7 +7,7 @@
 
 using namespace Kore;
 
-SoundStream::SoundStream(const char *filename, bool looping) : myLooping(looping), myVolume(1), decoded(false), rateDecodedHack(false), end(false) {
+SoundStream::SoundStream(const char *filename, bool looping) : myLooping(looping), myVolume(1), rateDecodedHack(false), end(false) {
 	FileReader file(filename);
 	buffer = new u8[file.size()];
 	u8 *filecontent = (u8 *)file.readAll();
@@ -66,47 +66,42 @@ void SoundStream::reset() {
 	if (vorbis != nullptr) stb_vorbis_seek_start(vorbis);
 	end = false;
 	rateDecodedHack = false;
-	decoded = false;
 }
 
-float SoundStream::nextSample() {
-	if (vorbis == nullptr) return 0;
+float *SoundStream::nextFrame() {
+	if (vorbis == nullptr) {
+		for (int i = 0; i < chans; ++i) {
+			samples[i] = 0;
+		}
+		return samples;
+	}
 	if (rate == 22050) {
 		if (rateDecodedHack) {
-			if (decoded) {
-				decoded = false;
-				return samples[0];
-			}
-			else {
-				rateDecodedHack = false;
-				decoded = true;
-				return samples[1];
-			}
+			rateDecodedHack = false;
+			return samples;
 		}
 	}
-	if (decoded) {
-		decoded = false;
-		if (chans == 1) {
-			return samples[0];
+
+	float left, right;
+	float *samplesArray[2] = {&left, &right};
+	int read = stb_vorbis_get_samples_float(vorbis, chans, samplesArray, 1);
+	if (read == 0) {
+		if (looping()) {
+			stb_vorbis_seek_start(vorbis);
+			stb_vorbis_get_samples_float(vorbis, chans, samplesArray, 1);
 		}
 		else {
-			return samples[1];
+			end = true;
+			for (int i = 0; i < chans; ++i) {
+				samples[i] = 0;
+			}
+			return samples;
 		}
 	}
-	else {
-		int read = stb_vorbis_get_samples_float_interleaved(vorbis, chans, &samples[0], chans);
-		if (read == 0) {
-			if (looping()) {
-				stb_vorbis_seek_start(vorbis);
-				stb_vorbis_get_samples_float_interleaved(vorbis, chans, &samples[0], chans);
-			}
-			else {
-				end = true;
-				return 0.0f;
-			}
-		}
-		decoded = true;
-		rateDecodedHack = true;
-		return samples[0];
-	}
+
+	samples[0] = samplesArray[0][0];
+	samples[1] = samplesArray[1][0];
+
+	rateDecodedHack = true;
+	return samples;
 }

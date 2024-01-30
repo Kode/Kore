@@ -8,7 +8,7 @@ namespace Kore {
 	class SoundStream {
 	public:
 		SoundStream(const char *filename, bool looping);
-		float nextSample();
+		float *nextFrame();
 		int channels();
 		int sampleRate();
 		bool looping();
@@ -26,7 +26,6 @@ namespace Kore {
 		int rate;
 		bool myLooping;
 		float myVolume;
-		bool decoded;
 		bool rateDecodedHack;
 		bool end;
 		float samples[2];

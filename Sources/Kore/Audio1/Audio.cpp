@@ -44,10 +44,10 @@ namespace {
 	}*/
 }
 
-void Audio1::mix(int samples) {
-	for (int i = 0; i < samples; ++i) {
-		bool left = (i % 2) == 0;
-		float value = 0;
+void Audio1::mix(uint32_t samples) {
+	for (uint32_t i = 0; i < samples; ++i) {
+		float leftValue = 0;
+		float rightValue = 0;
 #if 0
 		__m128 sseSamples[4];
 		for (int i = 0; i < channelCount; i += 4) {
@@ -74,12 +74,11 @@ void Audio1::mix(int samples) {
 		for (int i = 0; i < channelCount; ++i) {
 			if (channels[i].sound != nullptr) {
 				// value += *(s16*)&channels[i].sound->data[(int)channels[i].position] / 32767.0f * channels[i].sound->volume();
-				if (left)
-					value += sampleLinear(channels[i].sound->left, channels[i].position) * channels[i].volume * channels[i].sound->volume();
-				else
-					value += sampleLinear(channels[i].sound->right, channels[i].position) * channels[i].volume * channels[i].sound->volume();
-				value = max(min(value, 1.0f), -1.0f);
-				if (!left) channels[i].position += channels[i].pitch / channels[i].sound->sampleRatePos;
+				leftValue += sampleLinear(channels[i].sound->left, channels[i].position) * channels[i].volume * channels[i].sound->volume();
+				leftValue = max(min(leftValue, 1.0f), -1.0f);
+				rightValue += sampleLinear(channels[i].sound->right, channels[i].position) * channels[i].volume * channels[i].sound->volume();
+				rightValue = max(min(rightValue, 1.0f), -1.0f);
+				channels[i].position += channels[i].pitch / channels[i].sound->sampleRatePos;
 				// channels[i].position += 2;
 				if (channels[i].position + 1 >= channels[i].sound->size) {
 					if (channels[i].loop) {
@@ -93,15 +92,23 @@ void Audio1::mix(int samples) {
 		}
 		for (int i = 0; i < channelCount; ++i) {
 			if (streams[i].stream != nullptr) {
-				value += streams[i].stream->nextSample() * streams[i].stream->volume();
-				value = max(min(value, 1.0f), -1.0f);
-				if (streams[i].stream->ended()) streams[i].stream = nullptr;
+				float *samples = streams[i].stream->nextFrame();
+				leftValue += samples[0] * streams[i].stream->volume();
+				leftValue = max(min(leftValue, 1.0f), -1.0f);
+				rightValue += samples[1] * streams[i].stream->volume();
+				rightValue = max(min(rightValue, 1.0f), -1.0f);
+				if (streams[i].stream->ended()) {
+					streams[i].stream = nullptr;
+				}
 			}
 		}
 		for (int i = 0; i < channelCount; ++i) {
 			if (videos[i].stream != nullptr) {
-				value += kinc_internal_video_sound_stream_next_sample(videos[i].stream);
-				value = max(min(value, 1.0f), -1.0f);
+				float *samples = kinc_internal_video_sound_stream_next_frame(videos[i].stream);
+				leftValue += samples[0];
+				leftValue = max(min(leftValue, 1.0f), -1.0f);
+				rightValue += samples[1];
+				rightValue = max(min(rightValue, 1.0f), -1.0f);
 				if (kinc_internal_video_sound_stream_ended(videos[i].stream)) {
 					videos[i].stream = nullptr;
 				}
@@ -109,9 +116,12 @@ void Audio1::mix(int samples) {
 		}
 		mutex.unlock();
 #endif
-		*(float *)&Audio2::buffer.data[Audio2::buffer.writeLocation] = value;
-		Audio2::buffer.writeLocation += 4;
-		if (Audio2::buffer.writeLocation >= Audio2::buffer.dataSize) Audio2::buffer.writeLocation = 0;
+		Audio2::buffer.channels[0][Audio2::buffer.writeLocation] = leftValue;
+		Audio2::buffer.channels[1][Audio2::buffer.writeLocation] = rightValue;
+		Audio2::buffer.writeLocation += 1;
+		if (Audio2::buffer.writeLocation >= Audio2::buffer.dataSize) {
+			Audio2::buffer.writeLocation = 0;
+		}
 	}
 }
 

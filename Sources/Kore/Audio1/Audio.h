@@ -33,6 +33,6 @@ namespace Kore {
 		void stop(SoundStream *stream);
 		void play(kinc_internal_video_sound_stream *stream);
 		void stop(kinc_internal_video_sound_stream *stream);
-		void mix(int samples);
+		void mix(uint32_t samples);
 	}
 }
