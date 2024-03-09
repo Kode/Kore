@@ -6,17 +6,17 @@ namespace Kore {
 
 	class BufferReader : public Reader {
 		u8 *buffer;
-		int bufferSize;
-		int position;
+		size_t bufferSize;
+		size_t position;
 		void *readAllBuffer;
 
 	public:
-		BufferReader(void const *buffer, int size);
+		BufferReader(void const *buffer, size_t size);
 		virtual ~BufferReader();
-		int read(void *data, int size) override;
+		size_t read(void *data, size_t size) override;
 		void *readAll() override;
-		int size() override;
-		int pos() override;
-		void seek(int pos) override;
+		size_t size() override;
+		size_t pos() override;
+		void seek(size_t pos) override;
 	};
 }

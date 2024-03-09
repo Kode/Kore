@@ -12,7 +12,7 @@ SoundStream::SoundStream(const char *filename, bool looping) : myLooping(looping
 	buffer = new u8[file.size()];
 	u8 *filecontent = (u8 *)file.readAll();
 	memcpy(buffer, filecontent, file.size());
-	vorbis = stb_vorbis_open_memory(buffer, file.size(), nullptr, nullptr);
+	vorbis = stb_vorbis_open_memory(buffer, (int)file.size(), nullptr, nullptr);
 	if (vorbis != nullptr) {
 		stb_vorbis_info info = stb_vorbis_get_info(vorbis);
 		chans = info.channels;

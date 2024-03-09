@@ -21,7 +21,7 @@ bool FileReader::open(const char *filename, FileType type) {
 	return kinc_file_reader_open(&reader, filename, (int)type);
 }
 
-int FileReader::read(void *data, int size) {
+size_t FileReader::read(void *data, size_t size) {
 	return kinc_file_reader_read(&reader, data, size);
 }
 
@@ -34,7 +34,7 @@ void *FileReader::readAll() {
 	return readdata;
 }
 
-void FileReader::seek(int pos) {
+void FileReader::seek(size_t pos) {
 	kinc_file_reader_seek(&reader, pos);
 }
 
@@ -48,10 +48,10 @@ FileReader::~FileReader() {
 	close();
 }
 
-int FileReader::pos() {
+size_t FileReader::pos() {
 	return kinc_file_reader_pos(&reader);
 }
 
-int FileReader::size() {
-	return (int)kinc_file_reader_size(&reader);
+size_t FileReader::size() {
+	return kinc_file_reader_size(&reader);
 }

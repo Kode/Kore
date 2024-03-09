@@ -6,11 +6,11 @@ namespace Kore {
 	class Reader {
 	public:
 		virtual ~Reader() {}
-		virtual int read(void *data, int size) = 0;
+		virtual size_t read(void *data, size_t size) = 0;
 		virtual void *readAll() = 0;
-		virtual int size() = 0;
-		virtual int pos() = 0;
-		virtual void seek(int pos) = 0;
+		virtual size_t size() = 0;
+		virtual size_t pos() = 0;
+		virtual void seek(size_t pos) = 0;
 
 		float readF32LE();
 		float readF32BE();

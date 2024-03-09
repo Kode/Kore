@@ -110,7 +110,7 @@ void Sound::load(Reader &file, const char *filename) {
 
 	if (strncmp(&filename[filenameLength - 4], ".ogg", 4) == 0) {
 		u8 *filedata = (u8 *)file.readAll();
-		int samples = stb_vorbis_decode_memory(filedata, file.size(), &format.channels, &format.samplesPerSecond, (short **)&data);
+		int samples = stb_vorbis_decode_memory(filedata, (int)file.size(), &format.channels, &format.samplesPerSecond, (short **)&data);
 		size = samples * 2 * format.channels;
 		format.bitsPerSample = 16;
 		length = samples / (float)format.samplesPerSecond;

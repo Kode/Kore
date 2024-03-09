@@ -3,7 +3,7 @@
 using namespace Kore;
 using namespace Kore::Graphics4;
 
-Shader::Shader(void *data, int length, ShaderType type) {
+Shader::Shader(void *data, size_t length, ShaderType type) {
 	kinc_g4_shader_init(&kincShader, data, length, (kinc_g4_shader_type_t)type);
 }
 

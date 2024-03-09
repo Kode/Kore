@@ -15,7 +15,7 @@ namespace Kore {
 
 		class Shader {
 		public:
-			Shader(void *data, int length, ShaderType type);
+			Shader(void *data, size_t length, ShaderType type);
 			Shader(const char *source, ShaderType type); // Beware, this is not portable
 			virtual ~Shader();
 
