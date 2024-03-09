@@ -2,7 +2,7 @@
 
 #include <Kore/global.h>
 
-#include <stdint.h>
+#include <stddef.h>
 
 namespace Kore {
 	class Reader {
