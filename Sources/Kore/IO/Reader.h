@@ -2,6 +2,8 @@
 
 #include <Kore/global.h>
 
+#include <stdint.h>
+
 namespace Kore {
 	class Reader {
 	public:
