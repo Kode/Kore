@@ -70,7 +70,7 @@ void Writer::writeS8(s8 value) {
 	write(&value, 1);
 }
 
-#ifdef KORE_LITTLE_ENDIAN
+#ifdef KINC_LITTLE_ENDIAN
 #define TO_LE(size)                                                                                                                                            \
 	u8 *values = (u8 *)&value;                                                                                                                                 \
 	for (int i = 0; i < size; ++i) data[i] = values[i];

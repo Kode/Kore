@@ -7,7 +7,7 @@
 
 using namespace Kore;
 
-#ifdef KORE_G4
+#ifdef KINC_G4
 
 namespace {
 	std::map<std::string, Kravur *> fontCache;

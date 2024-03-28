@@ -5,7 +5,7 @@
 
 using namespace Kore;
 
-#ifndef KORE_G4
+#ifndef KINC_G4
 
 Graphics3::Texture::Texture(Kore::Reader &reader, const char *format, bool readable) : Image(reader, format, readable) {
 	init(format, readable);

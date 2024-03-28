@@ -8,7 +8,7 @@
 
 using namespace Kore;
 
-#ifdef KORE_G4
+#ifdef KINC_G4
 
 //==========
 // ImageShaderPainter
@@ -164,7 +164,7 @@ void Graphics2::ImageShaderPainter::drawBuffer() {
 	Graphics4::setTextureMagnificationFilter(textureLocation, bilinear ? Graphics4::LinearFilter : Graphics4::PointFilter);
 	Graphics4::setTextureMipmapFilter(textureLocation, Graphics4::NoMipFilter);
 
-#ifndef KORE_G4
+#ifndef KINC_G4
 	// Set fixed-function projection matrix
 	Graphics3::setProjectionMatrix(projectionMatrix);
 #else
@@ -478,7 +478,7 @@ void Graphics2::ColoredShaderPainter::drawBuffer(bool trisDone) {
 	Graphics4::setVertexBuffer(*rectVertexBuffer);
 	Graphics4::setIndexBuffer(*indexBuffer);
 
-#ifndef KORE_G4
+#ifndef KINC_G4
 	// Set fixed-function projection matrix
 	Graphics3::setProjectionMatrix(projectionMatrix);
 #else
@@ -501,7 +501,7 @@ void Graphics2::ColoredShaderPainter::drawTriBuffer(bool rectsDone) {
 	Graphics4::setVertexBuffer(*triangleVertexBuffer);
 	Graphics4::setIndexBuffer(*triangleIndexBuffer);
 
-#ifndef KORE_G4
+#ifndef KINC_G4
 	// Set fixed-function projection matrix
 	Graphics3::setProjectionMatrix(projectionMatrix);
 #else
@@ -703,7 +703,7 @@ void Graphics2::TextShaderPainter::drawBuffer() {
 	Graphics4::setIndexBuffer(*indexBuffer);
 	Graphics4::setTexture(textureLocation, lastTexture);
 
-#ifndef KORE_G4
+#ifndef KINC_G4
 	// Set fixed-function projection matrix
 	Graphics3::setProjectionMatrix(projectionMatrix);
 #else

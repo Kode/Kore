@@ -1,4 +1,4 @@
-#ifdef KORE_VR
+#ifdef KINC_VR
 
 #include "VrInterface.h"
 

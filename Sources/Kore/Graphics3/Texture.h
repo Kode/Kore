@@ -22,7 +22,7 @@ namespace Kore {
 			Texture(const char *filename, bool readable = false);
 			Texture(void *data, int size, const char *format, bool readable = false);
 			Texture(void *data, int width, int height, int format, bool readable = false);
-#ifdef KORE_ANDROID
+#ifdef KINC_ANDROID
 			Texture(unsigned texid);
 #endif
 			void _set(TextureUnit unit);
@@ -30,7 +30,7 @@ namespace Kore {
 			uint8_t *lock();
 			void unlock();
 			void clear(int x, int y, int z, int width, int height, int depth, unsigned color);
-#ifdef KORE_IOS
+#ifdef KINC_IOS
 			void upload(u8 *data);
 #endif
 			void generateMipmaps(int levels);

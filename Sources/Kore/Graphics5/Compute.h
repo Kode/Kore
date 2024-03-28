@@ -2,7 +2,7 @@
 
 #include <kinc/graphics5/compute.h>
 
-#ifdef KORE_OPENGL
+#ifdef KINC_OPENGL
 #include <kinc/backend/graphics4/ShaderStorageBufferImpl.h>
 #endif
 #include <Kore/Graphics5/Graphics.h>

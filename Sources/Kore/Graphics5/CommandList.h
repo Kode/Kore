@@ -14,7 +14,7 @@ namespace Kore {
 		class Sampler;
 		class Texture;
 		class VertexBuffer;
-#ifdef KORE_OPENGL
+#ifdef KINC_OPENGL
 		class ShaderStorageBuffer;
 #endif
 

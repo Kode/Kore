@@ -2,7 +2,7 @@
 
 #include <kinc/graphics4/compute.h>
 
-#ifdef KORE_OPENGL
+#ifdef KINC_OPENGL
 #include <kinc/backend/graphics4/ShaderStorageBufferImpl.h>
 #endif
 #include <Kore/Graphics4/Graphics.h>
@@ -22,7 +22,7 @@ namespace Kore {
 			kinc_g4_compute_shader kincImpl;
 		};
 
-#ifdef KORE_OPENGL
+#ifdef KINC_OPENGL
 		class ShaderStorageBuffer {
 		public:
 			ShaderStorageBuffer(int count, Graphics4::VertexData type);

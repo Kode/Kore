@@ -18,7 +18,7 @@ namespace Kore {
 		class ComputeShader;
 		class PipelineState;
 		class TextureArray;
-#ifdef KORE_OPENGL
+#ifdef KINC_OPENGL
 		class ShaderStorageBuffer;
 #endif
 
@@ -182,7 +182,7 @@ namespace Kore {
 		void setRenderTargetFace(RenderTarget *texture, int face = 0);
 		void restoreRenderTarget();
 
-#ifdef KORE_OPENGL
+#ifdef KINC_OPENGL
 		void setShaderStorageBuffer(ShaderStorageBuffer *buffer, int index);
 #endif
 		void setComputeShader(ComputeShader *shader);

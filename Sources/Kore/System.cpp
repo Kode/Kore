@@ -132,7 +132,7 @@ const char *Kore::System::name() {
 	return kinc_application_name();
 }
 
-#ifdef KORE_METAL
+#ifdef KINC_METAL
 void shutdownMetalCompute();
 #endif
 

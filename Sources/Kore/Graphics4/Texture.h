@@ -27,7 +27,7 @@ namespace Kore {
 			Texture(void *data, int width, int height, Format format, bool readable = false);
 			Texture(void *data, int width, int height, int depth, Format format, bool readable = false);
 			virtual ~Texture();
-#if defined(KORE_ANDROID) && !defined(KORE_VULKAN)
+#if defined(KINC_ANDROID) && !defined(KINC_VULKAN)
 			Texture(unsigned texid);
 #endif
 			void _set(TextureUnit unit);
@@ -35,7 +35,7 @@ namespace Kore {
 			u8 *lock();
 			void unlock();
 			void clear(int x, int y, int z, int width, int height, int depth, uint color);
-#if defined(KORE_IOS) || defined(KORE_MACOS)
+#if defined(KINC_IOS) || defined(KINC_MACOS)
 			void upload(u8 *data, int stride);
 #endif
 			void generateMipmaps(int levels);

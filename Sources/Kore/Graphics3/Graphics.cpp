@@ -2,7 +2,7 @@
 
 #include <limits>
 
-#ifndef KORE_G4
+#ifndef KINC_G4
 
 using namespace Kore;
 
@@ -11,7 +11,7 @@ namespace {
 	bool window = true;
 }
 
-#if !defined(KORE_WINDOWS)
+#if !defined(KINC_WINDOWS)
 void Graphics3::Graphics3::setup() {}
 #endif
 

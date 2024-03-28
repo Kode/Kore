@@ -1,6 +1,6 @@
 #pragma once
 
-#ifndef KORE_G4
+#ifndef KINC_G4
 
 #include <Kore/global.h>
 

@@ -24,7 +24,7 @@ Graphics4::TextureUnit Graphics4::ComputeShader::getTextureUnit(const char *name
 	return unit;
 }
 
-#ifdef KORE_OPENGL
+#ifdef KINC_OPENGL
 Graphics4::ShaderStorageBuffer::ShaderStorageBuffer(int count, Graphics4::VertexData type) {
 	kinc_shader_storage_buffer_init(&kincImpl, count, (kinc_g4_vertex_data_t)type);
 }

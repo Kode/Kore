@@ -122,7 +122,7 @@ Texture::~Texture() {
 	kinc_g5_texture_destroy(&kincTexture);
 }
 
-#if defined(KORE_ANDROID) && !defined(KORE_VULKAN)
+#if defined(KINC_ANDROID) && !defined(KINC_VULKAN)
 KINC_FUNC void kinc_g4_texture_init_from_id(kinc_g4_texture_t *texture, unsigned texid);
 
 Texture::Texture(unsigned texid) {
@@ -142,7 +142,7 @@ int Texture::stride() {
 	return kinc_g5_texture_stride(&kincTexture);
 }
 
-#if defined(KORE_IOS) || defined(KORE_MACOS)
+#if defined(KINC_IOS) || defined(KINC_MACOS)
 void Texture::upload(u8 *data, int stride) {
 	// kinc_g5_texture_upload(&kincTexture, data, stride);
 }

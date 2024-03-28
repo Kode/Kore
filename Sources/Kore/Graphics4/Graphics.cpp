@@ -1,5 +1,5 @@
 
-#ifdef KORE_G4
+#ifdef KINC_G4
 
 #include "Graphics.h"
 #include "PipelineState.h"
@@ -286,7 +286,7 @@ void Graphics4::_changeFramebuffer(int window, struct kinc_framebuffer_options *
 	kinc_internal_change_framebuffer(window, frame);
 }
 
-#ifdef KORE_OPENGL
+#ifdef KINC_OPENGL
 void Graphics4::setShaderStorageBuffer(ShaderStorageBuffer *buffer, int index) {
 	kinc_g4_set_shader_storage_buffer(&buffer->kincImpl, index);
 }
