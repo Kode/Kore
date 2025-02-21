@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 . `dirname "$0"`/Tools/platform.sh
-MAKE="`dirname "$0"`/Tools/$KINC_PLATFORM/kmake$KINC_EXE_SUFFIX"
+MAKE="`dirname "$0"`/Tools/$KORE_PLATFORM/kmake$KORE_EXE_SUFFIX"
 
 if [ -f "$MAKE" ]; then
 	exec $MAKE "$@"
