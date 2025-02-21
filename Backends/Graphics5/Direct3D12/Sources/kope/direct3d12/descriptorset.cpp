@@ -30,6 +30,21 @@ void kope_d3d12_descriptor_set_set_buffer_view_srv(kope_g5_device *device, kope_
 	device->d3d12.device->CreateShaderResourceView(buffer->d3d12.resource, &desc, descriptor_handle);
 }
 
+void kope_d3d12_descriptor_set_set_buffer_view_uav(kope_g5_device *device, kope_d3d12_descriptor_set *set, kope_g5_buffer *buffer, uint32_t index) {
+	D3D12_UNORDERED_ACCESS_VIEW_DESC desc = {};
+	desc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+	desc.Format = DXGI_FORMAT_UNKNOWN;
+	desc.Buffer.FirstElement = 0;
+	desc.Buffer.NumElements = 1;
+	desc.Buffer.StructureByteStride = (UINT)buffer->d3d12.size;
+	desc.Buffer.CounterOffsetInBytes = 0;
+	desc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle = device->d3d12.descriptor_heap->GetCPUDescriptorHandleForHeapStart();
+	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
+	device->d3d12.device->CreateUnorderedAccessView(buffer->d3d12.resource, nullptr, &desc, descriptor_handle);
+}
+
 void kope_d3d12_descriptor_set_set_bvh_view_srv(kope_g5_device *device, kope_d3d12_descriptor_set *set, kope_g5_raytracing_hierarchy *bvh, uint32_t index) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D12_SRV_DIMENSION_RAYTRACING_ACCELERATION_STRUCTURE;
@@ -157,6 +172,26 @@ void kope_d3d12_descriptor_set_prepare_cbv_buffer(kope_g5_command_list *list, ko
 		list->d3d12.list->ResourceBarrier(1, &barrier);
 
 		buffer->d3d12.resource_state = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+	}
+
+	if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
+		kope_d3d12_command_list_queue_buffer_access(list, buffer, offset, size);
+	}
+}
+
+void kope_d3d12_descriptor_set_prepare_uav_buffer(kope_g5_command_list *list, kope_g5_buffer *buffer, uint32_t offset, uint32_t size) {
+	if (buffer->d3d12.resource_state != D3D12_RESOURCE_STATE_UNORDERED_ACCESS) {
+		D3D12_RESOURCE_BARRIER barrier;
+		barrier.Transition.pResource = buffer->d3d12.resource;
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		barrier.Transition.StateBefore = (D3D12_RESOURCE_STATES)buffer->d3d12.resource_state;
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+		list->d3d12.list->ResourceBarrier(1, &barrier);
+
+		buffer->d3d12.resource_state = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 	}
 
 	if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
