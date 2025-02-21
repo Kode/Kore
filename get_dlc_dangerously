@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-if test -f "Kinc/get_dlc_dangerously"; then
-git -C `dirname "$0"` submodule update --remote --merge Kinc
+if test -f "v2/get_dlc_dangerously"; then
+git -C `dirname "$0"` submodule update --remote --merge v2
 else
-git -C `dirname "$0"` submodule update --init --remote Kinc
-git -C `dirname "$0"`/Kinc checkout main
+git -C `dirname "$0"` submodule update --init --remote v2
+git -C `dirname "$0"`/v2 checkout main
 fi
-bash `dirname "$0"`/Kinc/get_dlc_dangerously
+bash `dirname "$0"`/v2/get_dlc_dangerously

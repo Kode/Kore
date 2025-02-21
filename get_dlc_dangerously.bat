@@ -1,9 +1,9 @@
 @pushd "%~dp0"
-@if exist Kinc\get_dlc_dangerously (
-@git submodule update --remote --merge Kinc
+@if exist v2\get_dlc_dangerously (
+@git submodule update --remote --merge v2
 ) else (
-@git submodule update --init --remote Kinc
-@git -C Kinc checkout main
+@git submodule update --init --remote v2
+@git -C v2 checkout main
 )
-@call Kinc\get_dlc_dangerously.bat
+@call v2\get_dlc_dangerously.bat
 @popd
