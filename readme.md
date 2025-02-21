@@ -15,3 +15,6 @@ Depending on the capabilities of the target system you can also choose
 your graphics api (-g direct3d9/direct3d11/direct3d12/opengl/vulkan/metal).
 Console support is implemented via separate plugins because the code can not
 be provided publicly - contact Robert for details if you are interested in it.
+
+If you are looking for Kore's original C++-API, go to the [v1-branch](https://github.com/Kode/Kore/tree/v1).
+For the very latest things, visit the [v3-branch](https://github.com/Kode/Kore/tree/v3).
