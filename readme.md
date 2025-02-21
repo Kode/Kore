@@ -1,3 +1,9 @@
 ## Kore
 
-Kore is a C++-API for [Kinc](https://github.com/Kode/Kinc). It is mainly here for backwards compatibility. For new projects it is recommended to use Kinc (which by the way stands for Kore in C) directly because, hey, you can use C from C++.
+Kore is a low level toolkit for cross-platform game engine development and
+similar endeavors. It is comparable to SDL but bigger in scope as it also
+takes care of cross-platform GPU programming with multiple portable APIs
+to choose from.
+
+This is Kore's original C++-API which is now mapped to Kore 2's C-API
+to provide convenient backwards-compatibility.

@@ -1,0 +1,4 @@
+[submodule "v2"]
+	path = v2
+	url = https://github.com/Kode/Kore.git
+	branch = v2
