@@ -126,8 +126,9 @@ KINC_FUNC unsigned kinc_url_to_int(const char *url, int port);
 #ifdef KINC_IMPLEMENTATION
 
 #undef KINC_IMPLEMENTATION
-#include <kinc/libs/stb_sprintf.h>
+
 #include <kinc/log.h>
+
 #define KINC_IMPLEMENTATION
 
 #include <errno.h>
