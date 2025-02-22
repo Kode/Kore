@@ -17,7 +17,9 @@ jobs:
     - name: Set email
       run: git config --global user.email "robbot2019@robdangero.us"
 
-    - name: Git Checkout
-      run: git checkout v2
+    - name: Fetch main
+      run: git fetch origin main:main
+    - name: Merge main
+      run: git merge main
     - name: Push to main
       run: git push origin v2:main
