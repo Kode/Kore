@@ -548,19 +548,19 @@ else {
 if (g5) {
 	addKincDefine('G5');
 	addKincDefine('G4ONG5');
-	addBackend('Graphics4/G4onG5');
+	addBackend('Graphics4/g4ong5');
 }
 else {
 	addKincDefine('G5');
 	addKincDefine('G5ONG4');
-	addBackend('Graphics5/G5onG4');
+	addBackend('Graphics5/g5ong4');
 }
 
 if (!a3) {
 	if (cpp) {
 		a3 = true;
 		addKincDefine('A3');
-		addBackend('Audio3/A3onA2');
+		addBackend('Audio3/a3ona2');
 	}
 }
 
