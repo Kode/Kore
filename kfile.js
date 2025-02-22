@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const project = new Project('Kinc');
+const project = new Project('Kore');
 
 function addKincDefine(name) {
 	project.addDefine('KINC_' + name);
@@ -35,21 +35,10 @@ const lz4x = true;
 
 project.addFile('sources/kinc/**');
 
-if (Options.kong) {
-	if (!Options.kope) {
-		project.addKongDir('KongShaders');
-	}
-}
-else {
-	project.addFile('GLSLShaders/**');
-}
-
-if (Options.kope) {
-	project.addDefine('KOPE');
-	project.addFile('sources/kope/**', {nocompile: true});
-	project.addFile('sources/kope/**/*unit.c*');
-	project.addFile('sources/kope/**/*unit.m');
-}
+project.addDefine('KOPE');
+project.addFile('sources/kope/**', {nocompile: true});
+project.addFile('sources/kope/**/*unit.c*');
+project.addFile('sources/kope/**/*unit.m');
 
 if (lz4x) {
 	addKincDefine('LZ4X');
@@ -61,11 +50,9 @@ function addBackend(name) {
 	project.addFile('backends/' + name + '/sources/kinc/**');
 	project.addFile('backends/' + name + '/sources/GL/**');
 	project.addFile('backends/' + name + '/sources/Android/**');
-	if (Options.kope) {
-		project.addFile('backends/' + name + '/sources/kope/**', {nocompile: true});
-		project.addFile('backends/' + name + '/sources/kope/**/*unit.c*');
-		project.addFile('backends/' + name + '/sources/kope/**/*unit.m');
-	}
+	project.addFile('backends/' + name + '/sources/kope/**', {nocompile: true});
+	project.addFile('backends/' + name + '/sources/kope/**/*unit.c*');
+	project.addFile('backends/' + name + '/sources/kope/**/*unit.m');
 	project.addIncludeDir('backends/' + name + '/sources');
 }
 
@@ -313,12 +300,7 @@ else if (platform === Platform.Android) {
 	project.addLib('log');
 	project.addLib('android');
 	project.addLib('EGL');
-	if (Options.kong) {
-		project.addLib('GLESv3');
-	}
-	else {
-		project.addLib('GLESv2');
-	}
+	project.addLib('GLESv3');
 	project.addLib('OpenSLES');
 	project.addLib('OpenMAXAL');
 }
@@ -339,9 +321,7 @@ else if (platform === Platform.Emscripten) {
 		project.addExclude('backends/Graphics4/opengl/sources/GL/**');
 		addKincDefine('OPENGL');
 		addKincDefine('OPENGL_ES');
-		if (Options.kong) {
-			project.addLib('USE_WEBGL2=1');
-		}
+		project.addLib('USE_WEBGL2=1');
 	}
 	else {
 		throw new Error('Graphics API ' + graphics + ' is not available for Emscripten.');

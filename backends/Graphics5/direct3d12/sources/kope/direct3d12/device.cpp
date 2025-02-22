@@ -47,7 +47,7 @@ void kope_d3d12_device_create(kope_g5_device *device, const kope_g5_device_wishl
 
 	HRESULT result = S_FALSE;
 
-#ifndef KOPE_D3D12_FORCE_WARP
+#ifndef KORE_D3D12_FORCE_WARP
 	result = D3D12CreateDevice(NULL, D3D_FEATURE_LEVEL_12_2, IID_PPV_ARGS(&device->d3d12.device));
 	if (result == S_OK) {
 		kinc_log(KINC_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.2.");
