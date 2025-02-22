@@ -97,19 +97,19 @@ if (platform === Platform.Windows) {
 	project.addLib('wbemuuid');
 
 	if (graphics === GraphicsApi.OpenGL1) {
-		addBackend('Graphics3/OpenGL1');
+		addBackend('Graphics3/opengl1');
 		addKincDefine('OPENGL1');
 		project.addDefine('GLEW_STATIC');
 	}
 	else if (graphics === GraphicsApi.OpenGL) {
 		g4 = true;
-		addBackend('Graphics4/OpenGL');
+		addBackend('Graphics4/opengl');
 		addKincDefine('OPENGL');
 		project.addDefine('GLEW_STATIC');
 	}
 	else if (graphics === GraphicsApi.Direct3D11) {
 		g4 = true;
-		addBackend('Graphics4/Direct3D11');
+		addBackend('Graphics4/direct3d11');
 		addKincDefine('DIRECT3D');
 		addKincDefine('DIRECT3D11');
 		project.addLib('d3d11');
@@ -117,7 +117,7 @@ if (platform === Platform.Windows) {
 	else if (graphics === GraphicsApi.Direct3D12 || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/Direct3D12');
+		addBackend('Graphics5/direct3d12');
 		addKincDefine('DIRECT3D');
 		addKincDefine('DIRECT3D12');
 		project.addLib('dxgi');
@@ -126,7 +126,7 @@ if (platform === Platform.Windows) {
 	else if (graphics === GraphicsApi.Vulkan) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/Vulkan');
+		addBackend('Graphics5/vulkan');
 		addKincDefine('VULKAN');
 		project.addDefine('VK_USE_PLATFORM_WIN32_KHR');
 		if (!process.env.VULKAN_SDK) {
@@ -143,7 +143,7 @@ if (platform === Platform.Windows) {
 	}
 	else if (graphics === GraphicsApi.Direct3D9) {
 		g4 = true;
-		addBackend('Graphics4/Direct3D9');
+		addBackend('Graphics4/direct3d9');
 		addKincDefine('DIRECT3D');
 		addKincDefine('DIRECT3D9');
 		project.addLib('d3d9');
@@ -153,10 +153,10 @@ if (platform === Platform.Windows) {
 	}
 
 	if (audio === AudioApi.DirectSound) {
-		addBackend('Audio2/DirectSound');
+		addBackend('Audio2/directsound');
 	}
 	else if (audio === AudioApi.WASAPI || audio === AudioApi.Default) {
-		addBackend('Audio2/WASAPI');
+		addBackend('Audio2/wasapi');
 	}
 	else {
 		throw new Error('Audio API ' + audio + ' is not available for Windows.');
@@ -198,8 +198,8 @@ else if (platform === Platform.WindowsApp) {
 	addKincDefine('WINDOWSAPP');
 	addBackend('system/windowsapp');
 	addBackend('system/microsoft');
-	addBackend('Graphics4/Direct3D11');
-	addBackend('Audio2/WASAPI_WinRT');
+	addBackend('Graphics4/direct3d11');
+	addBackend('Audio2/wasapi_winrt');
 	project.addDefine('_CRT_SECURE_NO_WARNINGS');
 	project.vsdeploy = true;
 
@@ -221,19 +221,19 @@ else if (platform === Platform.OSX) {
 	if (graphics === GraphicsApi.Metal || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/Metal');
+		addBackend('Graphics5/metal');
 		addKincDefine('METAL');
 		project.addLib('Metal');
 		project.addLib('MetalKit');
 	}
 	else if (graphics === GraphicsApi.OpenGL1) {
-		addBackend('Graphics3/OpenGL1');
+		addBackend('Graphics3/opengl1');
 		addKincDefine('OPENGL1');
 		project.addLib('OpenGL');
 	}
 	else if (graphics === GraphicsApi.OpenGL) {
 		g4 = true;
-		addBackend('Graphics4/OpenGL');
+		addBackend('graphics4/opengl');
 		addKincDefine('OPENGL');
 		project.addLib('OpenGL');
 	}
@@ -260,13 +260,13 @@ else if (platform === Platform.iOS || platform === Platform.tvOS) {
 	if (graphics === GraphicsApi.Metal || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/Metal');
+		addBackend('Graphics5/metal');
 		addKincDefine('METAL');
 		project.addLib('Metal');
 	}
 	else if (graphics === GraphicsApi.OpenGL) {
 		g4 = true;
-		addBackend('Graphics4/OpenGL');
+		addBackend('Graphics4/opengl');
 		addKincDefine('OPENGL');
 		addKincDefine('OPENGL_ES');
 		project.addLib('OpenGLES');
@@ -293,7 +293,7 @@ else if (platform === Platform.Android) {
 	if (graphics === GraphicsApi.Vulkan || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/Vulkan');
+		addBackend('Graphics5/vulkan');
 		addKincDefine('VULKAN');
 		project.addDefine('VK_USE_PLATFORM_ANDROID_KHR');
 		project.addLib('vulkan');
@@ -301,7 +301,7 @@ else if (platform === Platform.Android) {
 	}
 	else if (graphics === GraphicsApi.OpenGL) {
 		g4 = true;
-		addBackend('Graphics4/OpenGL');
+		addBackend('Graphics4/opengl');
 		addKincDefine('OPENGL');
 		addKincDefine('OPENGL_ES');
 		addKincDefine('ANDROID_API=19');
@@ -330,13 +330,13 @@ else if (platform === Platform.Emscripten) {
 	if (graphics === GraphicsApi.WebGPU) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/WebGPU');
+		addBackend('Graphics5/webgpu');
 		addKincDefine('WEBGPU');
 	}
 	else if (graphics === GraphicsApi.OpenGL || graphics === GraphicsApi.Default) {
 		g4 = true;
-		addBackend('Graphics4/OpenGL');
-		project.addExclude('backends/Graphics4/OpenGL/sources/GL/**');
+		addBackend('Graphics4/opengl');
+		project.addExclude('backends/Graphics4/opengl/sources/GL/**');
 		addKincDefine('OPENGL');
 		addKincDefine('OPENGL_ES');
 		if (Options.kong) {
@@ -355,13 +355,13 @@ else if (platform === Platform.Wasm) {
 	if (graphics === GraphicsApi.WebGPU) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/WebGPU');
+		addBackend('Graphics5/webgpu');
 		addKincDefine('WEBGPU');
 	}
 	else if (graphics === GraphicsApi.OpenGL || graphics === GraphicsApi.Default) {
 		g4 = true;
-		addBackend('Graphics4/OpenGL');
-		project.addExclude('backends/Graphics4/OpenGL/sources/GL/**');
+		addBackend('Graphics4/opengl');
+		project.addExclude('backends/Graphics4/opengl/sources/GL/**');
 		addKincDefine('OPENGL');
 		addKincDefine('OPENGL_ES');
 	}
@@ -487,14 +487,14 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 	if (graphics === GraphicsApi.Vulkan || (platform === Platform.Linux && graphics === GraphicsApi.Default)) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/Vulkan');
+		addBackend('Graphics5/vulkan');
 		project.addLib('vulkan');
 		addKincDefine('VULKAN');
 	}
 	else if (graphics === GraphicsApi.OpenGL || (platform === Platform.FreeBSD && graphics === GraphicsApi.Default)) {
 		g4 = true;
-		addBackend('Graphics4/OpenGL');
-		project.addExclude('backends/Graphics4/OpenGL/sources/GL/glew.c');
+		addBackend('Graphics4/opengl');
+		project.addExclude('backends/Graphics4/opengl/sources/GL/glew.c');
 		project.addLib('GL');
 		addKincDefine('OPENGL');
 		project.addLib('EGL');
@@ -514,8 +514,8 @@ else if (platform === Platform.Pi) {
 	addKincDefine('RASPBERRY_PI');
 	addBackend('system/pi');
 	addBackend('system/posix');
-	addBackend('Graphics4/OpenGL');
-	project.addExclude('backends/Graphics4/OpenGL/sources/GL/**');
+	addBackend('Graphics4/opengl');
+	project.addExclude('backends/Graphics4/opengl/sources/GL/**');
 	addKincDefine('OPENGL');
 	addKincDefine('OPENGL_ES');
 	addKincDefine('POSIX');
