@@ -3,10 +3,10 @@ name: Windows (Direct3D 9)
 on:
   push:
     branches:
-    - main
+    - v1
   pull_request:
     branches:
-    - main
+    - v1
 
 jobs:
   build:
@@ -20,4 +20,4 @@ jobs:
     - name: Install DirectX
       run: choco install -y directx --no-progress
     - name: Compile
-      run: .\make.bat -v vs2022 -g direct3d9 -a directsound --kinc . --from Tests/Empty --compile
+      run: .\make.bat -v vs2022 -g direct3d9 -a directsound --kore . --from Tests/Empty --compile

@@ -3,10 +3,10 @@ name: Linux (Vulkan)
 on:
   push:
     branches:
-    - main
+    - v1
   pull_request:
     branches:
-    - main
+    - v1
 
 jobs:
   build:
@@ -26,4 +26,4 @@ jobs:
     - name: Get Submodules
       run: ./get_dlc
     - name: Compile
-      run: ./make -g vulkan --kinc . --from Tests/Empty --compile
+      run: ./make -g vulkan --kore . --from Tests/Empty --compile
