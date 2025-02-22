@@ -1,0 +1,20 @@
+name: Update main
+
+on:
+  push:
+    branches:
+    - v2
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Set name
+      run: git config --global user.name "Robbot"
+    - name: Set email
+      run: git config --global user.email "robbot2019@robdangero.us"
+
+    - name: Push to main
+      run: git push origin main
