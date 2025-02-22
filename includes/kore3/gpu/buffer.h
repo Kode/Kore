@@ -6,15 +6,15 @@
 #include "api.h"
 
 #ifdef KORE_DIRECT3D12
-#include <kope/direct3d12/buffer_structs.h>
+#include <kore3/direct3d12/buffer_structs.h>
 #endif
 
 #ifdef KORE_METAL
-#include <kope/metal/buffer_structs.h>
+#include <kore3/metal/buffer_structs.h>
 #endif
 
 #ifdef KORE_VULKAN
-#include <kope/vulkan/buffer_structs.h>
+#include <kore3/vulkan/buffer_structs.h>
 #endif
 
 #include <stdint.h>

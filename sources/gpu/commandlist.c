@@ -1,15 +1,15 @@
 #include <kore3/gpu/commandlist.h>
 
 #ifdef KORE_DIRECT3D12
-#include <kope/direct3d12/commandlist_functions.h>
+#include <kore3/direct3d12/commandlist_functions.h>
 #endif
 
 #ifdef KORE_METAL
-#include <kope/metal/commandlist_functions.h>
+#include <kore3/metal/commandlist_functions.h>
 #endif
 
 #ifdef KORE_VULKAN
-#include <kope/vulkan/commandlist_functions.h>
+#include <kore3/vulkan/commandlist_functions.h>
 #endif
 
 #include <assert.h>

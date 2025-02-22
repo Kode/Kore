@@ -1,4 +1,4 @@
-#include <kinc/graphics4/graphics.h>
+#include <kore3/gpu/gpu.h>
 
 #include <kinc/input/gamepad.h>
 
@@ -343,7 +343,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		if (window >= 0) {
 			int width = LOWORD(lParam);
 			int height = HIWORD(lParam);
-			kinc_internal_resize(window, width, height);
+			// kinc_internal_resize(window, width, height); // TODO
 			kinc_internal_call_resize_callback(window, width, height);
 		}
 		break;
@@ -1411,7 +1411,7 @@ int kinc_init(const char *name, int width, int height, kinc_window_options_t *wi
 		win->title = name;
 	}
 
-	kinc_g4_internal_init();
+	// kinc_g4_internal_init(); // TODO
 
 	int window = kinc_window_create(win, frame);
 	loadXInput();
@@ -1428,7 +1428,7 @@ void kinc_internal_shutdown() {
 	kinc_windows_hide_windows();
 	kinc_internal_shutdown_callback();
 	kinc_windows_destroy_windows();
-	kinc_g4_internal_destroy();
+	// kinc_g4_internal_destroy(); // TODO
 	kinc_windows_restore_displays();
 }
 

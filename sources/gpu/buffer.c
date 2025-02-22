@@ -1,15 +1,15 @@
 #include <kore3/gpu/buffer.h>
 
 #ifdef KORE_DIRECT3D12
-#include <kope/direct3d12/buffer_functions.h>
+#include <kore3/direct3d12/buffer_functions.h>
 #endif
 
 #ifdef KORE_METAL
-#include <kope/metal/buffer_functions.h>
+#include <kore3/metal/buffer_functions.h>
 #endif
 
 #ifdef KORE_VULKAN
-#include <kope/vulkan/buffer_functions.h>
+#include <kore3/vulkan/buffer_functions.h>
 #endif
 
 void kore_gpu_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {

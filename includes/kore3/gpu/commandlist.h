@@ -10,15 +10,15 @@
 #include "texture.h"
 
 #ifdef KORE_DIRECT3D12
-#include <kope/direct3d12/commandlist_structs.h>
+#include <kore3/direct3d12/commandlist_structs.h>
 #endif
 
 #ifdef KORE_METAL
-#include <kope/metal/commandlist_structs.h>
+#include <kore3/metal/commandlist_structs.h>
 #endif
 
 #ifdef KORE_VULKAN
-#include <kope/vulkan/commandlist_structs.h>
+#include <kore3/vulkan/commandlist_structs.h>
 #endif
 
 #include <kinc/math/vector.h>

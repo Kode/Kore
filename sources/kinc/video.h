@@ -3,7 +3,7 @@
 #include <kinc/global.h>
 
 #include <kinc/backend/video.h>
-#include <kinc/graphics4/texture.h>
+#include <kore3/gpu/texture.h>
 
 /*! \file video.h
     \brief Hardware-assisted video decoding support. Actually supported
@@ -65,7 +65,7 @@ KINC_FUNC int kinc_video_height(kinc_video_t *video);
 /// Gets the current image of a playing video which can be rendered using any of Kinc's graphics APIs.
 /// </summary>
 /// <returns>The current image of a playing video</returns>
-KINC_FUNC kinc_g4_texture_t *kinc_video_current_image(kinc_video_t *video);
+KINC_FUNC kore_gpu_texture *kinc_video_current_image(kinc_video_t *video);
 
 /// <summary>
 /// Gets the duration of the video in seconds.

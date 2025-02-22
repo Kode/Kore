@@ -1,15 +1,15 @@
 #include <kore3/gpu/device.h>
 
 #ifdef KORE_DIRECT3D12
-#include <kope/direct3d12/device_functions.h>
+#include <kore3/direct3d12/device_functions.h>
 #endif
 
 #ifdef KORE_METAL
-#include <kope/metal/device_functions.h>
+#include <kore3/metal/device_functions.h>
 #endif
 
 #ifdef KORE_VULKAN
-#include <kope/vulkan/device_functions.h>
+#include <kore3/vulkan/device_functions.h>
 #endif
 
 #include <assert.h>

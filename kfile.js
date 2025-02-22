@@ -61,6 +61,14 @@ function addBackend(name) {
 	project.addIncludeDir('backends/' + name + '/sources');
 }
 
+function addBackend2(name) {
+	project.addIncludeDir('backends/' + name + '/includes');
+	project.addFile('backends/' + name + '/includes/**');
+	project.addFile('backends/' + name + '/sources/*', {nocompile: true});
+	project.addFile('backends/' + name + '/sources/*unit.c*');
+	project.addFile('backends/' + name + '/sources/*unit.m');
+}
+
 let plugin = false;
 
 if (platform === Platform.Windows) {
@@ -109,7 +117,7 @@ if (platform === Platform.Windows) {
 	else if (graphics === GraphicsApi.Direct3D12 || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/direct3d12');
+		addBackend2('gpu/direct3d12');
 		addKincDefine('DIRECT3D');
 		addKincDefine('DIRECT3D12');
 		project.addLib('dxgi');
@@ -530,16 +538,7 @@ else {
 	project.addExclude('sources/kinc/graphics4/**');
 }
 
-if (g5) {
-	addKincDefine('G5');
-	addKincDefine('G4ONG5');
-	addBackend('Graphics4/g4ong5');
-}
-else {
-	addKincDefine('G5');
-	addKincDefine('G5ONG4');
-	addBackend('Graphics5/g5ong4');
-}
+addKincDefine('G5');
 
 if (!a3) {
 	if (cpp) {

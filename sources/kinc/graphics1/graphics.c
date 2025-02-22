@@ -1,5 +1,7 @@
 #include "graphics.h"
 
+#if 0
+
 #include <kinc/graphics4/graphics.h>
 #include <kinc/graphics4/indexbuffer.h>
 #include <kinc/graphics4/pipeline.h>
@@ -220,6 +222,8 @@ void kinc_g1_set_texture_minification_filter(kinc_g1_texture_filter_t filter) {
 void kinc_g1_set_texture_mipmap_filter(kinc_g1_mipmap_filter_t filter) {
 	kinc_internal_g1_mipmap_filter = filter;
 }
+
+#endif
 
 #endif
 

@@ -1,5 +1,5 @@
 #include <kinc/display.h>
-#include <kinc/graphics4/graphics.h>
+#include <kore3/gpu/gpu.h>
 #include <kinc/window.h>
 
 #include <kinc/backend/Windows.h>
@@ -308,7 +308,7 @@ void kinc_window_move(int window_index, int x, int y) {
 void kinc_internal_change_framebuffer(int window, struct kinc_framebuffer_options *frame);
 
 void kinc_window_change_framebuffer(int window, kinc_framebuffer_options_t *frame) {
-	kinc_internal_change_framebuffer(window, frame);
+	// kinc_internal_change_framebuffer(window, frame); // TODO
 }
 
 void kinc_window_change_features(int window_index, int features) {
@@ -359,7 +359,7 @@ kinc_window_mode_t kinc_window_get_mode(int window_index) {
 void kinc_window_destroy(int window_index) {
 	WindowData *win = &windows[window_index];
 	if (win->handle != NULL) {
-		kinc_g4_internal_destroy_window(window_index);
+		// kinc_g4_internal_destroy_window(window_index); // TODO
 		DestroyWindow(win->handle);
 		win->handle = NULL;
 		--window_counter;
@@ -422,7 +422,7 @@ int kinc_window_create(kinc_window_options_t *win, kinc_framebuffer_options_t *f
 	int windowId = createWindow(wbuffer, win->x, win->y, win->width, win->height, frame->color_bits, frame->frequency, win->window_features, win->mode,
 	                            win->display_index);
 
-	kinc_g4_set_antialiasing_samples(frame->samples_per_pixel);
+	// kinc_g4_set_antialiasing_samples(frame->samples_per_pixel); // TODO
 	bool vsync = frame->vertical_sync;
 #ifdef KINC_OCULUS
 	vsync = false;

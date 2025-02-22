@@ -6,15 +6,15 @@
 #include "api.h"
 
 #ifdef KORE_DIRECT3D12
-#include <kope/direct3d12/fence_structs.h>
+#include <kore3/direct3d12/fence_structs.h>
 #endif
 
 #ifdef KORE_METAL
-#include <kope/metal/fence_structs.h>
+#include <kore3/metal/fence_structs.h>
 #endif
 
 #ifdef KORE_VULKAN
-#include <kope/vulkan/fence_structs.h>
+#include <kore3/vulkan/fence_structs.h>
 #endif
 
 #ifdef __cplusplus

@@ -2,6 +2,8 @@
 
 #include <kinc/global.h>
 
+#if 0
+
 #include <kinc/graphics4/texture.h>
 #include <kinc/math/matrix.h>
 
@@ -75,4 +77,6 @@ void kinc_g2_set_rotation(float angle, float centerx, float centery);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
