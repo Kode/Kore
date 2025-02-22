@@ -1,5 +1,5 @@
-#ifndef KOPE_D3D12_BUFFER_STRUCTS_HEADER
-#define KOPE_D3D12_BUFFER_STRUCTS_HEADER
+#ifndef KORE_D3D12_BUFFER_STRUCTS_HEADER
+#define KORE_D3D12_BUFFER_STRUCTS_HEADER
 
 #include "d3d12mini.h"
 
@@ -9,18 +9,18 @@
 extern "C" {
 #endif
 
-struct kope_g5_device;
+struct kore_gpu_device;
 
-#define KOPE_D3D12_MAX_BUFFER_RANGES 16
+#define KORE_D3D12_MAX_BUFFER_RANGES 16
 
-typedef struct kope_d3d12_buffer_range {
+typedef struct kore_d3d12_buffer_range {
 	uint64_t offset;
 	uint64_t size;
 	uint64_t execution_index;
-} kope_d3d12_buffer_range;
+} kore_d3d12_buffer_range;
 
-typedef struct kope_d3d12_buffer {
-	struct kope_g5_device *device;
+typedef struct kore_d3d12_buffer {
+	struct kore_gpu_device *device;
 
 	struct ID3D12Resource *resource;
 	uint32_t resource_state;
@@ -33,9 +33,9 @@ typedef struct kope_d3d12_buffer {
 	bool cpu_write;
 	bool cpu_read;
 
-	kope_d3d12_buffer_range ranges[KOPE_D3D12_MAX_BUFFER_RANGES];
+	kore_d3d12_buffer_range ranges[KORE_D3D12_MAX_BUFFER_RANGES];
 	uint32_t ranges_count;
-} kope_d3d12_buffer;
+} kore_d3d12_buffer;
 
 #ifdef __cplusplus
 }

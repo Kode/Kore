@@ -1,15 +1,15 @@
-#ifndef KOPE_D3D12_TEXTURE_FUNCTIONS_HEADER
-#define KOPE_D3D12_TEXTURE_FUNCTIONS_HEADER
+#ifndef KORE_D3D12_TEXTURE_FUNCTIONS_HEADER
+#define KORE_D3D12_TEXTURE_FUNCTIONS_HEADER
 
-#include <kope/graphics5/texture.h>
+#include <kore3/gpu/texture.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-uint32_t kope_d3d12_texture_resource_state_index(kope_g5_texture *texture, uint32_t mip_level, uint32_t array_layer);
+uint32_t kore_d3d12_texture_resource_state_index(kore_gpu_texture *texture, uint32_t mip_level, uint32_t array_layer);
 
-void kope_d3d12_texture_set_name(kope_g5_texture *texture, const char *name);
+void kore_d3d12_texture_set_name(kore_gpu_texture *texture, const char *name);
 
 #ifdef __cplusplus
 }

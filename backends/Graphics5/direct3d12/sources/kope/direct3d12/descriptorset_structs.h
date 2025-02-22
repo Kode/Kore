@@ -1,17 +1,17 @@
-#ifndef KOPE_D3D12_DESCRIPTORSET_STRUCTS_HEADER
-#define KOPE_D3D12_DESCRIPTORSET_STRUCTS_HEADER
+#ifndef KORE_D3D12_DESCRIPTORSET_STRUCTS_HEADER
+#define KORE_D3D12_DESCRIPTORSET_STRUCTS_HEADER
 
 #include "d3d12mini.h"
 
 #include "device_structs.h"
 
-#include <kope/util/offalloc/offalloc.h>
+#include <util/offalloc/offalloc.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct kope_d3d12_descriptor_set {
+typedef struct kore_d3d12_descriptor_set {
 	oa_allocation_t descriptor_allocation;
 	size_t descriptor_count;
 
@@ -24,7 +24,7 @@ typedef struct kope_d3d12_descriptor_set {
 	size_t sampler_count;
 
 	uint64_t execution_index;
-} kope_d3d12_descriptor_set;
+} kore_d3d12_descriptor_set;
 
 #ifdef __cplusplus
 }

@@ -3,9 +3,9 @@
 
 #include <kope/direct3d12/texture_functions.h>
 
-#include <kope/util/align.h>
+#include <util/align.h>
 
-void kope_d3d12_descriptor_set_set_buffer_view_cbv(kope_g5_device *device, kope_d3d12_descriptor_set *set, kope_g5_buffer *buffer, uint32_t index) {
+void kore_d3d12_descriptor_set_set_buffer_view_cbv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index) {
 	D3D12_CONSTANT_BUFFER_VIEW_DESC desc = {};
 	desc.BufferLocation = buffer->d3d12.resource->GetGPUVirtualAddress();
 	desc.SizeInBytes = align_pow2((int)buffer->d3d12.size, 256);
@@ -15,7 +15,7 @@ void kope_d3d12_descriptor_set_set_buffer_view_cbv(kope_g5_device *device, kope_
 	device->d3d12.device->CreateConstantBufferView(&desc, descriptor_handle);
 }
 
-void kope_d3d12_descriptor_set_set_buffer_view_srv(kope_g5_device *device, kope_d3d12_descriptor_set *set, kope_g5_buffer *buffer, uint32_t index) {
+void kore_d3d12_descriptor_set_set_buffer_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -30,7 +30,7 @@ void kope_d3d12_descriptor_set_set_buffer_view_srv(kope_g5_device *device, kope_
 	device->d3d12.device->CreateShaderResourceView(buffer->d3d12.resource, &desc, descriptor_handle);
 }
 
-void kope_d3d12_descriptor_set_set_buffer_view_uav(kope_g5_device *device, kope_d3d12_descriptor_set *set, kope_g5_buffer *buffer, uint32_t index) {
+void kore_d3d12_descriptor_set_set_buffer_view_uav(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index) {
 	D3D12_UNORDERED_ACCESS_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 	desc.Format = DXGI_FORMAT_UNKNOWN;
@@ -45,7 +45,7 @@ void kope_d3d12_descriptor_set_set_buffer_view_uav(kope_g5_device *device, kope_
 	device->d3d12.device->CreateUnorderedAccessView(buffer->d3d12.resource, nullptr, &desc, descriptor_handle);
 }
 
-void kope_d3d12_descriptor_set_set_bvh_view_srv(kope_g5_device *device, kope_d3d12_descriptor_set *set, kope_g5_raytracing_hierarchy *bvh, uint32_t index) {
+void kore_d3d12_descriptor_set_set_bvh_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_raytracing_hierarchy *bvh, uint32_t index) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D12_SRV_DIMENSION_RAYTRACING_ACCELERATION_STRUCTURE;
 	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -57,7 +57,7 @@ void kope_d3d12_descriptor_set_set_bvh_view_srv(kope_g5_device *device, kope_d3d
 	device->d3d12.device->CreateShaderResourceView(nullptr, &desc, descriptor_handle);
 }
 
-void kope_d3d12_descriptor_set_set_texture_view_srv(kope_g5_device *device, uint32_t offset, const kope_g5_texture_view *texture_view) {
+void kore_d3d12_descriptor_set_set_texture_view_srv(kore_gpu_device *device, uint32_t offset, const kore_gpu_texture_view *texture_view) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -84,7 +84,7 @@ void kope_d3d12_descriptor_set_set_texture_view_srv(kope_g5_device *device, uint
 	device->d3d12.device->CreateShaderResourceView(texture_view->texture->d3d12.resource, &desc, descriptor_handle);
 }
 
-void kope_d3d12_descriptor_set_set_texture_array_view_srv(kope_g5_device *device, kope_d3d12_descriptor_set *set, const kope_g5_texture_view *texture_view,
+void kore_d3d12_descriptor_set_set_texture_array_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                           uint32_t index) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
@@ -111,7 +111,7 @@ void kope_d3d12_descriptor_set_set_texture_array_view_srv(kope_g5_device *device
 	device->d3d12.device->CreateShaderResourceView(texture_view->texture->d3d12.resource, &desc, descriptor_handle);
 }
 
-void kope_d3d12_descriptor_set_set_texture_cube_view_srv(kope_g5_device *device, kope_d3d12_descriptor_set *set, const kope_g5_texture_view *texture_view,
+void kore_d3d12_descriptor_set_set_texture_cube_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                          uint32_t index) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
@@ -136,7 +136,7 @@ void kope_d3d12_descriptor_set_set_texture_cube_view_srv(kope_g5_device *device,
 	device->d3d12.device->CreateShaderResourceView(texture_view->texture->d3d12.resource, &desc, descriptor_handle);
 }
 
-void kope_d3d12_descriptor_set_set_texture_view_uav(kope_g5_device *device, kope_d3d12_descriptor_set *set, const kope_g5_texture_view *texture_view,
+void kore_d3d12_descriptor_set_set_texture_view_uav(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                     uint32_t index) {
 	D3D12_UNORDERED_ACCESS_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
@@ -149,7 +149,7 @@ void kope_d3d12_descriptor_set_set_texture_view_uav(kope_g5_device *device, kope
 	device->d3d12.device->CreateUnorderedAccessView(texture_view->texture->d3d12.resource, NULL, &desc, descriptor_handle);
 }
 
-void kope_d3d12_descriptor_set_set_sampler(kope_g5_device *device, kope_d3d12_descriptor_set *set, kope_g5_sampler *sampler, uint32_t index) {
+void kore_d3d12_descriptor_set_set_sampler(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_sampler *sampler, uint32_t index) {
 	D3D12_CPU_DESCRIPTOR_HANDLE src_handle = device->d3d12.all_samplers->GetCPUDescriptorHandleForHeapStart();
 	src_handle.ptr += sampler->d3d12.sampler_index * device->d3d12.sampler_increment;
 
@@ -159,7 +159,7 @@ void kope_d3d12_descriptor_set_set_sampler(kope_g5_device *device, kope_d3d12_de
 	device->d3d12.device->CopyDescriptorsSimple(1, dst_handle, src_handle, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 }
 
-void kope_d3d12_descriptor_set_prepare_cbv_buffer(kope_g5_command_list *list, kope_g5_buffer *buffer, uint32_t offset, uint32_t size) {
+void kore_d3d12_descriptor_set_prepare_cbv_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size) {
 	if (buffer->d3d12.resource_state != D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER && buffer->d3d12.resource_state != D3D12_RESOURCE_STATE_GENERIC_READ) {
 		D3D12_RESOURCE_BARRIER barrier;
 		barrier.Transition.pResource = buffer->d3d12.resource;
@@ -175,11 +175,11 @@ void kope_d3d12_descriptor_set_prepare_cbv_buffer(kope_g5_command_list *list, ko
 	}
 
 	if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
-		kope_d3d12_command_list_queue_buffer_access(list, buffer, offset, size);
+		kore_d3d12_command_list_queue_buffer_access(list, buffer, offset, size);
 	}
 }
 
-void kope_d3d12_descriptor_set_prepare_uav_buffer(kope_g5_command_list *list, kope_g5_buffer *buffer, uint32_t offset, uint32_t size) {
+void kore_d3d12_descriptor_set_prepare_uav_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size) {
 	if (buffer->d3d12.resource_state != D3D12_RESOURCE_STATE_UNORDERED_ACCESS) {
 		D3D12_RESOURCE_BARRIER barrier;
 		barrier.Transition.pResource = buffer->d3d12.resource;
@@ -195,14 +195,14 @@ void kope_d3d12_descriptor_set_prepare_uav_buffer(kope_g5_command_list *list, ko
 	}
 
 	if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
-		kope_d3d12_command_list_queue_buffer_access(list, buffer, offset, size);
+		kore_d3d12_command_list_queue_buffer_access(list, buffer, offset, size);
 	}
 }
 
-void kope_d3d12_descriptor_set_prepare_srv_texture(kope_g5_command_list *list, const kope_g5_texture_view *texture_view) {
+void kore_d3d12_descriptor_set_prepare_srv_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view) {
 	for (uint32_t array_layer = texture_view->base_array_layer; array_layer < texture_view->base_array_layer + texture_view->array_layer_count; ++array_layer) {
 		for (uint32_t mip_level = texture_view->base_mip_level; mip_level < texture_view->base_mip_level + texture_view->mip_level_count; ++mip_level) {
-			if (texture_view->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(texture_view->texture, mip_level, array_layer)] !=
+			if (texture_view->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, mip_level, array_layer)] !=
 			    (D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE)) {
 				D3D12_RESOURCE_BARRIER barrier;
 				barrier.Transition.pResource = texture_view->texture->d3d12.resource;
@@ -210,22 +210,22 @@ void kope_d3d12_descriptor_set_prepare_srv_texture(kope_g5_command_list *list, c
 				barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 				barrier.Transition.StateBefore =
 				    (D3D12_RESOURCE_STATES)
-				        texture_view->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(texture_view->texture, mip_level, array_layer)];
+				        texture_view->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, mip_level, array_layer)];
 				barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
 				barrier.Transition.Subresource = D3D12CalcSubresource(mip_level, array_layer, 0, texture_view->texture->d3d12.mip_level_count,
 				                                                      texture_view->texture->d3d12.depth_or_array_layers);
 
 				list->d3d12.list->ResourceBarrier(1, &barrier);
 
-				texture_view->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(texture_view->texture, mip_level, array_layer)] =
+				texture_view->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, mip_level, array_layer)] =
 				    D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
 			}
 		}
 	}
 }
 
-void kope_d3d12_descriptor_set_prepare_uav_texture(kope_g5_command_list *list, const kope_g5_texture_view *texture_view) {
-	if (texture_view->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(texture_view->texture, texture_view->base_mip_level, 0)] !=
+void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view) {
+	if (texture_view->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, texture_view->base_mip_level, 0)] !=
 	    D3D12_RESOURCE_STATE_UNORDERED_ACCESS) {
 		D3D12_RESOURCE_BARRIER barrier;
 		barrier.Transition.pResource = texture_view->texture->d3d12.resource;
@@ -233,7 +233,7 @@ void kope_d3d12_descriptor_set_prepare_uav_texture(kope_g5_command_list *list, c
 		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 		barrier.Transition.StateBefore =
 		    (D3D12_RESOURCE_STATES)
-		        texture_view->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(texture_view->texture, texture_view->base_mip_level, 0)];
+		        texture_view->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, texture_view->base_mip_level, 0)];
 		if (list->d3d12.list_type == D3D12_COMMAND_LIST_TYPE_COMPUTE && barrier.Transition.StateBefore == D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
 			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
 		}
@@ -243,7 +243,7 @@ void kope_d3d12_descriptor_set_prepare_uav_texture(kope_g5_command_list *list, c
 
 		list->d3d12.list->ResourceBarrier(1, &barrier);
 
-		texture_view->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(texture_view->texture, texture_view->base_mip_level, 0)] =
+		texture_view->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, texture_view->base_mip_level, 0)] =
 		    D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 	}
 }

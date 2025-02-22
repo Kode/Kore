@@ -11,33 +11,33 @@
 #define KONG_HAS_NO_RAY_SHADERS
 #endif
 
-static D3D12_BLEND convert_blend_factor(kope_d3d12_blend_factor factor) {
+static D3D12_BLEND convert_blend_factor(kore_d3d12_blend_factor factor) {
 	switch (factor) {
-	case KOPE_D3D12_BLEND_FACTOR_ZERO:
+	case KORE_D3D12_BLEND_FACTOR_ZERO:
 		return D3D12_BLEND_ZERO;
-	case KOPE_D3D12_BLEND_FACTOR_ONE:
+	case KORE_D3D12_BLEND_FACTOR_ONE:
 		return D3D12_BLEND_ONE;
-	case KOPE_D3D12_BLEND_FACTOR_SRC:
+	case KORE_D3D12_BLEND_FACTOR_SRC:
 		return D3D12_BLEND_SRC_COLOR;
-	case KOPE_D3D12_BLEND_FACTOR_ONE_MINUS_SRC:
+	case KORE_D3D12_BLEND_FACTOR_ONE_MINUS_SRC:
 		return D3D12_BLEND_INV_SRC_COLOR;
-	case KOPE_D3D12_BLEND_FACTOR_SRC_ALPHA:
+	case KORE_D3D12_BLEND_FACTOR_SRC_ALPHA:
 		return D3D12_BLEND_SRC_ALPHA;
-	case KOPE_D3D12_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:
+	case KORE_D3D12_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:
 		return D3D12_BLEND_INV_SRC_ALPHA;
-	case KOPE_D3D12_BLEND_FACTOR_DST:
+	case KORE_D3D12_BLEND_FACTOR_DST:
 		return D3D12_BLEND_DEST_COLOR;
-	case KOPE_D3D12_BLEND_FACTOR_ONE_MINUS_DST:
+	case KORE_D3D12_BLEND_FACTOR_ONE_MINUS_DST:
 		return D3D12_BLEND_INV_DEST_COLOR;
-	case KOPE_D3D12_BLEND_FACTOR_DST_ALPHA:
+	case KORE_D3D12_BLEND_FACTOR_DST_ALPHA:
 		return D3D12_BLEND_DEST_ALPHA;
-	case KOPE_D3D12_BLEND_FACTOR_ONE_MINUS_DST_ALPHA:
+	case KORE_D3D12_BLEND_FACTOR_ONE_MINUS_DST_ALPHA:
 		return D3D12_BLEND_INV_DEST_ALPHA;
-	case KOPE_D3D12_BLEND_FACTOR_SRC_ALPHA_SATURATED:
+	case KORE_D3D12_BLEND_FACTOR_SRC_ALPHA_SATURATED:
 		return D3D12_BLEND_SRC_ALPHA_SAT;
-	case KOPE_D3D12_BLEND_FACTOR_CONSTANT:
+	case KORE_D3D12_BLEND_FACTOR_CONSTANT:
 		return D3D12_BLEND_BLEND_FACTOR;
-	case KOPE_D3D12_BLEND_FACTOR_ONE_MINUS_CONSTANT:
+	case KORE_D3D12_BLEND_FACTOR_ONE_MINUS_CONSTANT:
 		return D3D12_BLEND_INV_BLEND_FACTOR;
 	default:
 		assert(false);
@@ -45,17 +45,17 @@ static D3D12_BLEND convert_blend_factor(kope_d3d12_blend_factor factor) {
 	}
 }
 
-static D3D12_BLEND_OP convert_blend_operation(kope_d3d12_blend_operation op) {
+static D3D12_BLEND_OP convert_blend_operation(kore_d3d12_blend_operation op) {
 	switch (op) {
-	case KOPE_D3D12_BLEND_OPERATION_ADD:
+	case KORE_D3D12_BLEND_OPERATION_ADD:
 		return D3D12_BLEND_OP_ADD;
-	case KOPE_D3D12_BLEND_OPERATION_SUBTRACT:
+	case KORE_D3D12_BLEND_OPERATION_SUBTRACT:
 		return D3D12_BLEND_OP_SUBTRACT;
-	case KOPE_D3D12_BLEND_OPERATION_REVERSE_SUBTRACT:
+	case KORE_D3D12_BLEND_OPERATION_REVERSE_SUBTRACT:
 		return D3D12_BLEND_OP_REV_SUBTRACT;
-	case KOPE_D3D12_BLEND_OPERATION_MIN:
+	case KORE_D3D12_BLEND_OPERATION_MIN:
 		return D3D12_BLEND_OP_MIN;
-	case KOPE_D3D12_BLEND_OPERATION_MAX:
+	case KORE_D3D12_BLEND_OPERATION_MAX:
 		return D3D12_BLEND_OP_MAX;
 	default:
 		assert(false);
@@ -63,13 +63,13 @@ static D3D12_BLEND_OP convert_blend_operation(kope_d3d12_blend_operation op) {
 	}
 }
 
-static D3D12_CULL_MODE convert_cull_mode(kope_d3d12_cull_mode mode) {
+static D3D12_CULL_MODE convert_cull_mode(kore_d3d12_cull_mode mode) {
 	switch (mode) {
-	case KOPE_D3D12_CULL_MODE_NONE:
+	case KORE_D3D12_CULL_MODE_NONE:
 		return D3D12_CULL_MODE_NONE;
-	case KOPE_D3D12_CULL_MODE_FRONT:
+	case KORE_D3D12_CULL_MODE_FRONT:
 		return D3D12_CULL_MODE_FRONT;
-	case KOPE_D3D12_CULL_MODE_BACK:
+	case KORE_D3D12_CULL_MODE_BACK:
 		return D3D12_CULL_MODE_BACK;
 	default:
 		assert(false);
@@ -77,23 +77,23 @@ static D3D12_CULL_MODE convert_cull_mode(kope_d3d12_cull_mode mode) {
 	}
 }
 
-D3D12_STENCIL_OP convert_stencil_operation(kope_d3d12_stencil_operation operation) {
+D3D12_STENCIL_OP convert_stencil_operation(kore_d3d12_stencil_operation operation) {
 	switch (operation) {
-	case KOPE_D3D12_STENCIL_OPERATION_KEEP:
+	case KORE_D3D12_STENCIL_OPERATION_KEEP:
 		return D3D12_STENCIL_OP_KEEP;
-	case KOPE_D3D12_STENCIL_OPERATION_ZERO:
+	case KORE_D3D12_STENCIL_OPERATION_ZERO:
 		return D3D12_STENCIL_OP_ZERO;
-	case KOPE_D3D12_STENCIL_OPERATION_REPLACE:
+	case KORE_D3D12_STENCIL_OPERATION_REPLACE:
 		return D3D12_STENCIL_OP_REPLACE;
-	case KOPE_D3D12_STENCIL_OPERATION_INVERT:
+	case KORE_D3D12_STENCIL_OPERATION_INVERT:
 		return D3D12_STENCIL_OP_INVERT;
-	case KOPE_D3D12_STENCIL_OPERATION_INCREMENT_CLAMP:
+	case KORE_D3D12_STENCIL_OPERATION_INCREMENT_CLAMP:
 		return D3D12_STENCIL_OP_INCR_SAT;
-	case KOPE_D3D12_STENCIL_OPERATION_DECREMENT_CLAMP:
+	case KORE_D3D12_STENCIL_OPERATION_DECREMENT_CLAMP:
 		return D3D12_STENCIL_OP_DECR_SAT;
-	case KOPE_D3D12_STENCIL_OPERATION_INCREMENT_WRAP:
+	case KORE_D3D12_STENCIL_OPERATION_INCREMENT_WRAP:
 		return D3D12_STENCIL_OP_INCR;
-	case KOPE_D3D12_STENCIL_OPERATION_DECREMENT_WRAP:
+	case KORE_D3D12_STENCIL_OPERATION_DECREMENT_WRAP:
 		return D3D12_STENCIL_OP_DECR;
 	default:
 		assert(false);
@@ -101,15 +101,15 @@ D3D12_STENCIL_OP convert_stencil_operation(kope_d3d12_stencil_operation operatio
 	}
 }
 
-D3D12_PRIMITIVE_TOPOLOGY_TYPE convert_primitive_topology(kope_d3d12_primitive_topology topolocy) {
+D3D12_PRIMITIVE_TOPOLOGY_TYPE convert_primitive_topology(kore_d3d12_primitive_topology topolocy) {
 	switch (topolocy) {
-	case KOPE_D3D12_PRIMITIVE_TOPOLOGY_POINT_LIST:
+	case KORE_D3D12_PRIMITIVE_TOPOLOGY_POINT_LIST:
 		return D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
-	case KOPE_D3D12_PRIMITIVE_TOPOLOGY_LINE_LIST:
-	case KOPE_D3D12_PRIMITIVE_TOPOLOGY_LINE_STRIP:
+	case KORE_D3D12_PRIMITIVE_TOPOLOGY_LINE_LIST:
+	case KORE_D3D12_PRIMITIVE_TOPOLOGY_LINE_STRIP:
 		return D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
-	case KOPE_D3D12_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST:
-	case KOPE_D3D12_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP:
+	case KORE_D3D12_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST:
+	case KORE_D3D12_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP:
 		return D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	default:
 		assert(false);
@@ -117,10 +117,10 @@ D3D12_PRIMITIVE_TOPOLOGY_TYPE convert_primitive_topology(kope_d3d12_primitive_to
 	}
 }
 
-static void set_blend_state(D3D12_BLEND_DESC *desc, const kope_d3d12_color_target_state *target_state, size_t target) {
+static void set_blend_state(D3D12_BLEND_DESC *desc, const kore_d3d12_color_target_state *target_state, size_t target) {
 	desc->RenderTarget[target].BlendEnable =
-	    target_state->blend.color.src_factor != KOPE_D3D12_BLEND_FACTOR_ONE || target_state->blend.color.dst_factor != KOPE_D3D12_BLEND_FACTOR_ZERO ||
-	    target_state->blend.alpha.src_factor != KOPE_D3D12_BLEND_FACTOR_ONE || target_state->blend.alpha.dst_factor != KOPE_D3D12_BLEND_FACTOR_ZERO;
+	    target_state->blend.color.src_factor != KORE_D3D12_BLEND_FACTOR_ONE || target_state->blend.color.dst_factor != KORE_D3D12_BLEND_FACTOR_ZERO ||
+	    target_state->blend.alpha.src_factor != KORE_D3D12_BLEND_FACTOR_ONE || target_state->blend.alpha.dst_factor != KORE_D3D12_BLEND_FACTOR_ZERO;
 	desc->RenderTarget[target].SrcBlend = convert_blend_factor(target_state->blend.color.src_factor);
 	desc->RenderTarget[target].DestBlend = convert_blend_factor(target_state->blend.color.dst_factor);
 	desc->RenderTarget[target].BlendOp = convert_blend_operation(target_state->blend.color.operation);
@@ -130,14 +130,14 @@ static void set_blend_state(D3D12_BLEND_DESC *desc, const kope_d3d12_color_targe
 	desc->RenderTarget[target].RenderTargetWriteMask = (UINT8)target_state->write_mask;
 }
 
-void kope_d3d12_render_pipeline_init(kope_d3d12_device *device, kope_d3d12_render_pipeline *pipe, const kope_d3d12_render_pipeline_parameters *parameters) {
+void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_render_pipeline *pipe, const kore_d3d12_render_pipeline_parameters *parameters) {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {0};
 
 	desc.VS.BytecodeLength = parameters->vertex.shader.size;
 	desc.VS.pShaderBytecode = parameters->vertex.shader.data;
 
-	assert(parameters->vertex.buffers_count <= KOPE_D3D12_MAX_VERTEX_ATTRIBUTES);
-	D3D12_INPUT_ELEMENT_DESC input_elements[KOPE_D3D12_MAX_VERTEX_ATTRIBUTES] = {0};
+	assert(parameters->vertex.buffers_count <= KORE_D3D12_MAX_VERTEX_ATTRIBUTES);
+	D3D12_INPUT_ELEMENT_DESC input_elements[KORE_D3D12_MAX_VERTEX_ATTRIBUTES] = {0};
 
 	size_t input_element_index = 0;
 	for (size_t buffer_index = 0; buffer_index < parameters->vertex.buffers_count; ++buffer_index) {
@@ -146,104 +146,104 @@ void kope_d3d12_render_pipeline_init(kope_d3d12_device *device, kope_d3d12_rende
 			input_elements[input_element_index].SemanticIndex = parameters->vertex.buffers[buffer_index].attributes[attribute_index].shader_location;
 			input_elements[input_element_index].InputSlot = (UINT)buffer_index;
 			input_elements[input_element_index].AlignedByteOffset = (attribute_index == 0) ? 0 : D3D12_APPEND_ALIGNED_ELEMENT;
-			input_elements[input_element_index].InputSlotClass = parameters->vertex.buffers[buffer_index].step_mode == KOPE_D3D12_VERTEX_STEP_MODE_INSTANCE
+			input_elements[input_element_index].InputSlotClass = parameters->vertex.buffers[buffer_index].step_mode == KORE_D3D12_VERTEX_STEP_MODE_INSTANCE
 			                                                         ? D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA
 			                                                         : D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
 			input_elements[input_element_index].InstanceDataStepRate =
-			    parameters->vertex.buffers[buffer_index].step_mode == KOPE_D3D12_VERTEX_STEP_MODE_INSTANCE ? 1 : 0;
+			    parameters->vertex.buffers[buffer_index].step_mode == KORE_D3D12_VERTEX_STEP_MODE_INSTANCE ? 1 : 0;
 
 			switch (parameters->vertex.buffers[buffer_index].attributes[attribute_index].format) {
-			case KOPE_D3D12_VERTEX_FORMAT_UINT8X2:
+			case KORE_D3D12_VERTEX_FORMAT_UINT8X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R8G8_UINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UINT8X4:
+			case KORE_D3D12_VERTEX_FORMAT_UINT8X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R8G8B8A8_UINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SINT8X2:
+			case KORE_D3D12_VERTEX_FORMAT_SINT8X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R8G8_SINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SINT8X4:
+			case KORE_D3D12_VERTEX_FORMAT_SINT8X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R8G8B8A8_SINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UNORM8X2:
+			case KORE_D3D12_VERTEX_FORMAT_UNORM8X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R8G8_UNORM;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UNORM8X4:
+			case KORE_D3D12_VERTEX_FORMAT_UNORM8X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SNORM8X2:
+			case KORE_D3D12_VERTEX_FORMAT_SNORM8X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R8G8_SNORM;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SNORM8X4:
+			case KORE_D3D12_VERTEX_FORMAT_SNORM8X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R8G8B8A8_SNORM;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UINT16X2:
+			case KORE_D3D12_VERTEX_FORMAT_UINT16X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R16G16_UINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UINT16X4:
+			case KORE_D3D12_VERTEX_FORMAT_UINT16X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R16G16B16A16_UINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SINT16X2:
+			case KORE_D3D12_VERTEX_FORMAT_SINT16X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R16G16_SINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SINT16X4:
+			case KORE_D3D12_VERTEX_FORMAT_SINT16X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R16G16B16A16_SINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UNORM16X2:
+			case KORE_D3D12_VERTEX_FORMAT_UNORM16X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R16G16_UNORM;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UNORM16X4:
+			case KORE_D3D12_VERTEX_FORMAT_UNORM16X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R16G16B16A16_UNORM;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SNORM16X2:
+			case KORE_D3D12_VERTEX_FORMAT_SNORM16X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R16G16_SNORM;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SNORM16X4:
+			case KORE_D3D12_VERTEX_FORMAT_SNORM16X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R16G16B16A16_SNORM;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_FLOAT16X2:
+			case KORE_D3D12_VERTEX_FORMAT_FLOAT16X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R16G16_FLOAT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_FLOAT16X4:
+			case KORE_D3D12_VERTEX_FORMAT_FLOAT16X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_FLOAT32:
+			case KORE_D3D12_VERTEX_FORMAT_FLOAT32:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32_FLOAT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_FLOAT32X2:
+			case KORE_D3D12_VERTEX_FORMAT_FLOAT32X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32G32_FLOAT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_FLOAT32X3:
+			case KORE_D3D12_VERTEX_FORMAT_FLOAT32X3:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_FLOAT32X4:
+			case KORE_D3D12_VERTEX_FORMAT_FLOAT32X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UINT32:
+			case KORE_D3D12_VERTEX_FORMAT_UINT32:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32_UINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UINT32X2:
+			case KORE_D3D12_VERTEX_FORMAT_UINT32X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32G32_UINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UINT32X3:
+			case KORE_D3D12_VERTEX_FORMAT_UINT32X3:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32G32B32_UINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UINT32X4:
+			case KORE_D3D12_VERTEX_FORMAT_UINT32X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32G32B32A32_UINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SINT32:
+			case KORE_D3D12_VERTEX_FORMAT_SINT32:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32_SINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SINT32X2:
+			case KORE_D3D12_VERTEX_FORMAT_SINT32X2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32G32_SINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SINT32X3:
+			case KORE_D3D12_VERTEX_FORMAT_SINT32X3:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32G32B32_SINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_SINT32X4:
+			case KORE_D3D12_VERTEX_FORMAT_SINT32X4:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R32G32B32A32_SINT;
 				break;
-			case KOPE_D3D12_VERTEX_FORMAT_UNORM10_10_10_2:
+			case KORE_D3D12_VERTEX_FORMAT_UNORM10_10_10_2:
 				input_elements[input_element_index].Format = DXGI_FORMAT_R10G10B10A2_UNORM;
 				break;
 			default:
@@ -259,25 +259,25 @@ void kope_d3d12_render_pipeline_init(kope_d3d12_device *device, kope_d3d12_rende
 
 	desc.PrimitiveTopologyType = convert_primitive_topology(parameters->primitive.topology);
 
-	desc.RasterizerState.FrontCounterClockwise = parameters->primitive.front_face == KOPE_D3D12_FRONT_FACE_CCW ? TRUE : FALSE;
+	desc.RasterizerState.FrontCounterClockwise = parameters->primitive.front_face == KORE_D3D12_FRONT_FACE_CCW ? TRUE : FALSE;
 	desc.RasterizerState.CullMode = convert_cull_mode(parameters->primitive.cull_mode);
 
 	desc.RasterizerState.DepthClipEnable = parameters->primitive.unclipped_depth ? FALSE : TRUE;
 
 	desc.DSVFormat = convert_texture_format(parameters->depth_stencil.format);
 
-	desc.DepthStencilState.DepthEnable = parameters->depth_stencil.depth_compare != KOPE_G5_COMPARE_FUNCTION_ALWAYS;
+	desc.DepthStencilState.DepthEnable = parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS;
 	desc.DepthStencilState.DepthWriteMask = parameters->depth_stencil.depth_write_enabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
 	desc.DepthStencilState.DepthFunc = convert_compare_function(parameters->depth_stencil.depth_compare);
 
-	desc.DepthStencilState.StencilEnable = parameters->depth_stencil.stencil_front.compare != KOPE_G5_COMPARE_FUNCTION_ALWAYS ||
-	                                       parameters->depth_stencil.stencil_front.pass_op != KOPE_D3D12_STENCIL_OPERATION_KEEP ||
-	                                       parameters->depth_stencil.stencil_front.fail_op != KOPE_D3D12_STENCIL_OPERATION_KEEP ||
-	                                       parameters->depth_stencil.stencil_front.depth_fail_op != KOPE_D3D12_STENCIL_OPERATION_KEEP ||
-	                                       parameters->depth_stencil.stencil_back.compare != KOPE_G5_COMPARE_FUNCTION_ALWAYS ||
-	                                       parameters->depth_stencil.stencil_back.pass_op != KOPE_D3D12_STENCIL_OPERATION_KEEP ||
-	                                       parameters->depth_stencil.stencil_back.fail_op != KOPE_D3D12_STENCIL_OPERATION_KEEP ||
-	                                       parameters->depth_stencil.stencil_back.depth_fail_op != KOPE_D3D12_STENCIL_OPERATION_KEEP;
+	desc.DepthStencilState.StencilEnable = parameters->depth_stencil.stencil_front.compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS ||
+	                                       parameters->depth_stencil.stencil_front.pass_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
+	                                       parameters->depth_stencil.stencil_front.fail_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
+	                                       parameters->depth_stencil.stencil_front.depth_fail_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
+	                                       parameters->depth_stencil.stencil_back.compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS ||
+	                                       parameters->depth_stencil.stencil_back.pass_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
+	                                       parameters->depth_stencil.stencil_back.fail_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
+	                                       parameters->depth_stencil.stencil_back.depth_fail_op != KORE_D3D12_STENCIL_OPERATION_KEEP;
 	desc.DepthStencilState.StencilReadMask = parameters->depth_stencil.stencil_read_mask;
 	desc.DepthStencilState.StencilWriteMask = parameters->depth_stencil.stencil_write_mask;
 	desc.DepthStencilState.FrontFace.StencilFunc = convert_compare_function(parameters->depth_stencil.stencil_front.compare);
@@ -303,7 +303,7 @@ void kope_d3d12_render_pipeline_init(kope_d3d12_device *device, kope_d3d12_rende
 	desc.PS.pShaderBytecode = parameters->fragment.shader.data;
 
 	desc.NumRenderTargets = (UINT)parameters->fragment.targets_count;
-	assert(parameters->fragment.targets_count <= KOPE_D3D12_MAX_COLOR_TARGETS);
+	assert(parameters->fragment.targets_count <= KORE_D3D12_MAX_COLOR_TARGETS);
 	for (size_t target_index = 0; target_index < parameters->fragment.targets_count; ++target_index) {
 		desc.RTVFormats[target_index] = convert_texture_format(parameters->fragment.targets[target_index].format);
 	}
@@ -316,7 +316,7 @@ void kope_d3d12_render_pipeline_init(kope_d3d12_device *device, kope_d3d12_rende
 
 	bool independent_blend = false;
 	for (int i = 1; i < parameters->fragment.targets_count; ++i) {
-		if (memcmp(&parameters->fragment.targets[0], &parameters->fragment.targets[i], sizeof(kope_d3d12_color_target_state)) != 0) {
+		if (memcmp(&parameters->fragment.targets[0], &parameters->fragment.targets[i], sizeof(kore_d3d12_color_target_state)) != 0) {
 			independent_blend = true;
 			break;
 		}
@@ -346,7 +346,7 @@ void kope_d3d12_render_pipeline_init(kope_d3d12_device *device, kope_d3d12_rende
 	indirect_args[1].Type = D3D12_INDIRECT_ARGUMENT_TYPE_DRAW;
 
 	D3D12_COMMAND_SIGNATURE_DESC command_signature_desc;
-	command_signature_desc.ByteStride = sizeof(kope_g5_draw_arguments);
+	command_signature_desc.ByteStride = sizeof(kore_gpu_draw_arguments);
 	command_signature_desc.NumArgumentDescs = 2;
 	command_signature_desc.pArgumentDescs = indirect_args;
 
@@ -354,19 +354,19 @@ void kope_d3d12_render_pipeline_init(kope_d3d12_device *device, kope_d3d12_rende
 
 	indirect_args[1].Type = D3D12_INDIRECT_ARGUMENT_TYPE_DRAW_INDEXED;
 
-	command_signature_desc.ByteStride = sizeof(kope_g5_draw_indexed_arguments);
+	command_signature_desc.ByteStride = sizeof(kore_gpu_draw_indexed_arguments);
 
 	device->device->CreateCommandSignature(&command_signature_desc, pipe->root_signature, IID_GRAPHICS_PPV_ARGS(&pipe->draw_indexed_command_signature));
 }
 
-void kope_d3d12_render_pipeline_destroy(kope_d3d12_render_pipeline *pipe) {
+void kore_d3d12_render_pipeline_destroy(kore_d3d12_render_pipeline *pipe) {
 	if (pipe->pipe != NULL) {
 		pipe->pipe->Release();
 		pipe->pipe = NULL;
 	}
 }
 
-void kope_d3d12_compute_pipeline_init(kope_d3d12_device *device, kope_d3d12_compute_pipeline *pipe, const kope_d3d12_compute_pipeline_parameters *parameters) {
+void kore_d3d12_compute_pipeline_init(kore_d3d12_device *device, kore_d3d12_compute_pipeline *pipe, const kore_d3d12_compute_pipeline_parameters *parameters) {
 	D3D12_COMPUTE_PIPELINE_STATE_DESC desc = {0};
 
 	desc.CS.pShaderBytecode = parameters->shader.data;
@@ -382,14 +382,14 @@ void kope_d3d12_compute_pipeline_init(kope_d3d12_device *device, kope_d3d12_comp
 	indirect_args[0].Type = D3D12_INDIRECT_ARGUMENT_TYPE_DISPATCH;
 
 	D3D12_COMMAND_SIGNATURE_DESC command_signature_desc;
-	command_signature_desc.ByteStride = sizeof(kope_g5_compute_arguments);
+	command_signature_desc.ByteStride = sizeof(kore_gpu_compute_arguments);
 	command_signature_desc.NumArgumentDescs = 1;
 	command_signature_desc.pArgumentDescs = indirect_args;
 
 	device->device->CreateCommandSignature(&command_signature_desc, pipe->root_signature, IID_GRAPHICS_PPV_ARGS(&pipe->compute_command_signature));
 }
 
-void kope_d3d12_compute_pipeline_destroy(kope_d3d12_compute_pipeline *pipe) {
+void kore_d3d12_compute_pipeline_destroy(kore_d3d12_compute_pipeline *pipe) {
 	if (pipe->pipe != NULL) {
 		pipe->pipe->Release();
 		pipe->pipe = NULL;
@@ -397,7 +397,7 @@ void kope_d3d12_compute_pipeline_destroy(kope_d3d12_compute_pipeline *pipe) {
 }
 
 #ifndef KONG_HAS_NO_RAY_SHADERS
-void kope_d3d12_ray_pipeline_init(kope_g5_device *device, kope_d3d12_ray_pipeline *pipe, const kope_d3d12_ray_pipeline_parameters *parameters,
+void kore_d3d12_ray_pipeline_init(kope_g5_device *device, kore_d3d12_ray_pipeline *pipe, const kore_d3d12_ray_pipeline_parameters *parameters,
                                   ID3D12RootSignature *root_signature) {
 	D3D12_DXIL_LIBRARY_DESC lib = {0};
 	lib.DXILLibrary.pShaderBytecode = ray_code;
@@ -486,7 +486,7 @@ void kope_d3d12_ray_pipeline_init(kope_g5_device *device, kope_d3d12_ray_pipelin
 	pipe->root_signature = root_signature;
 }
 
-void kope_d3d12_ray_pipeline_destroy(kope_d3d12_ray_pipeline *pipe) {
+void kore_d3d12_ray_pipeline_destroy(kore_d3d12_ray_pipeline *pipe) {
 	if (pipe->pipe != NULL) {
 		pipe->pipe->Release();
 		pipe->pipe = NULL;

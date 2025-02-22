@@ -1,5 +1,5 @@
-#ifndef KOPE_D3D12_TEXTURE_STRUCTS_HEADER
-#define KOPE_D3D12_TEXTURE_STRUCTS_HEADER
+#ifndef KORE_D3D12_TEXTURE_STRUCTS_HEADER
+#define KORE_D3D12_TEXTURE_STRUCTS_HEADER
 
 #include "d3d12mini.h"
 
@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-typedef struct kope_d3d12_texture {
+typedef struct kore_d3d12_texture {
 	struct ID3D12Resource *resource;
 
 	uint32_t width;
@@ -20,7 +20,7 @@ typedef struct kope_d3d12_texture {
 
 	// used for framebuffer-synchronization
 	uint64_t in_flight_frame_index;
-} kope_d3d12_texture;
+} kore_d3d12_texture;
 
 #ifdef __cplusplus
 }

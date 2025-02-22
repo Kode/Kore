@@ -36,15 +36,20 @@ const lz4x = true;
 project.addFile('sources/kinc/**');
 
 project.addDefine('KOPE');
-project.addFile('sources/kope/**', {nocompile: true});
-project.addFile('sources/kope/**/*unit.c*');
-project.addFile('sources/kope/**/*unit.m');
+project.addFile('includes/**');
+project.addFile('sources/gpu/**', {nocompile: true});
+project.addFile('sources/gpu/*unit.c*');
+project.addFile('sources/gpu/*unit.m');
+project.addFile('sources/util/**', {nocompile: true});
+project.addFile('sources/util/*unit.c*');
+project.addFile('sources/util/*unit.m');
 
 if (lz4x) {
 	addKincDefine('LZ4X');
 	project.addExclude('sources/kinc/io/lz4/**');
 }
 project.addIncludeDir('sources');
+project.addIncludeDir('includes');
 
 function addBackend(name) {
 	project.addFile('backends/' + name + '/sources/kinc/**');

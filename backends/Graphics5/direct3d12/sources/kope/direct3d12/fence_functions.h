@@ -1,13 +1,13 @@
-#ifndef KOPE_D3D12_FENCE_FUNCTIONS_HEADER
-#define KOPE_D3D12_FENCE_FUNCTIONS_HEADER
+#ifndef KORE_D3D12_FENCE_FUNCTIONS_HEADER
+#define KORE_D3D12_FENCE_FUNCTIONS_HEADER
 
-#include <kope/graphics5/fence.h>
+#include <kore3/gpu/fence.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void kope_d3d12_fence_destroy(kope_g5_fence *fence);
+void kore_d3d12_fence_destroy(kore_gpu_fence *fence);
 
 #ifdef __cplusplus
 }

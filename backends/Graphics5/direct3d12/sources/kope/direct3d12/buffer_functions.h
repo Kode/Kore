@@ -1,25 +1,25 @@
-#ifndef KOPE_D3D12_BUFFER_FUNCTIONS_HEADER
-#define KOPE_D3D12_BUFFER_FUNCTIONS_HEADER
+#ifndef KORE_D3D12_BUFFER_FUNCTIONS_HEADER
+#define KORE_D3D12_BUFFER_FUNCTIONS_HEADER
 
-#include <kope/graphics5/buffer.h>
+#include <kore3/gpu/buffer.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void kope_d3d12_buffer_set_name(kope_g5_buffer *buffer, const char *name);
+void kore_d3d12_buffer_set_name(kore_gpu_buffer *buffer, const char *name);
 
-void kope_d3d12_buffer_destroy(kope_g5_buffer *buffer);
+void kore_d3d12_buffer_destroy(kore_gpu_buffer *buffer);
 
-void *kope_d3d12_buffer_try_to_lock_all(kope_g5_buffer *buffer);
+void *kore_d3d12_buffer_try_to_lock_all(kore_gpu_buffer *buffer);
 
-void *kope_d3d12_buffer_lock_all(kope_g5_buffer *buffer);
+void *kore_d3d12_buffer_lock_all(kore_gpu_buffer *buffer);
 
-void *kope_d3d12_buffer_try_to_lock(kope_g5_buffer *buffer, uint64_t offset, uint64_t size);
+void *kore_d3d12_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t size);
 
-void *kope_d3d12_buffer_lock(kope_g5_buffer *buffer, uint64_t offset, uint64_t size);
+void *kore_d3d12_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t size);
 
-void kope_d3d12_buffer_unlock(kope_g5_buffer *buffer);
+void kore_d3d12_buffer_unlock(kore_gpu_buffer *buffer);
 
 #ifdef __cplusplus
 }

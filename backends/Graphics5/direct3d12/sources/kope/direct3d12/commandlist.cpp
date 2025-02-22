@@ -2,8 +2,8 @@
 
 #include "d3d12unit.h"
 
-#include <kope/graphics5/commandlist.h>
-#include <kope/graphics5/device.h>
+#include <kore3/gpu/commandlist.h>
+#include <kore3/gpu/device.h>
 
 #include <kope/direct3d12/texture_functions.h>
 
@@ -11,7 +11,7 @@
 
 #include "pipeline_structs.h"
 
-#include <kope/util/align.h>
+#include <util/align.h>
 
 #include <assert.h>
 
@@ -19,8 +19,8 @@
 #include <WinPixEventRuntime/pix3.h>
 #endif
 
-void kope_d3d12_command_list_destroy(kope_g5_command_list *list) {
-	for (int i = 0; i < KOPE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++i) {
+void kore_d3d12_command_list_destroy(kore_gpu_command_list *list) {
+	for (int i = 0; i < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++i) {
 		list->d3d12.allocator[i]->Release();
 	}
 	list->d3d12.list->Release();
@@ -29,26 +29,26 @@ void kope_d3d12_command_list_destroy(kope_g5_command_list *list) {
 	list->d3d12.dsv_descriptor->Release();
 }
 
-void kope_d3d12_command_list_begin_render_pass(kope_g5_command_list *list, const kope_g5_render_pass_parameters *parameters) {
+void kore_d3d12_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	list->d3d12.compute_pipe = NULL;
 	list->d3d12.ray_pipe = NULL;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE render_target_views = list->d3d12.rtv_descriptors->GetCPUDescriptorHandleForHeapStart();
 
 	for (size_t render_target_index = 0; render_target_index < parameters->color_attachments_count; ++render_target_index) {
-		kope_g5_texture *render_target = parameters->color_attachments[render_target_index].texture.texture;
+		kore_gpu_texture *render_target = parameters->color_attachments[render_target_index].texture.texture;
 
 		if (render_target->d3d12.in_flight_frame_index > 0) {
 			list->d3d12.blocking_frame_index = render_target->d3d12.in_flight_frame_index;
 		}
 
-		if (render_target->d3d12.resource_states[kope_d3d12_texture_resource_state_index(
+		if (render_target->d3d12.resource_states[kore_d3d12_texture_resource_state_index(
 		        render_target, 0, parameters->color_attachments[render_target_index].texture.base_array_layer)] != D3D12_RESOURCE_STATE_RENDER_TARGET) {
 			D3D12_RESOURCE_BARRIER barrier;
 			barrier.Transition.pResource = render_target->d3d12.resource;
 			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-			barrier.Transition.StateBefore = (D3D12_RESOURCE_STATES)render_target->d3d12.resource_states[kope_d3d12_texture_resource_state_index(
+			barrier.Transition.StateBefore = (D3D12_RESOURCE_STATES)render_target->d3d12.resource_states[kore_d3d12_texture_resource_state_index(
 			    render_target, 0, parameters->color_attachments[render_target_index].texture.base_array_layer)];
 			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 			barrier.Transition.Subresource = D3D12CalcSubresource(0, parameters->color_attachments[render_target_index].texture.base_array_layer, 0,
@@ -56,7 +56,7 @@ void kope_d3d12_command_list_begin_render_pass(kope_g5_command_list *list, const
 
 			list->d3d12.list->ResourceBarrier(1, &barrier);
 
-			render_target->d3d12.resource_states[kope_d3d12_texture_resource_state_index(
+			render_target->d3d12.resource_states[kore_d3d12_texture_resource_state_index(
 			    render_target, 0, parameters->color_attachments[render_target_index].texture.base_array_layer)] = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		}
 
@@ -81,7 +81,7 @@ void kope_d3d12_command_list_begin_render_pass(kope_g5_command_list *list, const
 	D3D12_CPU_DESCRIPTOR_HANDLE depth_stencil_view = list->d3d12.dsv_descriptor->GetCPUDescriptorHandleForHeapStart();
 
 	if (parameters->depth_stencil_attachment.texture != NULL) {
-		kope_g5_texture *render_target = parameters->depth_stencil_attachment.texture;
+		kore_gpu_texture *render_target = parameters->depth_stencil_attachment.texture;
 
 		if (render_target->d3d12.in_flight_frame_index > 0) {
 			list->d3d12.blocking_frame_index = render_target->d3d12.in_flight_frame_index;
@@ -145,7 +145,7 @@ void kope_d3d12_command_list_begin_render_pass(kope_g5_command_list *list, const
 	}
 
 	for (size_t render_target_index = 0; render_target_index < parameters->color_attachments_count; ++render_target_index) {
-		if (parameters->color_attachments[render_target_index].load_op == KOPE_G5_LOAD_OP_CLEAR) {
+		if (parameters->color_attachments[render_target_index].load_op == KORE_GPU_LOAD_OP_CLEAR) {
 			D3D12_CPU_DESCRIPTOR_HANDLE render_target_view = render_target_views;
 			render_target_view.ptr += render_target_index * list->d3d12.rtv_increment;
 
@@ -156,7 +156,7 @@ void kope_d3d12_command_list_begin_render_pass(kope_g5_command_list *list, const
 	}
 
 	if (parameters->depth_stencil_attachment.texture != NULL) {
-		if (parameters->depth_stencil_attachment.depth_load_op == KOPE_G5_LOAD_OP_CLEAR) {
+		if (parameters->depth_stencil_attachment.depth_load_op == KORE_GPU_LOAD_OP_CLEAR) {
 			list->d3d12.list->ClearDepthStencilView(depth_stencil_view, D3D12_CLEAR_FLAG_DEPTH, parameters->depth_stencil_attachment.depth_clear_value, 0, 0,
 			                                        NULL);
 		}
@@ -174,18 +174,18 @@ void kope_d3d12_command_list_begin_render_pass(kope_g5_command_list *list, const
 	}
 }
 
-void kope_d3d12_command_list_end_render_pass(kope_g5_command_list *list) {
+void kore_d3d12_command_list_end_render_pass(kore_gpu_command_list *list) {
 	if (list->d3d12.timestamp_query_set != NULL) {
 		list->d3d12.list->EndQuery(list->d3d12.timestamp_query_set->d3d12.query_heap, D3D12_QUERY_TYPE_TIMESTAMP,
 		                           list->d3d12.timestamp_end_of_pass_write_index);
 	}
 }
 
-void kope_d3d12_command_list_present(kope_g5_command_list *list) {
+void kore_d3d12_command_list_present(kore_gpu_command_list *list) {
 	list->d3d12.presenting = true;
 }
 
-void kope_d3d12_command_list_set_index_buffer(kope_g5_command_list *list, kope_g5_buffer *buffer, kope_g5_index_format index_format, uint64_t offset,
+void kore_d3d12_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
                                               uint64_t size) {
 	D3D12_GPU_VIRTUAL_ADDRESS address = buffer->d3d12.resource->GetGPUVirtualAddress();
 	address += offset;
@@ -194,12 +194,12 @@ void kope_d3d12_command_list_set_index_buffer(kope_g5_command_list *list, kope_g
 	view.BufferLocation = address;
 	assert(size <= UINT32_MAX);
 	view.SizeInBytes = (UINT)size;
-	view.Format = index_format == KOPE_G5_INDEX_FORMAT_UINT16 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+	view.Format = index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
 
 	list->d3d12.list->IASetIndexBuffer(&view);
 }
 
-void kope_d3d12_command_list_set_vertex_buffer(kope_g5_command_list *list, uint32_t slot, kope_d3d12_buffer *buffer, uint64_t offset, uint64_t size,
+void kore_d3d12_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_d3d12_buffer *buffer, uint64_t offset, uint64_t size,
                                                uint64_t stride) {
 	D3D12_VERTEX_BUFFER_VIEW view = {0};
 
@@ -210,7 +210,7 @@ void kope_d3d12_command_list_set_vertex_buffer(kope_g5_command_list *list, uint3
 	list->d3d12.list->IASetVertexBuffers(slot, 1, &view);
 }
 
-void kope_d3d12_command_list_set_render_pipeline(kope_g5_command_list *list, kope_d3d12_render_pipeline *pipeline) {
+void kore_d3d12_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_d3d12_render_pipeline *pipeline) {
 	list->d3d12.render_pipe = pipeline;
 	list->d3d12.ray_pipe = NULL;
 	list->d3d12.compute_pipe = NULL;
@@ -219,19 +219,19 @@ void kope_d3d12_command_list_set_render_pipeline(kope_g5_command_list *list, kop
 	list->d3d12.list->SetGraphicsRootSignature(pipeline->root_signature);
 }
 
-void kope_d3d12_command_list_draw(kope_g5_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {
+void kore_d3d12_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {
 	list->d3d12.list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	list->d3d12.list->DrawInstanced(vertex_count, instance_count, first_vertex, first_instance);
 }
 
-void kope_d3d12_command_list_draw_indexed(kope_g5_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index, int32_t base_vertex,
+void kore_d3d12_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index, int32_t base_vertex,
                                           uint32_t first_instance) {
 	list->d3d12.list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	list->d3d12.list->DrawIndexedInstanced(index_count, instance_count, first_index, base_vertex, first_instance);
 }
 
-void kope_d3d12_command_list_set_descriptor_table(kope_g5_command_list *list, uint32_t table_index, kope_d3d12_descriptor_set *set,
-                                                  kope_g5_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {
+void kore_d3d12_command_list_set_descriptor_table(kore_gpu_command_list *list, uint32_t table_index, kore_d3d12_descriptor_set *set,
+                                                  kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {
 	if (set->descriptor_count > 0) {
 		D3D12_GPU_DESCRIPTOR_HANDLE gpu_descriptor = list->d3d12.device->descriptor_heap->GetGPUDescriptorHandleForHeapStart();
 		gpu_descriptor.ptr += set->descriptor_allocation.offset * list->d3d12.device->cbv_srv_uav_increment;
@@ -296,7 +296,7 @@ void kope_d3d12_command_list_set_descriptor_table(kope_g5_command_list *list, ui
 	}
 }
 
-void kope_d3d12_command_list_set_root_constants(kope_g5_command_list *list, uint32_t table_index, const void *data, size_t data_size) {
+void kore_d3d12_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {
 	if (list->d3d12.compute_pipe != NULL || list->d3d12.ray_pipe != NULL) {
 		list->d3d12.list->SetComputeRoot32BitConstants(table_index, (UINT)(data_size / 4), data, 0);
 	}
@@ -305,7 +305,7 @@ void kope_d3d12_command_list_set_root_constants(kope_g5_command_list *list, uint
 	}
 }
 
-void kope_d3d12_command_list_copy_buffer_to_buffer(kope_g5_command_list *list, kope_g5_buffer *source, uint64_t source_offset, kope_g5_buffer *destination,
+void kore_d3d12_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset, kore_gpu_buffer *destination,
                                                    uint64_t destination_offset, uint64_t size) {
 	if (source->d3d12.resource_state != D3D12_RESOURCE_STATE_COPY_SOURCE && source->d3d12.resource_state != D3D12_RESOURCE_STATE_GENERIC_READ) {
 		D3D12_RESOURCE_BARRIER barrier;
@@ -338,8 +338,8 @@ void kope_d3d12_command_list_copy_buffer_to_buffer(kope_g5_command_list *list, k
 	list->d3d12.list->CopyBufferRegion(destination->d3d12.resource, destination_offset, source->d3d12.resource, source_offset, size);
 }
 
-void kope_d3d12_command_list_copy_buffer_to_texture(kope_g5_command_list *list, const kope_g5_image_copy_buffer *source,
-                                                    const kope_g5_image_copy_texture *destination, uint32_t width, uint32_t height,
+void kore_d3d12_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
+                                                    const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                     uint32_t depth_or_array_layers) {
 	if (source->buffer->d3d12.resource_state != D3D12_RESOURCE_STATE_COPY_SOURCE && source->buffer->d3d12.resource_state != D3D12_RESOURCE_STATE_GENERIC_READ) {
 		D3D12_RESOURCE_BARRIER barrier;
@@ -356,7 +356,7 @@ void kope_d3d12_command_list_copy_buffer_to_texture(kope_g5_command_list *list, 
 	}
 
 	for (uint32_t array_layer = destination->origin_z; array_layer < destination->origin_z + depth_or_array_layers; ++array_layer) {
-		if (destination->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)] !=
+		if (destination->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)] !=
 		    D3D12_RESOURCE_STATE_COPY_DEST) {
 			D3D12_RESOURCE_BARRIER barrier;
 			barrier.Transition.pResource = destination->texture->d3d12.resource;
@@ -364,14 +364,14 @@ void kope_d3d12_command_list_copy_buffer_to_texture(kope_g5_command_list *list, 
 			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 			barrier.Transition.StateBefore =
 			    (D3D12_RESOURCE_STATES)destination->texture->d3d12
-			        .resource_states[kope_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)];
+			        .resource_states[kore_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)];
 			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
 			barrier.Transition.Subresource = D3D12CalcSubresource(destination->mip_level, destination->origin_z, 0, destination->texture->d3d12.mip_level_count,
 			                                                      destination->texture->d3d12.depth_or_array_layers);
 
 			list->d3d12.list->ResourceBarrier(1, &barrier);
 
-			destination->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)] =
+			destination->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)] =
 			    D3D12_RESOURCE_STATE_COPY_DEST;
 		}
 	}
@@ -404,11 +404,11 @@ void kope_d3d12_command_list_copy_buffer_to_texture(kope_g5_command_list *list, 
 	                                    &source_box); // Set DstZ to zero because it has already been selected via dst.SubresourceIndex
 }
 
-void kope_d3d12_command_list_copy_texture_to_buffer(kope_g5_command_list *list, const kope_g5_image_copy_texture *source,
-                                                    const kope_g5_image_copy_buffer *destination, uint32_t width, uint32_t height,
+void kore_d3d12_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
+                                                    const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
                                                     uint32_t depth_or_array_layers) {
 	for (uint32_t array_layer = source->origin_z; array_layer < source->origin_z + depth_or_array_layers; ++array_layer) {
-		if (source->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)] !=
+		if (source->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)] !=
 		    D3D12_RESOURCE_STATE_COPY_SOURCE) {
 			D3D12_RESOURCE_BARRIER barrier;
 			barrier.Transition.pResource = source->texture->d3d12.resource;
@@ -416,14 +416,14 @@ void kope_d3d12_command_list_copy_texture_to_buffer(kope_g5_command_list *list, 
 			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 			barrier.Transition.StateBefore =
 			    (D3D12_RESOURCE_STATES)
-			        source->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)];
+			        source->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)];
 			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
 			barrier.Transition.Subresource = D3D12CalcSubresource(source->mip_level, source->origin_z, 0, source->texture->d3d12.mip_level_count,
 			                                                      source->texture->d3d12.depth_or_array_layers);
 
 			list->d3d12.list->ResourceBarrier(1, &barrier);
 
-			source->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)] =
+			source->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)] =
 			    D3D12_RESOURCE_STATE_COPY_SOURCE;
 		}
 	}
@@ -469,11 +469,11 @@ void kope_d3d12_command_list_copy_texture_to_buffer(kope_g5_command_list *list, 
 	list->d3d12.list->CopyTextureRegion(&dst, 0, 0, 0, &src, &source_box);
 }
 
-void kope_d3d12_command_list_copy_texture_to_texture(kope_g5_command_list *list, const kope_g5_image_copy_texture *source,
-                                                     const kope_g5_image_copy_texture *destination, uint32_t width, uint32_t height,
+void kore_d3d12_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
+                                                     const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {
 	for (uint32_t array_layer = source->origin_z; array_layer < source->origin_z + depth_or_array_layers; ++array_layer) {
-		if (source->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)] !=
+		if (source->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)] !=
 		    D3D12_RESOURCE_STATE_COPY_SOURCE) {
 			D3D12_RESOURCE_BARRIER barrier;
 			barrier.Transition.pResource = source->texture->d3d12.resource;
@@ -481,20 +481,20 @@ void kope_d3d12_command_list_copy_texture_to_texture(kope_g5_command_list *list,
 			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 			barrier.Transition.StateBefore =
 			    (D3D12_RESOURCE_STATES)
-			        source->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)];
+			        source->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)];
 			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
 			barrier.Transition.Subresource = D3D12CalcSubresource(source->mip_level, source->origin_z, 0, source->texture->d3d12.mip_level_count,
 			                                                      source->texture->d3d12.depth_or_array_layers);
 
 			list->d3d12.list->ResourceBarrier(1, &barrier);
 
-			source->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)] =
+			source->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(source->texture, source->mip_level, array_layer)] =
 			    D3D12_RESOURCE_STATE_COPY_SOURCE;
 		}
 	}
 
 	for (uint32_t array_layer = destination->origin_z; array_layer < destination->origin_z + depth_or_array_layers; ++array_layer) {
-		if (destination->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)] !=
+		if (destination->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)] !=
 		    D3D12_RESOURCE_STATE_COPY_DEST) {
 			D3D12_RESOURCE_BARRIER barrier;
 			barrier.Transition.pResource = destination->texture->d3d12.resource;
@@ -502,14 +502,14 @@ void kope_d3d12_command_list_copy_texture_to_texture(kope_g5_command_list *list,
 			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 			barrier.Transition.StateBefore =
 			    (D3D12_RESOURCE_STATES)destination->texture->d3d12
-			        .resource_states[kope_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)];
+			        .resource_states[kore_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)];
 			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
 			barrier.Transition.Subresource = D3D12CalcSubresource(destination->mip_level, destination->origin_z, 0, destination->texture->d3d12.mip_level_count,
 			                                                      destination->texture->d3d12.depth_or_array_layers);
 
 			list->d3d12.list->ResourceBarrier(1, &barrier);
 
-			destination->texture->d3d12.resource_states[kope_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)] =
+			destination->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(destination->texture, destination->mip_level, array_layer)] =
 			    D3D12_RESOURCE_STATE_COPY_DEST;
 		}
 	}
@@ -537,13 +537,13 @@ void kope_d3d12_command_list_copy_texture_to_texture(kope_g5_command_list *list,
 	list->d3d12.list->CopyTextureRegion(&dst, destination->origin_x, destination->origin_y, destination->origin_z, &src, &source_box);
 }
 
-void kope_d3d12_command_list_clear_buffer(kope_g5_command_list *list, kope_g5_buffer *buffer, size_t offset, uint64_t size) {
+void kore_d3d12_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size) {
 	UINT values[4] = {0};
 	// TODO
 	// list->d3d12.list->ClearUnorderedAccessViewUint(a, b, buffer->d3d12.resource, values, 0, NULL);
 }
 
-void kope_d3d12_command_list_set_compute_pipeline(kope_g5_command_list *list, kope_d3d12_compute_pipeline *pipeline) {
+void kore_d3d12_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_d3d12_compute_pipeline *pipeline) {
 	list->d3d12.compute_pipe = pipeline;
 	list->d3d12.ray_pipe = NULL;
 	list->d3d12.render_pipe = NULL;
@@ -551,11 +551,11 @@ void kope_d3d12_command_list_set_compute_pipeline(kope_g5_command_list *list, ko
 	list->d3d12.list->SetComputeRootSignature(pipeline->root_signature);
 }
 
-void kope_d3d12_command_list_compute(kope_g5_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z) {
+void kore_d3d12_command_list_compute(kore_gpu_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z) {
 	list->d3d12.list->Dispatch(workgroup_count_x, workgroup_count_y, workgroup_count_z);
 }
 
-void kope_d3d12_command_list_prepare_raytracing_volume(kope_g5_command_list *list, kope_g5_raytracing_volume *volume) {
+void kore_d3d12_command_list_prepare_raytracing_volume(kore_gpu_command_list *list, kore_gpu_raytracing_volume *volume) {
 	D3D12_RAYTRACING_GEOMETRY_DESC geometry_desc = {};
 
 	geometry_desc.Type = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
@@ -592,7 +592,7 @@ void kope_d3d12_command_list_prepare_raytracing_volume(kope_g5_command_list *lis
 	list->d3d12.list->ResourceBarrier(1, &barrier);
 }
 
-void kope_d3d12_command_list_prepare_raytracing_hierarchy(kope_g5_command_list *list, kope_g5_raytracing_hierarchy *hierarchy) {
+void kore_d3d12_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list *list, kore_gpu_raytracing_hierarchy *hierarchy) {
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs = {};
 	inputs.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL;
 	inputs.Flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_UPDATE;
@@ -614,9 +614,9 @@ void kope_d3d12_command_list_prepare_raytracing_hierarchy(kope_g5_command_list *
 	list->d3d12.list->ResourceBarrier(1, &barrier);
 }
 
-void kope_d3d12_command_list_update_raytracing_hierarchy(kope_g5_command_list *list, kinc_matrix4x4_t *volume_transforms, uint32_t volumes_count,
-                                                         kope_g5_raytracing_hierarchy *hierarchy) {
-	D3D12_RAYTRACING_INSTANCE_DESC *descs = (D3D12_RAYTRACING_INSTANCE_DESC *)kope_g5_buffer_lock_all(&hierarchy->d3d12.instances);
+void kore_d3d12_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kinc_matrix4x4_t *volume_transforms, uint32_t volumes_count,
+                                                         kore_gpu_raytracing_hierarchy *hierarchy) {
+	D3D12_RAYTRACING_INSTANCE_DESC *descs = (D3D12_RAYTRACING_INSTANCE_DESC *)kore_gpu_buffer_lock_all(&hierarchy->d3d12.instances);
 
 	for (uint32_t volume_index = 0; volume_index < hierarchy->d3d12.volumes_count; ++volume_index) {
 		descs[volume_index].Transform[0][0] = volume_transforms[volume_index].m[0];
@@ -636,7 +636,7 @@ void kope_d3d12_command_list_update_raytracing_hierarchy(kope_g5_command_list *l
 		descs[volume_index].Transform[2][3] = volume_transforms[volume_index].m[14];
 	}
 
-	kope_g5_buffer_unlock(&hierarchy->d3d12.instances);
+	kore_gpu_buffer_unlock(&hierarchy->d3d12.instances);
 
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs = {};
 	inputs.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL;
@@ -660,7 +660,7 @@ void kope_d3d12_command_list_update_raytracing_hierarchy(kope_g5_command_list *l
 	list->d3d12.list->ResourceBarrier(1, &barrier);
 }
 
-void kope_d3d12_command_list_set_ray_pipeline(kope_g5_command_list *list, kope_d3d12_ray_pipeline *pipeline) {
+void kore_d3d12_command_list_set_ray_pipeline(kore_gpu_command_list *list, kore_d3d12_ray_pipeline *pipeline) {
 	list->d3d12.list->SetPipelineState1(pipeline->pipe);
 	list->d3d12.list->SetComputeRootSignature(pipeline->root_signature);
 	list->d3d12.ray_pipe = pipeline;
@@ -668,7 +668,7 @@ void kope_d3d12_command_list_set_ray_pipeline(kope_g5_command_list *list, kope_d
 	list->d3d12.render_pipe = NULL;
 }
 
-void kope_d3d12_command_list_trace_rays(kope_g5_command_list *list, uint32_t width, uint32_t height, uint32_t depth) {
+void kore_d3d12_command_list_trace_rays(kore_gpu_command_list *list, uint32_t width, uint32_t height, uint32_t depth) {
 	D3D12_DISPATCH_RAYS_DESC desc = {};
 	desc.RayGenerationShaderRecord.StartAddress = list->d3d12.ray_pipe->shader_ids.d3d12.resource->GetGPUVirtualAddress();
 	desc.RayGenerationShaderRecord.SizeInBytes = D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES;
@@ -685,7 +685,7 @@ void kope_d3d12_command_list_trace_rays(kope_g5_command_list *list, uint32_t wid
 	list->d3d12.list->DispatchRays(&desc);
 }
 
-void kope_d3d12_command_list_set_viewport(kope_g5_command_list *list, float x, float y, float width, float height, float min_depth, float max_depth) {
+void kore_d3d12_command_list_set_viewport(kore_gpu_command_list *list, float x, float y, float width, float height, float min_depth, float max_depth) {
 	D3D12_VIEWPORT viewport = {0};
 	viewport.TopLeftX = x;
 	viewport.TopLeftY = y;
@@ -696,7 +696,7 @@ void kope_d3d12_command_list_set_viewport(kope_g5_command_list *list, float x, f
 	list->d3d12.list->RSSetViewports(1, &viewport);
 }
 
-void kope_d3d12_command_list_set_scissor_rect(kope_g5_command_list *list, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+void kore_d3d12_command_list_set_scissor_rect(kore_gpu_command_list *list, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 	D3D12_RECT rect = {0};
 	rect.left = x;
 	rect.right = rect.left + width;
@@ -705,7 +705,7 @@ void kope_d3d12_command_list_set_scissor_rect(kope_g5_command_list *list, uint32
 	list->d3d12.list->RSSetScissorRects(1, &rect);
 }
 
-void kope_d3d12_command_list_set_blend_constant(kope_g5_command_list *list, kope_g5_color color) {
+void kore_d3d12_command_list_set_blend_constant(kore_gpu_command_list *list, kore_gpu_color color) {
 	float color_array[4] = {0};
 	color_array[0] = color.r;
 	color_array[1] = color.g;
@@ -714,68 +714,68 @@ void kope_d3d12_command_list_set_blend_constant(kope_g5_command_list *list, kope
 	list->d3d12.list->OMSetBlendFactor(color_array);
 }
 
-void kope_d3d12_command_list_set_stencil_reference(kope_g5_command_list *list, uint32_t reference) {
+void kore_d3d12_command_list_set_stencil_reference(kore_gpu_command_list *list, uint32_t reference) {
 	list->d3d12.list->OMSetStencilRef(reference);
 }
 
-void kope_d3d12_command_list_set_name(kope_g5_command_list *list, const char *name) {
+void kore_d3d12_command_list_set_name(kore_gpu_command_list *list, const char *name) {
 	wchar_t wstr[1024];
 	kinc_microsoft_convert_string(wstr, name, 1024);
 	list->d3d12.list->SetName(wstr);
 }
 
-void kope_d3d12_command_list_push_debug_group(kope_g5_command_list *list, const char *name) {
+void kore_d3d12_command_list_push_debug_group(kore_gpu_command_list *list, const char *name) {
 #ifdef KOPE_PIX
 	PIXBeginEvent(list->d3d12.list, 0, "%s", name);
 #endif
 }
 
-void kope_d3d12_command_list_pop_debug_group(kope_g5_command_list *list) {
+void kore_d3d12_command_list_pop_debug_group(kore_gpu_command_list *list) {
 #ifdef KOPE_PIX
 	PIXEndEvent(list->d3d12.list);
 #endif
 }
 
-void kope_d3d12_command_list_insert_debug_marker(kope_g5_command_list *list, const char *name) {
+void kore_d3d12_command_list_insert_debug_marker(kore_gpu_command_list *list, const char *name) {
 #ifdef KOPE_PIX
 	PIXSetMarker(list->d3d12.list, 0, "%s", name);
 #endif
 }
 
-void kope_d3d12_command_list_begin_occlusion_query(kope_g5_command_list *list, uint32_t query_index) {
+void kore_d3d12_command_list_begin_occlusion_query(kore_gpu_command_list *list, uint32_t query_index) {
 	list->d3d12.current_occlusion_query_index = query_index;
 	list->d3d12.list->BeginQuery(list->d3d12.occlusion_query_set->d3d12.query_heap, D3D12_QUERY_TYPE_OCCLUSION, query_index);
 }
 
-void kope_d3d12_command_list_end_occlusion_query(kope_g5_command_list *list) {
+void kore_d3d12_command_list_end_occlusion_query(kore_gpu_command_list *list) {
 	list->d3d12.list->EndQuery(list->d3d12.occlusion_query_set->d3d12.query_heap, D3D12_QUERY_TYPE_OCCLUSION, list->d3d12.current_occlusion_query_index);
 }
 
-void kope_d3d12_command_list_resolve_query_set(kope_g5_command_list *list, kope_g5_query_set *query_set, uint32_t first_query, uint32_t query_count,
-                                               kope_g5_buffer *destination, uint64_t destination_offset) {
+void kore_d3d12_command_list_resolve_query_set(kore_gpu_command_list *list, kore_gpu_query_set *query_set, uint32_t first_query, uint32_t query_count,
+                                               kore_gpu_buffer *destination, uint64_t destination_offset) {
 	list->d3d12.list->ResolveQueryData(query_set->d3d12.query_heap,
-	                                   query_set->d3d12.query_type == KOPE_G5_QUERY_TYPE_OCCLUSION ? D3D12_QUERY_TYPE_OCCLUSION : D3D12_QUERY_TYPE_TIMESTAMP,
+	                                   query_set->d3d12.query_type == KORE_GPU_QUERY_TYPE_OCCLUSION ? D3D12_QUERY_TYPE_OCCLUSION : D3D12_QUERY_TYPE_TIMESTAMP,
 	                                   first_query, query_count, destination->d3d12.resource, destination_offset);
 }
 
-void kope_d3d12_command_list_draw_indirect(kope_g5_command_list *list, kope_g5_buffer *indirect_buffer, uint64_t indirect_offset, uint32_t max_draw_count,
-                                           kope_g5_buffer *count_buffer, uint64_t count_offset) {
+void kore_d3d12_command_list_draw_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset, uint32_t max_draw_count,
+                                           kore_gpu_buffer *count_buffer, uint64_t count_offset) {
 	list->d3d12.list->ExecuteIndirect(list->d3d12.render_pipe->draw_command_signature, max_draw_count, indirect_buffer->d3d12.resource, indirect_offset,
 	                                  count_buffer != NULL ? count_buffer->d3d12.resource : NULL, count_offset);
 }
 
-void kope_d3d12_command_list_draw_indexed_indirect(kope_g5_command_list *list, kope_g5_buffer *indirect_buffer, uint64_t indirect_offset,
-                                                   uint32_t max_draw_count, kope_g5_buffer *count_buffer, uint64_t count_offset) {
+void kore_d3d12_command_list_draw_indexed_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset,
+                                                   uint32_t max_draw_count, kore_gpu_buffer *count_buffer, uint64_t count_offset) {
 	list->d3d12.list->ExecuteIndirect(list->d3d12.render_pipe->draw_indexed_command_signature, max_draw_count, indirect_buffer->d3d12.resource, indirect_offset,
 	                                  count_buffer != NULL ? count_buffer->d3d12.resource : NULL, count_offset);
 }
 
-void kope_d3d12_command_list_compute_indirect(kope_g5_command_list *list, kope_g5_buffer *indirect_buffer, uint64_t indirect_offset) {
+void kore_d3d12_command_list_compute_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset) {
 	list->d3d12.list->ExecuteIndirect(list->d3d12.compute_pipe->compute_command_signature, 1, indirect_buffer->d3d12.resource, indirect_offset, NULL, 0);
 }
 
-void kope_d3d12_command_list_queue_buffer_access(kope_g5_command_list *list, kope_g5_buffer *buffer, uint32_t offset, uint32_t size) {
-	kope_d3d12_buffer_access access;
+void kore_d3d12_command_list_queue_buffer_access(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size) {
+	kore_d3d12_buffer_access access;
 	access.buffer = buffer;
 	access.offset = offset;
 	access.size = size;
@@ -784,7 +784,7 @@ void kope_d3d12_command_list_queue_buffer_access(kope_g5_command_list *list, kop
 	list->d3d12.queued_buffer_accesses_count += 1;
 }
 
-void kope_d3d12_command_list_queue_descriptor_set_access(kope_g5_command_list *list, kope_d3d12_descriptor_set *descriptor_set) {
+void kore_d3d12_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_d3d12_descriptor_set *descriptor_set) {
 	list->d3d12.queued_descriptor_set_accesses[list->d3d12.queued_descriptor_set_accesses_count] = descriptor_set;
 	list->d3d12.queued_descriptor_set_accesses_count += 1;
 }

@@ -1,5 +1,5 @@
-#ifndef KOPE_D3D12_UNIT_HEADER
-#define KOPE_D3D12_UNIT_HEADER
+#ifndef KORE_D3D12_UNIT_HEADER
+#define KORE_D3D12_UNIT_HEADER
 
 // Windows 7
 #define WINVER 0x0601
@@ -65,9 +65,9 @@ static inline UINT D3D12CalcSubresource(UINT MipSlice, UINT ArraySlice, UINT Pla
 	return MipSlice + (ArraySlice * MipLevels) + (PlaneSlice * MipLevels * ArraySize);
 }
 
-struct kope_g5_device;
+struct kore_gpu_device;
 
-static void wait_for_fence(struct kope_g5_device *device, ID3D12Fence *fence, HANDLE event, UINT64 completion_value);
+static void wait_for_fence(struct kore_gpu_device *device, ID3D12Fence *fence, HANDLE event, UINT64 completion_value);
 static bool check_for_fence(ID3D12Fence *fence, UINT64 completion_value);
 
 #endif

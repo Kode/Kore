@@ -1,12 +1,12 @@
-#ifndef KOPE_D3D12_DEVICE_STRUCTS_HEADER
-#define KOPE_D3D12_DEVICE_STRUCTS_HEADER
+#ifndef KORE_D3D12_DEVICE_STRUCTS_HEADER
+#define KORE_D3D12_DEVICE_STRUCTS_HEADER
 
 #include "d3d12mini.h"
 
-#include <kope/graphics5/commandlist.h>
-#include <kope/graphics5/texture.h>
-#include <kope/util/indexallocator.h>
-#include <kope/util/offalloc/offalloc.h>
+#include <kore3/gpu/commandlist.h>
+#include <kore3/gpu/texture.h>
+#include <util/indexallocator.h>
+#include <util/offalloc/offalloc.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,9 +16,9 @@ struct ID3D12CommandAllocator;
 struct ID3D12DescriptorHeap;
 struct ID3D12QueryHeap;
 
-#define KOPE_D3D12_FRAME_COUNT 2
+#define KORE_D3D12_FRAME_COUNT 2
 
-typedef struct kope_d3d12_device {
+typedef struct kore_d3d12_device {
 	struct ID3D12Device5 *device;
 	struct ID3D12CommandQueue *graphics_queue;
 	struct ID3D12CommandQueue *compute_queue;
@@ -29,7 +29,7 @@ typedef struct kope_d3d12_device {
 	uint32_t sampler_increment;
 
 	uint32_t framebuffer_index;
-	kope_g5_texture framebuffer_textures[KOPE_D3D12_FRAME_COUNT];
+	kore_gpu_texture framebuffer_textures[KORE_D3D12_FRAME_COUNT];
 
 	struct ID3D12Fence *frame_fence;
 	HANDLE frame_event;
@@ -46,34 +46,34 @@ typedef struct kope_d3d12_device {
 	oa_allocator_t sampler_heap_allocator;
 
 	struct ID3D12DescriptorHeap *all_samplers;
-	kope_index_allocator sampler_index_allocator;
+	kore_index_allocator sampler_index_allocator;
 
-	kope_g5_command_list management_list;
-} kope_d3d12_device;
+	kore_gpu_command_list management_list;
+} kore_d3d12_device;
 
-typedef struct kope_d3d12_query_set {
+typedef struct kore_d3d12_query_set {
 	struct ID3D12QueryHeap *query_heap;
 	uint8_t query_type;
-} kope_d3d12_query_set;
+} kore_d3d12_query_set;
 
-typedef struct kope_d3d12_raytracing_volume {
-	kope_g5_buffer *vertex_buffer;
+typedef struct kore_d3d12_raytracing_volume {
+	kore_gpu_buffer *vertex_buffer;
 	uint64_t vertex_count;
-	kope_g5_buffer *index_buffer;
+	kore_gpu_buffer *index_buffer;
 	uint32_t index_count;
 
-	kope_g5_buffer scratch_buffer;
-	kope_g5_buffer acceleration_structure;
-} kope_d3d12_raytracing_volume;
+	kore_gpu_buffer scratch_buffer;
+	kore_gpu_buffer acceleration_structure;
+} kore_d3d12_raytracing_volume;
 
-typedef struct kope_d3d12_raytracing_hierarchy {
+typedef struct kore_d3d12_raytracing_hierarchy {
 	uint32_t volumes_count;
-	kope_g5_buffer instances;
+	kore_gpu_buffer instances;
 
-	kope_g5_buffer scratch_buffer;
-	kope_g5_buffer update_scratch_buffer;
-	kope_g5_buffer acceleration_structure;
-} kope_d3d12_raytracing_hierarchy;
+	kore_gpu_buffer scratch_buffer;
+	kore_gpu_buffer update_scratch_buffer;
+	kore_gpu_buffer acceleration_structure;
+} kore_d3d12_raytracing_hierarchy;
 
 #ifdef __cplusplus
 }
