@@ -10,52 +10,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
-    # Run steps for both armv6 and aarch64
-    strategy:
-      matrix:
-        include:
-          - arch: aarch64
-            distro: ubuntu20.04
-          - arch: armv7
-            distro: ubuntu20.04
+    runs-on: ubuntu-22.04-arm
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: uraimo/run-on-arch-action@v2.0.9
-        name: Run Tests in ${{ matrix.distro }} ${{ matrix.arch }}
-        id: build
-        with:
-          arch: ${{ matrix.arch }}
-          distro: ${{ matrix.distro }}
-
-          # Not required, but speeds up builds
-          githubToken: ${{ github.token }}
-
-          # The shell to run commands with in the container
-          shell: /bin/bash
-
-          # Install some dependencies in the container. This speeds up builds if
-          # you are also using githubToken. Any dependencies installed here will
-          # be part of the container image that gets cached, so subsequent
-          # builds don't have to re-install them. The image layer is cached
-          # publicly in your project's package repository, so it is vital that
-          # no secrets are present in the container state or logs.
-          install: |
-              apt-get update -y -q
-              apt-get upgrade -y -q
-              apt-get install -y -q libasound2-dev libxinerama-dev libxrandr-dev libgl1-mesa-dev libxi-dev libxcursor-dev libudev-dev git build-essential imagemagick xvfb libwayland-dev wayland-protocols libxkbcommon-dev ninja-build
-
-          # Produce a binary artifact and place it in the mounted volume
-          run: |
-            echo " * Make Git happy"
-            git config --global --add safe.directory /home/runner/work/Kore/Kore
-            git config --global --add safe.directory /home/runner/work/Kore/Kore/v2
-            git config --global --add safe.directory /home/runner/work/Kore/Kore/v2/Tools/linux_arm
-            git config --global --add safe.directory /home/runner/work/Kore/Kore/v2/Tools/linux_arm64
-            echo " * Get Submodules"
-            ./get_dlc
-            echo " * Compile"
-            ./make -g opengl --kore . --from Tests/Empty --compile
+    - uses: actions/checkout@v4
+    - name: Apt Update
+      run: sudo apt update
+    - name: Apt Install
+      run: sudo apt-get install libasound2-dev libxinerama-dev libxrandr-dev libgl1-mesa-dev libxi-dev libxcursor-dev libudev-dev libwayland-dev wayland-protocols libxkbcommon-dev ninja-build --yes --quiet
+    - name: Get Submodules
+      run: ./get_dlc
+    - name: Compile
+      run: ./make -g opengl --kore . --from Tests/Empty --compile
+    
