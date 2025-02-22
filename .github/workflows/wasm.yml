@@ -22,4 +22,4 @@ jobs:
     - name: Get Submodules
       run: ./get_dlc
     - name: Compile
-      run: ./make wasm --kinc . --from Tests/Empty --compile
+      run: ./make wasm --kore . --from Tests/Empty --compile

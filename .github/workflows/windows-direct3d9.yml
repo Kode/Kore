@@ -20,4 +20,4 @@ jobs:
     - name: Install DirectX
       run: choco install -y directx --no-progress
     - name: Compile
-      run: .\make.bat -v vs2022 -g direct3d9 -a directsound --kinc . --from Tests/Empty --compile
+      run: .\make.bat -v vs2022 -g direct3d9 -a directsound --kore . --from Tests/Empty --compile
