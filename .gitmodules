@@ -1,0 +1,25 @@
+[submodule "tools/windows_x64"]
+	path = tools/windows_x64
+	url = https://github.com/Kode/KoreTools_windows_x64.git
+	branch = main
+	shallow = true
+[submodule "tools/macos"]
+	path = tools/macos
+	url = https://github.com/Kode/KoreTools_macos.git
+	branch = main
+	shallow = true
+[submodule "tools/linux_x64"]
+	path = tools/linux_x64
+	url = https://github.com/Kode/KoreTools_linux_x64.git
+	branch = main
+	shallow = true
+[submodule "tools/linux_arm"]
+	path = tools/linux_arm
+	url = https://github.com/Kode/KoreTools_linux_arm.git
+	branch = main
+	shallow = true
+[submodule "tools/linux_arm64"]
+	path = tools/linux_arm64
+	url = https://github.com/Kode/KoreTools_linux_arm64.git
+	branch = main
+	shallow = true
