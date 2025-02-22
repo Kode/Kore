@@ -1,6 +1,6 @@
 let project = new Project('Empty');
 
-await project.addProject('../../');
+await project.addProject(findKore());
 
 project.addFile('sources/**');
 project.setDebugDir('deployment');

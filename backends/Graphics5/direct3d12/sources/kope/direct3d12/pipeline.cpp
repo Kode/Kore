@@ -5,7 +5,11 @@
 
 #include <kinc/backend/SystemMicrosoft.h>
 
+#ifdef KORE_KONG
 #include <kong_ray.h>
+#else
+#define KONG_HAS_NO_RAY_SHADERS
+#endif
 
 static D3D12_BLEND convert_blend_factor(kope_d3d12_blend_factor factor) {
 	switch (factor) {

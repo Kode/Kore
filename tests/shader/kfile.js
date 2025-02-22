@@ -1,6 +1,6 @@
 const project = new Project('ShaderTest');
 
-await project.addProject('../../');
+await project.addProject(findKore());
 
 project.addFile('sources/**');
 project.addFile('shaders/**');

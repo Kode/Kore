@@ -1,6 +1,6 @@
 const project = new Project('MultiWindow');
 
-await project.addProject('../../');
+await project.addProject(findKore());
 
 project.addFile('sources/**');
 project.setDebugDir('deployment');
