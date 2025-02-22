@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-. `dirname "$0"`/Tools/platform.sh
-git -C `dirname "$0"` submodule update --depth 1 --init "Tools/$KINC_PLATFORM"
+. `dirname "$0"`/tools/platform.sh
+git -C `dirname "$0"` submodule update --depth 1 --init "tools/$KORE_PLATFORM"
