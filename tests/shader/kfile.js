@@ -2,9 +2,9 @@ const project = new Project('ShaderTest');
 
 await project.addProject('../../');
 
-project.addFile('Sources/**');
-project.addFile('Shaders/**');
-project.setDebugDir('Deployment');
+project.addFile('sources/**');
+project.addFile('shaders/**');
+project.setDebugDir('deployment');
 
 project.flatten();
 
