@@ -1,4 +1,4 @@
-#include "indexallocator.h"
+#include <kore3/util/indexallocator.h>
 
 void kore_index_allocator_init(kore_index_allocator *allocator) {
 	for (uint32_t i = 0; i < KORE_INDEX_ALLOCATOR_SIZE; ++i) {

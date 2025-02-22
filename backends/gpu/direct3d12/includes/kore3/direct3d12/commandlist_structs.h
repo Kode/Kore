@@ -3,7 +3,7 @@
 
 #include "d3d12mini.h"
 
-#include <util/offalloc/offalloc.h>
+#include <kore3/util/offalloc/offalloc.h>
 
 #ifdef __cplusplus
 extern "C" {

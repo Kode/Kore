@@ -3,7 +3,7 @@
 #include "d3d12unit.h"
 
 #include <kore3/gpu/device.h>
-#include <util/align.h>
+#include <kore3/util/align.h>
 
 #include <kinc/backend/SystemMicrosoft.h>
 #include <kinc/backend/Windows.h>

@@ -3,7 +3,7 @@
 
 #include <kore3/direct3d12/texture_functions.h>
 
-#include <util/align.h>
+#include <kore3/util/align.h>
 
 void kore_d3d12_descriptor_set_set_buffer_view_cbv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index) {
 	D3D12_CONSTANT_BUFFER_VIEW_DESC desc = {};

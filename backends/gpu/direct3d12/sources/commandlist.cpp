@@ -11,7 +11,7 @@
 
 #include <kore3/direct3d12/pipeline_structs.h>
 
-#include <util/align.h>
+#include <kore3/util/align.h>
 
 #include <assert.h>
 
