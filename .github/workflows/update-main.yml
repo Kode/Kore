@@ -12,14 +12,13 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
     - name: Set name
       run: git config --global user.name "Robbot"
     - name: Set email
       run: git config --global user.email "robbot2019@robdangero.us"
 
-    - name: Fetch main
-      run: git fetch origin main:main
-    - name: Merge main
-      run: git merge main
     - name: Push to main
       run: git push origin v2:main
