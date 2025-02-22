@@ -1,102 +1,54 @@
-#include <kinc/graphics4/graphics.h>
-#include <kinc/graphics4/indexbuffer.h>
-#include <kinc/graphics4/pipeline.h>
-#include <kinc/graphics4/shader.h>
-#include <kinc/graphics4/vertexbuffer.h>
 #include <kinc/io/filereader.h>
 #include <kinc/system.h>
+#include <kore3/gpu/device.h>
+
+#include <kong.h>
 
 #include <assert.h>
 #include <stdlib.h>
 
-static kinc_g4_shader_t vertex_shader;
-static kinc_g4_shader_t fragment_shader;
-static kinc_g4_pipeline_t pipeline;
-static kinc_g4_vertex_buffer_t vertices;
-static kinc_g4_index_buffer_t indices;
+static kore_gpu_device device;
+static kore_gpu_command_list list;
 
-#define HEAP_SIZE 1024 * 1024
-static uint8_t *heap = NULL;
-static size_t heap_top = 0;
-
-static void *allocate(size_t size) {
-	size_t old_top = heap_top;
-	heap_top += size;
-	assert(heap_top <= HEAP_SIZE);
-	return &heap[old_top];
-}
+static const int width = 800;
+static const int height = 600;
 
 static void update(void *data) {
-	kinc_g4_begin(0);
-	kinc_g4_clear(KINC_G4_CLEAR_COLOR, 0, 0.0f, 0);
+	kore_gpu_texture *framebuffer = kore_gpu_device_get_framebuffer(&device);
 
-	kinc_g4_set_pipeline(&pipeline);
-	kinc_g4_set_vertex_buffer(&vertices);
-	kinc_g4_set_index_buffer(&indices);
-	kinc_g4_draw_indexed_vertices();
+	kore_gpu_render_pass_parameters parameters = {0};
+	parameters.color_attachments_count = 1;
+	parameters.color_attachments[0].load_op = KORE_GPU_LOAD_OP_CLEAR;
+	kore_gpu_color clear_color;
+	clear_color.r = 0.0f;
+	clear_color.g = 0.0f;
+	clear_color.b = 0.0f;
+	clear_color.a = 1.0f;
+	parameters.color_attachments[0].clear_value = clear_color;
+	parameters.color_attachments[0].texture.texture = framebuffer;
+	parameters.color_attachments[0].texture.array_layer_count = 1;
+	parameters.color_attachments[0].texture.mip_level_count = 1;
+	parameters.color_attachments[0].texture.format = KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM;
+	parameters.color_attachments[0].texture.dimension = KORE_GPU_TEXTURE_VIEW_DIMENSION_2D;
+	kore_gpu_command_list_begin_render_pass(&list, &parameters);
 
-	kinc_g4_end(0);
-	kinc_g4_swap_buffers();
-}
+	kore_gpu_command_list_end_render_pass(&list);
 
-static void load_shader(const char *filename, kinc_g4_shader_t *shader, kinc_g4_shader_type_t shader_type) {
-	kinc_file_reader_t file;
-	kinc_file_reader_open(&file, filename, KINC_FILE_TYPE_ASSET);
-	size_t data_size = kinc_file_reader_size(&file);
-	uint8_t *data = allocate(data_size);
-	kinc_file_reader_read(&file, data, data_size);
-	kinc_file_reader_close(&file);
-	kinc_g4_shader_init(shader, data, data_size, shader_type);
+	kore_gpu_command_list_present(&list);
+
+	kore_gpu_device_execute_command_list(&device, &list);
 }
 
 int kickstart(int argc, char **argv) {
-	kinc_init("Shader", 1024, 768, NULL, NULL);
+	kinc_init("Example", width, height, NULL, NULL);
 	kinc_set_update_callback(update, NULL);
 
-	heap = (uint8_t *)malloc(HEAP_SIZE);
-	assert(heap != NULL);
+	kore_gpu_device_wishlist wishlist = {0};
+	kore_gpu_device_create(&device, &wishlist);
 
-	load_shader("shader.vert", &vertex_shader, KINC_G4_SHADER_TYPE_VERTEX);
-	load_shader("shader.frag", &fragment_shader, KINC_G4_SHADER_TYPE_FRAGMENT);
+	kong_init(&device);
 
-	kinc_g4_vertex_structure_t structure;
-	kinc_g4_vertex_structure_init(&structure);
-	kinc_g4_vertex_structure_add(&structure, "pos", KINC_G4_VERTEX_DATA_F32_3X);
-	kinc_g4_pipeline_init(&pipeline);
-	pipeline.vertex_shader = &vertex_shader;
-	pipeline.fragment_shader = &fragment_shader;
-	pipeline.input_layout[0] = &structure;
-	pipeline.input_layout[1] = NULL;
-	kinc_g4_pipeline_compile(&pipeline);
-
-	kinc_g4_vertex_buffer_init(&vertices, 3, &structure, KINC_G4_USAGE_STATIC, 0);
-	{
-		float *v = kinc_g4_vertex_buffer_lock_all(&vertices);
-		int i = 0;
-
-		v[i++] = -1;
-		v[i++] = -1;
-		v[i++] = 0.5;
-
-		v[i++] = 1;
-		v[i++] = -1;
-		v[i++] = 0.5;
-
-		v[i++] = -1;
-		v[i++] = 1;
-		v[i++] = 0.5;
-
-		kinc_g4_vertex_buffer_unlock_all(&vertices);
-	}
-
-	kinc_g4_index_buffer_init(&indices, 3, KINC_G4_INDEX_BUFFER_FORMAT_16BIT, KINC_G4_USAGE_STATIC);
-	{
-		uint16_t *i = (uint16_t *)kinc_g4_index_buffer_lock_all(&indices);
-		i[0] = 0;
-		i[1] = 1;
-		i[2] = 2;
-		kinc_g4_index_buffer_unlock_all(&indices);
-	}
+	kore_gpu_device_create_command_list(&device, KORE_GPU_COMMAND_LIST_TYPE_GRAPHICS, &list);
 
 	kinc_start();
 
