@@ -33,7 +33,7 @@ let a3 = false;
 // which is a little more restrictive than Kinc's zlib license.
 const lz4x = true;
 
-project.addFile('Sources/kinc/**');
+project.addFile('sources/kinc/**');
 
 if (Options.kong) {
 	if (!Options.kope) {
@@ -46,34 +46,34 @@ else {
 
 if (Options.kope) {
 	project.addDefine('KOPE');
-	project.addFile('Sources/kope/**', {nocompile: true});
-	project.addFile('Sources/kope/**/*unit.c*');
-	project.addFile('Sources/kope/**/*unit.m');
+	project.addFile('sources/kope/**', {nocompile: true});
+	project.addFile('sources/kope/**/*unit.c*');
+	project.addFile('sources/kope/**/*unit.m');
 }
 
 if (lz4x) {
 	addKincDefine('LZ4X');
-	project.addExclude('Sources/kinc/io/lz4/**');
+	project.addExclude('sources/kinc/io/lz4/**');
 }
-project.addIncludeDir('Sources');
+project.addIncludeDir('sources');
 
 function addBackend(name) {
-	project.addFile('Backends/' + name + '/Sources/kinc/**');
-	project.addFile('Backends/' + name + '/Sources/GL/**');
-	project.addFile('Backends/' + name + '/Sources/Android/**');
+	project.addFile('backends/' + name + '/sources/kinc/**');
+	project.addFile('backends/' + name + '/sources/GL/**');
+	project.addFile('backends/' + name + '/sources/Android/**');
 	if (Options.kope) {
-		project.addFile('Backends/' + name + '/Sources/kope/**', {nocompile: true});
-		project.addFile('Backends/' + name + '/Sources/kope/**/*unit.c*');
-		project.addFile('Backends/' + name + '/Sources/kope/**/*unit.m');
+		project.addFile('backends/' + name + '/sources/kope/**', {nocompile: true});
+		project.addFile('backends/' + name + '/sources/kope/**/*unit.c*');
+		project.addFile('backends/' + name + '/sources/kope/**/*unit.m');
 	}
-	project.addIncludeDir('Backends/' + name + '/Sources');
+	project.addIncludeDir('backends/' + name + '/sources');
 }
 
 let plugin = false;
 
 if (platform === Platform.Windows) {
-	addBackend('System/Windows');
-	addBackend('System/Microsoft');
+	addBackend('system/windows');
+	addBackend('system/microsoft');
 	project.addLib('dxguid');
 	project.addLib('dsound');
 	project.addLib('dinput8');
@@ -85,8 +85,8 @@ if (platform === Platform.Windows) {
 
 	const directshow = (graphics !== GraphicsApi.Direct3D12 && graphics !== GraphicsApi.Vulkan && graphics !== GraphicsApi.Default);
 	if (directshow) {
-		project.addFile('Backends/System/Windows/Libraries/DirectShow/**');
-		project.addIncludeDir('Backends/System/Windows/Libraries/DirectShow/BaseClasses');
+		project.addFile('backends/system/windows/libraries/directshow/**');
+		project.addIncludeDir('backends/system/windows/libraries/directshow/BaseClasses');
 		project.addLib('strmiids');
 		project.addLib('winmm');
 	}
@@ -165,20 +165,20 @@ if (platform === Platform.Windows) {
 	if (vr === VrApi.Oculus) {
 		addKincDefine('VR');
 		addKincDefine('OCULUS');
-		project.addLibFor('x64', 'Backends/System/Windows/Libraries/OculusSDK/LibOVR/Lib/Windows/x64/Release/VS2017/LibOVR');
-		project.addLibFor('Win32', 'Backends/System/Windows/Libraries/OculusSDK/LibOVR/Lib/Windows/Win32/Release/VS2017/LibOVR');
-		project.addFile('Backends/System/Windows/Libraries/OculusSDK/LibOVRKernel/Src/GL/**');
-		project.addIncludeDir('Backends/System/Windows/Libraries/OculusSDK/LibOVR/Include/');
-		project.addIncludeDir('Backends/System/Windows/Libraries/OculusSDK/LibOVRKernel/Src/');
+		project.addLibFor('x64', 'backends/system/windows/libraries/oculus/LibOVR/Lib/Windows/x64/Release/VS2017/LibOVR');
+		project.addLibFor('Win32', 'backends/system/windows/libraries/oculus/LibOVR/Lib/Windows/Win32/Release/VS2017/LibOVR');
+		project.addFile('backends/system/windows/libraries/oculus/LibOVRKernel/Src/GL/**');
+		project.addIncludeDir('backends/system/windows/libraries/oculus/LibOVR/Include/');
+		project.addIncludeDir('backends/system/windows/libraries/oculus/LibOVRKernel/Src/');
 	}
 	else if (vr === VrApi.SteamVR) {
 		addKincDefine('VR');
 		addKincDefine('STEAMVR');
 		project.addDefine('VR_API_PUBLIC');
-		project.addFile('Backends/System/Windows/Libraries/SteamVR/src/**');
-		project.addIncludeDir('Backends/System/Windows/Libraries/SteamVR/src');
-		project.addIncludeDir('Backends/System/Windows/Libraries/SteamVR/src/vrcommon');
-		project.addIncludeDir('Backends/System/Windows/Libraries/SteamVR/headers');
+		project.addFile('backends/system/windows/libraries/steamvr/src/**');
+		project.addIncludeDir('backends/system/windows/libraries/steamvr/src');
+		project.addIncludeDir('backends/system/windows/libraries/steamvr/src/vrcommon');
+		project.addIncludeDir('backends/system/windows/libraries/steamvr/headers');
 	}
 	else if (vr === VrApi.None) {
 
@@ -189,15 +189,15 @@ if (platform === Platform.Windows) {
 
 	if (Options.pix) {
 		project.addDefine('KOPE_PIX');
-		project.addIncludeDir('Backends/Graphics5/Direct3D12/pix/Include');
-		project.addLib('Backends/Graphics5/Direct3D12/pix/bin/x64/WinPixEventRuntime');
+		project.addIncludeDir('backends/Graphics5/Direct3D12/pix/Include');
+		project.addLib('backends/Graphics5/Direct3D12/pix/bin/x64/WinPixEventRuntime');
 	}
 }
 else if (platform === Platform.WindowsApp) {
 	g4 = true;
 	addKincDefine('WINDOWSAPP');
-	addBackend('System/WindowsApp');
-	addBackend('System/Microsoft');
+	addBackend('system/windowsapp');
+	addBackend('system/microsoft');
 	addBackend('Graphics4/Direct3D11');
 	addBackend('Audio2/WASAPI_WinRT');
 	project.addDefine('_CRT_SECURE_NO_WARNINGS');
@@ -215,9 +215,9 @@ else if (platform === Platform.WindowsApp) {
 	}
 }
 else if (platform === Platform.OSX) {
-	addBackend('System/Apple');
-	addBackend('System/macOS');
-	addBackend('System/POSIX');
+	addBackend('system/apple');
+	addBackend('system/macos');
+	addBackend('system/posix');
 	if (graphics === GraphicsApi.Metal || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
@@ -254,9 +254,9 @@ else if (platform === Platform.iOS || platform === Platform.tvOS) {
 	if (platform === Platform.tvOS) {
 		addKincDefine('TVOS');
 	}
-	addBackend('System/Apple');
-	addBackend('System/iOS');
-	addBackend('System/POSIX');
+	addBackend('system/apple');
+	addBackend('system/ios');
+	addBackend('system/posix');
 	if (graphics === GraphicsApi.Metal || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
@@ -288,8 +288,8 @@ else if (platform === Platform.iOS || platform === Platform.tvOS) {
 }
 else if (platform === Platform.Android) {
 	addKincDefine('ANDROID');
-	addBackend('System/Android');
-	addBackend('System/POSIX');
+	addBackend('system/android');
+	addBackend('system/posix');
 	if (graphics === GraphicsApi.Vulkan || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
@@ -325,7 +325,7 @@ else if (platform === Platform.Android) {
 else if (platform === Platform.Emscripten) {
 	addKincDefine('EMSCRIPTEN');
 	//project.addLib('websocket.js -sPROXY_POSIX_SOCKETS -sUSE_PTHREADS -sPROXY_TO_PTHREAD');
-	addBackend('System/Emscripten');
+	addBackend('system/emscripten');
 	project.addLib('USE_GLFW=2');
 	if (graphics === GraphicsApi.WebGPU) {
 		g4 = true;
@@ -336,7 +336,7 @@ else if (platform === Platform.Emscripten) {
 	else if (graphics === GraphicsApi.OpenGL || graphics === GraphicsApi.Default) {
 		g4 = true;
 		addBackend('Graphics4/OpenGL');
-		project.addExclude('Backends/Graphics4/OpenGL/Sources/GL/**');
+		project.addExclude('backends/Graphics4/OpenGL/sources/GL/**');
 		addKincDefine('OPENGL');
 		addKincDefine('OPENGL_ES');
 		if (Options.kong) {
@@ -349,7 +349,7 @@ else if (platform === Platform.Emscripten) {
 }
 else if (platform === Platform.Wasm) {
 	addKincDefine('WASM');
-	addBackend('System/Wasm');
+	addBackend('system/wasm');
 	project.addIncludeDir('miniClib');
 	project.addFile('miniClib/**');
 	if (graphics === GraphicsApi.WebGPU) {
@@ -361,7 +361,7 @@ else if (platform === Platform.Wasm) {
 	else if (graphics === GraphicsApi.OpenGL || graphics === GraphicsApi.Default) {
 		g4 = true;
 		addBackend('Graphics4/OpenGL');
-		project.addExclude('Backends/Graphics4/OpenGL/Sources/GL/**');
+		project.addExclude('backends/Graphics4/OpenGL/sources/GL/**');
 		addKincDefine('OPENGL');
 		addKincDefine('OPENGL_ES');
 	}
@@ -373,8 +373,8 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 	if (platform === Platform.FreeBSD) { // TODO
 		addKincDefine('LINUX');
 	}
-	addBackend('System/Linux');
-	addBackend('System/POSIX');
+	addBackend('system/linux');
+	addBackend('system/posix');
 	project.addLib('asound');
 	project.addLib('dl');
 
@@ -478,9 +478,9 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 		}
 	}
 	else if (platform === Platform.FreeBSD) {
-		addBackend('System/FreeBSD');
-		project.addExclude('Backends/System/Linux/Sources/kinc/backend/input/gamepad.cpp');
-		project.addExclude('Backends/System/Linux/Sources/kinc/backend/input/gamepad.h');
+		addBackend('system/freebsd');
+		project.addExclude('backends/System/Linux/sources/kinc/backend/input/gamepad.cpp');
+		project.addExclude('backends/System/Linux/sources/kinc/backend/input/gamepad.h');
 		project.addDefine('KINC_NO_WAYLAND');
 	}
 
@@ -494,7 +494,7 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 	else if (graphics === GraphicsApi.OpenGL || (platform === Platform.FreeBSD && graphics === GraphicsApi.Default)) {
 		g4 = true;
 		addBackend('Graphics4/OpenGL');
-		project.addExclude('Backends/Graphics4/OpenGL/Sources/GL/glew.c');
+		project.addExclude('backends/Graphics4/OpenGL/sources/GL/glew.c');
 		project.addLib('GL');
 		addKincDefine('OPENGL');
 		project.addLib('EGL');
@@ -512,10 +512,10 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 else if (platform === Platform.Pi) {
 	g4 = true;
 	addKincDefine('RASPBERRY_PI');
-	addBackend('System/Pi');
-	addBackend('System/POSIX');
+	addBackend('system/pi');
+	addBackend('system/posix');
 	addBackend('Graphics4/OpenGL');
-	project.addExclude('Backends/Graphics4/OpenGL/Sources/GL/**');
+	project.addExclude('backends/Graphics4/OpenGL/sources/GL/**');
 	addKincDefine('OPENGL');
 	addKincDefine('OPENGL_ES');
 	addKincDefine('POSIX');
@@ -541,8 +541,8 @@ if (g4) {
 	addKincDefine('G4');
 }
 else {
-	project.addExclude('Sources/Kore/Graphics4/**');
-	project.addExclude('Sources/kinc/graphics4/**');
+	project.addExclude('sources/Kore/Graphics4/**');
+	project.addExclude('sources/kinc/graphics4/**');
 }
 
 if (g5) {
@@ -590,9 +590,9 @@ if (plugin) {
 		ancestor = ancestor.parent;
 	}
 
-	let pluginPath = path.join(ancestor.basedir, 'Backends', backend);
+	let pluginPath = path.join(ancestor.basedir, 'backends', backend);
 	if (!fs.existsSync(pluginPath)) {
-		pluginPath = path.join(__dirname, '..', 'Backends', backend);
+		pluginPath = path.join(__dirname, '..', 'backends', backend);
 	}
 	if (!fs.existsSync(pluginPath)) {
 		log.error('Was looking for a backend in ' + pluginPath + ' but it wasn\'t there.');
