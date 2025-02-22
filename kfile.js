@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const project = new Project('Kinc');
+const project = new Project('Kore');
 
 function addKincDefine(name) {
 	project.addDefine('KINC_' + name);
