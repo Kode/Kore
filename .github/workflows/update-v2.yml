@@ -1,9 +1,9 @@
-name: Update main
+name: Update v2
 
 on:
   push:
     branches:
-    - v2
+    - main
 
 jobs:
   build:
@@ -20,5 +20,5 @@ jobs:
     - name: Set email
       run: git config --global user.email "robbot2019@robdangero.us"
 
-    - name: Push to main
-      run: git push origin v2:main
+    - name: Push to v2
+      run: git push origin main:v2
