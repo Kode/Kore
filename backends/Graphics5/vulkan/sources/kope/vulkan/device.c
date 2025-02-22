@@ -512,7 +512,9 @@ void kope_vulkan_device_create(kope_g5_device *device, const kope_g5_device_wish
 
 	if (check_instance_layers(instance_layers, instance_layers_count)) {
 		kinc_log(KINC_LOG_LEVEL_INFO, "Running with Vulkan validation layers enabled.");
+#ifdef VALIDATE
 		validation = true;
+#endif
 	}
 	else {
 		--instance_layers_count; // Remove VK_LAYER_KHRONOS_validation
@@ -626,6 +628,7 @@ void kope_vulkan_device_create(kope_g5_device *device, const kope_g5_device_wish
 
 	load_extension_functions();
 
+#ifdef VALIDATE
 	if (validation) {
 		const VkDebugUtilsMessengerCreateInfoEXT create_info = {
 		    .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
@@ -640,6 +643,7 @@ void kope_vulkan_device_create(kope_g5_device *device, const kope_g5_device_wish
 		result = vulkan_CreateDebugUtilsMessengerEXT(instance, &create_info, NULL, &debug_utils_messenger);
 		assert(result == VK_SUCCESS);
 	}
+#endif
 
 	const uint32_t graphics_queue_family_index = find_graphics_queue_family();
 
