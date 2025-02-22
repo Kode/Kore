@@ -1,4 +1,4 @@
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 
 #include <kinc/graphics4/constantbuffer.h>
 

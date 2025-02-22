@@ -1362,7 +1362,7 @@ static void init_crash_handler() {
 	}
 }
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 void kong_init(void);
 #endif
 
@@ -1417,7 +1417,7 @@ int kinc_init(const char *name, int width, int height, kinc_window_options_t *wi
 	loadXInput();
 	initializeDirectInput();
 
-#if defined(KINC_KONG) && !defined(KOPE)
+#if defined(KORE_KONG) && !defined(KOPE)
 	kong_init();
 #endif
 

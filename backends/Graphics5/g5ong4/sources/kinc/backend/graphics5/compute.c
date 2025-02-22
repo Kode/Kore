@@ -11,7 +11,7 @@ void kinc_g5_compute_shader_destroy(kinc_g5_compute_shader *shader) {
 	kinc_g4_compute_shader_destroy(&shader->impl.g4);
 }
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 kinc_g5_constant_location_t kinc_g5_compute_shader_get_constant_location(kinc_g5_compute_shader *shader, const char *name) {
 	kinc_g5_constant_location_t location = {0};
 	location.impl.location = kinc_g4_compute_shader_get_constant_location(&shader->impl.g4, name);

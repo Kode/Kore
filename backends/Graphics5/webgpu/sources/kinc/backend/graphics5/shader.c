@@ -4,7 +4,7 @@
 
 extern WGPUDevice device;
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 WGPUShaderModule kinc_g5_internal_webgpu_shader_module;
 
 void kinc_g5_internal_webgpu_create_shader_module(const void *source, size_t length) {

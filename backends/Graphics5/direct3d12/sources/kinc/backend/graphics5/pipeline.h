@@ -14,7 +14,7 @@ struct ID3D12RootSignature;
 
 typedef struct {
 	struct ID3D12PipelineState *pso;
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 #ifdef KINC_DXC
 	// struct ID3D12RootSignature *rootSignature;
 	int vertexConstantsSize;

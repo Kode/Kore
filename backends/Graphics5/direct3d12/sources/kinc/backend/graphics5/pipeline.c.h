@@ -37,11 +37,11 @@ void kinc_g5_internal_setConstants(kinc_g5_command_list_t *commandList, kinc_g5_
 	commandList->impl._commandList->SetGraphicsRootSignature(globalRootSignature);
 #endif
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 	if (pipeline->impl.textures > 0) {
 #endif
 		kinc_g5_internal_set_textures(commandList);
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 	}
 #endif
 }
@@ -99,7 +99,7 @@ void kinc_g5_pipeline_destroy(kinc_g5_pipeline_t *pipe) {
 // context->IASetInputLayout(inputLayout);
 //}
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 
 #define MAX_SHADER_THING 32
 
@@ -339,7 +339,7 @@ void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipe) {
 	for (int stream = 0; pipe->inputLayout[stream] != NULL; ++stream) {
 		for (int i = 0; i < pipe->inputLayout[stream]->size; ++i) {
 			vertexDesc[curAttr].SemanticName = "TEXCOORD";
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 			vertexDesc[curAttr].SemanticIndex = i;
 #else
 			vertexDesc[curAttr].SemanticIndex = findAttribute(pipe->vertexShader, pipe->inputLayout[stream]->elements[i].name).attribute;
@@ -472,13 +472,13 @@ void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipe) {
 	if (hr != S_OK) {
 		kinc_log(KINC_LOG_LEVEL_WARNING, "Could not create root signature.");
 	}
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 	pipe->impl.vertexConstantsSize = pipe->vertexShader->impl.constantsSize;
 	pipe->impl.fragmentConstantsSize = pipe->fragmentShader->impl.constantsSize;
 #endif
 #endif
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 	pipe->impl.textures = pipe->fragmentShader->impl.texturesCount;
 #endif
 

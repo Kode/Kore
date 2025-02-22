@@ -6,7 +6,7 @@
 
 extern WGPUDevice device;
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 extern WGPUShaderModule kinc_g5_internal_webgpu_shader_module;
 #endif
 
@@ -187,7 +187,7 @@ void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipe) {
 
 	WGPUVertexState vsDest;
 	memset(&vsDest, 0, sizeof(vsDest));
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 	vsDest.module = kinc_g5_internal_webgpu_shader_module;
 	vsDest.entryPoint = pipe->vertexShader->impl.entry_name;
 #else
@@ -199,7 +199,7 @@ void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipe) {
 
 	WGPUFragmentState fragmentDest;
 	memset(&fragmentDest, 0, sizeof(fragmentDest));
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 	fragmentDest.module = kinc_g5_internal_webgpu_shader_module;
 	fragmentDest.entryPoint = pipe->fragmentShader->impl.entry_name;
 #else

@@ -94,7 +94,7 @@ KINC_FUNC void kinc_g4_render_target_init_cube_with_multisampling(kinc_g4_render
 /// <param name="renderTarget">The render-target to destroy</param>
 KINC_FUNC void kinc_g4_render_target_destroy(kinc_g4_render_target_t *renderTarget);
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 /// <summary>
 /// Uses the color-component of a render-target as a texture.
 /// </summary>

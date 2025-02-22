@@ -9,7 +9,7 @@ extern "C" {
 struct WGPUShaderModuleImpl;
 
 typedef struct {
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 	char entry_name[256];
 #else
 	WGPUShaderModule module;

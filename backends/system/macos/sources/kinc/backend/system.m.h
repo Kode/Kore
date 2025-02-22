@@ -174,7 +174,7 @@ static void addMenubar(void) {
 	[NSApp setMainMenu:menubar];
 }
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 void kong_init(void);
 #endif
 

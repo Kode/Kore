@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 
 typedef struct kinc_g4_constant_buffer_impl {
 	size_t size;

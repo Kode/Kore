@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 
 #include <kinc/graphics5/constantbuffer.h>
 

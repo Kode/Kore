@@ -90,7 +90,7 @@ void kinc_g4_render_target_destroy(kinc_g4_render_target_t *renderTarget) {
 	}
 }
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 void kinc_g4_render_target_use_color_as_texture(kinc_g4_render_target_t *renderTarget, uint32_t unit) {
 	if (renderTarget->impl.antialiasing) {
 		IDirect3DSurface9 *surface;

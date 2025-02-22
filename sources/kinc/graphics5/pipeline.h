@@ -133,7 +133,7 @@ KINC_FUNC void kinc_g5_pipeline_destroy(kinc_g5_pipeline_t *pipeline);
 /// <param name="pipeline">The pipeline to compile</param>
 KINC_FUNC void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipeline);
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 /// <summary>
 /// Searches for a constant/uniform and returns a constant-location which can be used to change the constant/uniform.
 /// </summary>

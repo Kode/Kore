@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 
 struct ID3D11Buffer;
 

@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 typedef struct {
 	char name[64];
 	uint32_t offset;
@@ -23,7 +23,7 @@ typedef struct {
 #endif
 
 typedef struct {
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 	ShaderConstant constants[32];
 	int constantsSize;
 	ShaderAttribute attributes[32];

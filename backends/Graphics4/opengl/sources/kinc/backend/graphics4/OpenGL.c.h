@@ -786,7 +786,7 @@ void kinc_g4_set_index_buffer(kinc_g4_index_buffer_t *indexBuffer) {
 
 void Kinc_G4_Internal_TextureImageSet(kinc_g4_texture_t *texture, kinc_g4_texture_unit_t unit);
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 void Kinc_G4_Internal_TextureSet(kinc_g4_texture_t *texture, uint32_t unit);
 
 void kinc_g4_set_texture(uint32_t unit, kinc_g4_texture_t *texture) {
@@ -869,7 +869,7 @@ static void setTextureAddressingInternal(GLenum target, kinc_g4_texture_unit_t u
 	glCheckErrors();
 }
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 int Kinc_G4_Internal_TextureAddressingU(uint32_t unit) {
 	return texModesU[unit];
 }
@@ -1260,7 +1260,7 @@ bool kinc_g4_render_targets_inverted_y(void) {
 	return true;
 }
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 void kinc_g4_set_constant_buffer(uint32_t id, struct kinc_g4_constant_buffer *buffer) {
 	glBindBufferBase(GL_UNIFORM_BUFFER, id, buffer->impl.buffer);
 }

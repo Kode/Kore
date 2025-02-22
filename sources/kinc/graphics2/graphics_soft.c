@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 
 #include <kinc/graphics1/graphics.h>
 #include <kinc/math/core.h>

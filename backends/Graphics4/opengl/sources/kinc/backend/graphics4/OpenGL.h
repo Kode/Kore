@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 int Kinc_G4_Internal_TextureAddressingU(uint32_t unit);
 int Kinc_G4_Internal_TextureAddressingV(uint32_t unit);
 #else

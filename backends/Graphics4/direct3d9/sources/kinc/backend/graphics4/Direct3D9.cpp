@@ -493,7 +493,7 @@ void kinc_g4_set_blend_constant(float r, float g, float b, float a) {
 	device->SetRenderState(D3DRS_BLENDFACTOR, D3DCOLOR_RGBA((int)(r * 255), (int)(g * 255), (int)(b * 255), (int)(a * 255)));
 }
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 
 void kinc_g4_set_bool(kinc_g4_constant_location_t position, bool value) {
 	if (position.impl.shaderType == -1)
@@ -723,7 +723,7 @@ void kinc_g4_set_index_buffer(kinc_g4_index_buffer_t *buffer) {
 	kinc_internal_g4_index_buffer_set(buffer);
 }
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 void kinc_internal_texture_set(kinc_g4_texture_t *texture, uint32_t unit);
 
 void kinc_g4_set_texture(uint32_t unit, struct kinc_g4_texture *texture) {

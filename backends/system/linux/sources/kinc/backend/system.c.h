@@ -152,7 +152,7 @@ void kinc_unlock_achievement(int id) {}
 
 void kinc_linux_init_procs();
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 void kong_init(void);
 #endif
 
@@ -186,7 +186,7 @@ int kinc_init(const char *name, int width, int height, kinc_window_options_t *wi
 	}
 
 	int window = kinc_window_create(win, frame);
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 	kong_init();
 #endif
 	return window;

@@ -24,7 +24,7 @@ struct kinc_g4_texture_array;
 #ifdef KINC_OPENGL
 struct kinc_shader_storage_buffer;
 #endif
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 struct kinc_g4_constant_buffer;
 #endif
 
@@ -185,11 +185,11 @@ KINC_FUNC void kinc_g4_set_stencil_reference_value(int value);
 /// </summary>
 KINC_FUNC void kinc_g4_set_blend_constant(float r, float g, float b, float a);
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 KINC_FUNC void kinc_g4_set_constant_buffer(uint32_t id, struct kinc_g4_constant_buffer *buffer);
 #endif
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 
 /// <summary>
 /// Assigns an integer to a constant/uniform in the currently set pipeline.
@@ -371,7 +371,7 @@ KINC_FUNC void kinc_g4_set_render_targets(struct kinc_g4_render_target **targets
 
 KINC_FUNC void kinc_g4_set_render_target_face(struct kinc_g4_render_target *texture, int face);
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 /// <summary>
 /// Assigns a texture to a texture-unit for sampled access via GLSL's texture.
 /// </summary>

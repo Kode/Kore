@@ -28,7 +28,7 @@ typedef struct kinc_g4_compute_internal_shader_constant {
 } kinc_g4_compute_internal_shader_constant;
 
 typedef struct kinc_g4_compute_shader_impl {
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 	kinc_g4_compute_internal_shader_constant constants[64];
 	int constantsSize;
 	kinc_internal_hash_index_t attributes[64];

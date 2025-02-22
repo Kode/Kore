@@ -161,7 +161,7 @@ void kinc_g5_command_list_render_target_to_texture_barrier(struct kinc_g5_comman
 void kinc_g5_command_list_set_vertex_constant_buffer(struct kinc_g5_command_list *list, kinc_g5_constant_buffer_t *buffer, int offset, size_t size) {
 	assert(list->impl.open);
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 	list->impl._commandList->SetGraphicsRootConstantBufferView(2, buffer->impl.constant_buffer->GetGPUVirtualAddress() + offset);
 #else
 #ifdef KINC_DXC
@@ -182,7 +182,7 @@ void kinc_g5_command_list_set_vertex_constant_buffer(struct kinc_g5_command_list
 void kinc_g5_command_list_set_fragment_constant_buffer(struct kinc_g5_command_list *list, kinc_g5_constant_buffer_t *buffer, int offset, size_t size) {
 	assert(list->impl.open);
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 	list->impl._commandList->SetGraphicsRootConstantBufferView(3, buffer->impl.constant_buffer->GetGPUVirtualAddress() + offset);
 #else
 #ifdef KINC_DXC
@@ -198,7 +198,7 @@ void kinc_g5_command_list_set_fragment_constant_buffer(struct kinc_g5_command_li
 void kinc_g5_command_list_set_compute_constant_buffer(struct kinc_g5_command_list *list, kinc_g5_constant_buffer_t *buffer, int offset, size_t size) {
 	assert(list->impl.open);
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 	list->impl._commandList->SetComputeRootConstantBufferView(3, buffer->impl.constant_buffer->GetGPUVirtualAddress() + offset);
 #else
 #ifdef KINC_DXC

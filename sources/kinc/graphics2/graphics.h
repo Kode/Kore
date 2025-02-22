@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 
 typedef enum kinc_g2_image_scale_quality {
 	KINC_G2_IMAGE_SCALE_QUALITY_LOW, // usually point filter

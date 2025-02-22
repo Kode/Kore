@@ -13,7 +13,7 @@ __attribute__((import_module("imports"), import_name("js_time"))) int js_time();
 extern int kinc_internal_window_width;
 extern int kinc_internal_window_height;
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 void kong_init(void);
 #endif
 
@@ -37,7 +37,7 @@ int kinc_init(const char *name, int width, int height, kinc_window_options_t *wi
 	kinc_g4_internal_init();
 	kinc_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 	kong_init();
 #endif
 

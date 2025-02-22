@@ -38,7 +38,7 @@ KINC_FUNC void kinc_g4_compute_shader_init(kinc_g4_compute_shader *shader, void 
 /// <param name="shader">The shader-object to destroy</param>
 KINC_FUNC void kinc_g4_compute_shader_destroy(kinc_g4_compute_shader *shader);
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 /// <summary>
 /// Finds the location of a constant/uniform inside of a shader.
 /// </summary>

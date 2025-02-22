@@ -11,11 +11,11 @@
 
 #ifndef KOPE
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 #include <kong.h>
 #endif
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 static kinc_g4_shader_t vertexShader;
 static kinc_g4_shader_t fragmentShader;
 static kinc_g4_pipeline_t pipeline;
@@ -70,13 +70,13 @@ void kinc_g1_end(void) {
 
 	kinc_g4_clear(KINC_G4_CLEAR_COLOR, 0xff000000, 0.0f, 0);
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 	kinc_g4_set_pipeline(&kinc_g1_pipeline);
 #else
 	kinc_g4_set_pipeline(&pipeline);
 #endif
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 	kinc_g4_set_texture(tex, &texture);
 	kinc_g4_set_texture_minification_filter(tex, map_texture_filter(kinc_internal_g1_texture_filter_min));
 	kinc_g4_set_texture_magnification_filter(tex, map_texture_filter(kinc_internal_g1_texture_filter_mag));
@@ -94,7 +94,7 @@ void kinc_g1_init(int width, int height) {
 	kinc_internal_g1_w = width;
 	kinc_internal_g1_h = height;
 
-#ifndef KINC_KONG
+#ifndef KORE_KONG
 	{
 		kinc_file_reader_t file;
 		kinc_file_reader_open(&file, "g1.vert", KINC_FILE_TYPE_ASSET);
@@ -145,7 +145,7 @@ void kinc_g1_init(int width, int height) {
 	float xAspect = (float)width / texture.tex_width;
 	float yAspect = (float)height / texture.tex_height;
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 	kinc_g4_vertex_buffer_init(&vb, 4, &kinc_g1_vertex_in_structure, KINC_G4_USAGE_STATIC, 0);
 #else
 	kinc_g4_vertex_buffer_init(&vb, 4, &structure, KINC_G4_USAGE_STATIC, 0);

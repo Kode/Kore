@@ -207,7 +207,7 @@ void kinc_internal_texture_unmipmap(kinc_g4_texture_t *texture) {
 	texture->impl.hasMipmaps = false;
 }
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 void kinc_internal_texture_set(kinc_g4_texture_t *texture, uint32_t unit) {
 	dx_ctx.context->lpVtbl->PSSetShaderResources(dx_ctx.context, unit, 1, &texture->impl.view);
 

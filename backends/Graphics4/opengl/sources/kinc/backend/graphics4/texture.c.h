@@ -503,7 +503,7 @@ void kinc_g4_texture_destroy(kinc_g4_texture_t *texture) {
 	glFlush();
 }
 
-#ifdef KINC_KONG
+#ifdef KORE_KONG
 void Kinc_G4_Internal_TextureSet(kinc_g4_texture_t *texture, uint32_t unit) {
 	GLenum target = texture->tex_depth > 1 ? GL_TEXTURE_3D : GL_TEXTURE_2D;
 	glActiveTexture(GL_TEXTURE0 + unit);
