@@ -30,9 +30,14 @@ jobs:
     - name: Commit
       working-directory: Kore-Samples
       run: git commit -m "Update Kore"
-    - name: Push
+    - name: Push to v2
       working-directory: Kore-Samples
-      run: git push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples.git
+      run: git push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples.git v2
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+    - name: Push to main
+      working-directory: Kore-Samples
+      run: git push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples.git main
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     
