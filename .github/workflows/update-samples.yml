@@ -20,13 +20,13 @@ jobs:
       run: git clone --branch v3 https://github.com/Kode/Kore-Samples.git
     - name: Get Kore-Submodule
       working-directory: Kore-Samples
-      run: git submodule update --init --remote Kore
+      run: git submodule update --init --remote kore
     - name: Checkout Kore
-      working-directory: Kore-Samples/Kore
+      working-directory: Kore-Samples/kore
       run: git checkout v3
     - name: Add Kore
       working-directory: Kore-Samples
-      run: git add Kore
+      run: git add kore
     - name: Commit
       working-directory: Kore-Samples
       run: git commit -m "Update Kore"
