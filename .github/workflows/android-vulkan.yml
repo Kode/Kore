@@ -1,0 +1,25 @@
+name: Android (Vulkan)
+
+on:
+  push:
+    branches:
+    - v3
+  pull_request:
+    branches:
+    - v3
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'oracle'
+        java-version: '17'
+    - name: Get Submodules
+      run: ./get_dlc
+    - name: Compile
+      run: ./make android -g vulkan --kore . --from tests/empty --compile
