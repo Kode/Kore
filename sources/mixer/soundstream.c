@@ -3,7 +3,7 @@
 #define STB_VORBIS_HEADER_ONLY
 #include <kore3/libs/stb_vorbis.h>
 
-#include <kinc/io/filereader.h>
+#include <kore3/io/filereader.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -19,16 +19,16 @@ kore_mixer_sound_stream *kore_mixer_sound_stream_create(const char *filename, bo
 	stream->myVolume = 1;
 	stream->rateDecodedHack = false;
 	stream->end = false;
-	kinc_file_reader_t file;
-	kinc_file_reader_open(&file, filename, KINC_FILE_TYPE_ASSET);
+	kore_file_reader file;
+	kore_file_reader_open(&file, filename, KORE_FILE_TYPE_ASSET);
 	stream->buffer = &buffer[bufferIndex];
-	bufferIndex += (int)kinc_file_reader_size(&file);
-	uint8_t *filecontent = (uint8_t *)malloc(kinc_file_reader_size(&file));
-	kinc_file_reader_read(&file, filecontent, kinc_file_reader_size(&file));
-	kinc_file_reader_close(&file);
-	memcpy(stream->buffer, filecontent, kinc_file_reader_size(&file));
+	bufferIndex += (int)kore_file_reader_size(&file);
+	uint8_t *filecontent = (uint8_t *)malloc(kore_file_reader_size(&file));
+	kore_file_reader_read(&file, filecontent, kore_file_reader_size(&file));
+	kore_file_reader_close(&file);
+	memcpy(stream->buffer, filecontent, kore_file_reader_size(&file));
 	free(filecontent);
-	stream->vorbis = stb_vorbis_open_memory(buffer, (int)kinc_file_reader_size(&file), NULL, NULL);
+	stream->vorbis = stb_vorbis_open_memory(buffer, (int)kore_file_reader_size(&file), NULL, NULL);
 	if (stream->vorbis != NULL) {
 		stb_vorbis_info info = stb_vorbis_get_info(stream->vorbis);
 		stream->chans = info.channels;

@@ -207,8 +207,8 @@ KINC_FUNC int kinc_image_format_sizeof(kinc_image_format_t format);
 #endif
 
 #undef KINC_IMPLEMENTATION
-#include <kinc/io/filereader.h>
 #include <kore3/gpu/gpu.h>
+#include <kore3/io/filereader.h>
 #include <kore3/math/core.h>
 #define KINC_IMPLEMENTATION
 
@@ -312,9 +312,9 @@ static size_t loadImageSize(kinc_image_read_callbacks_t callbacks, void *user_da
 	if (endsWith(filename, "k")) {
 		uint8_t data[4];
 		callbacks.read(user_data, data, 4);
-		int width = kinc_read_s32le(data);
+		int width = kore_read_s32le(data);
 		callbacks.read(user_data, data, 4);
-		int height = kinc_read_s32le(data);
+		int height = kore_read_s32le(data);
 
 		char fourcc[5];
 		callbacks.read(user_data, fourcc, 4);
@@ -345,9 +345,9 @@ static size_t loadImageSize(kinc_image_read_callbacks_t callbacks, void *user_da
 		callbacks.read(user_data, data, 4); // colourSpace
 		callbacks.read(user_data, data, 4); // channelType
 		callbacks.read(user_data, data, 4);
-		uint32_t hh = kinc_read_u32le(data);
+		uint32_t hh = kore_read_u32le(data);
 		callbacks.read(user_data, data, 4);
-		uint32_t ww = kinc_read_u32le(data);
+		uint32_t ww = kore_read_u32le(data);
 
 		return ww * hh / 2;
 	}
@@ -389,9 +389,9 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 	if (endsWith(filename, "k")) {
 		uint8_t data[4];
 		callbacks.read(user_data, data, 4);
-		*width = kinc_read_s32le(data);
+		*width = kore_read_s32le(data);
 		callbacks.read(user_data, data, 4);
-		*height = kinc_read_s32le(data);
+		*height = kore_read_s32le(data);
 
 		char fourcc[5];
 		callbacks.read(user_data, fourcc, 4);
@@ -479,9 +479,9 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 		callbacks.read(user_data, data, 4); // colourSpace
 		callbacks.read(user_data, data, 4); // channelType
 		callbacks.read(user_data, data, 4);
-		uint32_t hh = kinc_read_u32le(data);
+		uint32_t hh = kore_read_u32le(data);
 		callbacks.read(user_data, data, 4);
-		uint32_t ww = kinc_read_u32le(data);
+		uint32_t ww = kore_read_u32le(data);
 		callbacks.read(user_data, data, 4); // depth
 		callbacks.read(user_data, data, 4); // numSurfaces
 		callbacks.read(user_data, data, 4); // numFaces
@@ -489,18 +489,18 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 		callbacks.read(user_data, data, 4);
 
 		callbacks.read(user_data, data, 4);
-		uint32_t meta1fourcc = kinc_read_u32le(data);
+		uint32_t meta1fourcc = kore_read_u32le(data);
 		callbacks.read(user_data, data, 4); // meta1key
 		callbacks.read(user_data, data, 4); // meta1size
 		callbacks.read(user_data, data, 4);
-		uint32_t meta1data = kinc_read_u32le(data);
+		uint32_t meta1data = kore_read_u32le(data);
 
 		callbacks.read(user_data, data, 4);
-		uint32_t meta2fourcc = kinc_read_u32le(data);
+		uint32_t meta2fourcc = kore_read_u32le(data);
 		callbacks.read(user_data, data, 4); // meta2key
 		callbacks.read(user_data, data, 4); // meta2size
 		callbacks.read(user_data, data, 4);
-		uint32_t meta2data = kinc_read_u32le(data);
+		uint32_t meta2data = kore_read_u32le(data);
 
 		int w = 0;
 		int h = 0;
@@ -644,19 +644,19 @@ void kinc_image_init_from_bytes3d(kinc_image_t *image, void *data, int width, in
 }
 
 static size_t read_callback(void *user_data, void *data, size_t size) {
-	return kinc_file_reader_read((kinc_file_reader_t *)user_data, data, size);
+	return kore_file_reader_read((kore_file_reader *)user_data, data, size);
 }
 
 static size_t size_callback(void *user_data) {
-	return kinc_file_reader_size((kinc_file_reader_t *)user_data);
+	return kore_file_reader_size((kore_file_reader *)user_data);
 }
 
 static size_t pos_callback(void *user_data) {
-	return kinc_file_reader_pos((kinc_file_reader_t *)user_data);
+	return kore_file_reader_pos((kore_file_reader *)user_data);
 }
 
 static void seek_callback(void *user_data, size_t pos) {
-	kinc_file_reader_seek((kinc_file_reader_t *)user_data, pos);
+	kore_file_reader_seek((kore_file_reader *)user_data, pos);
 }
 
 struct kinc_internal_image_memory {
@@ -693,8 +693,8 @@ size_t kinc_image_size_from_callbacks(kinc_image_read_callbacks_t callbacks, voi
 }
 
 size_t kinc_image_size_from_file(const char *filename) {
-	kinc_file_reader_t reader;
-	if (kinc_file_reader_open(&reader, filename, KINC_FILE_TYPE_ASSET)) {
+	kore_file_reader reader;
+	if (kore_file_reader_open(&reader, filename, KORE_FILE_TYPE_ASSET)) {
 		kinc_image_read_callbacks_t callbacks;
 		callbacks.read = read_callback;
 		callbacks.size = size_callback;
@@ -702,7 +702,7 @@ size_t kinc_image_size_from_file(const char *filename) {
 		callbacks.seek = seek_callback;
 
 		size_t dataSize = loadImageSize(callbacks, &reader, filename);
-		kinc_file_reader_close(&reader);
+		kore_file_reader_close(&reader);
 		return dataSize;
 	}
 	return 0;
@@ -738,8 +738,8 @@ size_t kinc_image_init_from_callbacks(kinc_image_t *image, void *memory, kinc_im
 }
 
 size_t kinc_image_init_from_file_with_stride(kinc_image_t *image, void *memory, const char *filename, uint32_t stride) {
-	kinc_file_reader_t reader;
-	if (kinc_file_reader_open(&reader, filename, KINC_FILE_TYPE_ASSET)) {
+	kore_file_reader reader;
+	if (kore_file_reader_open(&reader, filename, KORE_FILE_TYPE_ASSET)) {
 		kinc_image_read_callbacks_t callbacks;
 		callbacks.read = read_callback;
 		callbacks.size = size_callback;
@@ -749,7 +749,7 @@ size_t kinc_image_init_from_file_with_stride(kinc_image_t *image, void *memory, 
 		size_t dataSize = 0;
 		loadImage(callbacks, &reader, filename, memory, &dataSize, &image->width, &image->height, &image->compression, &image->format, &image->internal_format,
 		          stride);
-		kinc_file_reader_close(&reader);
+		kore_file_reader_close(&reader);
 		image->data = memory;
 		image->data_size = dataSize;
 		image->depth = 1;

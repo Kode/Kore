@@ -3,8 +3,8 @@
 #include <kore3/libs/stb_vorbis.h>
 
 #include <kinc/error.h>
-#include <kinc/io/filereader.h>
 #include <kore3/audio/audio.h>
+#include <kore3/io/filereader.h>
 
 #include <assert.h>
 #include <string.h>
@@ -37,14 +37,14 @@ static void readFOURCC(uint8_t **data, char *fourcc) {
 static void readChunk(uint8_t **data, struct WaveData *wave) {
 	char fourcc[5];
 	readFOURCC(data, fourcc);
-	uint32_t chunksize = kinc_read_u32le(*data);
+	uint32_t chunksize = kore_read_u32le(*data);
 	*data += 4;
 	if (strcmp(fourcc, "fmt ") == 0) {
-		wave->audioFormat = kinc_read_u16le(*data + 0);
-		wave->numChannels = kinc_read_u16le(*data + 2);
-		wave->sampleRate = kinc_read_u32le(*data + 4);
-		wave->bytesPerSecond = kinc_read_u32le(*data + 8);
-		wave->bitsPerSample = kinc_read_u16le(*data + 14);
+		wave->audioFormat = kore_read_u16le(*data + 0);
+		wave->numChannels = kore_read_u16le(*data + 2);
+		wave->sampleRate = kore_read_u32le(*data + 4);
+		wave->bytesPerSecond = kore_read_u32le(*data + 8);
+		wave->bitsPerSample = kore_read_u16le(*data + 14);
 		*data += chunksize;
 	}
 	else if (strcmp(fourcc, "data") == 0) {
@@ -129,7 +129,7 @@ kore_mixer_sound *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 			uint8_t *data = audio_data;
 
 			checkFOURCC(&data, "RIFF");
-			uint32_t filesize = kinc_read_u32le(data);
+			uint32_t filesize = kore_read_u32le(data);
 			data += 4;
 			checkFOURCC(&data, "WAVE");
 			while (data + 8 - audio_data < (intptr_t)filesize) {
@@ -201,15 +201,15 @@ kore_mixer_sound *kinc_a1_sound_create(const char *filename) {
 		assert(false);
 	}
 
-	kinc_file_reader_t file;
-	if (!kinc_file_reader_open(&file, filename, KINC_FILE_TYPE_ASSET)) {
+	kore_file_reader file;
+	if (!kore_file_reader_open(&file, filename, KORE_FILE_TYPE_ASSET)) {
 		return NULL;
 	}
 
-	uint8_t *filedata = (uint8_t *)malloc(kinc_file_reader_size(&file));
-	kinc_file_reader_read(&file, filedata, kinc_file_reader_size(&file));
-	kinc_file_reader_close(&file);
-	size_t filesize = kinc_file_reader_size(&file);
+	uint8_t *filedata = (uint8_t *)malloc(kore_file_reader_size(&file));
+	kore_file_reader_read(&file, filedata, kore_file_reader_size(&file));
+	kore_file_reader_close(&file);
+	size_t filesize = kore_file_reader_size(&file);
 
 	kore_mixer_sound *sound = kinc_a1_sound_create_from_buffer(filedata, (uint32_t)filesize, fileformat);
 

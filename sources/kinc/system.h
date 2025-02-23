@@ -377,8 +377,8 @@ void kinc_internal_logout_callback(void);
 #endif
 
 #undef KINC_IMPLEMENTATION
-#include <kinc/io/filereader.h>
-#include <kinc/io/filewriter.h>
+#include <kore3/io/filereader.h>
+#include <kore3/io/filewriter.h>
 #define KINC_IMPLEMENTATION
 
 #include <stdlib.h>
@@ -679,20 +679,20 @@ void kinc_load_save_file(const char *filename) {
 	current_file = NULL;
 	current_file_size = 0;
 
-	kinc_file_reader_t reader;
-	if (kinc_file_reader_open(&reader, filename, KINC_FILE_TYPE_SAVE)) {
-		current_file_size = kinc_file_reader_size(&reader);
+	kore_file_reader reader;
+	if (kore_file_reader_open(&reader, filename, KORE_FILE_TYPE_SAVE)) {
+		current_file_size = kore_file_reader_size(&reader);
 		current_file = (uint8_t *)malloc(current_file_size);
-		kinc_file_reader_read(&reader, current_file, current_file_size);
-		kinc_file_reader_close(&reader);
+		kore_file_reader_read(&reader, current_file, current_file_size);
+		kore_file_reader_close(&reader);
 	}
 }
 
 void kinc_save_save_file(const char *filename, uint8_t *data, size_t size) {
-	kinc_file_writer_t writer;
-	if (kinc_file_writer_open(&writer, filename)) {
-		kinc_file_writer_write(&writer, data, (int)size);
-		kinc_file_writer_close(&writer);
+	kore_file_writer writer;
+	if (kore_file_writer_open(&writer, filename)) {
+		kore_file_writer_write(&writer, data, (int)size);
+		kore_file_writer_close(&writer);
 	}
 }
 

@@ -49,6 +49,7 @@ function addSimpleUnit(name) {
 
 addSimpleUnit('audio');
 addUnit('gpu');
+addUnit('io');
 addUnit('math');
 addUnit('mixer');
 addUnit('network');
@@ -56,7 +57,9 @@ addUnit('util');
 
 if (lz4x) {
 	addKincDefine('LZ4X');
-	project.addExclude('sources/kinc/io/lz4/**');
+}
+else {
+	project.addFile('sources/libs/lz4/*');
 }
 project.addIncludeDir('sources');
 project.addIncludeDir('includes');
