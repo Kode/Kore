@@ -27,7 +27,7 @@ void kore_metal_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 #ifdef KINC_APPLE_SOC
 	options |= MTLResourceStorageModeShared;
 #else
-	if ((parameters->usage_flags & KOPE_G5_BUFFER_USAGE_CPU_WRITE) != 0) {
+	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
 		options |= MTLResourceStorageModeManaged;
 	}
 	else {
