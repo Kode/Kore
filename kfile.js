@@ -566,7 +566,6 @@ if (!a3) {
 	}
 }
 
-project.setDebugDir('Deployment');
 project.kincProcessed = true;
 
 if (plugin) {

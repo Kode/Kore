@@ -10,9 +10,9 @@
 *.frag
 *.comp
 # Ignore deployment directories, but not the keepme files (order is important)
-**/Deployment/**
-!**/Deployment/keepme
+**/deployment/**
+!**/deployment/keepme
 compile_commands.json
 .vscode/**
-**/Deployment/**
-!**/Deployment/keepme*
+**/deployment/**
+!**/deployment/keepme*

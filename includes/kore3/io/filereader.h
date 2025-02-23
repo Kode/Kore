@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 #ifndef KINC_DEBUGDIR
-#define KINC_DEBUGDIR "Deployment"
+#define KINC_DEBUGDIR "deployment"
 #endif
 
 #ifdef KINC_ANDROID
