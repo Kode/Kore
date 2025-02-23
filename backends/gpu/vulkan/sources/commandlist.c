@@ -114,11 +114,11 @@ void kore_vulkan_command_list_set_render_pipeline(kore_gpu_command_list *list, k
 	vkCmdBindPipeline(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
 }
 
-void kore_vulkan_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {
-}
+void kore_vulkan_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,
+                                   uint32_t first_instance) {}
 
-void kore_vulkan_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index, int32_t base_vertex,
-                                           uint32_t first_instance) {
+void kore_vulkan_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
+                                           int32_t base_vertex, uint32_t first_instance) {
 	vkCmdDrawIndexed(list->vulkan.command_buffer, index_count, instance_count, first_index, base_vertex, first_instance);
 }
 
@@ -152,7 +152,7 @@ void kore_vulkan_command_list_prepare_raytracing_volume(kore_gpu_command_list *l
 
 void kore_vulkan_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list *list, kore_gpu_raytracing_hierarchy *hierarchy) {}
 
-void kore_vulkan_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kinc_matrix4x4_t *volume_transforms, uint32_t volumes_count,
+void kore_vulkan_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kore_matrix4x4 *volume_transforms, uint32_t volumes_count,
                                                           kore_gpu_raytracing_hierarchy *hierarchy) {}
 
 void kore_vulkan_command_list_set_ray_pipeline(kore_gpu_command_list *list, kore_vulkan_ray_pipeline *pipeline) {}
