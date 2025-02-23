@@ -233,9 +233,9 @@ else if (platform === Platform.WindowsApp) {
 	}
 }
 else if (platform === Platform.OSX) {
-	addBackend('system/apple');
-	addBackend('system/macos');
-	addBackend('system/posix');
+	addBackend2('system/apple');
+	addBackend2('system/macos');
+	addBackend2('system/posix');
 	if (graphics === GraphicsApi.Metal || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
@@ -272,9 +272,9 @@ else if (platform === Platform.iOS || platform === Platform.tvOS) {
 	if (platform === Platform.tvOS) {
 		addKincDefine('TVOS');
 	}
-	addBackend('system/apple');
+	addBackend2('system/apple');
 	addBackend('system/ios');
-	addBackend('system/posix');
+	addBackend2('system/posix');
 	if (graphics === GraphicsApi.Metal || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
@@ -307,7 +307,7 @@ else if (platform === Platform.iOS || platform === Platform.tvOS) {
 else if (platform === Platform.Android) {
 	addKincDefine('ANDROID');
 	addBackend('system/android');
-	addBackend('system/posix');
+	addBackend2('system/posix');
 	if (graphics === GraphicsApi.Vulkan || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
@@ -385,7 +385,7 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 		addKincDefine('LINUX');
 	}
 	addBackend('system/linux');
-	addBackend('system/posix');
+	addBackend2('system/posix');
 	project.addLib('asound');
 	project.addLib('dl');
 
@@ -524,7 +524,7 @@ else if (platform === Platform.Pi) {
 	g4 = true;
 	addKincDefine('RASPBERRY_PI');
 	addBackend('system/pi');
-	addBackend('system/posix');
+	addBackend2('system/posix');
 	addBackend('Graphics4/opengl');
 	project.addExclude('backends/Graphics4/opengl/sources/GL/**');
 	addKincDefine('OPENGL');

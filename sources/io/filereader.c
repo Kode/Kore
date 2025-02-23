@@ -144,8 +144,8 @@ bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filena
 	strcat(filepath, filename);
 #endif
 #ifdef KINC_MACOS
-	strcpy(filepath, type == KINC_FILE_TYPE_SAVE ? kinc_internal_save_path() : macgetresourcepath());
-	if (type != KINC_FILE_TYPE_SAVE) {
+	strcpy(filepath, type == KORE_FILE_TYPE_SAVE ? kore_internal_save_path() : macgetresourcepath());
+	if (type != KORE_FILE_TYPE_SAVE) {
 		strcat(filepath, "/");
 		strcat(filepath, KINC_DEBUGDIR);
 		strcat(filepath, "/");

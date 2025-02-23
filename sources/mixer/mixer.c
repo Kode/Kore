@@ -249,5 +249,5 @@ float kore_mixer_channel_get_volume(kore_mixer_channel *channel) {
 }
 
 void kore_mixer_channel_set_volume(kore_mixer_channel *channel, float volume) {
-	KINC_ATOMIC_EXCHANGE_FLOAT(&channel->volume, volume);
+	kore_atomic_exchange_float(&channel->volume, volume);
 }
