@@ -1,7 +1,7 @@
 #ifndef KORE_THREADS_FIBER_HEADER
 #define KORE_THREADS_FIBER_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <kinc/backend/fiber.h>
 

@@ -1,7 +1,7 @@
 #ifndef KORE_NETWORK_SOCKET_HEADER
 #define KORE_NETWORK_SOCKET_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 /*! \file socket.h
     \brief Provides low-level network-communication via UDP or TCP-sockets.

@@ -2,11 +2,11 @@
 
 #include <stdint.h>
 
-#include <kinc/video.h>
 #include <kore3/audio/audio.h>
 #include <kore3/math/core.h>
 #include <kore3/threads/atomic.h>
 #include <kore3/threads/mutex.h>
+#include <kore3/video.h>
 
 #include <assert.h>
 #include <stdlib.h>
@@ -16,7 +16,7 @@ static kore_mutex mutex;
 #define CHANNEL_COUNT 16
 static kore_mixer_channel channels[CHANNEL_COUNT];
 static kore_mixer_stream_channel streamchannels[CHANNEL_COUNT];
-static kinc_internal_video_channel_t videos[CHANNEL_COUNT];
+static kore_internal_video_channel videos[CHANNEL_COUNT];
 
 static float sampleLinear(int16_t *data, double position) {
 	int pos1 = (int)position;
@@ -104,12 +104,12 @@ void kore_mixer_mix(kore_audio_buffer *buffer, uint32_t samples) {
 
 		for (int i = 0; i < CHANNEL_COUNT; ++i) {
 			if (videos[i].stream != NULL) {
-				float *samples = kinc_internal_video_sound_stream_next_frame(videos[i].stream);
+				float *samples = kore_internal_video_sound_stream_next_frame(videos[i].stream);
 				left_value += samples[0];
 				left_value = kore_max(kore_min(left_value, 1.0f), -1.0f);
 				right_value += samples[1];
 				right_value = kore_max(kore_min(right_value, 1.0f), -1.0f);
-				if (kinc_internal_video_sound_stream_ended(videos[i].stream)) {
+				if (kore_internal_video_sound_stream_ended(videos[i].stream)) {
 					videos[i].stream = NULL;
 				}
 			}
@@ -220,7 +220,7 @@ void kore_mixer_stop_sound_stream(kore_mixer_sound_stream *stream) {
 	kore_mutex_unlock(&mutex);
 }
 
-void kinc_internal_play_video_sound_stream(struct kinc_internal_video_sound_stream *stream) {
+void kinc_internal_play_video_sound_stream(struct kore_internal_video_sound_stream *stream) {
 	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (videos[i].stream == NULL) {
@@ -232,7 +232,7 @@ void kinc_internal_play_video_sound_stream(struct kinc_internal_video_sound_stre
 	kore_mutex_unlock(&mutex);
 }
 
-void kinc_internal_stop_video_sound_stream(struct kinc_internal_video_sound_stream *stream) {
+void kinc_internal_stop_video_sound_stream(struct kore_internal_video_sound_stream *stream) {
 	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (videos[i].stream == stream) {

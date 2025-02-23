@@ -2,9 +2,9 @@
 
 #include <kore3/io/filewriter.h>
 
-#include <kinc/error.h>
-#include <kinc/log.h>
-#include <kinc/system.h>
+#include <kore3/error.h>
+#include <kore3/log.h>
+#include <kore3/system.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -29,7 +29,7 @@ bool kore_file_writer_open(kore_file_writer *writer, const char *filepath) {
 	writer->mounted = true;
 #endif
 	char path[1001];
-	strcpy(path, kinc_internal_save_path());
+	strcpy(path, kore_internal_save_path());
 	strcat(path, filepath);
 
 #ifdef KINC_WINDOWS
@@ -40,7 +40,7 @@ bool kore_file_writer_open(kore_file_writer *writer, const char *filepath) {
 	writer->file = fopen(path, "wb");
 #endif
 	if (writer->file == NULL) {
-		kinc_log(KINC_LOG_LEVEL_WARNING, "Could not open file %s.", filepath);
+		kore_log(KORE_LOG_LEVEL_WARNING, "Could not open file %s.", filepath);
 		return false;
 	}
 	return true;

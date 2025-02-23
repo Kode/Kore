@@ -1,8 +1,8 @@
 #include <kinc/backend/Windows.h>
 
-#include <kinc/display.h>
-#include <kinc/error.h>
-#include <kinc/log.h>
+#include <kore3/display.h>
+#include <kore3/error.h>
+#include <kore3/log.h>
 
 #undef RegisterClass
 
@@ -77,7 +77,7 @@ static BOOL CALLBACK EnumerationCallback(HMONITOR monitor, HDC hdc_unused, LPREC
 	return TRUE;
 }
 
-void kinc_display_init() {
+void kore_display_init() {
 	if (display_initialized) {
 		return;
 	}
@@ -97,15 +97,15 @@ int kinc_windows_get_display_for_monitor(struct HMONITOR__ *monitor) {
 		}
 	}
 
-	kinc_error_message("Display for monitor not found");
+	kore_error_message("Display for monitor not found");
 	return -1;
 }
 
-int kinc_count_displays() {
+int kore_count_displays() {
 	return screen_counter;
 }
 
-int kinc_primary_display() {
+int kore_primary_display() {
 	for (int i = 0; i < MAXIMUM_DISPLAYS; ++i) {
 		DisplayData *display = &displays[i];
 
@@ -114,15 +114,15 @@ int kinc_primary_display() {
 		}
 	}
 
-	kinc_error_message("No primary display defined");
+	kore_error_message("No primary display defined");
 	return -1;
 }
 
-kinc_display_mode_t kinc_display_available_mode(int display_index, int mode_index) {
+kore_display_mode kore_display_available_mode(int display_index, int mode_index) {
 	DEVMODEA dev_mode = {0};
 	dev_mode.dmSize = sizeof(DEVMODEA);
 	EnumDisplaySettingsA(displays[display_index].name, mode_index, &dev_mode);
-	kinc_display_mode_t mode;
+	kore_display_mode mode;
 	mode.x = displays[display_index].x;
 	mode.y = displays[display_index].y;
 	mode.width = dev_mode.dmPelsWidth;
@@ -133,7 +133,7 @@ kinc_display_mode_t kinc_display_available_mode(int display_index, int mode_inde
 	return mode;
 }
 
-int kinc_display_count_available_modes(int display_index) {
+int kore_display_count_available_modes(int display_index) {
 	DEVMODEA dev_mode = {0};
 	dev_mode.dmSize = sizeof(DEVMODEA);
 	int i = 0;
@@ -176,20 +176,20 @@ void kinc_windows_restore_displays() {
 	}
 }
 
-bool kinc_display_available(int display_index) {
+bool kore_display_available(int display_index) {
 	if (display_index < 0 || display_index >= MAXIMUM_DISPLAYS) {
 		return false;
 	}
 	return displays[display_index].available;
 }
 
-const char *kinc_display_name(int display_index) {
+const char *kore_display_name(int display_index) {
 	return displays[display_index].name;
 }
 
-kinc_display_mode_t kinc_display_current_mode(int display_index) {
+kore_display_mode kore_display_current_mode(int display_index) {
 	DisplayData *display = &displays[display_index];
-	kinc_display_mode_t mode;
+	kore_display_mode mode;
 	mode.x = display->x;
 	mode.y = display->y;
 	mode.width = display->width;

@@ -1,7 +1,7 @@
 #ifndef KORE_THREADS_ATOMIC_HEADER
 #define KORE_THREADS_ATOMIC_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <kinc/backend/atomic.h>
 

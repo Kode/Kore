@@ -1,7 +1,7 @@
 #ifndef KORE_INPUT_ROTATION_HEADER
 #define KORE_INPUT_ROTATION_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 /*! \file rotation.h
     \brief Provides support for rotation-sensors.

@@ -1,9 +1,9 @@
 #ifndef KORE_FRAMEBUFFER_HEADER
 #define KORE_FRAMEBUFFER_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
-#include <kinc/color.h>
+#include <kore3/color.h>
 
 #include <assert.h>
 

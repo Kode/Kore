@@ -1,7 +1,7 @@
 #ifndef KORE_THREAD_THREADLOCAL_HEADER
 #define KORE_THREAD_THREADLOCAL_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <kinc/backend/threadlocal.h>
 

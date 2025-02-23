@@ -8,8 +8,8 @@
 #include <kinc/backend/SystemMicrosoft.h>
 #include <kinc/backend/Windows.h>
 
-#include <kinc/log.h>
-#include <kinc/window.h>
+#include <kore3/log.h>
+#include <kore3/window.h>
 
 #include <assert.h>
 
@@ -30,7 +30,7 @@ static void __stdcall myValidationMessageCallback(void *pUserData, NVAPI_D3D12_R
 		severityString = "warning";
 		break;
 	}
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Ray Tracing Validation message: %s: [%s] %s\n%s", severityString, messageCode, message, messageDetails);
+	kore_log(KORE_LOG_LEVEL_ERROR, "Ray Tracing Validation message: %s: [%s] %s\n%s", severityString, messageCode, message, messageDetails);
 }
 #endif
 
@@ -50,46 +50,46 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 #ifndef KORE_D3D12_FORCE_WARP
 	result = D3D12CreateDevice(NULL, D3D_FEATURE_LEVEL_12_2, IID_PPV_ARGS(&device->d3d12.device));
 	if (result == S_OK) {
-		kinc_log(KINC_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.2.");
+		kore_log(KORE_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.2.");
 	}
 
 	if (result != S_OK) {
 		result = D3D12CreateDevice(NULL, D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&device->d3d12.device));
 		if (result == S_OK) {
-			kinc_log(KINC_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.1.");
+			kore_log(KORE_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.1.");
 		}
 	}
 
 	if (result != S_OK) {
 		result = D3D12CreateDevice(NULL, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&device->d3d12.device));
 		if (result == S_OK) {
-			kinc_log(KINC_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.0.");
+			kore_log(KORE_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.0.");
 		}
 	}
 #endif
 
 	if (result != S_OK) {
-		kinc_log(KINC_LOG_LEVEL_WARNING, "%s", "Falling back to the WARP driver, things will be slow.");
+		kore_log(KORE_LOG_LEVEL_WARNING, "%s", "Falling back to the WARP driver, things will be slow.");
 
 		IDXGIAdapter *adapter;
 		dxgi_factory->EnumWarpAdapter(IID_PPV_ARGS(&adapter));
 
 		result = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_2, IID_PPV_ARGS(&device->d3d12.device));
 		if (result == S_OK) {
-			kinc_log(KINC_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.2.");
+			kore_log(KORE_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.2.");
 		}
 
 		if (result != S_OK) {
 			result = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&device->d3d12.device));
 			if (result == S_OK) {
-				kinc_log(KINC_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.1.");
+				kore_log(KORE_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.1.");
 			}
 		}
 
 		if (result != S_OK) {
 			result = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&device->d3d12.device));
 			if (result == S_OK) {
-				kinc_log(KINC_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.0.");
+				kore_log(KORE_LOG_LEVEL_INFO, "%s", "Direct3D running on feature level 12.0.");
 			}
 		}
 	}
@@ -132,8 +132,8 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.BufferCount = 2;
 		desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		desc.BufferDesc.Width = kinc_window_width(0);
-		desc.BufferDesc.Height = kinc_window_height(0);
+		desc.BufferDesc.Width = kore_window_width(0);
+		desc.BufferDesc.Height = kore_window_height(0);
 		desc.OutputWindow = kinc_windows_window_handle(0);
 		desc.SampleDesc.Count = 1;
 		desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
@@ -158,8 +158,8 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	for (int i = 0; i < KORE_D3D12_FRAME_COUNT; ++i) {
 		device->d3d12.swap_chain->GetBuffer(i, IID_GRAPHICS_PPV_ARGS(&device->d3d12.framebuffer_textures[i].d3d12.resource));
 
-		device->d3d12.framebuffer_textures[i].d3d12.width = kinc_window_width(0);
-		device->d3d12.framebuffer_textures[i].d3d12.height = kinc_window_height(0);
+		device->d3d12.framebuffer_textures[i].d3d12.width = kore_window_width(0);
+		device->d3d12.framebuffer_textures[i].d3d12.height = kore_window_height(0);
 		device->d3d12.framebuffer_textures[i].d3d12.depth_or_array_layers = 1;
 		device->d3d12.framebuffer_textures[i].d3d12.mip_level_count = 1;
 
@@ -591,7 +591,7 @@ kore_gpu_texture_format kore_d3d12_device_framebuffer_format(kore_gpu_device *de
 }
 
 static bool check_for_fence(ID3D12Fence *fence, UINT64 completion_value) {
-	// kinc_log(KINC_LOG_LEVEL_INFO, "Done: %llu Check: %llu", fence->GetCompletedValue(), completion_value);
+	// kore_log(KORE_LOG_LEVEL_INFO, "Done: %llu Check: %llu", fence->GetCompletedValue(), completion_value);
 	return fence->GetCompletedValue() >= completion_value;
 }
 

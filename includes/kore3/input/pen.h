@@ -1,7 +1,7 @@
 #ifndef KORE_INPUT_PEN_HEADER
 #define KORE_INPUT_PEN_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 /*! \file pen.h
     \brief Provides pen-support.

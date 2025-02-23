@@ -1,216 +1,16 @@
-#pragma once
-
-#include <kinc/global.h>
-
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-
-/*! \file image.h
-    \brief Functionality for creating and loading images. Image loading supports PNG, JPEG and the custom K format. K files can contain image data that uses
-   texture-compression (see kinc_image_compression).
-*/
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-typedef enum kinc_image_compression {
-	KINC_IMAGE_COMPRESSION_NONE,
-	KINC_IMAGE_COMPRESSION_DXT5,
-	KINC_IMAGE_COMPRESSION_ASTC,
-	KINC_IMAGE_COMPRESSION_PVRTC
-} kinc_image_compression_t;
-
-typedef enum kinc_image_format {
-	KINC_IMAGE_FORMAT_RGBA32,
-	KINC_IMAGE_FORMAT_GREY8,
-	KINC_IMAGE_FORMAT_RGB24,
-	KINC_IMAGE_FORMAT_RGBA128,
-	KINC_IMAGE_FORMAT_RGBA64,
-	KINC_IMAGE_FORMAT_A32,
-	KINC_IMAGE_FORMAT_BGRA32,
-	KINC_IMAGE_FORMAT_A16
-} kinc_image_format_t;
-
-typedef struct kinc_image {
-	int width, height, depth;
-	kinc_image_format_t format;
-	unsigned internal_format;
-	kinc_image_compression_t compression;
-	void *data;
-	size_t data_size;
-} kinc_image_t;
-
-typedef struct kinc_image_read_callbacks {
-	size_t (*read)(void *user_data, void *data, size_t size);
-	void (*seek)(void *user_data, size_t pos);
-	size_t (*pos)(void *user_data);
-	size_t (*size)(void *user_data);
-} kinc_image_read_callbacks_t;
-
-/// <summary>
-/// Creates a 2D kinc_image in the provided memory.
-/// </summary>
-/// <returns>The size that's occupied by the image in memory in bytes</returns>
-KINC_FUNC size_t kinc_image_init(kinc_image_t *image, void *memory, int width, int height, kinc_image_format_t format);
-
-/// <summary>
-/// Creates a 3D kinc_image in the provided memory.
-/// </summary>
-/// <returns>The size that's occupied by the image in memory in bytes</returns>
-KINC_FUNC size_t kinc_image_init3d(kinc_image_t *image, void *memory, int width, int height, int depth, kinc_image_format_t format);
-
-/// <summary>
-/// Peeks into an image file and figures out the size it will occupy in memory.
-/// </summary>
-/// <returns>The memory size in bytes that will be used when loading the image</returns>
-KINC_FUNC size_t kinc_image_size_from_file(const char *filename);
-
-/// <summary>
-/// Peeks into an image that is loaded via callback functions and figures out the size it will occupy in memory.
-/// </summary>
-/// <returns>The memory size in bytes that will be used when loading the image</returns>
-KINC_FUNC size_t kinc_image_size_from_callbacks(kinc_image_read_callbacks_t callbacks, void *user_data, const char *format);
-
-/// <summary>
-/// Peeks into an image file that resides in memory and figures out the size it will occupy in memory once it is uncompressed.
-/// </summary>
-/// <param name="data">The encoded data</param>
-/// <param name="data_size">The size of the encoded data</param>
-/// <param name="format_hint">Something like "png" can help, it also works to just put in the filename</param>
-/// <returns>The memory size in bytes that will be used when loading the image</returns>
-KINC_FUNC size_t kinc_image_size_from_encoded_bytes(void *data, size_t data_size, const char *format_hint);
-
-/// <summary>
-/// Loads an image from a file.
-/// </summary>
-/// <param name="image">The image-object to initialize with the data</param>
-/// <param name="memory">The pre-allocated memory to load the image-data into</param>
-/// <param name="filename">The file to load</param>
-/// <returns>The memory size in bytes that will be used when loading the image</returns>
-KINC_FUNC size_t kinc_image_init_from_file(kinc_image_t *image, void *memory, const char *filename);
-
-/// <summary>
-/// Loads an image from a file with an enforced stride.
-/// </summary>
-/// <param name="image">The image-object to initialize with the data</param>
-/// <param name="memory">The pre-allocated memory to load the image-data into</param>
-/// <param name="filename">The file to load</param>
-/// <param name="stride">The enforced stride in bytes</param>
-/// <returns>The memory size in bytes that will be used when loading the image</returns>
-KINC_FUNC size_t kinc_image_init_from_file_with_stride(kinc_image_t *image, void *memory, const char *filename, uint32_t stride);
-
-/// <summary>
-/// Loads an image file using callbacks.
-/// </summary>
-/// <param name="image">The image-object to initialize with the data</param>
-/// <param name="memory">The pre-allocated memory to load the image-data into</param>
-/// <param name="callbacks">The callbacks that are used to query the data to encode</param>
-/// <param name="user_data">An optional pointer that is passed to the callbacks</param>
-/// <returns>The memory size in bytes that will be used when loading the image</returns>
-KINC_FUNC size_t kinc_image_init_from_callbacks(kinc_image_t *image, void *memory, kinc_image_read_callbacks_t callbacks, void *user_data, const char *format);
-
-/// <summary>
-/// Loads an image file using callbacks with an enforced stride.
-/// </summary>
-/// <param name="image">The image-object to initialize with the data</param>
-/// <param name="memory">The pre-allocated memory to load the image-data into</param>
-/// <param name="callbacks">The callbacks that are used to query the data to encode</param>
-/// <param name="user_data">An optional pointer that is passed to the callbacks</param>
-/// <param name="stride">The enforced stride in bytes</param>
-/// <returns>The memory size in bytes that will be used when loading the image</returns>
-KINC_FUNC size_t kinc_image_init_from_callbacks_with_stride(kinc_image_t *image, void *memory, kinc_image_read_callbacks_t callbacks, void *user_data,
-                                                            const char *format, uint32_t stride);
-
-/// <summary>
-/// Loads an image file from memory.
-/// </summary>
-/// <param name="image">The image-object to initialize with the data</param>
-/// <param name="memory">The pre-allocated memory to load the image-data into</param>
-/// <param name="data">The data to encode</param>
-/// <param name="data_size">The size of the data to encode in bytes</param>
-/// <returns>The memory size in bytes that will be used when loading the image</returns>
-KINC_FUNC size_t kinc_image_init_from_encoded_bytes(kinc_image_t *image, void *memory, void *data, size_t data_size, const char *format);
-
-/// <summary>
-/// Loads an image file from memory with an enforced stride.
-/// </summary>
-/// <param name="image">The image-object to initialize with the data</param>
-/// <param name="memory">The pre-allocated memory to load the image-data into</param>
-/// <param name="data">The data to encode</param>
-/// <param name="data_size">The size of the data to encode in bytes</param>
-/// <param name="stride">The enforced stride in bytes</param>
-/// <returns>The memory size in bytes that will be used when loading the image</returns>
-KINC_FUNC size_t kinc_image_init_from_encoded_bytes_with_stride(kinc_image_t *image, void *memory, void *data, size_t data_size, const char *format,
-                                                                uint32_t stride);
-
-/// <summary>
-/// Creates a 2D image from memory.
-/// </summary>
-KINC_FUNC void kinc_image_init_from_bytes(kinc_image_t *image, void *data, int width, int height, kinc_image_format_t format);
-
-/// <summary>
-/// Creates a 3D image from memory.
-/// </summary>
-KINC_FUNC void kinc_image_init_from_bytes3d(kinc_image_t *image, void *data, int width, int height, int depth, kinc_image_format_t format);
-
-/// <summary>
-/// Destroys an image. This does not free the user-provided memory.
-/// </summary>
-KINC_FUNC void kinc_image_destroy(kinc_image_t *image);
-
-/// <summary>
-/// Gets the color value of a 32 bit pixel. If this doesn't fit the format of the image please use kinc_image_at_raw instead.
-/// </summary>
-/// <returns>One 32 bit color value</returns>
-KINC_FUNC uint32_t kinc_image_at(kinc_image_t *image, int x, int y);
-
-/// <summary>
-/// Gets a pointer to the color-data of one pixel.
-/// </summary>
-/// <returns>A pointer to the color-data of the pixel pointed to by x and y</returns>
-KINC_FUNC void *kinc_image_at_raw(kinc_image_t *image, int x, int y);
-
-/// <summary>
-/// Provides access to the image data.
-/// </summary>
-/// <returns>A pointer to the image data</returns>
-KINC_FUNC uint8_t *kinc_image_get_pixels(kinc_image_t *image);
-
-/// <summary>
-/// Gets the size in bytes of a single pixel for a given image format.
-/// </summary>
-/// <returns>The size of one pixel in bytes</returns>
-KINC_FUNC int kinc_image_format_sizeof(kinc_image_format_t format);
-
-#ifdef KINC_IMPLEMENTATION_ROOT
-#define KINC_IMPLEMENTATION
-#endif
-
-#ifdef KINC_IMPLEMENTATION
-
-#include "image.h"
+#include <kore3/image.h>
 
 #ifdef KINC_LZ4X
 #include <kore3/libs/lz4x.h>
 #else
-#include <kinc/io/lz4/lz4.h>
+#include <kore3/io/lz4/lz4.h>
 #endif
 
-#ifdef KINC_IMPLEMENTATION_ROOT
-#undef KINC_IMPLEMENTATION
-#endif
-#include <kinc/log.h>
-#ifdef KINC_IMPLEMENTATION_ROOT
-#define KINC_IMPLEMENTATION
-#endif
+#include <kore3/log.h>
 
-#undef KINC_IMPLEMENTATION
 #include <kore3/gpu/gpu.h>
 #include <kore3/io/filereader.h>
 #include <kore3/math/core.h>
-#define KINC_IMPLEMENTATION
 
 #include <string.h>
 
@@ -223,7 +23,7 @@ static void *buffer_malloc(size_t size) {
 	uint8_t *current = &buffer[buffer_offset];
 	buffer_offset += size + sizeof(size_t);
 	if (buffer_offset > BUFFER_SIZE) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Not enough memory on image.c Buffer.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Not enough memory on image.c Buffer.");
 		return NULL;
 	}
 	memcpy(current, &size, sizeof(size_t));
@@ -276,7 +76,7 @@ static void buffer_free(void *p) {}
 #include <stdint.h>
 
 typedef struct {
-	kinc_image_read_callbacks_t callbacks;
+	kore_image_read_callbacks callbacks;
 	void *user_data;
 } read_data;
 
@@ -308,7 +108,7 @@ static _Bool endsWith(const char *str, const char *suffix) {
 	return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
 }
 
-static size_t loadImageSize(kinc_image_read_callbacks_t callbacks, void *user_data, const char *filename) {
+static size_t loadImageSize(kore_image_read_callbacks callbacks, void *user_data, const char *filename) {
 	if (endsWith(filename, "k")) {
 		uint8_t data[4];
 		callbacks.read(user_data, data, 4);
@@ -333,7 +133,7 @@ static size_t loadImageSize(kinc_image_read_callbacks_t callbacks, void *user_da
 			return width * height; // just an upper bound
 		}
 		else {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Unknown fourcc in .k file.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "Unknown fourcc in .k file.");
 			return 0;
 		}
 	}
@@ -383,9 +183,9 @@ static size_t loadImageSize(kinc_image_read_callbacks_t callbacks, void *user_da
 	}
 }
 
-static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, const char *filename, uint8_t *output, size_t *outputSize, int *width,
-                      int *height, kinc_image_compression_t *compression, kinc_image_format_t *format, unsigned *internalFormat, uint32_t forced_stride) {
-	*format = KINC_IMAGE_FORMAT_RGBA32;
+static bool loadImage(kore_image_read_callbacks callbacks, void *user_data, const char *filename, uint8_t *output, size_t *outputSize, int *width, int *height,
+                      kore_image_compression *compression, kore_image_format *format, unsigned *internalFormat, uint32_t forced_stride) {
+	*format = KORE_IMAGE_FORMAT_RGBA32;
 	if (endsWith(filename, "k")) {
 		uint8_t data[4];
 		callbacks.read(user_data, data, 4);
@@ -400,7 +200,7 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 		int compressedSize = (int)callbacks.size(user_data) - 12;
 
 		if (strcmp(fourcc, "LZ4 ") == 0) {
-			*compression = KINC_IMAGE_COMPRESSION_NONE;
+			*compression = KORE_IMAGE_COMPRESSION_NONE;
 			*internalFormat = 0;
 			*outputSize = (size_t)(*width * *height * 4);
 			callbacks.read(user_data, buffer, compressedSize);
@@ -408,16 +208,16 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 			return true;
 		}
 		else if (strcmp(fourcc, "LZ4F") == 0) {
-			*compression = KINC_IMAGE_COMPRESSION_NONE;
+			*compression = KORE_IMAGE_COMPRESSION_NONE;
 			*internalFormat = 0;
 			*outputSize = (size_t)(*width * *height * 16);
 			callbacks.read(user_data, buffer, compressedSize);
 			LZ4_decompress_safe((char *)buffer, (char *)output, compressedSize, (int)*outputSize);
-			*format = KINC_IMAGE_FORMAT_RGBA128;
+			*format = KORE_IMAGE_FORMAT_RGBA128;
 			return true;
 		}
 		else if (strcmp(fourcc, "ASTC") == 0) {
-			*compression = KINC_IMAGE_COMPRESSION_ASTC;
+			*compression = KORE_IMAGE_COMPRESSION_ASTC;
 			*outputSize = (size_t)(*width * *height * 4);
 			callbacks.read(user_data, buffer, compressedSize);
 			*outputSize = LZ4_decompress_safe((char *)buffer, (char *)output, compressedSize, (int)*outputSize);
@@ -459,7 +259,7 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 			free(astcdata);*/
 		}
 		else if (strcmp(fourcc, "DXT5") == 0) {
-			*compression = KINC_IMAGE_COMPRESSION_DXT5;
+			*compression = KORE_IMAGE_COMPRESSION_DXT5;
 			*outputSize = (size_t)(*width * *height);
 			callbacks.read(user_data, buffer, compressedSize);
 			*outputSize = LZ4_decompress_safe((char *)buffer, (char *)output, compressedSize, (int)*outputSize);
@@ -467,7 +267,7 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 			return true;
 		}
 		else {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Unknown fourcc in .k file.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "Unknown fourcc in .k file.");
 			return false;
 		}
 	}
@@ -516,7 +316,7 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 
 		*width = w;
 		*height = h;
-		*compression = KINC_IMAGE_COMPRESSION_PVRTC;
+		*compression = KORE_IMAGE_COMPRESSION_PVRTC;
 		*internalFormat = 0;
 
 		*outputSize = (size_t)(ww * hh / 2);
@@ -524,7 +324,7 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 		return true;
 	}
 	else if (endsWith(filename, "hdr")) {
-		*compression = KINC_IMAGE_COMPRESSION_NONE;
+		*compression = KORE_IMAGE_COMPRESSION_NONE;
 		*internalFormat = 0;
 
 		stbi_io_callbacks stbi_callbacks;
@@ -539,17 +339,17 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 		int comp;
 		float *uncompressed = stbi_loadf_from_callbacks(&stbi_callbacks, &reader, width, height, &comp, 4);
 		if (uncompressed == NULL) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, stbi_failure_reason());
+			kore_log(KORE_LOG_LEVEL_ERROR, stbi_failure_reason());
 			return false;
 		}
 		*outputSize = (size_t)(*width * *height * 16);
 		memcpy(output, uncompressed, *outputSize);
-		*format = KINC_IMAGE_FORMAT_RGBA128;
+		*format = KORE_IMAGE_FORMAT_RGBA128;
 		buffer_offset = 0;
 		return true;
 	}
 	else {
-		*compression = KINC_IMAGE_COMPRESSION_NONE;
+		*compression = KORE_IMAGE_COMPRESSION_NONE;
 		*internalFormat = 0;
 
 		stbi_io_callbacks stbi_callbacks;
@@ -564,7 +364,7 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 		int comp;
 		uint8_t *uncompressed = stbi_load_from_callbacks(&stbi_callbacks, &reader, width, height, &comp, 4);
 		if (uncompressed == NULL) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, stbi_failure_reason());
+			kore_log(KORE_LOG_LEVEL_ERROR, stbi_failure_reason());
 			return false;
 		}
 
@@ -591,55 +391,55 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 	}
 }
 
-int kinc_image_format_sizeof(kinc_image_format_t format) {
+int kore_image_format_sizeof(kore_image_format format) {
 	switch (format) {
-	case KINC_IMAGE_FORMAT_RGBA128:
+	case KORE_IMAGE_FORMAT_RGBA128:
 		return 16;
-	case KINC_IMAGE_FORMAT_RGBA32:
-	case KINC_IMAGE_FORMAT_BGRA32:
+	case KORE_IMAGE_FORMAT_RGBA32:
+	case KORE_IMAGE_FORMAT_BGRA32:
 		return 4;
-	case KINC_IMAGE_FORMAT_RGBA64:
+	case KORE_IMAGE_FORMAT_RGBA64:
 		return 8;
-	case KINC_IMAGE_FORMAT_A32:
+	case KORE_IMAGE_FORMAT_A32:
 		return 4;
-	case KINC_IMAGE_FORMAT_A16:
+	case KORE_IMAGE_FORMAT_A16:
 		return 2;
-	case KINC_IMAGE_FORMAT_GREY8:
+	case KORE_IMAGE_FORMAT_GREY8:
 		return 1;
-	case KINC_IMAGE_FORMAT_RGB24:
+	case KORE_IMAGE_FORMAT_RGB24:
 		return 3;
 	}
 	return -1;
 }
 
-// static bool formatIsFloatingPoint(kinc_image_format_t format) {
+// static bool formatIsFloatingPoint(kore_image_format_t format) {
 //	return format == KINC_IMAGE_FORMAT_RGBA128 || format == KINC_IMAGE_FORMAT_RGBA64 || format == KINC_IMAGE_FORMAT_A32 || format == KINC_IMAGE_FORMAT_A16;
 //}
 
-size_t kinc_image_init(kinc_image_t *image, void *memory, int width, int height, kinc_image_format_t format) {
-	return kinc_image_init3d(image, memory, width, height, 1, format);
+size_t kore_image_init(kore_image *image, void *memory, int width, int height, kore_image_format format) {
+	return kore_image_init3d(image, memory, width, height, 1, format);
 }
 
-size_t kinc_image_init3d(kinc_image_t *image, void *memory, int width, int height, int depth, kinc_image_format_t format) {
+size_t kore_image_init3d(kore_image *image, void *memory, int width, int height, int depth, kore_image_format format) {
 	image->width = width;
 	image->height = height;
 	image->depth = depth;
 	image->format = format;
-	image->compression = KINC_IMAGE_COMPRESSION_NONE;
+	image->compression = KORE_IMAGE_COMPRESSION_NONE;
 	image->data = memory;
-	return width * height * depth * kinc_image_format_sizeof(format);
+	return width * height * depth * kore_image_format_sizeof(format);
 }
 
-void kinc_image_init_from_bytes(kinc_image_t *image, void *data, int width, int height, kinc_image_format_t format) {
-	kinc_image_init_from_bytes3d(image, data, width, height, 1, format);
+void kore_image_init_from_bytes(kore_image *image, void *data, int width, int height, kore_image_format format) {
+	kore_image_init_from_bytes3d(image, data, width, height, 1, format);
 }
 
-void kinc_image_init_from_bytes3d(kinc_image_t *image, void *data, int width, int height, int depth, kinc_image_format_t format) {
+void kore_image_init_from_bytes3d(kore_image *image, void *data, int width, int height, int depth, kore_image_format format) {
 	image->width = width;
 	image->height = height;
 	image->depth = depth;
 	image->format = format;
-	image->compression = KINC_IMAGE_COMPRESSION_NONE;
+	image->compression = KORE_IMAGE_COMPRESSION_NONE;
 	image->data = data;
 }
 
@@ -659,14 +459,14 @@ static void seek_callback(void *user_data, size_t pos) {
 	kore_file_reader_seek((kore_file_reader *)user_data, pos);
 }
 
-struct kinc_internal_image_memory {
+struct kore_internal_image_memory {
 	uint8_t *data;
 	size_t size;
 	size_t offset;
 };
 
 static size_t memory_read_callback(void *user_data, void *data, size_t size) {
-	struct kinc_internal_image_memory *memory = (struct kinc_internal_image_memory *)user_data;
+	struct kore_internal_image_memory *memory = (struct kore_internal_image_memory *)user_data;
 	size_t read_size = memory->size - memory->offset < size ? memory->size - memory->offset : size;
 	memcpy(data, &memory->data[memory->offset], read_size);
 	memory->offset += read_size;
@@ -674,28 +474,28 @@ static size_t memory_read_callback(void *user_data, void *data, size_t size) {
 }
 
 static size_t memory_size_callback(void *user_data) {
-	struct kinc_internal_image_memory *memory = (struct kinc_internal_image_memory *)user_data;
+	struct kore_internal_image_memory *memory = (struct kore_internal_image_memory *)user_data;
 	return memory->size;
 }
 
 static size_t memory_pos_callback(void *user_data) {
-	struct kinc_internal_image_memory *memory = (struct kinc_internal_image_memory *)user_data;
+	struct kore_internal_image_memory *memory = (struct kore_internal_image_memory *)user_data;
 	return memory->offset;
 }
 
 static void memory_seek_callback(void *user_data, size_t pos) {
-	struct kinc_internal_image_memory *memory = (struct kinc_internal_image_memory *)user_data;
+	struct kore_internal_image_memory *memory = (struct kore_internal_image_memory *)user_data;
 	memory->offset = pos;
 }
 
-size_t kinc_image_size_from_callbacks(kinc_image_read_callbacks_t callbacks, void *user_data, const char *filename) {
+size_t kore_image_size_from_callbacks(kore_image_read_callbacks callbacks, void *user_data, const char *filename) {
 	return loadImageSize(callbacks, user_data, filename);
 }
 
-size_t kinc_image_size_from_file(const char *filename) {
+size_t kore_image_size_from_file(const char *filename) {
 	kore_file_reader reader;
 	if (kore_file_reader_open(&reader, filename, KORE_FILE_TYPE_ASSET)) {
-		kinc_image_read_callbacks_t callbacks;
+		kore_image_read_callbacks callbacks;
 		callbacks.read = read_callback;
 		callbacks.size = size_callback;
 		callbacks.pos = pos_callback;
@@ -708,14 +508,14 @@ size_t kinc_image_size_from_file(const char *filename) {
 	return 0;
 }
 
-size_t kinc_image_size_from_encoded_bytes(void *data, size_t data_size, const char *format) {
-	kinc_image_read_callbacks_t callbacks;
+size_t kore_image_size_from_encoded_bytes(void *data, size_t data_size, const char *format) {
+	kore_image_read_callbacks callbacks;
 	callbacks.read = memory_read_callback;
 	callbacks.size = memory_size_callback;
 	callbacks.pos = memory_pos_callback;
 	callbacks.seek = memory_seek_callback;
 
-	struct kinc_internal_image_memory image_memory;
+	struct kore_internal_image_memory image_memory;
 	image_memory.data = (uint8_t *)data;
 	image_memory.size = data_size;
 	image_memory.offset = 0;
@@ -723,8 +523,8 @@ size_t kinc_image_size_from_encoded_bytes(void *data, size_t data_size, const ch
 	return loadImageSize(callbacks, &image_memory, format);
 }
 
-size_t kinc_image_init_from_callbacks_with_stride(kinc_image_t *image, void *memory, kinc_image_read_callbacks_t callbacks, void *user_data,
-                                                  const char *filename, uint32_t stride) {
+size_t kore_image_init_from_callbacks_with_stride(kore_image *image, void *memory, kore_image_read_callbacks callbacks, void *user_data, const char *filename,
+                                                  uint32_t stride) {
 	size_t dataSize = 0;
 	loadImage(callbacks, user_data, filename, memory, &dataSize, &image->width, &image->height, &image->compression, &image->format, &image->internal_format,
 	          stride);
@@ -733,14 +533,14 @@ size_t kinc_image_init_from_callbacks_with_stride(kinc_image_t *image, void *mem
 	return dataSize;
 }
 
-size_t kinc_image_init_from_callbacks(kinc_image_t *image, void *memory, kinc_image_read_callbacks_t callbacks, void *user_data, const char *filename) {
-	return kinc_image_init_from_callbacks_with_stride(image, memory, callbacks, user_data, filename, 0);
+size_t kore_image_init_from_callbacks(kore_image *image, void *memory, kore_image_read_callbacks callbacks, void *user_data, const char *filename) {
+	return kore_image_init_from_callbacks_with_stride(image, memory, callbacks, user_data, filename, 0);
 }
 
-size_t kinc_image_init_from_file_with_stride(kinc_image_t *image, void *memory, const char *filename, uint32_t stride) {
+size_t kore_image_init_from_file_with_stride(kore_image *image, void *memory, const char *filename, uint32_t stride) {
 	kore_file_reader reader;
 	if (kore_file_reader_open(&reader, filename, KORE_FILE_TYPE_ASSET)) {
-		kinc_image_read_callbacks_t callbacks;
+		kore_image_read_callbacks callbacks;
 		callbacks.read = read_callback;
 		callbacks.size = size_callback;
 		callbacks.pos = pos_callback;
@@ -758,18 +558,18 @@ size_t kinc_image_init_from_file_with_stride(kinc_image_t *image, void *memory, 
 	return 0;
 }
 
-size_t kinc_image_init_from_file(kinc_image_t *image, void *memory, const char *filename) {
-	return kinc_image_init_from_file_with_stride(image, memory, filename, 0);
+size_t kore_image_init_from_file(kore_image *image, void *memory, const char *filename) {
+	return kore_image_init_from_file_with_stride(image, memory, filename, 0);
 }
 
-size_t kinc_image_init_from_encoded_bytes_with_stride(kinc_image_t *image, void *memory, void *data, size_t data_size, const char *format, uint32_t stride) {
-	kinc_image_read_callbacks_t callbacks;
+size_t kore_image_init_from_encoded_bytes_with_stride(kore_image *image, void *memory, void *data, size_t data_size, const char *format, uint32_t stride) {
+	kore_image_read_callbacks callbacks;
 	callbacks.read = memory_read_callback;
 	callbacks.size = memory_size_callback;
 	callbacks.pos = memory_pos_callback;
 	callbacks.seek = memory_seek_callback;
 
-	struct kinc_internal_image_memory image_memory;
+	struct kore_internal_image_memory image_memory;
 	image_memory.data = (uint8_t *)data;
 	image_memory.size = data_size;
 	image_memory.offset = 0;
@@ -783,39 +583,33 @@ size_t kinc_image_init_from_encoded_bytes_with_stride(kinc_image_t *image, void 
 	return dataSize;
 }
 
-size_t kinc_image_init_from_encoded_bytes(kinc_image_t *image, void *memory, void *data, size_t data_size, const char *format) {
-	return kinc_image_init_from_encoded_bytes_with_stride(image, memory, data, data_size, format, 0);
+size_t kore_image_init_from_encoded_bytes(kore_image *image, void *memory, void *data, size_t data_size, const char *format) {
+	return kore_image_init_from_encoded_bytes_with_stride(image, memory, data, data_size, format, 0);
 }
 
-void kinc_image_destroy(kinc_image_t *image) {
+void kore_image_destroy(kore_image *image) {
 	// user has to free the data
 	image->data = NULL;
 }
 
-uint32_t kinc_image_at(kinc_image_t *image, int x, int y) {
+uint32_t kore_image_at(kore_image *image, int x, int y) {
 	if (image->data == NULL) {
 		return 0;
 	}
 	else {
-		return *(uint32_t *)&((uint8_t *)image->data)[image->width * kinc_image_format_sizeof(image->format) * y + x * kinc_image_format_sizeof(image->format)];
+		return *(uint32_t *)&((uint8_t *)image->data)[image->width * kore_image_format_sizeof(image->format) * y + x * kore_image_format_sizeof(image->format)];
 	}
 }
 
-void *kinc_image_at_raw(kinc_image_t *image, int x, int y) {
+void *kore_image_at_raw(kore_image *image, int x, int y) {
 	if (image->data == NULL) {
 		return NULL;
 	}
 	else {
-		return &((uint8_t *)image->data)[image->width * kinc_image_format_sizeof(image->format) * y + x * kinc_image_format_sizeof(image->format)];
+		return &((uint8_t *)image->data)[image->width * kore_image_format_sizeof(image->format) * y + x * kore_image_format_sizeof(image->format)];
 	}
 }
 
-uint8_t *kinc_image_get_pixels(kinc_image_t *image) {
+uint8_t *kore_image_get_pixels(kore_image *image) {
 	return (uint8_t *)image->data;
 }
-
-#endif
-
-#ifdef __cplusplus
-}
-#endif

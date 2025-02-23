@@ -1,7 +1,7 @@
 #ifndef KORE_INPUT_ACCELERATION_HEADER
 #define KORE_INPUT_ACCELERATION_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 /*! \file acceleration.h
     \brief Provides data provided by acceleration-sensors.

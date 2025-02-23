@@ -1,7 +1,7 @@
 #ifndef KORE_IO_FILEREADER_HEADER
 #define KORE_IO_FILEREADER_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <stdbool.h>
 #include <stdint.h>

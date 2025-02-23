@@ -1,7 +1,7 @@
 #ifndef KORE_INPUT_KEYBOARD_HEADER
 #define KORE_INPUT_KEYBOARD_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 /*! \file keyboard.h
     \brief Provides keyboard-support.

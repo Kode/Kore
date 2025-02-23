@@ -1,7 +1,7 @@
 #ifndef KORE_MIXER_HEADER
 #define KORE_MIXER_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include "sound.h"
 #include "soundstream.h"
@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-struct kinc_internal_video_sound_stream;
+struct kore_internal_video_sound_stream;
 
 struct kore_mixer_channel;
 typedef struct kore_mixer_channel kore_mixer_channel;
@@ -24,8 +24,8 @@ typedef struct kore_mixer_channel kore_mixer_channel;
 struct kore_mixer_stream_channel;
 typedef struct kore_mixer_stream_channel kore_mixer_stream_channel;
 
-struct kinc_internal_video_channel;
-typedef struct kinc_internal_video_channel kinc_internal_video_channel_t;
+struct kore_internal_video_channel;
+typedef struct kore_internal_video_channel kore_internal_video_channel;
 
 /// <summary>
 /// Initialize the Mixer-API.
@@ -87,8 +87,8 @@ KORE_FUNC void kore_mixer_channel_set_volume(kore_mixer_channel *channel, float 
 /// <param name="samples">The number of samples to be filled in</param>
 KORE_FUNC void kore_mixer_mix(kore_audio_buffer *buffer, uint32_t samples);
 
-void kinc_internal_play_video_sound_stream(struct kinc_internal_video_sound_stream *stream);
-void kinc_internal_stop_video_sound_stream(struct kinc_internal_video_sound_stream *stream);
+void kinc_internal_play_video_sound_stream(struct kore_internal_video_sound_stream *stream);
+void kinc_internal_stop_video_sound_stream(struct kore_internal_video_sound_stream *stream);
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,7 @@
 #ifndef KORE_THREADS_SEMAPHORE_HEADER
 #define KORE_THREADS_SEMAPHORE_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <kinc/backend/semaphore.h>
 

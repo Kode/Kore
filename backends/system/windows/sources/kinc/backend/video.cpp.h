@@ -1,44 +1,44 @@
-#include <kinc/video.h>
+#include <kore3/video.h>
 
 #ifdef KINC_DIRECT3D12
 
-void kinc_video_init(kinc_video_t *video, const char *filename) {}
+void kore_video_init(kore_video *video, const char *filename) {}
 
-void kinc_video_destroy(kinc_video_t *video) {}
+void kore_video_destroy(kore_video *video) {}
 
-kore_gpu_texture *kinc_video_current_image(kinc_video_t *video) {
+kore_gpu_texture *kore_video_current_image(kore_video *video) {
 	return NULL;
 }
 
-int kinc_video_width(kinc_video_t *video) {
+int kore_video_width(kore_video *video) {
 	return 64;
 }
 
-int kinc_video_height(kinc_video_t *video) {
+int kore_video_height(kore_video *video) {
 	return 64;
 }
 
-void kinc_video_play(kinc_video_t *video, bool loop) {}
+void kore_video_play(kore_video *video, bool loop) {}
 
-void kinc_video_pause(kinc_video_t *video) {}
+void kore_video_pause(kore_video *video) {}
 
-void kinc_video_stop(kinc_video_t *video) {}
+void kore_video_stop(kore_video *video) {}
 
-void kinc_video_update(kinc_video_t *video, double time) {}
+void kore_video_update(kore_video *video, double time) {}
 
-double kinc_video_duration(kinc_video_t *video) {
+double kore_video_duration(kore_video *video) {
 	return 0.0;
 }
 
-double kinc_video_position(kinc_video_t *video) {
+double kore_video_position(kore_video *video) {
 	return 0.0;
 }
 
-bool kinc_video_finished(kinc_video_t *video) {
+bool kore_video_finished(kore_video *video) {
 	return true;
 }
 
-bool kinc_video_paused(kinc_video_t *video) {
+bool kore_video_paused(kore_video *video) {
 	return true;
 }
 
@@ -279,20 +279,20 @@ bool kinc_video_paused(kinc_video_t *video) {
 
 #endif
 
-void kinc_internal_video_sound_stream_init(kinc_internal_video_sound_stream_t *stream, int channel_count, int frequency) {}
+void kore_internal_video_sound_stream_init(kore_internal_video_sound_stream *stream, int channel_count, int frequency) {}
 
-void kinc_internal_video_sound_stream_destroy(kinc_internal_video_sound_stream_t *stream) {}
+void kore_internal_video_sound_stream_destroy(kore_internal_video_sound_stream *stream) {}
 
-void kinc_internal_video_sound_stream_insert_data(kinc_internal_video_sound_stream_t *stream, float *data, int sample_count) {}
+void kore_internal_video_sound_stream_insert_data(kore_internal_video_sound_stream *stream, float *data, int sample_count) {}
 
 static float samples[2];
 
-float *kinc_internal_video_sound_stream_next_frame(kinc_internal_video_sound_stream_t *stream) {
+float *kore_internal_video_sound_stream_next_frame(kore_internal_video_sound_stream *stream) {
 	samples[0] = 0.0f;
 	samples[1] = 0.0f;
 	return samples;
 }
 
-bool kinc_internal_video_sound_stream_ended(kinc_internal_video_sound_stream_t *stream) {
+bool kore_internal_video_sound_stream_ended(kore_internal_video_sound_stream *stream) {
 	return true;
 }

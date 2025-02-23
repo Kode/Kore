@@ -1,7 +1,7 @@
 #ifndef KORE_INPUT_SURFACE_HEADER
 #define KORE_INPUT_SURFACE_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 /*! \file surface.h
     \brief Provides touch-support.

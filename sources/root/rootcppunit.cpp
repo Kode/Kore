@@ -1,5 +1,5 @@
-#ifdef KINC_LIVEPP
-#include <kinc/system.h>
+#ifdef KORE_LIVEPP
+#include <kore3/system.h>
 
 #include <Windows.h>
 
@@ -7,7 +7,7 @@
 
 static lpp::LppDefaultAgent lppAgent;
 
-void kinc_LivePP_start(void) {
+void kore_LivePP_start(void) {
 	// create a default agent, loading the Live++ agent from the given path, e.g. "ThirdParty/LivePP"
 	lppAgent = lpp::LppCreateDefaultAgent(KINC_LIVEPP_PATH);
 
@@ -15,11 +15,11 @@ void kinc_LivePP_start(void) {
 	lppAgent.EnableModule(lpp::LppGetCurrentModulePath(), lpp::LPP_MODULES_OPTION_ALL_IMPORT_MODULES);
 }
 
-void kinc_LivePP_stop(void) {
+void kore_LivePP_stop(void) {
 	// destroy the Live++ agent
 	lpp::LppDestroyDefaultAgent(&lppAgent);
 }
 #else
-void kinc_start_LivePP(void) {}
-void kinc_stop_LivePP(void) {}
+void kore_start_LivePP(void) {}
+void kore_stop_LivePP(void) {}
 #endif

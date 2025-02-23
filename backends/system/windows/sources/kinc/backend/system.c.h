@@ -5,16 +5,16 @@
 #include <kinc/backend/SystemMicrosoft.h>
 #include <kinc/backend/Windows.h>
 
-#include <kinc/display.h>
-#include <kinc/log.h>
-#include <kinc/system.h>
-#include <kinc/video.h>
-#include <kinc/window.h>
+#include <kore3/display.h>
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
 #include <kore3/input/pen.h>
 #include <kore3/input/surface.h>
+#include <kore3/log.h>
+#include <kore3/system.h>
 #include <kore3/threads/thread.h>
+#include <kore3/video.h>
+#include <kore3/window.h>
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
@@ -329,7 +329,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 	case WM_DPICHANGED: {
 		int window = kinc_windows_window_index_from_hwnd(hWnd);
 		if (window >= 0) {
-			kinc_internal_call_ppi_changed_callback(window, LOWORD(wParam));
+			kore_internal_call_ppi_changed_callback(window, LOWORD(wParam));
 		}
 		break;
 	}
@@ -344,16 +344,16 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 			int width = LOWORD(lParam);
 			int height = HIWORD(lParam);
 			// kinc_internal_resize(window, width, height); // TODO
-			kinc_internal_call_resize_callback(window, width, height);
+			kore_internal_call_resize_callback(window, width, height);
 		}
 		break;
 	}
 	case WM_CLOSE: {
 		int window_index = kinc_windows_window_index_from_hwnd(hWnd);
-		if (kinc_internal_call_close_callback(window_index)) {
-			kinc_window_destroy(window_index);
-			if (kinc_count_windows() <= 0) {
-				kinc_stop();
+		if (kore_internal_call_close_callback(window_index)) {
+			kore_window_destroy(window_index);
+			if (kore_count_windows() <= 0) {
+				kore_stop();
 				return 0;
 			}
 		}
@@ -364,11 +364,11 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE) {
 			kore_internal_mouse_window_activated(kinc_windows_window_index_from_hwnd(hWnd));
-			kinc_internal_foreground_callback();
+			kore_internal_foreground_callback();
 		}
 		else {
 			kore_internal_mouse_window_deactivated(kinc_windows_window_index_from_hwnd(hWnd));
-			kinc_internal_background_callback();
+			kore_internal_background_callback();
 #ifdef HANDLE_ALT_ENTER
 			altDown = false;
 #endif
@@ -565,7 +565,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 #endif
 			else {
 				if (controlDown && keyTranslated[wParam] == KORE_KEY_X) {
-					char *text = kinc_internal_cut_callback();
+					char *text = kore_internal_cut_callback();
 					if (text != NULL) {
 						wchar_t wtext[4096];
 						MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 4096);
@@ -582,7 +582,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 				}
 
 				if (controlDown && keyTranslated[wParam] == KORE_KEY_C) {
-					char *text = kinc_internal_copy_callback();
+					char *text = kore_internal_copy_callback();
 					if (text != NULL) {
 						wchar_t wtext[4096];
 						MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 4096);
@@ -607,7 +607,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 							if (wtext != NULL) {
 								char text[4096];
 								WideCharToMultiByte(CP_UTF8, 0, wtext, -1, text, 4096, NULL, NULL);
-								kinc_internal_paste_callback(text);
+								kore_internal_paste_callback(text);
 								GlobalUnlock(handle);
 							}
 						}
@@ -695,7 +695,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		for (unsigned i = 0; i < count; ++i) {
 			wchar_t filePath[260];
 			if (DragQueryFileW(hDrop, i, filePath, 260)) {
-				kinc_internal_drop_files_callback(filePath);
+				kore_internal_drop_files_callback(filePath);
 			}
 		}
 		DragFinish(hDrop);
@@ -890,7 +890,7 @@ static BOOL CALLBACK enumerateJoystickAxesCallback(LPCDIDEVICEOBJECTINSTANCEW dd
 	HRESULT hr = di_pads[padCount]->lpVtbl->SetProperty(di_pads[padCount], DIPROP_RANGE, &propertyRange.diph);
 
 	if (FAILED(hr)) {
-		kinc_log(KINC_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / SetProperty() failed (HRESULT=0x%x)", padCount, hr);
+		kore_log(KORE_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / SetProperty() failed (HRESULT=0x%x)", padCount, hr);
 
 		// TODO (DK) cleanup?
 		// cleanupPad(padCount);
@@ -930,30 +930,30 @@ static BOOL CALLBACK enumerateJoysticksCallback(LPCDIDEVICEINSTANCEW ddi, LPVOID
 						hr = di_pads[padCount]->lpVtbl->GetDeviceState(di_pads[padCount], sizeof(DIJOYSTATE2), &di_padState[padCount]);
 
 						if (SUCCEEDED(hr)) {
-							kinc_log(KINC_LOG_LEVEL_INFO, "DirectInput8 / Pad%i / initialized", padCount);
+							kore_log(KORE_LOG_LEVEL_INFO, "DirectInput8 / Pad%i / initialized", padCount);
 						}
 						else {
-							kinc_log(KINC_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / GetDeviceState() failed (HRESULT=0x%x)", padCount, hr);
+							kore_log(KORE_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / GetDeviceState() failed (HRESULT=0x%x)", padCount, hr);
 							// cleanupPad(padCount); // (DK) don't kill it, we try again in handleDirectInputPad()
 						}
 					}
 					else {
-						kinc_log(KINC_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / Acquire() failed (HRESULT=0x%x)", padCount, hr);
+						kore_log(KORE_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / Acquire() failed (HRESULT=0x%x)", padCount, hr);
 						cleanupPad(padCount);
 					}
 				}
 				else {
-					kinc_log(KINC_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / EnumObjects(DIDFT_AXIS) failed (HRESULT=0x%x)", padCount, hr);
+					kore_log(KORE_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / EnumObjects(DIDFT_AXIS) failed (HRESULT=0x%x)", padCount, hr);
 					cleanupPad(padCount);
 				}
 			}
 			else {
-				kinc_log(KINC_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / GetCapabilities() failed (HRESULT=0x%x)", padCount, hr);
+				kore_log(KORE_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / GetCapabilities() failed (HRESULT=0x%x)", padCount, hr);
 				cleanupPad(padCount);
 			}
 		}
 		else {
-			kinc_log(KINC_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / SetDataFormat() failed (HRESULT=0x%x)", padCount, hr);
+			kore_log(KORE_LOG_LEVEL_WARNING, "DirectInput8 / Pad%i / SetDataFormat() failed (HRESULT=0x%x)", padCount, hr);
 			cleanupPad(padCount);
 		}
 
@@ -987,7 +987,7 @@ static void initializeDirectInput() {
 		}
 	}
 	else {
-		kinc_log(KINC_LOG_LEVEL_WARNING, "DirectInput8Create failed (HRESULT=0x%x)", hr);
+		kore_log(KORE_LOG_LEVEL_WARNING, "DirectInput8Create failed (HRESULT=0x%x)", hr);
 	}
 }
 
@@ -1094,7 +1094,7 @@ static bool isDirectInputGamepad(int gamepad) {
 	return hr == S_OK;
 }
 
-const char *kinc_gamepad_vendor(int gamepad) {
+const char *kore_gamepad_vendor(int gamepad) {
 	if (isXInputGamepad(gamepad)) {
 		return "Microsoft";
 	}
@@ -1103,7 +1103,7 @@ const char *kinc_gamepad_vendor(int gamepad) {
 	}
 }
 
-const char *kinc_gamepad_product_name(int gamepad) {
+const char *kore_gamepad_product_name(int gamepad) {
 	if (isXInputGamepad(gamepad)) {
 		return "Xbox 360 Controller";
 	}
@@ -1112,7 +1112,7 @@ const char *kinc_gamepad_product_name(int gamepad) {
 	}
 }
 
-bool kinc_internal_handle_messages() {
+bool kore_internal_handle_messages() {
 	MSG message;
 
 	while (PeekMessageW(&message, 0, 0, 0, PM_REMOVE)) {
@@ -1207,7 +1207,7 @@ void kinc_load_url(const char *url) {
 		INT_PTR ret = (INT_PTR)ShellExecuteW(NULL, L"open", wurl, NULL, NULL, SW_SHOWNORMAL);
 		// According to ShellExecuteW's documentation return values > 32 indicate a success.
 		if (ret <= 32) {
-			kinc_log(KINC_LOG_LEVEL_WARNING, "Error opening url %s", url);
+			kore_log(KORE_LOG_LEVEL_WARNING, "Error opening url %s", url);
 		}
 	}
 #undef HTTPS
@@ -1257,7 +1257,7 @@ static void findSavePath() {
 	wcscpy(savePathw, path);
 	wcscat(savePathw, L"\\");
 	wchar_t name[1024];
-	MultiByteToWideChar(CP_UTF8, 0, kinc_application_name(), -1, name, 1024);
+	MultiByteToWideChar(CP_UTF8, 0, kore_application_name(), -1, name, 1024);
 	wcscat(savePathw, name);
 	wcscat(savePathw, L"\\");
 
@@ -1270,7 +1270,7 @@ static void findSavePath() {
 	// CoUninitialize();
 }
 
-const char *kinc_internal_save_path() {
+const char *kore_internal_save_path() {
 	if (savePath[0] == 0)
 		findSavePath();
 	return savePath;
@@ -1280,21 +1280,21 @@ static const char *videoFormats[] = {"ogv", NULL};
 static LARGE_INTEGER frequency;
 static LARGE_INTEGER startCount;
 
-const char **kinc_video_formats() {
+const char **kore_video_formats() {
 	return videoFormats;
 }
 
-void kinc_login(void) {}
+void kore_login(void) {}
 
-void kinc_unlock_achievement(int id) {}
+void kore_unlock_achievement(int id) {}
 
-void kinc_gamepad_set_count(int count) {}
+void kore_gamepad_set_count(int count) {}
 
-bool kinc_gamepad_connected(int num) {
+bool kore_gamepad_connected(int num) {
 	return isXInputGamepad(num) || isDirectInputGamepad(num);
 }
 
-void kinc_gamepad_rumble(int gamepad, float left, float right) {
+void kore_gamepad_rumble(int gamepad, float left, float right) {
 	if (isXInputGamepad(gamepad)) {
 		XINPUT_VIBRATION vibration;
 		memset(&vibration, 0, sizeof(XINPUT_VIBRATION));
@@ -1304,17 +1304,17 @@ void kinc_gamepad_rumble(int gamepad, float left, float right) {
 	}
 }
 
-double kinc_frequency() {
+double kore_frequency() {
 	return (double)frequency.QuadPart;
 }
 
-kinc_ticks_t kinc_timestamp(void) {
+kore_ticks kore_timestamp(void) {
 	LARGE_INTEGER stamp;
 	QueryPerformanceCounter(&stamp);
 	return stamp.QuadPart - startCount.QuadPart;
 }
 
-double kinc_time(void) {
+double kore_time(void) {
 	LARGE_INTEGER stamp;
 	QueryPerformanceCounter(&stamp);
 	return (double)(stamp.QuadPart - startCount.QuadPart) / (double)frequency.QuadPart;
@@ -1366,7 +1366,7 @@ static void init_crash_handler() {
 void kong_init(void);
 #endif
 
-int kinc_init(const char *name, int width, int height, kinc_window_options_t *win, kinc_framebuffer_options_t *frame) {
+int kore_init(const char *name, int width, int height, kore_window_parameters *win, kore_framebuffer_parameters *frame) {
 	init_crash_handler();
 
 #if defined(KINC_VTUNE)
@@ -1389,7 +1389,7 @@ int kinc_init(const char *name, int width, int height, kinc_window_options_t *wi
 		touchPoints[i].y = -1;
 	}
 
-	kinc_display_init();
+	kore_display_init();
 
 	QueryPerformanceCounter(&startCount);
 	QueryPerformanceFrequency(&frequency);
@@ -1399,10 +1399,10 @@ int kinc_init(const char *name, int width, int height, kinc_window_options_t *wi
 	}
 
 	// Kore::System::_init(name, width, height, &win, &frame);
-	kinc_set_application_name(name);
-	kinc_window_options_t defaultWin;
+	kore_set_application_name(name);
+	kore_window_parameters defaultWin;
 	if (win == NULL) {
-		kinc_window_options_set_defaults(&defaultWin);
+		kore_window_options_set_defaults(&defaultWin);
 		win = &defaultWin;
 	}
 	win->width = width;
@@ -1413,22 +1413,22 @@ int kinc_init(const char *name, int width, int height, kinc_window_options_t *wi
 
 	// kinc_g4_internal_init(); // TODO
 
-	int window = kinc_window_create(win, frame);
+	int window = kore_window_create(win, frame);
 	loadXInput();
 	initializeDirectInput();
 
 	return window;
 }
 
-void kinc_internal_shutdown() {
+void kore_internal_shutdown() {
 	kinc_windows_hide_windows();
-	kinc_internal_shutdown_callback();
+	kore_internal_shutdown_callback();
 	kinc_windows_destroy_windows();
 	// kinc_g4_internal_destroy(); // TODO
 	kinc_windows_restore_displays();
 }
 
-void kinc_copy_to_clipboard(const char *text) {
+void kore_copy_to_clipboard(const char *text) {
 	wchar_t wtext[4096];
 	MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 4096);
 	OpenClipboard(kinc_windows_window_handle(0));
@@ -1442,7 +1442,7 @@ void kinc_copy_to_clipboard(const char *text) {
 	CloseClipboard();
 }
 
-int kinc_cpu_cores(void) {
+int kore_cpu_cores(void) {
 	SYSTEM_LOGICAL_PROCESSOR_INFORMATION info[1024];
 	DWORD returnLength = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) * 1024;
 	BOOL success = GetLogicalProcessorInformation(&info[0], &returnLength);
@@ -1468,7 +1468,7 @@ int kinc_cpu_cores(void) {
 	return proper_cpu_count;
 }
 
-int kinc_hardware_threads(void) {
+int kore_hardware_threads(void) {
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
 	return sysinfo.dwNumberOfProcessors;

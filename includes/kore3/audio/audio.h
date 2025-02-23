@@ -1,7 +1,7 @@
 #ifndef KORE_AUDIO_HEADER
 #define KORE_AUDIO_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <stdint.h>
 

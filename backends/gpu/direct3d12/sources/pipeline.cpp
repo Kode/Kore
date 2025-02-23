@@ -1,7 +1,7 @@
 #include <kore3/direct3d12/pipeline_functions.h>
 #include <kore3/direct3d12/pipeline_structs.h>
 
-#include <kinc/log.h>
+#include <kore3/log.h>
 
 #include <kinc/backend/SystemMicrosoft.h>
 

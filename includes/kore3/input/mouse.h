@@ -1,7 +1,7 @@
 #ifndef KORE_INPUT_MOUSE_HEADER
 #define KORE_INPUT_MOUSE_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <stdbool.h>
 

@@ -1,6 +1,6 @@
 #include <kore3/network/socket.h>
 
-#include <kinc/log.h>
+#include <kore3/log.h>
 
 #include <errno.h>
 #include <stdbool.h>
@@ -101,7 +101,7 @@ bool kore_socket_bind(kore_socket *sock) {
 	address.sin_addr.s_addr = sock->host;
 	address.sin_port = sock->port;
 	if (bind(sock->handle, (const struct sockaddr *)&address, sizeof(struct sockaddr_in)) < 0) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Could not bind socket: %s", strerror(errno));
+		kore_log(KORE_LOG_LEVEL_ERROR, "Could not bind socket: %s", strerror(errno));
 		return false;
 	}
 	return true;
@@ -157,66 +157,66 @@ bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *pa
 		sock->handle = socket(sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6, SOCK_STREAM, IPPROTO_TCP);
 		break;
 	default:
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Unsupported socket protocol.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Unsupported socket protocol.");
 		return false;
 	}
 
 	if (sock->handle <= 0) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Could not create socket.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Could not create socket.");
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 		int errorCode = WSAGetLastError();
 		switch (errorCode) {
 		case (WSANOTINITIALISED):
-			kinc_log(KINC_LOG_LEVEL_ERROR, "A successful WSAStartup call must occur before using this function.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "A successful WSAStartup call must occur before using this function.");
 			break;
 		case (WSAENETDOWN):
-			kinc_log(KINC_LOG_LEVEL_ERROR, "The network subsystem or the associated service provider has failed.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "The network subsystem or the associated service provider has failed.");
 			break;
 		case (WSAEAFNOSUPPORT):
-			kinc_log(KINC_LOG_LEVEL_ERROR,
+			kore_log(KORE_LOG_LEVEL_ERROR,
 			         "The specified address family is not supported.For example, an application tried to create a socket for the AF_IRDA address "
 			         "family but an infrared adapter and device driver is not installed on the local computer.");
 			break;
 		case (WSAEINPROGRESS):
-			kinc_log(KINC_LOG_LEVEL_ERROR,
+			kore_log(KORE_LOG_LEVEL_ERROR,
 			         "A blocking Windows Sockets 1.1 call is in progress, or the service provider is still processing a callback function.");
 			break;
 		case (WSAEMFILE):
-			kinc_log(KINC_LOG_LEVEL_ERROR, "No more socket descriptors are available.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "No more socket descriptors are available.");
 			break;
 		case (WSAEINVAL):
-			kinc_log(KINC_LOG_LEVEL_ERROR,
+			kore_log(KORE_LOG_LEVEL_ERROR,
 			         "An invalid argument was supplied.This error is returned if the af parameter is set to AF_UNSPEC and the type and protocol "
 			         "parameter are unspecified.");
 			break;
 		case (WSAENOBUFS):
-			kinc_log(KINC_LOG_LEVEL_ERROR, "No buffer space is available.The socket cannot be created.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "No buffer space is available.The socket cannot be created.");
 			break;
 		case (WSAEPROTONOSUPPORT):
-			kinc_log(KINC_LOG_LEVEL_ERROR, "The specified protocol is not supported.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "The specified protocol is not supported.");
 			break;
 		case (WSAEPROTOTYPE):
-			kinc_log(KINC_LOG_LEVEL_ERROR, "The specified protocol is the wrong type for this socket.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "The specified protocol is the wrong type for this socket.");
 			break;
 		case (WSAEPROVIDERFAILEDINIT):
-			kinc_log(KINC_LOG_LEVEL_ERROR,
+			kore_log(KORE_LOG_LEVEL_ERROR,
 			         "The service provider failed to initialize.This error is returned if a layered service provider(LSP) or namespace provider was "
 			         "improperly installed or the provider fails to operate correctly.");
 			break;
 		case (WSAESOCKTNOSUPPORT):
-			kinc_log(KINC_LOG_LEVEL_ERROR, "The specified socket type is not supported in this address family.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "The specified socket type is not supported in this address family.");
 			break;
 		case (WSAEINVALIDPROVIDER):
-			kinc_log(KINC_LOG_LEVEL_ERROR, "The service provider returned a version other than 2.2.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "The service provider returned a version other than 2.2.");
 			break;
 		case (WSAEINVALIDPROCTABLE):
-			kinc_log(KINC_LOG_LEVEL_ERROR, "The service provider returned an invalid or incomplete procedure table to the WSPStartup.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "The service provider returned an invalid or incomplete procedure table to the WSPStartup.");
 			break;
 		default:
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Unknown error.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "Unknown error.");
 		}
 #elif defined(KINC_POSIX) && !defined(KINC_EMSCRIPTEN)
-		kinc_log(KINC_LOG_LEVEL_ERROR, "%s", strerror(errno));
+		kore_log(KORE_LOG_LEVEL_ERROR, "%s", strerror(errno));
 #endif
 		return false;
 	}
@@ -227,13 +227,13 @@ bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *pa
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 			DWORD value = 1;
 			if (ioctlsocket(sock->handle, FIONBIO, &value) != 0) {
-				kinc_log(KINC_LOG_LEVEL_ERROR, "Could not set non-blocking mode.");
+				kore_log(KORE_LOG_LEVEL_ERROR, "Could not set non-blocking mode.");
 				return false;
 			}
 #elif defined(KINC_POSIX)
 			int value = 1;
 			if (fcntl(sock->handle, F_SETFL, O_NONBLOCK, value) == -1) {
-				kinc_log(KINC_LOG_LEVEL_ERROR, "Could not set non-blocking mode.");
+				kore_log(KORE_LOG_LEVEL_ERROR, "Could not set non-blocking mode.");
 				return false;
 			}
 #endif
@@ -243,7 +243,7 @@ bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *pa
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 			int value = 1;
 			if (setsockopt(sock->handle, SOL_SOCKET, SO_BROADCAST, (const char *)&value, sizeof(value)) < 0) {
-				kinc_log(KINC_LOG_LEVEL_ERROR, "Could not set broadcast mode.");
+				kore_log(KORE_LOG_LEVEL_ERROR, "Could not set broadcast mode.");
 				return false;
 			}
 #endif
@@ -253,7 +253,7 @@ bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *pa
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 			int value = 1;
 			if (setsockopt(sock->handle, IPPROTO_TCP, TCP_NODELAY, (const char *)&value, sizeof(value)) != 0) {
-				kinc_log(KINC_LOG_LEVEL_ERROR, "Could not set no-delay mode.");
+				kore_log(KORE_LOG_LEVEL_ERROR, "Could not set no-delay mode.");
 				return false;
 			}
 #endif
@@ -295,7 +295,7 @@ bool kore_socket_select(kore_socket *sock, uint32_t waittime, bool read, bool wr
 	timeout.tv_usec = 0;
 
 	if (select(0, &r_fds, &w_fds, NULL, &timeout) < 0) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "kinc_socket_select didn't work: %s", strerror(errno));
+		kore_log(KORE_LOG_LEVEL_ERROR, "kinc_socket_select didn't work: %s", strerror(errno));
 		return false;
 	}
 
@@ -309,7 +309,7 @@ bool kore_socket_select(kore_socket *sock, uint32_t waittime, bool read, bool wr
 		return FD_ISSET(sock->handle, &w_fds);
 	}
 	else {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Calling kinc_socket_select with both read and write set to false is useless.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Calling kinc_socket_select with both read and write set to false is useless.");
 		return false;
 	}
 #else
@@ -331,7 +331,7 @@ bool kore_socket_set(kore_socket *sock, const char *host, int port, kore_socket_
 		struct in_addr addr;
 
 		if (inet_pton(sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6, host, &addr) == 0) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Invalid %s address: %s\n", sock->family == KORE_SOCKET_FAMILY_IP4 ? "IPv4" : "IPv6", host);
+			kore_log(KORE_LOG_LEVEL_ERROR, "Invalid %s address: %s\n", sock->family == KORE_SOCKET_FAMILY_IP4 ? "IPv4" : "IPv6", host);
 			return false;
 		}
 		sock->host = addr.s_addr;
@@ -341,7 +341,7 @@ bool kore_socket_set(kore_socket *sock, const char *host, int port, kore_socket_
 		struct addrinfo *address = NULL;
 		int res = resolveAddress(host, port, &address);
 		if (res != 0) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Could not resolve address.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "Could not resolve address.");
 			return false;
 		}
 #if defined(KINC_POSIX)
@@ -419,20 +419,20 @@ int kore_socket_send(kore_socket *sock, const uint8_t *data, int size) {
 
 		size_t sent = sendto(sock->handle, (const char *)data, size, 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
 		if (sent != size) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Could not send packet.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "Could not send packet.");
 			return -1;
 		}
 		return (int)sent;
 	}
 	else {
 		if (!sock->connected) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Call kinc_sockect_connect/bind before send/recv can be called for TCP sockets.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "Call kinc_sockect_connect/bind before send/recv can be called for TCP sockets.");
 			return -1;
 		}
 
 		size_t sent = send(sock->handle, (const char *)data, size, 0);
 		if (sent != size) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Could not send packet.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "Could not send packet.");
 		}
 		return (int)sent;
 	}
@@ -450,7 +450,7 @@ int kore_socket_send_address(kore_socket *sock, unsigned address, int port, cons
 
 	size_t sent = sendto(sock->handle, (const char *)data, size, 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
 	if (sent != size) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Could not send packet.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Could not send packet.");
 	}
 	return (int)sent;
 #else
@@ -463,13 +463,13 @@ int kore_socket_send_url(kore_socket *sock, const char *url, int port, const uin
 	struct addrinfo *address = NULL;
 	int res = resolveAddress(url, port, &address);
 	if (res != 0) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Could not resolve address.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Could not resolve address.");
 		return 0;
 	}
 
 	size_t sent = sendto(sock->handle, (const char *)data, size, 0, address->ai_addr, sizeof(struct sockaddr_in));
 	if (sent != size) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Could not send packet.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Could not send packet.");
 	}
 	freeaddrinfo(address);
 	return (int)sent;
@@ -499,7 +499,7 @@ int kore_socket_receive(kore_socket *sock, uint8_t *data, int maxSize, unsigned 
 	else {
 
 		if (!sock->connected) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Call kinc_sockect_connect/bind before send/recv can be called for TCP sockets.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "Call kinc_sockect_connect/bind before send/recv can be called for TCP sockets.");
 			return -1;
 		}
 		ssize_t bytes = recv(sock->handle, (char *)data, maxSize, 0);
@@ -517,7 +517,7 @@ unsigned kore_url_to_int(const char *url, int port) {
 	struct addrinfo *address = NULL;
 	int res = resolveAddress(url, port, &address);
 	if (res != 0) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Could not resolve address.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Could not resolve address.");
 		return -1;
 	}
 

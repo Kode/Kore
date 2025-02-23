@@ -1,6 +1,6 @@
 #include <kinc/backend/Windows.h>
-#include <kinc/system.h>
-#include <kinc/window.h>
+#include <kore3/system.h>
+#include <kore3/window.h>
 
 #include <kore3/input/mouse.h>
 

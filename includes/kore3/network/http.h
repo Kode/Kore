@@ -1,7 +1,7 @@
 #ifndef KORE_NETWORK_HTTP_HEADER
 #define KORE_NETWORK_HTTP_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <stdbool.h>
 

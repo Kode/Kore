@@ -1,6 +1,6 @@
 #include <kore3/io/filereader.h>
 
-#include <kinc/system.h>
+#include <kore3/system.h>
 
 #ifdef KINC_ANDROID
 #include <kinc/backend/Android.h>
@@ -154,7 +154,7 @@ bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filena
 #endif
 #ifdef KINC_MICROSOFT
 	if (type == KORE_FILE_TYPE_SAVE) {
-		strcpy(filepath, kinc_internal_save_path());
+		strcpy(filepath, kore_internal_save_path());
 		strcat(filepath, filename);
 	}
 	else {

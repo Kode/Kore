@@ -446,7 +446,7 @@ static size_t kwrite(void* src, size_t size, char* dst, size_t* offset, int maxO
 
 //int decompress()
 #ifdef KINC_LZ4X
-#include <kinc/error.h>
+#include <kore3/error.h>
 
 int LZ4_decompress_safe(const char *source, char *buf, int compressedSize, int maxOutputSize)
 {
@@ -523,7 +523,7 @@ int LZ4_decompress_safe(const char *source, char *buf, int compressedSize, int m
 
     if (kwrite(g_buf, p, buf, &write_offset, maxOutputSize)!=p)
     {
-      kinc_error_message("Fwrite() failed");
+      kore_error_message("Fwrite() failed");
       return -1;
     }
   }

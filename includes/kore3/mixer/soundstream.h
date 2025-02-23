@@ -1,7 +1,7 @@
 #ifndef KORE_MIXER_SOUNDSTREAM_HEADER
 #define KORE_MIXER_SOUNDSTREAM_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <stdbool.h>
 #include <stdint.h>

@@ -2,8 +2,8 @@
 
 #include <kore3/libs/stb_vorbis.h>
 
-#include <kinc/error.h>
 #include <kore3/audio/audio.h>
+#include <kore3/error.h>
 #include <kore3/io/filereader.h>
 
 #include <assert.h>
@@ -21,7 +21,7 @@ struct WaveData {
 
 static void checkFOURCC(uint8_t **data, const char *fourcc) {
 	for (int i = 0; i < 4; ++i) {
-		kinc_affirm(**data == fourcc[i]);
+		kore_affirm(**data == fourcc[i]);
 		++*data;
 	}
 }
@@ -50,7 +50,7 @@ static void readChunk(uint8_t **data, struct WaveData *wave) {
 	else if (strcmp(fourcc, "data") == 0) {
 		wave->dataSize = chunksize;
 		wave->data = (uint8_t *)malloc(chunksize * sizeof(uint8_t));
-		kinc_affirm(wave->data != NULL);
+		kore_affirm(wave->data != NULL);
 		memcpy(wave->data, *data, chunksize);
 		*data += chunksize;
 	}
@@ -117,7 +117,7 @@ kore_mixer_sound *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 	if (format == KORE_MIXER_AUDIOFORMAT_OGG) {
 		int channels, sample_rate;
 		int samples = stb_vorbis_decode_memory(audio_data, size, &channels, &sample_rate, (short **)&data);
-		kinc_affirm(samples > 0);
+		kore_affirm(samples > 0);
 		sound->channel_count = (uint8_t)channels;
 		sound->samples_per_second = (uint32_t)sample_rate;
 		sound->size = samples * 2 * sound->channel_count;
@@ -144,7 +144,7 @@ kore_mixer_sound *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 		sound->size = wave.dataSize;
 	}
 	else {
-		kinc_affirm(false);
+		kore_affirm(false);
 	}
 
 	if (sound->channel_count == 1) {
@@ -160,7 +160,7 @@ kore_mixer_sound *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 			splitMono16((int16_t *)data, sound->size, sound->left, sound->right);
 		}
 		else {
-			kinc_affirm(false);
+			kore_affirm(false);
 		}
 	}
 	else {
@@ -178,7 +178,7 @@ kore_mixer_sound *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 			splitStereo16((int16_t *)data, sound->size, sound->left, sound->right);
 		}
 		else {
-			kinc_affirm(false);
+			kore_affirm(false);
 		}
 	}
 	sound->sample_rate_pos = kore_audio_samples_per_second() / (float)sound->samples_per_second;

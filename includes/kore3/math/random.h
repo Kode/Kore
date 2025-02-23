@@ -1,7 +1,7 @@
 #ifndef KORE_MATH_RANDOM_HEADER
 #define KORE_MATH_RANDOM_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 /*! \file random.h
     \brief Generates values which are kind of random.

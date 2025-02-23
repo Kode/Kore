@@ -1,7 +1,7 @@
 #ifndef KORE_INPUT_GAMEPAD_HEADER
 #define KORE_INPUT_GAMEPAD_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 /*! \file gamepad.h
     \brief Provides gamepad-support.

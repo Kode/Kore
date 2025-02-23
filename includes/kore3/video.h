@@ -1,6 +1,7 @@
-#pragma once
+#ifndef KORE_VIDEO_HEADER
+#define KORE_VIDEO_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <kinc/backend/video.h>
 #include <kore3/gpu/texture.h>
@@ -14,89 +15,91 @@
 extern "C" {
 #endif
 
-typedef struct kinc_video {
-	kinc_video_impl_t impl;
-} kinc_video_t;
+typedef struct kore_video {
+	kore_video_impl impl;
+} kore_video;
 
 /// <summary>
 /// Returns the list of video formats which are supported on the current system.
 /// </summary>
 /// <returns>A NULL-terminated list of strings representing the supported video-formats</returns>
-KINC_FUNC const char **kinc_video_formats(void);
+KORE_FUNC const char **kore_video_formats(void);
 
 /// <summary>
 /// Prepares a video object based on an encoded video-file.
 /// </summary>
-KINC_FUNC void kinc_video_init(kinc_video_t *video, const char *filename);
+KORE_FUNC void kore_video_init(kore_video *video, const char *filename);
 
 /// <summary>
 /// Destroys a video object.
 /// </summary>
-KINC_FUNC void kinc_video_destroy(kinc_video_t *video);
+KORE_FUNC void kore_video_destroy(kore_video *video);
 
 /// <summary>
 /// Starts playing a video.
 /// </summary>
-KINC_FUNC void kinc_video_play(kinc_video_t *video, bool loop);
+KORE_FUNC void kore_video_play(kore_video *video, bool loop);
 
 /// <summary>
 /// Pauses a video.
 /// </summary>
-KINC_FUNC void kinc_video_pause(kinc_video_t *video);
+KORE_FUNC void kore_video_pause(kore_video *video);
 
 /// <summary>
 /// Stops a video which is equivalent to pausing it and setting the position to 0.
 /// </summary>
-KINC_FUNC void kinc_video_stop(kinc_video_t *video);
+KORE_FUNC void kore_video_stop(kore_video *video);
 
 /// <summary>
 /// Gets the width of the video in pixels.
 /// </summary>
 /// <returns>The width of the video in pixels</returns>
-KINC_FUNC int kinc_video_width(kinc_video_t *video);
+KORE_FUNC int kore_video_width(kore_video *video);
 
 /// <summary>
 /// Gets the height of the video in pixels.
 /// </summary>
 /// <returns>The height of the video in pixels</returns>
-KINC_FUNC int kinc_video_height(kinc_video_t *video);
+KORE_FUNC int kore_video_height(kore_video *video);
 
 /// <summary>
 /// Gets the current image of a playing video which can be rendered using any of Kinc's graphics APIs.
 /// </summary>
 /// <returns>The current image of a playing video</returns>
-KINC_FUNC kore_gpu_texture *kinc_video_current_image(kinc_video_t *video);
+KORE_FUNC kore_gpu_texture *kore_video_current_image(kore_video *video);
 
 /// <summary>
 /// Gets the duration of the video in seconds.
 /// </summary>
 /// <returns>The duration of the video in seconds</returns>
-KINC_FUNC double kinc_video_duration(kinc_video_t *video);
+KORE_FUNC double kore_video_duration(kore_video *video);
 
 /// <summary>
 /// Returns the current playback-position of the video in seconds.
 /// </summary>
 /// <returns>The current playback-position in seconds</returns>
-KINC_FUNC double kinc_video_position(kinc_video_t *video);
+KORE_FUNC double kore_video_position(kore_video *video);
 
 /// <summary>
 /// Returns whether the video reached its end.
 /// </summary>
 /// <returns>the end-state of the video</returns>
-KINC_FUNC bool kinc_video_finished(kinc_video_t *video);
+KORE_FUNC bool kore_video_finished(kore_video *video);
 
 /// <summary>
 /// Returns whether the video is currently paused.
 /// </summary>
 /// <returns>The current pause state of the video</returns>
-KINC_FUNC bool kinc_video_paused(kinc_video_t *video);
+KORE_FUNC bool kore_video_paused(kore_video *video);
 
 /// <summary>
 /// Call this every frame to update the video. This is not required on all targets but where it's not required the function just does nothing - so please call
 /// it.
 /// </summary>
-KINC_FUNC void kinc_video_update(kinc_video_t *video, double time);
+KORE_FUNC void kore_video_update(kore_video *video, double time);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

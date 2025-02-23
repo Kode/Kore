@@ -56,6 +56,7 @@ addUnit('io');
 addUnit('math');
 addUnit('mixer');
 addUnit('network');
+addUnit('root');
 addUnit('util');
 
 if (lz4x) {

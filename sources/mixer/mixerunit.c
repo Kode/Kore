@@ -15,8 +15,8 @@ struct kore_mixer_stream_channel {
 	int position;
 };
 
-struct kinc_internal_video_channel {
-	struct kinc_internal_video_sound_stream *stream;
+struct kore_internal_video_channel {
+	struct kore_internal_video_sound_stream *stream;
 	int position;
 };
 

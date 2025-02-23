@@ -1,6 +1,6 @@
 #include <kore3/input/mouse.h>
 
-#include <kinc/window.h>
+#include <kore3/window.h>
 
 static void (*mouse_press_callback)(int /*window*/, int /*button*/, int /*x*/, int /*y*/, void * /*data*/) = NULL;
 static void *mouse_press_callback_data = NULL;
@@ -135,8 +135,8 @@ void kore_mouse_lock(int window) {
 	locked = true;
 	kore_internal_mouse_lock(window);
 	kore_mouse_get_position(window, &preLockX, &preLockY);
-	centerX = kinc_window_width(window) / 2;
-	centerY = kinc_window_height(window) / 2;
+	centerX = kore_window_width(window) / 2;
+	centerY = kore_window_height(window) / 2;
 	kore_mouse_set_position(window, centerX, centerY);
 }
 

@@ -1,7 +1,7 @@
 #ifndef KORE_MATH_CORE_HEADER
 #define KORE_MATH_CORE_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 /*! \file core.h
     \brief Just a few very simple additions to math.h
