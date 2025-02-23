@@ -114,12 +114,7 @@ if (platform === Platform.Windows) {
 
 	project.addLib('wbemuuid');
 
-	if (graphics === GraphicsApi.OpenGL1) {
-		addBackend('Graphics3/opengl1');
-		addKincDefine('OPENGL1');
-		project.addDefine('GLEW_STATIC');
-	}
-	else if (graphics === GraphicsApi.OpenGL) {
+	if (graphics === GraphicsApi.OpenGL) {
 		g4 = true;
 		addBackend('Graphics4/opengl');
 		addKincDefine('OPENGL');
@@ -214,7 +209,7 @@ if (platform === Platform.Windows) {
 else if (platform === Platform.WindowsApp) {
 	g4 = true;
 	addKincDefine('WINDOWSAPP');
-	addBackend('system/windowsapp');
+	addBackend2('system/windowsapp');
 	addBackend2('system/microsoft');
 	addBackend('Graphics4/direct3d11');
 	addSimpleBackend('audio/wasapi_winrt');
@@ -243,11 +238,6 @@ else if (platform === Platform.OSX) {
 		addKincDefine('METAL');
 		project.addLib('Metal');
 		project.addLib('MetalKit');
-	}
-	else if (graphics === GraphicsApi.OpenGL1) {
-		addBackend('Graphics3/opengl1');
-		addKincDefine('OPENGL1');
-		project.addLib('OpenGL');
 	}
 	else if (graphics === GraphicsApi.OpenGL) {
 		g4 = true;
@@ -384,7 +374,7 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 	if (platform === Platform.FreeBSD) { // TODO
 		addKincDefine('LINUX');
 	}
-	addBackend('system/linux');
+	addBackend2('system/linux');
 	addBackend2('system/posix');
 	project.addLib('asound');
 	project.addLib('dl');
@@ -489,9 +479,9 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 		}
 	}
 	else if (platform === Platform.FreeBSD) {
-		addBackend('system/freebsd');
-		project.addExclude('backends/System/Linux/sources/kinc/backend/input/gamepad.cpp');
-		project.addExclude('backends/System/Linux/sources/kinc/backend/input/gamepad.h');
+		addBackend2('system/linux');
+		addBackend2('system/posix');
+		addBackend2('system/freebsd');
 		project.addDefine('KINC_NO_WAYLAND');
 	}
 
@@ -523,7 +513,7 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 else if (platform === Platform.Pi) {
 	g4 = true;
 	addKincDefine('RASPBERRY_PI');
-	addBackend('system/pi');
+	addBackend2('system/pi');
 	addBackend2('system/posix');
 	addBackend('Graphics4/opengl');
 	project.addExclude('backends/Graphics4/opengl/sources/GL/**');
@@ -557,14 +547,6 @@ else {
 }
 
 addKincDefine('G5');
-
-if (!a3) {
-	if (cpp) {
-		a3 = true;
-		addKincDefine('A3');
-		addBackend('Audio3/a3ona2');
-	}
-}
 
 project.kincProcessed = true;
 
