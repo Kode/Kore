@@ -2,7 +2,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 #include <kinc/audio1/audio.h>
-#include <kinc/graphics4/texture.h>
+#include <kore3/gpu/texture.h>
 #include <kinc/io/filereader.h>
 #include <kinc/log.h>
 #include <kinc/system.h>
@@ -229,7 +229,7 @@ static void updateImage(kinc_video_t *video) {
 			CGSize size = CVImageBufferGetDisplaySize(pixelBuffer);
 			video->impl.myWidth = size.width;
 			video->impl.myHeight = size.height;
-			kinc_g4_texture_init(&video->impl.image, kinc_video_width(video), kinc_video_height(video), KINC_IMAGE_FORMAT_BGRA32);
+			// kinc_g4_texture_init(&video->impl.image, kinc_video_width(video), kinc_video_height(video), KINC_IMAGE_FORMAT_BGRA32); // TODO
 			video->impl.image_initialized = true;
 		}
 
@@ -239,7 +239,7 @@ static void updateImage(kinc_video_t *video) {
 			kinc_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer),
 			                       (int)(CVPixelBufferGetBytesPerRow(pixelBuffer) / 4));
 #else
-			kinc_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer), (int)(CVPixelBufferGetBytesPerRow(pixelBuffer)));
+			// kinc_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer), (int)(CVPixelBufferGetBytesPerRow(pixelBuffer))); // TODO
 #endif
 			CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 		}
@@ -289,7 +289,7 @@ int kinc_video_height(kinc_video_t *video) {
 	return video->impl.myHeight;
 }
 
-kinc_g4_texture_t *kinc_video_current_image(kinc_video_t *video) {
+kore_gpu_texture *kinc_video_current_image(kinc_video_t *video) {
 	kinc_video_update(video, kinc_time());
 	return &video->impl.image;
 }

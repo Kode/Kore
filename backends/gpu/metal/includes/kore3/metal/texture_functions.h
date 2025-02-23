@@ -1,13 +1,13 @@
-#ifndef KOPE_METAL_TEXTURE_FUNCTIONS_HEADER
-#define KOPE_METAL_TEXTURE_FUNCTIONS_HEADER
+#ifndef KORE_METAL_TEXTURE_FUNCTIONS_HEADER
+#define KORE_METAL_TEXTURE_FUNCTIONS_HEADER
 
-#include <kope/graphics5/texture.h>
+#include <kore3/gpu/texture.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void kope_metal_texture_set_name(kope_g5_texture *texture, const char *name);
+void kore_metal_texture_set_name(kore_gpu_texture *texture, const char *name);
 
 #ifdef __cplusplus
 }

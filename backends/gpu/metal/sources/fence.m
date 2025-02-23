@@ -1,5 +1,5 @@
-#include "fence_functions.h"
+#include <kore3/metal/fence_functions.h>
 
-#include <kope/graphics5/fence.h>
+#include <kore3/gpu/fence.h>
 
-void kope_metal_fence_destroy(kope_g5_fence *fence) {}
+void kore_metal_fence_destroy(kore_gpu_fence *fence) {}

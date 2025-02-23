@@ -6,7 +6,7 @@
 #include <kinc/system.h>
 
 #ifdef KINC_METAL
-#include <kinc/graphics5/graphics.h>
+//#include <kinc/graphics5/graphics.h>
 #endif
 
 @implementation BasicOpenGLView

@@ -1,10 +1,10 @@
-#ifndef KOPE_METAL_DEVICE_STRUCTS_HEADER
-#define KOPE_METAL_DEVICE_STRUCTS_HEADER
+#ifndef KORE_METAL_DEVICE_STRUCTS_HEADER
+#define KORE_METAL_DEVICE_STRUCTS_HEADER
 
-#include <kope/graphics5/commandlist.h>
-#include <kope/graphics5/texture.h>
-#include <kope/util/indexallocator.h>
-#include <kope/util/offalloc/offalloc.h>
+#include <kore3/gpu/commandlist.h>
+#include <kore3/gpu/texture.h>
+#include <kore3/util/indexallocator.h>
+#include <kore3/util/offalloc/offalloc.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,22 +12,22 @@ extern "C" {
 
 #define KOPE_METAL_FRAME_COUNT 2
 
-typedef struct kope_metal_device {
+typedef struct kore_metal_device {
 	void *device;
 	void *library;
-} kope_metal_device;
+} kore_metal_device;
 
-typedef struct kope_metal_query_set {
+typedef struct kore_metal_query_set {
 	int nothing;
-} kope_metal_query_set;
+} kore_metal_query_set;
 
-typedef struct kope_metal_raytracing_volume {
+typedef struct kore_metal_raytracing_volume {
 	int nothing;
-} kope_metal_raytracing_volume;
+} kore_metal_raytracing_volume;
 
-typedef struct kope_metal_raytracing_hierarchy {
+typedef struct kore_metal_raytracing_hierarchy {
 	int nothing;
-} kope_metal_raytracing_hierarchy;
+} kore_metal_raytracing_hierarchy;
 
 #ifdef __cplusplus
 }

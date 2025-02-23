@@ -1,13 +1,13 @@
-#ifndef KOPE_METAL_TEXTURE_STRUCTS_HEADER
-#define KOPE_METAL_TEXTURE_STRUCTS_HEADER
+#ifndef KORE_METAL_TEXTURE_STRUCTS_HEADER
+#define KORE_METAL_TEXTURE_STRUCTS_HEADER
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct kope_metal_texture {
+typedef struct kore_metal_texture {
 	void *texture;
-} kope_metal_texture;
+} kore_metal_texture;
 
 #ifdef __cplusplus
 }

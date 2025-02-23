@@ -1,7 +1,7 @@
-#ifndef KOPE_METAL_UNIT_HEADER
-#define KOPE_METAL_UNIT_HEADER
+#ifndef KORE_METAL_UNIT_HEADER
+#define KORE_METAL_UNIT_HEADER
 
-#include <kope/graphics5/device.h>
+#include <kore3/gpu/device.h>
 
 #include <assert.h>
 

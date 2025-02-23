@@ -1,5 +1,5 @@
-#ifndef KOPE_METAL_BUFFER_STRUCTS_HEADER
-#define KOPE_METAL_BUFFER_STRUCTS_HEADER
+#ifndef KORE_METAL_BUFFER_STRUCTS_HEADER
+#define KORE_METAL_BUFFER_STRUCTS_HEADER
 
 #include <stdint.h>
 
@@ -7,11 +7,11 @@
 extern "C" {
 #endif
 
-struct kope_g5_device;
+struct kore_gpu_device;
 
-typedef struct kope_metal_buffer {
+typedef struct kore_metal_buffer {
 	void *buffer;
-} kope_metal_buffer;
+} kore_metal_buffer;
 
 #ifdef __cplusplus
 }

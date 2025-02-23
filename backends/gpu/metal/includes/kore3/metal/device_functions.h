@@ -1,56 +1,56 @@
-#ifndef KOPE_METAL_DEVICE_FUNCTIONS_HEADER
-#define KOPE_METAL_DEVICE_FUNCTIONS_HEADER
+#ifndef KORE_METAL_DEVICE_FUNCTIONS_HEADER
+#define KORE_METAL_DEVICE_FUNCTIONS_HEADER
 
-#include <kope/graphics5/device.h>
+#include <kore3/gpu/device.h>
 
 #include <kinc/math/matrix.h>
 
-#include "descriptorset_structs.h"
+#include <kore3/metal/descriptorset_structs.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void kope_metal_device_create(kope_g5_device *device, const kope_g5_device_wishlist *wishlist);
+void kore_metal_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist);
 
-void kope_metal_device_destroy(kope_g5_device *device);
+void kore_metal_device_destroy(kore_gpu_device *device);
 
-void kope_metal_device_set_name(kope_g5_device *device, const char *name);
+void kore_metal_device_set_name(kore_gpu_device *device, const char *name);
 
-void kope_metal_device_create_buffer(kope_g5_device *device, const kope_g5_buffer_parameters *parameters, kope_g5_buffer *buffer);
+void kore_metal_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer);
 
-void kope_metal_device_create_command_list(kope_g5_device *device, kope_g5_command_list_type type, kope_g5_command_list *list);
+void kore_metal_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list);
 
-void kope_metal_device_create_texture(kope_g5_device *device, const kope_g5_texture_parameters *parameters, kope_g5_texture *texture);
+void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture);
 
-void kope_metal_device_create_descriptor_set(kope_g5_device *device, uint32_t descriptor_count, uint32_t dynamic_descriptor_count,
-                                             uint32_t bindless_descriptor_count, uint32_t sampler_count, kope_metal_descriptor_set *set);
+void kore_metal_device_create_descriptor_set(kore_gpu_device *device, uint32_t descriptor_count, uint32_t dynamic_descriptor_count,
+                                             uint32_t bindless_descriptor_count, uint32_t sampler_count, kore_metal_descriptor_set *set);
 
-void kope_metal_device_create_sampler(kope_g5_device *device, const kope_g5_sampler_parameters *parameters, kope_g5_sampler *sampler);
+void kore_metal_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler);
 
-kope_g5_texture *kope_metal_device_get_framebuffer(kope_g5_device *device);
+kore_gpu_texture *kore_metal_device_get_framebuffer(kore_gpu_device *device);
 
-kope_g5_texture_format kope_metal_device_framebuffer_format(kope_g5_device *device);
+kore_gpu_texture_format kore_metal_device_framebuffer_format(kore_gpu_device *device);
 
-void kope_metal_device_execute_command_list(kope_g5_device *device, kope_g5_command_list *list);
+void kore_metal_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list);
 
-void kope_metal_device_wait_until_idle(kope_g5_device *device);
+void kore_metal_device_wait_until_idle(kore_gpu_device *device);
 
-void kope_metal_device_create_raytracing_volume(kope_g5_device *device, kope_g5_buffer *vertex_buffer, uint64_t vertex_count, kope_g5_buffer *index_buffer,
-                                                uint32_t index_count, kope_g5_raytracing_volume *volume);
+void kore_metal_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
+                                                uint32_t index_count, kore_gpu_raytracing_volume *volume);
 
-void kope_metal_device_create_raytracing_hierarchy(kope_g5_device *device, kope_g5_raytracing_volume **volumes, kinc_matrix4x4_t *volume_transforms,
-                                                   uint32_t volumes_count, kope_g5_raytracing_hierarchy *hierarchy);
+void kore_metal_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kinc_matrix4x4_t *volume_transforms,
+                                                   uint32_t volumes_count, kore_gpu_raytracing_hierarchy *hierarchy);
 
-void kope_metal_device_create_query_set(kope_g5_device *device, const kope_g5_query_set_parameters *parameters, kope_g5_query_set *query_set);
+void kore_metal_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set);
 
-void kope_metal_device_create_fence(kope_g5_device *device, kope_g5_fence *fence);
+void kore_metal_device_create_fence(kore_gpu_device *device, kore_gpu_fence *fence);
 
-uint32_t kope_metal_device_align_texture_row_bytes(kope_g5_device *device, uint32_t row_bytes);
+uint32_t kore_metal_device_align_texture_row_bytes(kore_gpu_device *device, uint32_t row_bytes);
 
-void kope_metal_device_signal(kope_g5_device *device, kope_g5_command_list_type list_type, kope_g5_fence *fence, uint64_t value);
+void kore_metal_device_signal(kore_gpu_device *device, kore_gpu_command_list_type list_type, kore_gpu_fence *fence, uint64_t value);
 
-void kope_metal_device_wait(kope_g5_device *device, kope_g5_command_list_type list_type, kope_g5_fence *fence, uint64_t value);
+void kore_metal_device_wait(kore_gpu_device *device, kore_gpu_command_list_type list_type, kore_gpu_fence *fence, uint64_t value);
 
 #ifdef __cplusplus
 }

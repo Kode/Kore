@@ -221,7 +221,7 @@ else if (platform === Platform.OSX) {
 	if (graphics === GraphicsApi.Metal || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/metal');
+		addBackend2('gpu/metal');
 		addKincDefine('METAL');
 		project.addLib('Metal');
 		project.addLib('MetalKit');
@@ -260,7 +260,7 @@ else if (platform === Platform.iOS || platform === Platform.tvOS) {
 	if (graphics === GraphicsApi.Metal || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/metal');
+		addBackend2('gpu/metal');
 		addKincDefine('METAL');
 		project.addLib('Metal');
 	}

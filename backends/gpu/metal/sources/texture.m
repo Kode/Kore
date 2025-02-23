@@ -1,7 +1,7 @@
-#include "texture_functions.h"
+#include <kore3/metal/texture_functions.h>
 
 #include "metalunit.h"
 
-#include <kope/graphics5/texture.h>
+#include <kore3/gpu/texture.h>
 
-void kope_metal_texture_set_name(kope_g5_texture *texture, const char *name) {}
+void kore_metal_texture_set_name(kore_gpu_texture *texture, const char *name) {}

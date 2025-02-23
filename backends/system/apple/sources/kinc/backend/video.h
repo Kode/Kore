@@ -2,7 +2,7 @@
 
 #include <objc/runtime.h>
 
-#include <kinc/graphics4/texture.h>
+#include <kore3/gpu/texture.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,7 +18,7 @@ typedef struct {
 	bool loop;
 	void *sound;
 	bool image_initialized;
-	kinc_g4_texture_t image;
+	kore_gpu_texture image;
 	double lastTime;
 	float duration;
 	bool finished;

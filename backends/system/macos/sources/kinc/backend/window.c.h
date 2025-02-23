@@ -1,5 +1,4 @@
 #include <kinc/display.h>
-#include <kinc/graphics4/graphics.h>
 #include <kinc/window.h>
 
 int kinc_window_x(int window) {

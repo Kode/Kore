@@ -1,13 +1,13 @@
-#ifndef KOPE_METAL_SAMPLER_STRUCTS_HEADER
-#define KOPE_METAL_SAMPLER_STRUCTS_HEADER
+#ifndef KORE_METAL_SAMPLER_STRUCTS_HEADER
+#define KORE_METAL_SAMPLER_STRUCTS_HEADER
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct kope_metal_sampler {
+typedef struct kore_metal_sampler {
 	int nothing;
-} kope_metal_sampler;
+} kore_metal_sampler;
 
 #ifdef __cplusplus
 }

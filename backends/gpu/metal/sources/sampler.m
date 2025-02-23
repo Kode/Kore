@@ -1,7 +1,7 @@
-#include "sampler_functions.h"
+#include <kore3/metal/sampler_functions.h>
 
 #include "metalunit.h"
 
-#include <kope/graphics5/sampler.h>
+#include <kore3/gpu/sampler.h>
 
-void kope_metal_sampler_set_name(kope_g5_sampler *sampler, const char *name) {}
+void kore_metal_sampler_set_name(kore_gpu_sampler *sampler, const char *name) {}
