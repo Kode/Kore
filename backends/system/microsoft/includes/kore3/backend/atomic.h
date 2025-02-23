@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef _WIN64
-#include <kinc/error.h>
+#include <kore3/error.h>
 #endif
 
 #include <intrin.h>
@@ -34,6 +34,6 @@ static inline void kore_atomic_exchange_double(volatile double *pointer, double 
 #ifdef _WIN64
 	_InterlockedExchange64((volatile __int64 *)pointer, *(__int64 *)&value);
 #else
-	kinc_error_message("kinc_atomic_exchange_double is not supported for 32 bit Windows builds");
+	kore_error_message("kinc_atomic_exchange_double is not supported for 32 bit Windows builds");
 #endif
 }
