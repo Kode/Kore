@@ -1,27 +1,27 @@
-#include <kinc/threads/mutex.h>
+#include <kore3/threads/mutex.h>
 
-void kinc_mutex_init(kinc_mutex_t *mutex) {
-	assert(sizeof(RTL_CRITICAL_SECTION) == sizeof(kinc_microsoft_critical_section_t));
+void kore_mutex_init(kore_mutex *mutex) {
+	assert(sizeof(RTL_CRITICAL_SECTION) == sizeof(kore_microsoft_critical_section));
 	InitializeCriticalSection((LPCRITICAL_SECTION)&mutex->impl.criticalSection);
 }
 
-void kinc_mutex_destroy(kinc_mutex_t *mutex) {
+void kore_mutex_destroy(kore_mutex *mutex) {
 	DeleteCriticalSection((LPCRITICAL_SECTION)&mutex->impl.criticalSection);
 }
 
-void kinc_mutex_lock(kinc_mutex_t *mutex) {
+void kore_mutex_lock(kore_mutex *mutex) {
 	EnterCriticalSection((LPCRITICAL_SECTION)&mutex->impl.criticalSection);
 }
 
-bool kinc_mutex_try_to_lock(kinc_mutex_t *mutex) {
+bool kore_mutex_try_to_lock(kore_mutex *mutex) {
 	return TryEnterCriticalSection((LPCRITICAL_SECTION)&mutex->impl.criticalSection);
 }
 
-void kinc_mutex_unlock(kinc_mutex_t *mutex) {
+void kore_mutex_unlock(kore_mutex *mutex) {
 	LeaveCriticalSection((LPCRITICAL_SECTION)&mutex->impl.criticalSection);
 }
 
-bool kinc_uber_mutex_init(kinc_uber_mutex_t *mutex, const char *name) {
+bool kore_uber_mutex_init(kore_uber_mutex *mutex, const char *name) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 	mutex->impl.id = (void *)CreateMutexA(NULL, FALSE, name);
 	HRESULT res = GetLastError();
@@ -36,7 +36,7 @@ bool kinc_uber_mutex_init(kinc_uber_mutex_t *mutex, const char *name) {
 #endif
 }
 
-void kinc_uber_mutex_destroy(kinc_uber_mutex_t *mutex) {
+void kore_uber_mutex_destroy(kore_uber_mutex *mutex) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 	if (mutex->impl.id) {
 		CloseHandle((HANDLE)mutex->impl.id);
@@ -45,14 +45,14 @@ void kinc_uber_mutex_destroy(kinc_uber_mutex_t *mutex) {
 #endif
 }
 
-void kinc_uber_mutex_lock(kinc_uber_mutex_t *mutex) {
+void kore_uber_mutex_lock(kore_uber_mutex *mutex) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 	bool succ = WaitForSingleObject((HANDLE)mutex->impl.id, INFINITE) == WAIT_FAILED ? false : true;
 	assert(succ);
 #endif
 }
 
-void kinc_uber_mutex_unlock(kinc_uber_mutex_t *mutex) {
+void kore_uber_mutex_unlock(kore_uber_mutex *mutex) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 	bool succ = ReleaseMutex((HANDLE)mutex->impl.id) == FALSE ? false : true;
 	assert(succ);

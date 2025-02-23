@@ -1,4 +1,4 @@
-#include <kinc/threads/thread.h>
+#include <kore3/threads/thread.h>
 
 #ifdef KINC_VTUNE
 #include <ittnotify.h>
@@ -8,9 +8,9 @@
 #include <Superluminal/PerformanceAPI_capi.h>
 #endif
 
-void kinc_threads_init() {}
+void kore_threads_init() {}
 
-void kinc_threads_quit() {}
+void kore_threads_quit() {}
 
 struct thread_start {
 	void (*thread)(void *param);
@@ -27,7 +27,7 @@ static DWORD WINAPI ThreadProc(LPVOID arg) {
 	return 0;
 }
 
-void kinc_thread_init(kinc_thread_t *thread, void (*func)(void *param), void *param) {
+void kore_thread_init(kore_thread *thread, void (*func)(void *param), void *param) {
 	thread->impl.func = func;
 	thread->impl.param = param;
 
@@ -41,12 +41,12 @@ void kinc_thread_init(kinc_thread_t *thread, void (*func)(void *param), void *pa
 	assert(thread->impl.handle != NULL);
 }
 
-void kinc_thread_wait_and_destroy(kinc_thread_t *thread) {
+void kore_thread_wait_and_destroy(kore_thread *thread) {
 	WaitForSingleObject(thread->impl.handle, INFINITE);
 	CloseHandle(thread->impl.handle);
 }
 
-bool kinc_thread_try_to_destroy(kinc_thread_t *thread) {
+bool kore_thread_try_to_destroy(kore_thread *thread) {
 	DWORD code;
 	GetExitCodeThread(thread->impl.handle, &code);
 	if (code != STILL_ACTIVE) {
@@ -60,7 +60,7 @@ typedef HRESULT(WINAPI *SetThreadDescriptionType)(HANDLE hThread, PCWSTR lpThrea
 static SetThreadDescriptionType MySetThreadDescription = NULL;
 static bool set_thread_description_loaded = false;
 
-void kinc_thread_set_name(const char *name) {
+void kore_thread_set_name(const char *name) {
 	if (!set_thread_description_loaded) {
 		HMODULE kernel32 = LoadLibraryA("kernel32.dll");
 		MySetThreadDescription = (SetThreadDescriptionType)GetProcAddress(kernel32, "SetThreadDescription");
@@ -82,6 +82,6 @@ void kinc_thread_set_name(const char *name) {
 #endif
 }
 
-void kinc_thread_sleep(int milliseconds) {
+void kore_thread_sleep(int milliseconds) {
 	Sleep(milliseconds);
 }

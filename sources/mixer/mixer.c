@@ -2,16 +2,16 @@
 
 #include <stdint.h>
 
-#include <kinc/threads/atomic.h>
-#include <kinc/threads/mutex.h>
 #include <kinc/video.h>
 #include <kore3/audio/audio.h>
 #include <kore3/math/core.h>
+#include <kore3/threads/atomic.h>
+#include <kore3/threads/mutex.h>
 
 #include <assert.h>
 #include <stdlib.h>
 
-static kinc_mutex_t mutex;
+static kore_mutex mutex;
 
 #define CHANNEL_COUNT 16
 static kore_mixer_channel channels[CHANNEL_COUNT];
@@ -69,7 +69,7 @@ void kore_mixer_mix(kore_audio_buffer *buffer, uint32_t samples) {
 		value = c.m128_f32[0] + c.m128_f32[1] + c.m128_f32[2] + c.m128_f32[3];
 		value = max(min(value, 1.0f), -1.0f);
 #else
-		kinc_mutex_lock(&mutex);
+		kore_mutex_lock(&mutex);
 		for (int i = 0; i < CHANNEL_COUNT; ++i) {
 			if (channels[i].sound != NULL) {
 				left_value += sampleLinear(channels[i].sound->left, channels[i].position) * channels[i].volume * channels[i].sound->volume;
@@ -115,7 +115,7 @@ void kore_mixer_mix(kore_audio_buffer *buffer, uint32_t samples) {
 			}
 		}
 
-		kinc_mutex_unlock(&mutex);
+		kore_mutex_unlock(&mutex);
 #endif
 		assert(buffer->channel_count >= 2);
 		buffer->channels[0][buffer->write_location] = left_value;
@@ -141,7 +141,7 @@ void kore_mixer_init(void) {
 		streamchannels[i].stream = NULL;
 		streamchannels[i].position = 0;
 	}
-	kinc_mutex_init(&mutex);
+	kore_mutex_init(&mutex);
 
 	kore_audio_init();
 	kore_audio_set_callback(kore_mixer_mix_callback, NULL);
@@ -149,7 +149,7 @@ void kore_mixer_init(void) {
 
 kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, float pitch, bool unique) {
 	kore_mixer_channel *channel = NULL;
-	kinc_mutex_lock(&mutex);
+	kore_mutex_lock(&mutex);
 	bool found = false;
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (channels[i].sound == sound) {
@@ -170,12 +170,12 @@ kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, fl
 			}
 		}
 	}
-	kinc_mutex_unlock(&mutex);
+	kore_mutex_unlock(&mutex);
 	return channel;
 }
 
 void kore_mixer_stop_sound(kore_mixer_sound *sound) {
-	kinc_mutex_lock(&mutex);
+	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (channels[i].sound == sound) {
 			channels[i].sound = NULL;
@@ -183,11 +183,11 @@ void kore_mixer_stop_sound(kore_mixer_sound *sound) {
 			break;
 		}
 	}
-	kinc_mutex_unlock(&mutex);
+	kore_mutex_unlock(&mutex);
 }
 
 void kore_mixer_play_sound_stream(kore_mixer_sound_stream *stream) {
-	kinc_mutex_lock(&mutex);
+	kore_mutex_lock(&mutex);
 
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (streamchannels[i].stream == stream) {
@@ -205,11 +205,11 @@ void kore_mixer_play_sound_stream(kore_mixer_sound_stream *stream) {
 		}
 	}
 
-	kinc_mutex_unlock(&mutex);
+	kore_mutex_unlock(&mutex);
 }
 
 void kore_mixer_stop_sound_stream(kore_mixer_sound_stream *stream) {
-	kinc_mutex_lock(&mutex);
+	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (streamchannels[i].stream == stream) {
 			streamchannels[i].stream = NULL;
@@ -217,11 +217,11 @@ void kore_mixer_stop_sound_stream(kore_mixer_sound_stream *stream) {
 			break;
 		}
 	}
-	kinc_mutex_unlock(&mutex);
+	kore_mutex_unlock(&mutex);
 }
 
 void kinc_internal_play_video_sound_stream(struct kinc_internal_video_sound_stream *stream) {
-	kinc_mutex_lock(&mutex);
+	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (videos[i].stream == NULL) {
 			videos[i].stream = stream;
@@ -229,11 +229,11 @@ void kinc_internal_play_video_sound_stream(struct kinc_internal_video_sound_stre
 			break;
 		}
 	}
-	kinc_mutex_unlock(&mutex);
+	kore_mutex_unlock(&mutex);
 }
 
 void kinc_internal_stop_video_sound_stream(struct kinc_internal_video_sound_stream *stream) {
-	kinc_mutex_lock(&mutex);
+	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (videos[i].stream == stream) {
 			videos[i].stream = NULL;
@@ -241,7 +241,7 @@ void kinc_internal_stop_video_sound_stream(struct kinc_internal_video_sound_stre
 			break;
 		}
 	}
-	kinc_mutex_unlock(&mutex);
+	kore_mutex_unlock(&mutex);
 }
 
 float kore_mixer_channel_get_volume(kore_mixer_channel *channel) {

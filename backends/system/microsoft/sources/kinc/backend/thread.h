@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MICROSOFT_THREAD_HEADER
+#define KORE_MICROSOFT_THREAD_HEADER
 
 #ifdef __cplusplus
 extern "C" {
@@ -8,8 +9,10 @@ typedef struct {
 	void *handle;
 	void *param;
 	void (*func)(void *param);
-} kinc_thread_impl_t;
+} kore_thread_impl;
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

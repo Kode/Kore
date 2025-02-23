@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_THREADS_SEMAPHORE_HEADER
+#define KORE_THREADS_SEMAPHORE_HEADER
 
 #include <kinc/global.h>
 
@@ -14,9 +15,9 @@
 extern "C" {
 #endif
 
-typedef struct kinc_semaphore {
-	kinc_semaphore_impl_t impl;
-} kinc_semaphore_t;
+typedef struct kore_semaphore {
+	kore_semaphore_impl impl;
+} kore_semaphore;
 
 /// <summary>
 /// Initializes a semaphore.
@@ -24,26 +25,26 @@ typedef struct kinc_semaphore {
 /// <param name="semaphore">The semaphore to initialize</param>
 /// <param name="current">The current count of the semaphore</param>
 /// <param name="max">The maximum allowed count of the semaphore</param>
-KINC_FUNC void kinc_semaphore_init(kinc_semaphore_t *semaphore, int current, int max);
+KORE_FUNC void kore_semaphore_init(kore_semaphore *semaphore, int current, int max);
 
 /// <summary>
 /// Destroys a semaphore.
 /// </summary>
 /// <param name="semaphore">The semaphore to destroy</param>
-KINC_FUNC void kinc_semaphore_destroy(kinc_semaphore_t *semaphore);
+KORE_FUNC void kore_semaphore_destroy(kore_semaphore *semaphore);
 
 /// <summary>
 /// Increases the current count of the semaphore, therefore allowing more acquires to succeed.
 /// </summary>
 /// <param name="semaphore">The semaphore to increase the count on</param>
 /// <param name="count">The amount by which the count will be increased</param>
-KINC_FUNC void kinc_semaphore_release(kinc_semaphore_t *semaphore, int count);
+KORE_FUNC void kore_semaphore_release(kore_semaphore *semaphore, int count);
 
 /// <summary>
 /// Decreases the count of the semaphore by one. Blocks until it is possible to decrease the count if it already reached zero.
 /// </summary>
 /// <param name="semaphore">The semaphore to acquire</param>
-KINC_FUNC void kinc_semaphore_acquire(kinc_semaphore_t *semaphore);
+KORE_FUNC void kore_semaphore_acquire(kore_semaphore *semaphore);
 
 /// <summary>
 /// Attempts to decrease the count of the semaphore by one.
@@ -51,8 +52,10 @@ KINC_FUNC void kinc_semaphore_acquire(kinc_semaphore_t *semaphore);
 /// <param name="semaphore">The semaphore to acquire</param>
 /// <param name="timeout">The timeout in seconds after which the function returns if the semaphore-count could not be decreased</param>
 /// <returns>Whether the semaphore-count could be decreased</returns>
-KINC_FUNC bool kinc_semaphore_try_to_acquire(kinc_semaphore_t *semaphore, double timeout);
+KORE_FUNC bool kore_semaphore_try_to_acquire(kore_semaphore *semaphore, double timeout);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

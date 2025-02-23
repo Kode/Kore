@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_THREADS_ATOMIC_HEADER
+#define KORE_THREADS_ATOMIC_HEADER
 
 #include <kinc/global.h>
 
@@ -7,3 +8,5 @@
 /*! \file atomic.h
     \brief Provides atomics aka interlocked operations.
 */
+
+#endif

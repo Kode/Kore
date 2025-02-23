@@ -12,9 +12,9 @@
 #include <kinc/input/surface.h>
 #include <kinc/log.h>
 #include <kinc/system.h>
-#include <kinc/threads/thread.h>
 #include <kinc/video.h>
 #include <kinc/window.h>
+#include <kore3/threads/thread.h>
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>

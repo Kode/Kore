@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MICROSOFT_THREADLOCAL_HEADER
+#define KORE_MICROSOFT_THREADLOCAL_HEADER
 
 #ifdef __cplusplus
 extern "C" {
@@ -6,8 +7,10 @@ extern "C" {
 
 typedef struct {
 	int slot;
-} kinc_thread_local_impl_t;
+} kore_thread_local_impl;
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

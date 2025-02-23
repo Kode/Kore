@@ -1,5 +1,16 @@
-#pragma once
+#ifndef KORE_MICROSOFT_SEMAPHORE_HEADER
+#define KORE_MICROSOFT_SEMAPHORE_HEADER
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
 	void *handle;
-} kinc_semaphore_impl_t;
+} kore_semaphore_impl;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

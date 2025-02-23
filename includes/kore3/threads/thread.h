@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_THREADS_THREAD_HEADER
+#define KORE_THREADS_THREAD_HEADER
 
 #include <kinc/global.h>
 
@@ -12,21 +13,21 @@
 extern "C" {
 #endif
 
-typedef struct kinc_thread {
-	kinc_thread_impl_t impl;
-} kinc_thread_t;
+typedef struct kore_thread {
+	kore_thread_impl impl;
+} kore_thread;
 
 /// <summary>
-/// Initializes the threading system. This has to be called before calling any kinc_thread functions.
+/// Initializes the threading system. This has to be called before calling any kore_thread functions.
 /// </summary>
-KINC_FUNC void kinc_threads_init(void);
+KORE_FUNC void kore_threads_init(void);
 
 /// <summary>
 /// Shuts down the threading system.
 /// </summary>
 /// <param name=""></param>
 /// <returns></returns>
-KINC_FUNC void kinc_threads_quit(void);
+KORE_FUNC void kore_threads_quit(void);
 
 /// <summary>
 /// Starts a thread via the provided function.
@@ -34,33 +35,35 @@ KINC_FUNC void kinc_threads_quit(void);
 /// <param name="thread">The thread-object to initialize with the new thread</param>
 /// <param name="func">The function used to start a new thread</param>
 /// <param name="param">A parameter that is passed to the thread-function when the thread starts running</param>
-KINC_FUNC void kinc_thread_init(kinc_thread_t *thread, void (*func)(void *param), void *param);
+KORE_FUNC void kore_thread_init(kore_thread *thread, void (*func)(void *param), void *param);
 
 /// <summary>
 /// Waits for the thread to complete execution and then destroys it.
 /// </summary>
 /// <param name="thread">The thread to destroy</param>
-KINC_FUNC void kinc_thread_wait_and_destroy(kinc_thread_t *thread);
+KORE_FUNC void kore_thread_wait_and_destroy(kore_thread *thread);
 
 /// <summary>
 /// Attempts to destroy a thread.
 /// </summary>
 /// <param name="thread">The thread to destroy</param>
 /// <returns>Returns if the thread is still running and therefore couldn't be destroyed</returns>
-KINC_FUNC bool kinc_thread_try_to_destroy(kinc_thread_t *thread);
+KORE_FUNC bool kore_thread_try_to_destroy(kore_thread *thread);
 
 /// <summary>
 /// Assigns a name to the current thread which will then show up in debuggers and profilers.
 /// </summary>
 /// <param name="name">The name to assign to the thread</param>
-KINC_FUNC void kinc_thread_set_name(const char *name);
+KORE_FUNC void kore_thread_set_name(const char *name);
 
 /// <summary>
 /// Puts the current thread to sleep.
 /// </summary>
 /// <param name="milliseconds">How long to sleep</param>
-KINC_FUNC void kinc_thread_sleep(int milliseconds);
+KORE_FUNC void kore_thread_sleep(int milliseconds);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
