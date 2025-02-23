@@ -43,5 +43,5 @@
 
 #include <Windows.h>
 
-#include "VrInterface_SteamVR.cpp.h"
-#include "video.cpp.h"
+#include "steamvr.cpp"
+#include "video.cpp"

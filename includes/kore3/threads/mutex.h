@@ -3,7 +3,7 @@
 
 #include <kore3/global.h>
 
-#include <kinc/backend/mutex.h>
+#include <kore3/backend/mutex.h>
 
 #include <stdbool.h>
 

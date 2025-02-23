@@ -5,8 +5,8 @@
 #include <kore3/gpu/device.h>
 #include <kore3/util/align.h>
 
-#include <kinc/backend/SystemMicrosoft.h>
-#include <kinc/backend/Windows.h>
+#include <kore3/backend/microsoft.h>
+#include <kore3/backend/windows.h>
 
 #include <kore3/log.h>
 #include <kore3/window.h>
@@ -43,7 +43,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 #endif
 
 	IDXGIFactory4 *dxgi_factory = NULL;
-	kinc_microsoft_affirm(CreateDXGIFactory1(IID_PPV_ARGS(&dxgi_factory)));
+	kore_microsoft_affirm(CreateDXGIFactory1(IID_PPV_ARGS(&dxgi_factory)));
 
 	HRESULT result = S_FALSE;
 
@@ -108,7 +108,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
-		kinc_microsoft_affirm(device->d3d12.device->CreateCommandQueue(&desc, IID_PPV_ARGS(&device->d3d12.graphics_queue)));
+		kore_microsoft_affirm(device->d3d12.device->CreateCommandQueue(&desc, IID_PPV_ARGS(&device->d3d12.graphics_queue)));
 	}
 
 	{
@@ -116,7 +116,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		desc.Type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
 
-		kinc_microsoft_affirm(device->d3d12.device->CreateCommandQueue(&desc, IID_PPV_ARGS(&device->d3d12.compute_queue)));
+		kore_microsoft_affirm(device->d3d12.device->CreateCommandQueue(&desc, IID_PPV_ARGS(&device->d3d12.compute_queue)));
 	}
 
 	{
@@ -124,7 +124,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		desc.Type = D3D12_COMMAND_LIST_TYPE_COPY;
 
-		kinc_microsoft_affirm(device->d3d12.device->CreateCommandQueue(&desc, IID_PPV_ARGS(&device->d3d12.copy_queue)));
+		kore_microsoft_affirm(device->d3d12.device->CreateCommandQueue(&desc, IID_PPV_ARGS(&device->d3d12.copy_queue)));
 	}
 
 	{
@@ -134,12 +134,12 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		desc.BufferDesc.Width = kore_window_width(0);
 		desc.BufferDesc.Height = kore_window_height(0);
-		desc.OutputWindow = kinc_windows_window_handle(0);
+		desc.OutputWindow = kore_windows_window_handle(0);
 		desc.SampleDesc.Count = 1;
 		desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		desc.Windowed = true;
 
-		kinc_microsoft_affirm(dxgi_factory->CreateSwapChain((IUnknown *)device->d3d12.graphics_queue, &desc, &device->d3d12.swap_chain));
+		kore_microsoft_affirm(dxgi_factory->CreateSwapChain((IUnknown *)device->d3d12.graphics_queue, &desc, &device->d3d12.swap_chain));
 	}
 
 	device->d3d12.cbv_srv_uav_increment = device->d3d12.device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -150,7 +150,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.NumDescriptors = KORE_INDEX_ALLOCATOR_SIZE;
 		desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		kinc_microsoft_affirm(device->d3d12.device->CreateDescriptorHeap(&desc, IID_GRAPHICS_PPV_ARGS(&device->d3d12.all_samplers)));
+		kore_microsoft_affirm(device->d3d12.device->CreateDescriptorHeap(&desc, IID_GRAPHICS_PPV_ARGS(&device->d3d12.all_samplers)));
 
 		kore_index_allocator_init(&device->d3d12.sampler_index_allocator);
 	}
@@ -194,7 +194,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.NumDescriptors = descriptor_count;
 		desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		kinc_microsoft_affirm(device->d3d12.device->CreateDescriptorHeap(&desc, IID_GRAPHICS_PPV_ARGS(&device->d3d12.descriptor_heap)));
+		kore_microsoft_affirm(device->d3d12.device->CreateDescriptorHeap(&desc, IID_GRAPHICS_PPV_ARGS(&device->d3d12.descriptor_heap)));
 
 		oa_create(&device->d3d12.descriptor_heap_allocator, descriptor_count, 4096);
 	}
@@ -206,7 +206,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.NumDescriptors = sampler_count;
 		desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		kinc_microsoft_affirm(device->d3d12.device->CreateDescriptorHeap(&desc, IID_GRAPHICS_PPV_ARGS(&device->d3d12.sampler_heap)));
+		kore_microsoft_affirm(device->d3d12.device->CreateDescriptorHeap(&desc, IID_GRAPHICS_PPV_ARGS(&device->d3d12.sampler_heap)));
 
 		oa_create(&device->d3d12.sampler_heap_allocator, sampler_count, 4096);
 	}
@@ -228,7 +228,7 @@ void kore_d3d12_device_destroy(kore_gpu_device *device) {
 
 void kore_d3d12_device_set_name(kore_gpu_device *device, const char *name) {
 	wchar_t wstr[1024];
-	kinc_microsoft_convert_string(wstr, name, 1024);
+	kore_microsoft_convert_string(wstr, name, 1024);
 	device->d3d12.device->SetName(wstr);
 }
 
@@ -300,7 +300,7 @@ void kore_d3d12_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 	buffer->d3d12.cpu_read = (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0;
 	buffer->d3d12.cpu_write = (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0;
 
-	kinc_microsoft_affirm(device->d3d12.device->CreateCommittedResource(
+	kore_microsoft_affirm(device->d3d12.device->CreateCommittedResource(
 	    &props, D3D12_HEAP_FLAG_NONE, &desc, (D3D12_RESOURCE_STATES)buffer->d3d12.resource_state, NULL, IID_GRAPHICS_PPV_ARGS(&buffer->d3d12.resource)));
 }
 
@@ -338,7 +338,7 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 	list->d3d12.list_type = list_type;
 
 	for (int i = 0; i < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++i) {
-		kinc_microsoft_affirm(device->d3d12.device->CreateCommandAllocator(list_type, IID_GRAPHICS_PPV_ARGS(&list->d3d12.allocator[i])));
+		kore_microsoft_affirm(device->d3d12.device->CreateCommandAllocator(list_type, IID_GRAPHICS_PPV_ARGS(&list->d3d12.allocator[i])));
 		list->d3d12.allocator_execution_index[i] = 0;
 
 		oa_allocate(&device->d3d12.descriptor_heap_allocator, KORE_D3D12_COMMAND_LIST_DYNAMIC_DESCRIPTORS_COUNT,
@@ -348,7 +348,7 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 
 	list->d3d12.current_allocator_index = 0;
 
-	kinc_microsoft_affirm(device->d3d12.device->CreateCommandList(0, list_type, list->d3d12.allocator[list->d3d12.current_allocator_index], NULL,
+	kore_microsoft_affirm(device->d3d12.device->CreateCommandList(0, list_type, list->d3d12.allocator[list->d3d12.current_allocator_index], NULL,
 	                                                              IID_GRAPHICS_PPV_ARGS(&list->d3d12.list)));
 
 	list->d3d12.compute_pipe = NULL;
@@ -360,7 +360,7 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 		desc.NumDescriptors = D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT;
 		desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		kinc_microsoft_affirm(device->d3d12.device->CreateDescriptorHeap(&desc, IID_GRAPHICS_PPV_ARGS(&list->d3d12.rtv_descriptors)));
+		kore_microsoft_affirm(device->d3d12.device->CreateDescriptorHeap(&desc, IID_GRAPHICS_PPV_ARGS(&list->d3d12.rtv_descriptors)));
 
 		list->d3d12.rtv_increment = device->d3d12.device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	}
@@ -370,7 +370,7 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 		desc.NumDescriptors = 1;
 		desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		kinc_microsoft_affirm(device->d3d12.device->CreateDescriptorHeap(&desc, IID_GRAPHICS_PPV_ARGS(&list->d3d12.dsv_descriptor)));
+		kore_microsoft_affirm(device->d3d12.device->CreateDescriptorHeap(&desc, IID_GRAPHICS_PPV_ARGS(&list->d3d12.dsv_descriptor)));
 
 		list->d3d12.dsv_increment = device->d3d12.device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	}
@@ -550,7 +550,7 @@ void kore_d3d12_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	}
 
-	kinc_microsoft_affirm(device->d3d12.device->CreateCommittedResource(&heap_properties, D3D12_HEAP_FLAG_NONE, &desc,
+	kore_microsoft_affirm(device->d3d12.device->CreateCommittedResource(&heap_properties, D3D12_HEAP_FLAG_NONE, &desc,
 	                                                                    D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, optimizedClearValuePointer,
 	                                                                    IID_GRAPHICS_PPV_ARGS(&texture->d3d12.resource)));
 
@@ -577,7 +577,7 @@ kore_gpu_texture *kore_d3d12_device_get_framebuffer(kore_gpu_device *device) {
 
 static void wait_for_fence(kore_gpu_device *device, ID3D12Fence *fence, HANDLE event, UINT64 completion_value) {
 	if (fence->GetCompletedValue() < completion_value) {
-		kinc_microsoft_affirm(fence->SetEventOnCompletion(completion_value, event));
+		kore_microsoft_affirm(fence->SetEventOnCompletion(completion_value, event));
 		WaitForSingleObject(event, INFINITE);
 
 #if defined(KORE_NVAPI) && !defined(NDEBUG)
@@ -693,7 +693,7 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 		kore_gpu_texture *framebuffer = kore_d3d12_device_get_framebuffer(device);
 		framebuffer->d3d12.in_flight_frame_index = device->d3d12.current_frame_index;
 
-		kinc_microsoft_affirm(device->d3d12.swap_chain->Present(1, 0));
+		kore_microsoft_affirm(device->d3d12.swap_chain->Present(1, 0));
 
 		device->d3d12.graphics_queue->Signal(device->d3d12.frame_fence, device->d3d12.current_frame_index);
 

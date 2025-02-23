@@ -6,8 +6,8 @@
 
 #ifdef KINC_WINDOWS
 
-#include <kinc/backend/MiniWindows.h>
-#include <kinc/backend/SystemMicrosoft.h>
+#include <kore3/backend/microsoft.h>
+#include <kore3/backend/windowsmini.h>
 #endif
 
 void kore_affirm(bool condition) {
@@ -48,7 +48,7 @@ void kore_error_message(const char *format, ...) {
 		va_list args;
 		va_start(args, format);
 		wchar_t buffer[4096];
-		kinc_microsoft_format(format, args, buffer);
+		kore_microsoft_format(format, args, buffer);
 		MessageBoxW(NULL, buffer, L"Error", 0);
 		va_end(args);
 	}
@@ -64,7 +64,7 @@ void kore_error_args(const char *format, va_list args) {
 
 #ifdef KINC_WINDOWS
 	wchar_t buffer[4096];
-	kinc_microsoft_format(format, args, buffer);
+	kore_microsoft_format(format, args, buffer);
 	MessageBoxW(NULL, buffer, L"Error", 0);
 #endif
 

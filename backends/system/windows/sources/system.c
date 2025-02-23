@@ -2,8 +2,8 @@
 
 #include <kore3/input/gamepad.h>
 
-#include <kinc/backend/SystemMicrosoft.h>
-#include <kinc/backend/Windows.h>
+#include <kore3/backend/microsoft.h>
+#include <kore3/backend/windows.h>
 
 #include <kore3/display.h>
 #include <kore3/input/keyboard.h>
@@ -327,7 +327,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		}
 		break;
 	case WM_DPICHANGED: {
-		int window = kinc_windows_window_index_from_hwnd(hWnd);
+		int window = kore_windows_window_index_from_hwnd(hWnd);
 		if (window >= 0) {
 			kore_internal_call_ppi_changed_callback(window, LOWORD(wParam));
 		}
@@ -339,7 +339,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		// Scheduler::breakTime();
 		break;
 	case WM_SIZE: {
-		int window = kinc_windows_window_index_from_hwnd(hWnd);
+		int window = kore_windows_window_index_from_hwnd(hWnd);
 		if (window >= 0) {
 			int width = LOWORD(lParam);
 			int height = HIWORD(lParam);
@@ -349,7 +349,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		break;
 	}
 	case WM_CLOSE: {
-		int window_index = kinc_windows_window_index_from_hwnd(hWnd);
+		int window_index = kore_windows_window_index_from_hwnd(hWnd);
 		if (kore_internal_call_close_callback(window_index)) {
 			kore_window_destroy(window_index);
 			if (kore_count_windows() <= 0) {
@@ -363,11 +363,11 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		return 1;
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE) {
-			kore_internal_mouse_window_activated(kinc_windows_window_index_from_hwnd(hWnd));
+			kore_internal_mouse_window_activated(kore_windows_window_index_from_hwnd(hWnd));
 			kore_internal_foreground_callback();
 		}
 		else {
-			kore_internal_mouse_window_deactivated(kinc_windows_window_index_from_hwnd(hWnd));
+			kore_internal_mouse_window_deactivated(kore_windows_window_index_from_hwnd(hWnd));
 			kore_internal_background_callback();
 #ifdef HANDLE_ALT_ENTER
 			altDown = false;
@@ -376,12 +376,12 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		RegisterTouchWindow(hWnd, 0);
 		break;
 	case WM_MOUSELEAVE:
-		windowId = kinc_windows_window_index_from_hwnd(hWnd);
+		windowId = kore_windows_window_index_from_hwnd(hWnd);
 		//**windows[windowId]->isMouseInside = false;
 		kore_internal_mouse_trigger_leave_window(windowId);
 		break;
 	case WM_MOUSEMOVE:
-		windowId = kinc_windows_window_index_from_hwnd(hWnd);
+		windowId = kore_windows_window_index_from_hwnd(hWnd);
 		/*if (!windows[windowId]->isMouseInside) {
 		    windows[windowId]->isMouseInside = true;
 		    TRACKMOUSEEVENT tme;
@@ -425,47 +425,47 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 			SetCapture(hWnd);
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kore_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), 0, mouseX, mouseY);
+		kore_internal_mouse_trigger_press(kore_windows_window_index_from_hwnd(hWnd), 0, mouseX, mouseY);
 		break;
 	case WM_LBUTTONUP:
 		if (!kore_mouse_is_locked())
 			ReleaseCapture();
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kore_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), 0, mouseX, mouseY);
+		kore_internal_mouse_trigger_release(kore_windows_window_index_from_hwnd(hWnd), 0, mouseX, mouseY);
 		break;
 	case WM_RBUTTONDOWN:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kore_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), 1, mouseX, mouseY);
+		kore_internal_mouse_trigger_press(kore_windows_window_index_from_hwnd(hWnd), 1, mouseX, mouseY);
 		break;
 	case WM_RBUTTONUP:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kore_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), 1, mouseX, mouseY);
+		kore_internal_mouse_trigger_release(kore_windows_window_index_from_hwnd(hWnd), 1, mouseX, mouseY);
 		break;
 	case WM_MBUTTONDOWN:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kore_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), 2, mouseX, mouseY);
+		kore_internal_mouse_trigger_press(kore_windows_window_index_from_hwnd(hWnd), 2, mouseX, mouseY);
 		break;
 	case WM_MBUTTONUP:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kore_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), 2, mouseX, mouseY);
+		kore_internal_mouse_trigger_release(kore_windows_window_index_from_hwnd(hWnd), 2, mouseX, mouseY);
 		break;
 	case WM_XBUTTONDOWN:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kore_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), HIWORD(wParam) + 2, mouseX, mouseY);
+		kore_internal_mouse_trigger_press(kore_windows_window_index_from_hwnd(hWnd), HIWORD(wParam) + 2, mouseX, mouseY);
 		break;
 	case WM_XBUTTONUP:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kore_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), HIWORD(wParam) + 2, mouseX, mouseY);
+		kore_internal_mouse_trigger_release(kore_windows_window_index_from_hwnd(hWnd), HIWORD(wParam) + 2, mouseX, mouseY);
 		break;
 	case WM_MOUSEWHEEL:
-		kore_internal_mouse_trigger_scroll(kinc_windows_window_index_from_hwnd(hWnd), GET_WHEEL_DELTA_WPARAM(wParam) / -120);
+		kore_internal_mouse_trigger_scroll(kore_windows_window_index_from_hwnd(hWnd), GET_WHEEL_DELTA_WPARAM(wParam) / -120);
 		break;
 	case WM_POINTERDOWN:
 		pointerId = GET_POINTERID_WPARAM(wParam);
@@ -473,7 +473,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		if (pointerInfo.pointerType == PT_PEN) {
 			MyGetPointerPenInfo(pointerId, &penInfo);
 			ScreenToClient(hWnd, &pointerInfo.ptPixelLocation);
-			kore_internal_pen_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
+			kore_internal_pen_trigger_press(kore_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
 			                                penInfo.pressure / 1024.0f);
 		}
 		break;
@@ -483,7 +483,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		if (pointerInfo.pointerType == PT_PEN) {
 			MyGetPointerPenInfo(pointerId, &penInfo);
 			ScreenToClient(hWnd, &pointerInfo.ptPixelLocation);
-			kore_internal_pen_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
+			kore_internal_pen_trigger_release(kore_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
 			                                  penInfo.pressure / 1024.0f);
 		}
 		break;
@@ -493,7 +493,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		if (pointerInfo.pointerType == PT_PEN) {
 			MyGetPointerPenInfo(pointerId, &penInfo);
 			ScreenToClient(hWnd, &pointerInfo.ptPixelLocation);
-			kore_internal_pen_trigger_move(kinc_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
+			kore_internal_pen_trigger_move(kore_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
 			                               penInfo.pressure / 1024.0f);
 		}
 		break;
@@ -1234,9 +1234,9 @@ const char *kinc_system_id() {
 
 static bool co_initialized = false;
 
-void kinc_windows_co_initialize(void) {
+void kore_windows_co_initialize(void) {
 	if (!co_initialized) {
-		kinc_microsoft_affirm(CoInitializeEx(0, COINIT_MULTITHREADED));
+		kore_microsoft_affirm(CoInitializeEx(0, COINIT_MULTITHREADED));
 		co_initialized = true;
 	}
 }
@@ -1245,7 +1245,7 @@ static wchar_t savePathw[2048] = {0};
 static char savePath[2048] = {0};
 
 static void findSavePath() {
-	kinc_windows_co_initialize();
+	kore_windows_co_initialize();
 	IKnownFolderManager *folders = NULL;
 	CoCreateInstance(&CLSID_KnownFolderManager, NULL, CLSCTX_INPROC_SERVER, &IID_IKnownFolderManager, (LPVOID *)&folders);
 	IKnownFolder *folder = NULL;
@@ -1398,7 +1398,6 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 		keyPressed[i] = false;
 	}
 
-	// Kore::System::_init(name, width, height, &win, &frame);
 	kore_set_application_name(name);
 	kore_window_parameters defaultWin;
 	if (win == NULL) {
@@ -1411,7 +1410,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 		win->title = name;
 	}
 
-	// kinc_g4_internal_init(); // TODO
+	// kore_g4_internal_init(); // TODO
 
 	int window = kore_window_create(win, frame);
 	loadXInput();
@@ -1421,17 +1420,17 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 }
 
 void kore_internal_shutdown() {
-	kinc_windows_hide_windows();
+	kore_windows_hide_windows();
 	kore_internal_shutdown_callback();
-	kinc_windows_destroy_windows();
-	// kinc_g4_internal_destroy(); // TODO
-	kinc_windows_restore_displays();
+	kore_windows_destroy_windows();
+	// kore_g4_internal_destroy(); // TODO
+	kore_windows_restore_displays();
 }
 
 void kore_copy_to_clipboard(const char *text) {
 	wchar_t wtext[4096];
 	MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 4096);
-	OpenClipboard(kinc_windows_window_handle(0));
+	OpenClipboard(kore_windows_window_handle(0));
 	EmptyClipboard();
 	size_t size = (wcslen(wtext) + 1) * sizeof(wchar_t);
 	HANDLE handle = GlobalAlloc(GMEM_MOVEABLE, size);

@@ -1,12 +1,12 @@
-#include <kinc/backend/Windows.h>
+#include <kore3/input/mouse.h>
+
+#include <kore3/backend/windows.h>
 #include <kore3/system.h>
 #include <kore3/window.h>
 
-#include <kore3/input/mouse.h>
-
 void kore_internal_mouse_lock(int window) {
 	kore_mouse_hide();
-	HWND handle = kinc_windows_window_handle(window);
+	HWND handle = kore_windows_window_handle(window);
 	SetCapture(handle);
 	RECT rect;
 	GetWindowRect(handle, &rect);
@@ -39,14 +39,14 @@ void kore_mouse_set_position(int window, int x, int y) {
 	POINT point;
 	point.x = x;
 	point.y = y;
-	ClientToScreen(kinc_windows_window_handle(window), &point);
+	ClientToScreen(kore_windows_window_handle(window), &point);
 	SetCursorPos(point.x, point.y);
 }
 
 void kore_mouse_get_position(int window, int *x, int *y) {
 	POINT point;
 	GetCursorPos(&point);
-	ScreenToClient(kinc_windows_window_handle(window), &point);
+	ScreenToClient(kore_windows_window_handle(window), &point);
 	*x = point.x;
 	*y = point.y;
 }

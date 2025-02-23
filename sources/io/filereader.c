@@ -53,7 +53,7 @@ const char *macgetresourcepath(void);
 #endif
 
 #if defined(KINC_MICROSOFT)
-#include <kinc/backend/MiniWindows.h>
+#include <kore3/backend/windowsmini.h>
 #endif
 
 #ifdef KINC_RASPBERRY_PI

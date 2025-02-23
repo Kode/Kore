@@ -3,7 +3,7 @@
 
 #include <kore3/global.h>
 
-#include <kinc/backend/threadlocal.h>
+#include <kore3/backend/threadlocal.h>
 
 /*! \file threadlocal.h
     \brief Provides storage-slots for thread-specific data.

@@ -1,4 +1,4 @@
-#include "SystemMicrosoft.h"
+#include <kore3/backend/microsoft.h>
 
 #include <kore3/error.h>
 
@@ -25,25 +25,25 @@ static void winerror(HRESULT result) {
 #endif
 }
 
-void kinc_microsoft_affirm(HRESULT result) {
+void kore_microsoft_affirm(HRESULT result) {
 	if (result != S_OK) {
 		winerror(result);
 	}
 }
 
-void kinc_microsoft_affirm_message(HRESULT result, const char *format, ...) {
+void kore_microsoft_affirm_message(HRESULT result, const char *format, ...) {
 	va_list args;
 	va_start(args, format);
 	kore_affirm_args(result == S_OK, format, args);
 	va_end(args);
 }
 
-void kinc_microsoft_format(const char *format, va_list args, wchar_t *buffer) {
+void kore_microsoft_format(const char *format, va_list args, wchar_t *buffer) {
 	char cbuffer[4096];
 	vsprintf(cbuffer, format, args);
 	MultiByteToWideChar(CP_UTF8, 0, cbuffer, -1, buffer, 4096);
 }
 
-void kinc_microsoft_convert_string(wchar_t *destination, const char *source, int num) {
+void kore_microsoft_convert_string(wchar_t *destination, const char *source, int num) {
 	MultiByteToWideChar(CP_UTF8, 0, source, -1, destination, num);
 }

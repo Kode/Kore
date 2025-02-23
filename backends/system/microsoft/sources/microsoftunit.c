@@ -47,10 +47,10 @@
 #include <intrin.h>
 #include <stdio.h>
 
-#include "SystemMicrosoft.c.h"
-#include "event.c.h"
-#include "fiber.c.h"
-#include "mutex.c.h"
-#include "semaphore.c.h"
-#include "thread.c.h"
-#include "threadlocal.c.h"
+#include "event.c"
+#include "fiber.c"
+#include "microsoft.c"
+#include "mutex.c"
+#include "semaphore.c"
+#include "thread.c"
+#include "threadlocal.c"

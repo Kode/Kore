@@ -90,8 +90,8 @@ function addSimpleBackend(name) {
 let plugin = false;
 
 if (platform === Platform.Windows) {
-	addBackend('system/windows');
-	addBackend('system/microsoft');
+	addBackend2('system/windows');
+	addBackend2('system/microsoft');
 	project.addLib('dxguid');
 	project.addLib('dsound');
 	project.addLib('dinput8');
@@ -215,7 +215,7 @@ else if (platform === Platform.WindowsApp) {
 	g4 = true;
 	addKincDefine('WINDOWSAPP');
 	addBackend('system/windowsapp');
-	addBackend('system/microsoft');
+	addBackend2('system/microsoft');
 	addBackend('Graphics4/direct3d11');
 	addSimpleBackend('audio/wasapi_winrt');
 	project.addDefine('_CRT_SECURE_NO_WARNINGS');

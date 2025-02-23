@@ -3,7 +3,7 @@
 
 #include <kore3/global.h>
 
-#include <kinc/backend/thread.h>
+#include <kore3/backend/thread.h>
 
 /*! \file thread.h
     \brief Supports the creation and destruction of threads.

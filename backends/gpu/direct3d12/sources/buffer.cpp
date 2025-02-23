@@ -2,7 +2,7 @@
 
 #include <kore3/gpu/buffer.h>
 
-#include <kinc/backend/SystemMicrosoft.h>
+#include <kore3/backend/microsoft.h>
 
 static uint64_t find_max_execution_index_all(kore_gpu_buffer *buffer) {
 	uint64_t max_execution_index = 0;
@@ -37,7 +37,7 @@ static uint64_t find_max_execution_index(kore_gpu_buffer *buffer, uint64_t offse
 
 void kore_d3d12_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {
 	wchar_t wstr[1024];
-	kinc_microsoft_convert_string(wstr, name, 1024);
+	kore_microsoft_convert_string(wstr, name, 1024);
 	buffer->d3d12.resource->SetName(wstr);
 }
 

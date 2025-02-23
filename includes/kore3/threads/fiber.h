@@ -3,7 +3,7 @@
 
 #include <kore3/global.h>
 
-#include <kinc/backend/fiber.h>
+#include <kore3/backend/fiber.h>
 
 /*! \file fiber.h
     \brief The fiber-API is experimental and only supported on a few system.

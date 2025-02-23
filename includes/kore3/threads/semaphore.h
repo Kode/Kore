@@ -3,7 +3,7 @@
 
 #include <kore3/global.h>
 
-#include <kinc/backend/semaphore.h>
+#include <kore3/backend/semaphore.h>
 
 #include <stdbool.h>
 

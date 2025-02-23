@@ -1,4 +1,4 @@
-#include <kinc/backend/Windows.h>
+#include <kore3/backend/windows.h>
 
 #include <kore3/display.h>
 #include <kore3/error.h>
@@ -90,7 +90,7 @@ void kore_display_init() {
 	display_initialized = true;
 }
 
-int kinc_windows_get_display_for_monitor(struct HMONITOR__ *monitor) {
+int kore_windows_get_display_for_monitor(struct HMONITOR__ *monitor) {
 	for (int i = 0; i < MAXIMUM_DISPLAYS; ++i) {
 		if (displays[i].monitor == monitor) {
 			return i;
@@ -142,7 +142,7 @@ int kore_display_count_available_modes(int display_index) {
 	return i;
 }
 
-bool kinc_windows_set_display_mode(int display_index, int width, int height, int bpp, int frequency) {
+bool kore_windows_set_display_mode(int display_index, int width, int height, int bpp, int frequency) {
 	DisplayData *display = &displays[display_index];
 	display->mode_changed = true;
 	DEVMODEA mode = {0};
@@ -164,15 +164,15 @@ bool kinc_windows_set_display_mode(int display_index, int width, int height, int
 	return success;
 }
 
-void kinc_windows_restore_display(int display) {
+void kore_windows_restore_display(int display) {
 	if (displays[display].mode_changed) {
 		ChangeDisplaySettingsA(&original_modes[display], 0);
 	}
 }
 
-void kinc_windows_restore_displays() {
+void kore_windows_restore_displays() {
 	for (int i = 0; i < MAXIMUM_DISPLAYS; ++i) {
-		kinc_windows_restore_display(i);
+		kore_windows_restore_display(i);
 	}
 }
 

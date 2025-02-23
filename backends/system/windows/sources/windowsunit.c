@@ -117,10 +117,10 @@ enum tagPOINTER_INPUT_TYPE {
 
 #include <stdio.h>
 
-#include "Windows.c.h"
-#include "base.c.h"
-#include "display.c.h"
-#include "http.c.h"
-#include "mouse.c.h"
-#include "system.c.h"
-#include "window.c.h"
+#include "base.c"
+#include "display.c"
+#include "http.c"
+#include "mouse.c"
+#include "system.c"
+#include "window.c"
+#include "windows.c"

@@ -10,7 +10,7 @@
 #include <string.h>
 
 #if defined(KINC_WINDOWS)
-#include <kinc/backend/MiniWindows.h>
+#include <kore3/backend/windowsmini.h>
 #endif
 
 #if defined(KINC_PS4) || defined(KINC_SWITCH)

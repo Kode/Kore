@@ -2,10 +2,10 @@
 #include <kore3/gpu/gpu.h>
 #include <kore3/window.h>
 
-#include <kinc/backend/Windows.h>
+#include <kore3/backend/windows.h>
 
 #ifdef KINC_VR
-#include <kinc/vr/vrinterface.h>
+#include <kore/vr/vr.h>
 #endif
 
 #undef CreateWindow
@@ -118,7 +118,7 @@ static DWORD getExStyle(int features) {
 	return exStyle;
 }
 
-int kinc_windows_window_index_from_hwnd(struct HWND__ *handle) {
+int kore_windows_window_index_from_hwnd(struct HWND__ *handle) {
 	for (int i = 0; i < MAXIMUM_WINDOWS; ++i) {
 		if (windows[i].handle == handle) {
 			return i;
@@ -211,7 +211,7 @@ static int createWindow(const wchar_t *title, int x, int y, int width, int heigh
 	WindowRect.bottom = height;
 
 	if (windowMode == KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN) {
-		kinc_windows_set_display_mode(display_index, width, height, bpp, frequency);
+		kore_windows_set_display_mode(display_index, width, height, bpp, frequency);
 	}
 
 	AdjustWindowRectEx(&WindowRect, getDwStyle(windowMode, features), FALSE, getDwExStyle(windowMode, features));
@@ -278,7 +278,7 @@ void kore_window_resize(int window_index, int width, int height) {
 	case KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN: {
 		int display_index = kore_window_display(window_index);
 		kore_display_mode display_mode = kore_display_current_mode(display_index);
-		kinc_windows_set_display_mode(display_index, width, height, win->bpp, win->frequency);
+		kore_windows_set_display_mode(display_index, width, height, win->bpp, win->frequency);
 		SetWindowPos(win->handle, NULL, display_mode.x, display_mode.y, display_mode.width, display_mode.height, 0);
 		break;
 	}
@@ -329,12 +329,12 @@ void kore_window_change_mode(int window_index, kore_window_mode mode) {
 	kore_display_mode display_mode = kore_display_current_mode(display_index);
 	switch (mode) {
 	case KORE_WINDOW_MODE_WINDOW:
-		kinc_windows_restore_display(display_index);
+		kore_windows_restore_display(display_index);
 		kore_window_change_features(window_index, win->features);
 		kore_window_show(window_index);
 		break;
 	case KORE_WINDOW_MODE_FULLSCREEN: {
-		kinc_windows_restore_display(display_index);
+		kore_windows_restore_display(display_index);
 		SetWindowLongW(win->handle, GWL_STYLE, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP);
 		SetWindowLongW(win->handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
 		SetWindowPos(win->handle, NULL, display_mode.x, display_mode.y, display_mode.width, display_mode.height, 0);
@@ -342,7 +342,7 @@ void kore_window_change_mode(int window_index, kore_window_mode mode) {
 		break;
 	}
 	case KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
-		kinc_windows_set_display_mode(display_index, win->manualWidth, win->manualHeight, win->bpp, win->frequency);
+		kore_windows_set_display_mode(display_index, win->manualWidth, win->manualHeight, win->bpp, win->frequency);
 		SetWindowLongW(win->handle, GWL_STYLE, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP);
 		SetWindowLongW(win->handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
 		SetWindowPos(win->handle, NULL, display_mode.x, display_mode.y, display_mode.width, display_mode.height, 0);
@@ -366,7 +366,7 @@ void kore_window_destroy(int window_index) {
 	}
 }
 
-void kinc_windows_hide_windows(void) {
+void kore_windows_hide_windows(void) {
 	for (int i = 0; i < MAXIMUM_WINDOWS; ++i) {
 		if (windows[i].handle != NULL) {
 			ShowWindow(windows[i].handle, SW_HIDE);
@@ -375,7 +375,7 @@ void kinc_windows_hide_windows(void) {
 	}
 }
 
-void kinc_windows_destroy_windows(void) {
+void kore_windows_destroy_windows(void) {
 	for (int i = 0; i < MAXIMUM_WINDOWS; ++i) {
 		kore_window_destroy(i);
 	}
@@ -453,18 +453,18 @@ void kore_window_set_close_callback(int window_index, bool (*callback)(void *dat
 }
 
 int kore_window_display(int window_index) {
-	return kinc_windows_get_display_for_monitor(MonitorFromWindow(windows[window_index].handle, MONITOR_DEFAULTTOPRIMARY));
+	return kore_windows_get_display_for_monitor(MonitorFromWindow(windows[window_index].handle, MONITOR_DEFAULTTOPRIMARY));
 }
 
-struct HWND__ *kinc_windows_window_handle(int window_index) {
+struct HWND__ *kore_windows_window_handle(int window_index) {
 	return windows[window_index].handle;
 }
 
-int kinc_windows_manual_width(int window) {
+int kore_windows_manual_width(int window) {
 	return windows[window].manualWidth;
 }
 
-int kinc_windows_manual_height(int window) {
+int kore_windows_manual_height(int window) {
 	return windows[window].manualHeight;
 }
 

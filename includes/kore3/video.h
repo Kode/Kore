@@ -3,7 +3,7 @@
 
 #include <kore3/global.h>
 
-#include <kinc/backend/video.h>
+#include <kore3/backend/video.h>
 #include <kore3/gpu/texture.h>
 
 /*! \file video.h

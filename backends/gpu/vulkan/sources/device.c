@@ -5,7 +5,7 @@
 #include <kore3/gpu/device.h>
 #include <kore3/util/align.h>
 
-#include <kinc/backend/Windows.h>
+#include <kore3/backend/windows.h>
 
 #include <kore3/error.h>
 #include <kore3/log.h>
@@ -337,7 +337,7 @@ static VkSurfaceFormatKHR find_surface_format(VkSurfaceKHR surface) {
 }
 
 static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_family_index) {
-	HWND window_handle = kinc_windows_window_handle(0);
+	HWND window_handle = kore_windows_window_handle(0);
 	uint32_t window_width = kore_window_width(0);
 	uint32_t window_height = kore_window_height(0);
 	bool vsync = true; // kore_window_vsynced(0); // TODO

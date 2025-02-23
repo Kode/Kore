@@ -1,6 +1,6 @@
 #include <kore3/audio/audio.h>
 
-#include <kinc/backend/SystemMicrosoft.h>
+#include <kore3/backend/microsoft.h>
 
 #include <kore3/error.h>
 #include <kore3/log.h>
@@ -146,13 +146,13 @@ static bool initDefaultDevice() {
 		audio_buffer.channel_count = 2;
 
 		bufferFrames = 0;
-		kinc_microsoft_affirm(audioClient->lpVtbl->GetBufferSize(audioClient, &bufferFrames));
-		kinc_microsoft_affirm(audioClient->lpVtbl->GetService(audioClient, &IID_IAudioRenderClient, (void **)&renderClient));
+		kore_microsoft_affirm(audioClient->lpVtbl->GetBufferSize(audioClient, &bufferFrames));
+		kore_microsoft_affirm(audioClient->lpVtbl->GetService(audioClient, &IID_IAudioRenderClient, (void **)&renderClient));
 
 		bufferEndEvent = CreateEvent(0, FALSE, FALSE, 0);
 		kore_affirm(bufferEndEvent != 0);
 
-		kinc_microsoft_affirm(audioClient->lpVtbl->SetEventHandle(audioClient, bufferEndEvent));
+		kore_microsoft_affirm(audioClient->lpVtbl->SetEventHandle(audioClient, bufferEndEvent));
 
 		return true;
 	}
@@ -255,7 +255,7 @@ static DWORD WINAPI audioThread(LPVOID ignored) {
 	return 0;
 }
 
-void kinc_windows_co_initialize(void);
+void kore_windows_co_initialize(void);
 
 static bool initialized = false;
 
@@ -274,8 +274,8 @@ void kore_audio_init() {
 	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
 	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
-	kinc_windows_co_initialize();
-	kinc_microsoft_affirm(CoCreateInstance(&CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL, &IID_IMMDeviceEnumerator, (void **)&deviceEnumerator));
+	kore_windows_co_initialize();
+	kore_microsoft_affirm(CoCreateInstance(&CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL, &IID_IMMDeviceEnumerator, (void **)&deviceEnumerator));
 
 	if (initDefaultDevice()) {
 		CreateThread(0, 65536, audioThread, NULL, 0, 0);

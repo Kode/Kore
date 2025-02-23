@@ -3,7 +3,7 @@
 
 #include <kore3/global.h>
 
-#include <kinc/backend/atomic.h>
+#include <kore3/backend/atomic.h>
 
 /*! \file atomic.h
     \brief Provides atomics aka interlocked operations.

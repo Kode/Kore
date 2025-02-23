@@ -4,8 +4,8 @@
 #include <string.h>
 
 #ifdef KINC_MICROSOFT
-#include <kinc/backend/MiniWindows.h>
-#include <kinc/backend/SystemMicrosoft.h>
+#include <kore3/backend/microsoft.h>
+#include <kore3/backend/windowsmini.h>
 #endif
 
 #ifdef KINC_ANDROID
@@ -41,7 +41,7 @@ void kore_log_args(kore_log_level level, const char *format, va_list args) {
 #ifdef KINC_MICROSOFT
 #ifdef UTF8
 	wchar_t buffer[4096];
-	kinc_microsoft_format(format, args, buffer);
+	kore_microsoft_format(format, args, buffer);
 	wcscat(buffer, L"\r\n");
 	OutputDebugStringW(buffer);
 #ifdef KINC_WINDOWS

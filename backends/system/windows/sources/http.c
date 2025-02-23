@@ -1,5 +1,6 @@
-#include <kore3/log.h>
 #include <kore3/network/http.h>
+
+#include <kore3/log.h>
 
 #include <stdio.h>
 #include <stdlib.h>

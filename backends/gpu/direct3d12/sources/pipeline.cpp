@@ -3,7 +3,7 @@
 
 #include <kore3/log.h>
 
-#include <kinc/backend/SystemMicrosoft.h>
+#include <kore3/backend/microsoft.h>
 
 #ifdef KORE_KONG
 #include <kong_ray.h>
@@ -333,9 +333,9 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 
 	desc.pRootSignature = NULL;
 
-	kinc_microsoft_affirm(device->device->CreateGraphicsPipelineState(&desc, IID_GRAPHICS_PPV_ARGS(&pipe->pipe)));
+	kore_microsoft_affirm(device->device->CreateGraphicsPipelineState(&desc, IID_GRAPHICS_PPV_ARGS(&pipe->pipe)));
 
-	kinc_microsoft_affirm(
+	kore_microsoft_affirm(
 	    device->device->CreateRootSignature(0, desc.VS.pShaderBytecode, desc.VS.BytecodeLength, IID_GRAPHICS_PPV_ARGS(&pipe->root_signature)));
 
 	D3D12_INDIRECT_ARGUMENT_DESC indirect_args[2];
@@ -373,9 +373,9 @@ void kore_d3d12_compute_pipeline_init(kore_d3d12_device *device, kore_d3d12_comp
 	desc.CS.BytecodeLength = parameters->shader.size;
 	desc.pRootSignature = NULL;
 
-	kinc_microsoft_affirm(device->device->CreateComputePipelineState(&desc, IID_GRAPHICS_PPV_ARGS(&pipe->pipe)));
+	kore_microsoft_affirm(device->device->CreateComputePipelineState(&desc, IID_GRAPHICS_PPV_ARGS(&pipe->pipe)));
 
-	kinc_microsoft_affirm(
+	kore_microsoft_affirm(
 	    device->device->CreateRootSignature(0, desc.CS.pShaderBytecode, desc.CS.BytecodeLength, IID_GRAPHICS_PPV_ARGS(&pipe->root_signature)));
 
 	D3D12_INDIRECT_ARGUMENT_DESC indirect_args[2];
@@ -408,19 +408,19 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 	hit_group.Type = D3D12_HIT_GROUP_TYPE_TRIANGLES;
 
 	wchar_t closest_hit[1024];
-	kinc_microsoft_convert_string(closest_hit, parameters->closest_shader_name, 1024);
+	kore_microsoft_convert_string(closest_hit, parameters->closest_shader_name, 1024);
 	hit_group.ClosestHitShaderImport = closest_hit;
 
 	wchar_t any_hit[1024];
 	wchar_t intersection[1024];
 
 	if (parameters->any_shader_name != NULL) {
-		kinc_microsoft_convert_string(any_hit, parameters->any_shader_name, 1024);
+		kore_microsoft_convert_string(any_hit, parameters->any_shader_name, 1024);
 		hit_group.AnyHitShaderImport = any_hit;
 	}
 
 	if (parameters->intersection_shader_name != NULL) {
-		kinc_microsoft_convert_string(intersection, parameters->intersection_shader_name, 1024);
+		kore_microsoft_convert_string(intersection, parameters->intersection_shader_name, 1024);
 		hit_group.IntersectionShaderImport = intersection;
 	}
 
@@ -456,7 +456,7 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 	desc.NumSubobjects = 5;
 	desc.pSubobjects = subobjects;
 
-	kinc_microsoft_affirm(device->d3d12.device->CreateStateObject(&desc, IID_PPV_ARGS(&pipe->pipe)));
+	kore_microsoft_affirm(device->d3d12.device->CreateStateObject(&desc, IID_PPV_ARGS(&pipe->pipe)));
 
 	uint32_t shader_id_count = 3;
 	kore_gpu_buffer_parameters id_buffer_params;
@@ -470,11 +470,11 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 	uint8_t *data = (uint8_t *)kore_gpu_buffer_lock_all(&pipe->shader_ids);
 
 	wchar_t raygen[1024];
-	kinc_microsoft_convert_string(raygen, parameters->gen_shader_name, 1024);
+	kore_microsoft_convert_string(raygen, parameters->gen_shader_name, 1024);
 	memcpy(data, props->GetShaderIdentifier(raygen), D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
 
 	wchar_t miss[1024];
-	kinc_microsoft_convert_string(miss, parameters->miss_shader_name, 1024);
+	kore_microsoft_convert_string(miss, parameters->miss_shader_name, 1024);
 	memcpy(&data[D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT], props->GetShaderIdentifier(miss), D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
 
 	memcpy(&data[D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT * 2], props->GetShaderIdentifier(L"HitGroup"), D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
