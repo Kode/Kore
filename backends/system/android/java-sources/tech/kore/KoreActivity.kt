@@ -1,4 +1,4 @@
-package tech.kinc
+package tech.kore
 
 import android.app.NativeActivity
 import android.content.Context
@@ -18,9 +18,9 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import kotlin.system.exitProcess
 
-class KincActivity: NativeActivity(), KeyEvent.Callback {
+class KoreActivity: NativeActivity(), KeyEvent.Callback {
 	companion object {
-		var instance: KincActivity? = null
+		var instance: KoreActivity? = null
 
 		@JvmStatic
 		fun showKeyboard() {
@@ -107,7 +107,7 @@ class KincActivity: NativeActivity(), KeyEvent.Callback {
 			}
 		}
 
-		class MyHandler(private val kincActivity: KincActivity) : Handler() {
+		class MyHandler(private val kincActivity: KoreActivity) : Handler() {
 			override fun handleMessage(msg: Message) {
 				kincActivity.hideSystemUI()
 			}
@@ -157,9 +157,9 @@ class KincActivity: NativeActivity(), KeyEvent.Callback {
     }
 
 	override fun onKeyMultiple(keyCode: Int, count: Int, event: KeyEvent): Boolean {
-		this.nativeKincKeyPress(event.characters)
+		this.nativeKoreKeyPress(event.characters)
 		return false
 	}
 
-	private external fun nativeKincKeyPress(chars: String)
+	private external fun nativeKoreKeyPress(chars: String)
 }
