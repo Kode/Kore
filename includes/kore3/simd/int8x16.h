@@ -114,32 +114,32 @@ static inline kore_int8x16 kore_int8x16_not(kore_int8x16 t) {
 
 #elif defined(KORE_NEON)
 
-static inline kore_int8x16 kore_int8x16_intrin_load(const int8 *values) {
+static inline kore_int8x16 kore_int8x16_intrin_load(const int8_t *values) {
 	return vld1q_s8(values);
 }
 
-static inline kore_int8x16 kore_int8x16_intrin_load_unaligned(const int8 *values) {
+static inline kore_int8x16 kore_int8x16_intrin_load_unaligned(const int8_t *values) {
 	return kore_int8x16_intrin_load(values);
 }
 
-static inline kore_int8x16 kore_int8x16_load(const int8 values[16]) {
+static inline kore_int8x16 kore_int8x16_load(const int8_t values[16]) {
 	return (kore_int8x16){values[0], values[1], values[2],  values[3],  values[4],  values[5],  values[6],  values[7],
 	                      values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15]};
 }
 
-static inline kore_int8x16 kore_int8x16_load_all(int8 t) {
+static inline kore_int8x16 kore_int8x16_load_all(int8_t t) {
 	return (kore_int8x16){t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t};
 }
 
-static inline void kore_int8x16_store(int8 *destination, kore_int8x16 value) {
+static inline void kore_int8x16_store(int8_t *destination, kore_int8x16 value) {
 	vst1q_s8(destination, value);
 }
 
-static inline void kore_int8x16_store_unaligned(int8 *destination, kore_int8x16 value) {
+static inline void kore_int8x16_store_unaligned(int8_t *destination, kore_int8x16 value) {
 	kore_int8x16_store(destination, value);
 }
 
-static inline int8 kore_int8x16_get(kore_int8x16 t, int index) {
+static inline int8_t kore_int8x16_get(kore_int8x16 t, int index) {
 	return t[index];
 }
 

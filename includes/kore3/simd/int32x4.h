@@ -110,31 +110,31 @@ static inline kore_int32x4 kore_int32x4_not(kore_int32x4 t) {
 
 #elif defined(KORE_NEON)
 
-static inline kore_int32x4 kore_int32x4_intrin_load(const int32 *values) {
+static inline kore_int32x4 kore_int32x4_intrin_load(const int32_t *values) {
 	return vld1q_s32(values);
 }
 
-static inline kore_int32x4 kore_int32x4_intrin_load_unaligned(const int32 *values) {
+static inline kore_int32x4 kore_int32x4_intrin_load_unaligned(const int32_t *values) {
 	return kore_int32x4_intrin_load(values);
 }
 
-static inline kore_int32x4 kore_int32x4_load(const int32 values[4]) {
+static inline kore_int32x4 kore_int32x4_load(const int32_t values[4]) {
 	return (kore_int32x4){values[0], values[1], values[2], values[3]};
 }
 
-static inline kore_int32x4 kore_int32x4_load_all(int32 t) {
+static inline kore_int32x4 kore_int32x4_load_all(int32_t t) {
 	return (kore_int32x4){t, t, t, t};
 }
 
-static inline void kore_int32x4_store(int32 *destination, kore_int32x4 value) {
+static inline void kore_int32x4_store(int32_t *destination, kore_int32x4 value) {
 	vst1q_s32(destination, value);
 }
 
-static inline void kore_int32x4_store_unaligned(int32 *destination, kore_int32x4 value) {
+static inline void kore_int32x4_store_unaligned(int32_t *destination, kore_int32x4 value) {
 	kore_int32x4_store(destination, value);
 }
 
-static inline int32 kore_int32x4_get(kore_int32x4 t, int index) {
+static inline int32_t kore_int32x4_get(kore_int32x4 t, int index) {
 	return t[index];
 }
 
