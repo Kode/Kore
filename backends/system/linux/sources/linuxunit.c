@@ -1,6 +1,7 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE // memfd_create and mkostemp
 #endif
+
 #include "funcs.h"
 #include <dlfcn.h>
 #include <stdio.h>
@@ -23,15 +24,15 @@ static void load_lib(void **lib, const char *name) {
 }
 
 #ifndef KINC_NO_WAYLAND
-#include "wayland/display.c.h"
-#include "wayland/system.c.h"
-#include "wayland/window.c.h"
+#include "display-wayland.c"
+#include "system-wayland.c"
+#include "window-wayland.c"
 #endif
 
 #ifndef KINC_NO_X11
-#include "x11/display.c.h"
-#include "x11/system.c.h"
-#include "x11/window.c.h"
+#include "display-x11.c"
+#include "system-x11.c"
+#include "window-x11.c"
 #endif
 
 struct linux_procs procs = {0};
@@ -150,12 +151,12 @@ void kinc_linux_init_procs() {
 	}
 }
 
-#include "display.c.h"
+#include "display.c"
 #ifndef __FreeBSD__
-#include "gamepad.c.h"
+#include "gamepad.c"
 #endif
-#include "mouse.c.h"
-#include "sound.c.h"
-#include "system.c.h"
-#include "video.c.h"
-#include "window.c.h"
+#include "mouse.c"
+#include "sound.c"
+#include "system.c"
+#include "video.c"
+#include "window.c"
