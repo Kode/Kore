@@ -1,7 +1,7 @@
 #include <CoreAudio/AudioHardware.h>
 #include <CoreServices/CoreServices.h>
 
-#include <kinc/audio2/audio.h>
+#include <kore3/audio/audio.h>
 #include <kinc/backend/video.h>
 #include <kinc/log.h>
 
@@ -33,20 +33,20 @@ static AudioObjectPropertyAddress address;
 
 static AudioDeviceIOProcID theIOProcID = NULL;
 
-static kinc_a2_buffer_t a2_buffer;
+static kore_audio_buffer audio_buffer;
 
 static uint32_t samples_per_second = 44100;
 
-uint32_t kinc_a2_samples_per_second(void) {
+uint32_t kore_audio_samples_per_second(void) {
 	return samples_per_second;
 }
 
 static void copySample(void *buffer) {
-	float left_value = *(float *)&a2_buffer.channels[0][a2_buffer.read_location];
-	float right_value = *(float *)&a2_buffer.channels[1][a2_buffer.read_location];
-	a2_buffer.read_location += 1;
-	if (a2_buffer.read_location >= a2_buffer.data_size) {
-		a2_buffer.read_location = 0;
+	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
+	audio_buffer.read_location += 1;
+	if (audio_buffer.read_location >= audio_buffer.data_size) {
+		audio_buffer.read_location = 0;
 	}
 	((float *)buffer)[0] = left_value;
 	((float *)buffer)[1] = right_value;
@@ -57,10 +57,10 @@ static OSStatus appIOProc(AudioDeviceID inDevice, const AudioTimeStamp *inNow, c
 	affirm(AudioObjectGetPropertyData(device, &address, 0, NULL, &size, &deviceFormat));
 	if (samples_per_second != (int)deviceFormat.mSampleRate) {
 		samples_per_second = (int)deviceFormat.mSampleRate;
-		kinc_a2_internal_sample_rate_callback();
+		kore_audio_internal_sample_rate_callback();
 	}
 	int num_frames = deviceBufferSize / deviceFormat.mBytesPerFrame;
-	kinc_a2_internal_callback(&a2_buffer, num_frames);
+	kore_audio_internal_callback(&audio_buffer, num_frames);
 	float *output = (float *)outOutputData->mBuffers[0].mData;
 	for (int i = 0; i < num_frames; ++i) {
 		copySample(output);
@@ -71,20 +71,20 @@ static OSStatus appIOProc(AudioDeviceID inDevice, const AudioTimeStamp *inNow, c
 
 static bool initialized = false;
 
-void kinc_a2_init(void) {
+void kore_audio_init(void) {
 	if (initialized) {
 		return;
 	}
 
-	kinc_a2_internal_init();
+	kore_audio_internal_init();
 	initialized = true;
 
-	a2_buffer.read_location = 0;
-	a2_buffer.write_location = 0;
-	a2_buffer.data_size = 128 * 1024;
-	a2_buffer.channel_count = 2;
-	a2_buffer.channels[0] = (float *)malloc(a2_buffer.data_size * sizeof(float));
-	a2_buffer.channels[1] = (float *)malloc(a2_buffer.data_size * sizeof(float));
+	audio_buffer.read_location = 0;
+	audio_buffer.write_location = 0;
+	audio_buffer.data_size = 128 * 1024;
+	audio_buffer.channel_count = 2;
+	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	device = kAudioDeviceUnknown;
 
@@ -121,7 +121,7 @@ void kinc_a2_init(void) {
 
 	if (samples_per_second != (int)deviceFormat.mSampleRate) {
 		samples_per_second = (int)deviceFormat.mSampleRate;
-		kinc_a2_internal_sample_rate_callback();
+		kore_audio_internal_sample_rate_callback();
 	}
 
 	initialized = true;
@@ -143,9 +143,9 @@ void kinc_a2_init(void) {
 	soundPlaying = true;
 }
 
-void kinc_a2_update(void) {}
+void kore_audio_update(void) {}
 
-void kinc_a2_shutdown(void) {
+void kore_audio_shutdown(void) {
 	if (!initialized)
 		return;
 	if (!soundPlaying)

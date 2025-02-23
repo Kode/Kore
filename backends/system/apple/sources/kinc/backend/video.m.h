@@ -1,7 +1,7 @@
 #include <kinc/video.h>
 
 #import <AVFoundation/AVFoundation.h>
-#include <kinc/audio1/audio.h>
+#include <kore3/mixer/mixer.h>
 #include <kore3/gpu/texture.h>
 #include <kinc/io/filereader.h>
 #include <kinc/log.h>
