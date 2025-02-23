@@ -4,7 +4,7 @@
 #include <kinc/error.h>
 #include <kinc/input/gamepad.h>
 #include <kinc/log.h>
-#include <kinc/math/core.h>
+#include <kore3/math/core.h>
 
 static void inputValueCallback(void *inContext, IOReturn inResult, void *inSender, IOHIDValueRef inIOHIDValueRef);
 static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inSender);
@@ -127,7 +127,7 @@ static void cstringFromCFStringRef(CFStringRef string, char *cstr, size_t clen) 
 	if (string != NULL) {
 		char temp[256];
 		if (CFStringGetCString(string, temp, 256, kCFStringEncodingUTF8)) {
-			temp[kinc_mini(255, (int)(clen - 1))] = '\0';
+			temp[kore_mini(255, (int)(clen - 1))] = '\0';
 			strncpy(cstr, temp, clen);
 		}
 	}
