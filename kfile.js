@@ -126,7 +126,7 @@ if (platform === Platform.Windows) {
 	else if (graphics === GraphicsApi.Vulkan) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/vulkan');
+		addBackend2('gpu/vulkan');
 		addKincDefine('VULKAN');
 		project.addDefine('VK_USE_PLATFORM_WIN32_KHR');
 		if (!process.env.VULKAN_SDK) {
@@ -293,7 +293,7 @@ else if (platform === Platform.Android) {
 	if (graphics === GraphicsApi.Vulkan || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/vulkan');
+		addBackend2('gpu/vulkan');
 		addKincDefine('VULKAN');
 		project.addDefine('VK_USE_PLATFORM_ANDROID_KHR');
 		project.addLib('vulkan');
@@ -480,7 +480,7 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 	if (graphics === GraphicsApi.Vulkan || (platform === Platform.Linux && graphics === GraphicsApi.Default)) {
 		g4 = true;
 		g5 = true;
-		addBackend('Graphics5/vulkan');
+		addBackend2('gpu/vulkan');
 		project.addLib('vulkan');
 		addKincDefine('VULKAN');
 	}
