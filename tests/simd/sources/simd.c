@@ -1,5 +1,4 @@
-#include <kinc/log.h>
-#include <kinc/system.h>
+#include <kore3/log.h>
 #include <kore3/math/core.h>
 #include <kore3/simd/float32x4.h>
 #include <kore3/simd/int16x8.h>
@@ -8,6 +7,7 @@
 #include <kore3/simd/uint16x8.h>
 #include <kore3/simd/uint32x4.h>
 #include <kore3/simd/uint8x16.h>
+#include <kore3/system.h>
 
 #include <math.h>
 #include <stdbool.h>
@@ -24,9 +24,9 @@ static bool check_f32(const char *name, kore_float32x4 result, const float expec
 			success = false;
 		}
 	}
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
 	if (!success) {
-		kinc_log(KINC_LOG_LEVEL_INFO, "\texpected {%f, %f, %f, %f} got {%f, %f, %f, %f}", expected[0], expected[1], expected[2], expected[3],
+		kore_log(KORE_LOG_LEVEL_INFO, "\texpected {%f, %f, %f, %f} got {%f, %f, %f, %f}", expected[0], expected[1], expected[2], expected[3],
 		         kore_float32x4_get(result, 0), kore_float32x4_get(result, 1), kore_float32x4_get(result, 2), kore_float32x4_get(result, 3));
 	}
 	return success;
@@ -40,10 +40,10 @@ static bool check_i8(const char *name, kore_int8x16 result, const int8_t expecte
 			success = false;
 		}
 	}
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
 	if (!success) {
-		kinc_log(
-		    KINC_LOG_LEVEL_INFO,
+		kore_log(
+		    KORE_LOG_LEVEL_INFO,
 		    "\texpected {%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d} got {%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d}",
 		    expected[0], expected[1], expected[2], expected[3], expected[4], expected[5], expected[6], expected[7], expected[8], expected[9], expected[10],
 		    expected[11], expected[12], expected[13], expected[14], expected[15], kore_int8x16_get(result, 0), kore_int8x16_get(result, 1),
@@ -62,10 +62,10 @@ static bool check_u8(const char *name, kore_uint8x16 result, const uint8_t expec
 			success = false;
 		}
 	}
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
 	if (!success) {
-		kinc_log(
-		    KINC_LOG_LEVEL_INFO,
+		kore_log(
+		    KORE_LOG_LEVEL_INFO,
 		    "\texpected {%u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u} got {%u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u}",
 		    expected[0], expected[1], expected[2], expected[3], expected[4], expected[5], expected[6], expected[7], expected[8], expected[9], expected[10],
 		    expected[11], expected[12], expected[13], expected[14], expected[15], kore_uint8x16_get(result, 0), kore_uint8x16_get(result, 1),
@@ -85,9 +85,9 @@ static bool check_i16(const char *name, kore_int16x8 result, const int16_t expec
 			success = false;
 		}
 	}
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
 	if (!success) {
-		kinc_log(KINC_LOG_LEVEL_INFO, "\texpected {%d, %d, %d, %d, %d, %d, %d, %d} got {%d, %d, %d, %d, %d, %d, %d, %d}", expected[0], expected[1], expected[2],
+		kore_log(KORE_LOG_LEVEL_INFO, "\texpected {%d, %d, %d, %d, %d, %d, %d, %d} got {%d, %d, %d, %d, %d, %d, %d, %d}", expected[0], expected[1], expected[2],
 		         expected[3], expected[4], expected[5], expected[6], expected[7], kore_int16x8_get(result, 0), kore_int16x8_get(result, 1),
 		         kore_int16x8_get(result, 2), kore_int16x8_get(result, 3), kore_int16x8_get(result, 4), kore_int16x8_get(result, 5),
 		         kore_int16x8_get(result, 6), kore_int16x8_get(result, 7));
@@ -103,9 +103,9 @@ static bool check_u16(const char *name, kore_uint16x8 result, const uint16_t exp
 			success = false;
 		}
 	}
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
 	if (!success) {
-		kinc_log(KINC_LOG_LEVEL_INFO, "\texpected {%lu, %lu, %lu, %lu, %lu, %lu, %lu, %lu} got {%lu, %lu, %lu, %lu, %lu, %lu, %lu, %lu}", expected[0],
+		kore_log(KORE_LOG_LEVEL_INFO, "\texpected {%lu, %lu, %lu, %lu, %lu, %lu, %lu, %lu} got {%lu, %lu, %lu, %lu, %lu, %lu, %lu, %lu}", expected[0],
 		         expected[1], expected[2], expected[3], expected[4], expected[5], expected[6], expected[7], kore_uint16x8_get(result, 0),
 		         kore_uint16x8_get(result, 1), kore_uint16x8_get(result, 2), kore_uint16x8_get(result, 3), kore_uint16x8_get(result, 4),
 		         kore_uint16x8_get(result, 5), kore_uint16x8_get(result, 6), kore_uint16x8_get(result, 7));
@@ -121,9 +121,9 @@ static bool check_i32(const char *name, kore_int32x4 result, const int32_t expec
 			success = false;
 		}
 	}
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
 	if (!success) {
-		kinc_log(KINC_LOG_LEVEL_INFO, "\texpected {%d, %d, %d, %d} got {%d, %d, %d, %d}", expected[0], expected[1], expected[2], expected[3],
+		kore_log(KORE_LOG_LEVEL_INFO, "\texpected {%d, %d, %d, %d} got {%d, %d, %d, %d}", expected[0], expected[1], expected[2], expected[3],
 		         kore_int32x4_get(result, 0), kore_int32x4_get(result, 1), kore_int32x4_get(result, 2), kore_int32x4_get(result, 3));
 	}
 	return success;
@@ -137,9 +137,9 @@ static bool check_u32(const char *name, kore_uint32x4 result, const uint32_t exp
 			success = false;
 		}
 	}
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Test %s %s", name, success ? "PASS" : "FAIL");
 	if (!success) {
-		kinc_log(KINC_LOG_LEVEL_INFO, "\texpected {%lu, %lu, %lu, %lu} got {%lu, %lu, %lu, %lu}", expected[0], expected[1], expected[2], expected[3],
+		kore_log(KORE_LOG_LEVEL_INFO, "\texpected {%lu, %lu, %lu, %lu} got {%lu, %lu, %lu, %lu}", expected[0], expected[1], expected[2], expected[3],
 		         kore_uint32x4_get(result, 0), kore_uint32x4_get(result, 1), kore_uint32x4_get(result, 2), kore_uint32x4_get(result, 3));
 	}
 	return success;
@@ -147,13 +147,13 @@ static bool check_u32(const char *name, kore_uint32x4 result, const uint32_t exp
 
 int kickstart(int argc, char **argv) {
 #if defined(KINC_SSE2)
-	kinc_log(KINC_LOG_LEVEL_INFO, "Using SSE2\n");
+	kore_log(KORE_LOG_LEVEL_INFO, "Using SSE2\n");
 #elif defined(KINC_SSE)
-	kinc_log(KINC_LOG_LEVEL_INFO, "Using SSE for float32x4 and scalar fallback for all integer types\n");
+	kore_log(KORE_LOG_LEVEL_INFO, "Using SSE for float32x4 and scalar fallback for all integer types\n");
 #elif defined(KINC_NEON)
-	kinc_log(KINC_LOG_LEVEL_INFO, "Using NEON\n");
+	kore_log(KORE_LOG_LEVEL_INFO, "Using NEON\n");
 #else
-	kinc_log(KINC_LOG_LEVEL_INFO, "Using scalar fallback implementation\n");
+	kore_log(KORE_LOG_LEVEL_INFO, "Using scalar fallback implementation\n");
 #endif
 
 	int failed = 0;
@@ -546,10 +546,10 @@ int kickstart(int argc, char **argv) {
 	}
 
 	if (failed) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "\nERROR! %d of %d test(s) failed", failed, totalests);
+		kore_log(KORE_LOG_LEVEL_ERROR, "\nERROR! %d of %d test(s) failed", failed, totalests);
 	}
 	else {
-		kinc_log(KINC_LOG_LEVEL_INFO, "\nSUCCESS %d tests passed", totalests);
+		kore_log(KORE_LOG_LEVEL_INFO, "\nSUCCESS %d tests passed", totalests);
 	}
 
 	return failed;

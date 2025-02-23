@@ -1,7 +1,7 @@
 #ifndef KORE_SIMD_TYPES_HEADER
 #define KORE_SIMD_TYPES_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 /*! \file types.h
     \brief Provides 128bit SIMD types which are mapped to equivalent SSE or Neon types.

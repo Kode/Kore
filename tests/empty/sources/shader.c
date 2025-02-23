@@ -1,6 +1,6 @@
-#include <kinc/io/filereader.h>
-#include <kinc/system.h>
 #include <kore3/gpu/device.h>
+#include <kore3/io/filereader.h>
+#include <kore3/system.h>
 
 #include <kong.h>
 
@@ -16,20 +16,31 @@ static const int height = 600;
 static void update(void *data) {
 	kore_gpu_texture *framebuffer = kore_gpu_device_get_framebuffer(&device);
 
-	kore_gpu_render_pass_parameters parameters = {0};
-	parameters.color_attachments_count = 1;
-	parameters.color_attachments[0].load_op = KORE_GPU_LOAD_OP_CLEAR;
-	kore_gpu_color clear_color;
-	clear_color.r = 0.0f;
-	clear_color.g = 0.0f;
-	clear_color.b = 0.0f;
-	clear_color.a = 1.0f;
-	parameters.color_attachments[0].clear_value = clear_color;
-	parameters.color_attachments[0].texture.texture = framebuffer;
-	parameters.color_attachments[0].texture.array_layer_count = 1;
-	parameters.color_attachments[0].texture.mip_level_count = 1;
-	parameters.color_attachments[0].texture.format = KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM;
-	parameters.color_attachments[0].texture.dimension = KORE_GPU_TEXTURE_VIEW_DIMENSION_2D;
+	kore_gpu_color clear_color = {
+	    .r = 0.0f,
+	    .g = 0.0f,
+	    .b = 0.0f,
+	    .a = 1.0f,
+	};
+
+	kore_gpu_render_pass_parameters parameters = {
+	    .color_attachments_count = 1,
+	    .color_attachments =
+	        {
+	            {
+	                .load_op = KORE_GPU_LOAD_OP_CLEAR,
+	                .clear_value = clear_color,
+	                .texture =
+	                    {
+	                        .texture = framebuffer,
+	                        .array_layer_count = 1,
+	                        .mip_level_count = 1,
+	                        .format = KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM,
+	                        .dimension = KORE_GPU_TEXTURE_VIEW_DIMENSION_2D,
+	                    },
+	            },
+	        },
+	};
 	kore_gpu_command_list_begin_render_pass(&list, &parameters);
 
 	kore_gpu_command_list_end_render_pass(&list);
@@ -40,8 +51,8 @@ static void update(void *data) {
 }
 
 int kickstart(int argc, char **argv) {
-	kinc_init("Example", width, height, NULL, NULL);
-	kinc_set_update_callback(update, NULL);
+	kore_init("Example", width, height, NULL, NULL);
+	kore_set_update_callback(update, NULL);
 
 	kore_gpu_device_wishlist wishlist = {0};
 	kore_gpu_device_create(&device, &wishlist);
@@ -50,7 +61,7 @@ int kickstart(int argc, char **argv) {
 
 	kore_gpu_device_create_command_list(&device, KORE_GPU_COMMAND_LIST_TYPE_GRAPHICS, &list);
 
-	kinc_start();
+	kore_start();
 
 	return 0;
 }
