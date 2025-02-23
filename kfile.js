@@ -51,6 +51,7 @@ addSimpleUnit('audio');
 addUnit('gpu');
 addUnit('math');
 addUnit('mixer');
+addUnit('network');
 addUnit('util');
 
 if (lz4x) {

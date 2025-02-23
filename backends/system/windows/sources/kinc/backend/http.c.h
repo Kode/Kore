@@ -1,5 +1,5 @@
 #include <kinc/log.h>
-#include <kinc/network/http.h>
+#include <kore3/network/http.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,14 +8,14 @@
 
 static const wchar_t *convert(int method) {
 	switch (method) {
-	case KINC_HTTP_GET:
+	case KORE_HTTP_GET:
 	default:
 		return L"GET";
-	case KINC_HTTP_POST:
+	case KORE_HTTP_POST:
 		return L"POST";
-	case KINC_HTTP_PUT:
+	case KORE_HTTP_PUT:
 		return L"PUT";
-	case KINC_HTTP_DELETE:
+	case KORE_HTTP_DELETE:
 		return L"DELETE";
 	}
 }
@@ -23,8 +23,8 @@ static const wchar_t *convert(int method) {
 static char *returnData = NULL;
 static int returnDataSize = 0;
 
-void kinc_http_request(const char *url, const char *path, const char *data, int port, bool secure, int method, const char *header,
-                       kinc_http_callback_t callback, void *callbackdata) {
+void kore_http_request(const char *url, const char *path, const char *data, int port, bool secure, int method, const char *header, kore_http_callback callback,
+                       void *callbackdata) {
 	// based on https://docs.microsoft.com/en-us/windows/desktop/winhttp/winhttp-sessions-overview
 
 	HINTERNET hSession = WinHttpOpen(L"WinHTTP via Kore/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);

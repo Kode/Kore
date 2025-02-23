@@ -1,135 +1,6 @@
-#pragma once
-
-#include <kinc/global.h>
-
-/*! \file socket.h
-    \brief Provides low-level network-communication via UDP or TCP-sockets.
-*/
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-typedef enum kinc_socket_protocol { KINC_SOCKET_PROTOCOL_UDP, KINC_SOCKET_PROTOCOL_TCP } kinc_socket_protocol_t;
-
-typedef enum kinc_socket_family { KINC_SOCKET_FAMILY_IP4, KINC_SOCKET_FAMILY_IP6 } kinc_socket_family_t;
-
-#ifdef KINC_MICROSOFT
-#if defined(_WIN64)
-typedef unsigned __int64 UINT_PTR, *PUINT_PTR;
-#else
-#if !defined _W64
-#define _W64
-#endif
-typedef _W64 unsigned int UINT_PTR, *PUINT_PTR;
-#endif
-typedef UINT_PTR SOCKET;
-#endif
-
-typedef struct kinc_socket {
-#ifdef KINC_MICROSOFT
-	SOCKET handle;
-#else
-	int handle;
-#endif
-	uint32_t host;
-	uint32_t port;
-	kinc_socket_protocol_t protocol;
-	kinc_socket_family_t family;
-	bool connected;
-} kinc_socket_t;
-
-typedef struct kinc_socket_options {
-	bool non_blocking;
-	bool broadcast;
-	bool tcp_no_delay;
-} kinc_socket_options_t;
-
-/// <summary>
-/// Initializes a socket-options-object to the default options
-/// </summary>
-/// <param name="options">The new default options</param>
-KINC_FUNC void kinc_socket_options_set_defaults(kinc_socket_options_t *options);
-
-/// <summary>
-/// Initializes a socket-object. To set the host and port use kinc_socket_set.
-/// Host will be localhost
-/// Port will be 8080
-/// Family will be IPv4
-/// Protocol will be TCP
-/// </summary>
-/// <param name="socket">The socket to initialize</param>
-KINC_FUNC void kinc_socket_init(kinc_socket_t *socket);
-
-/// <summary>
-/// Sets the sockets properties.
-/// </summary>
-/// <param name="socket">The socket-object to use</param>
-/// <param name="host">The host to use as IP or URL</param>
-/// <param name="port">The port to use</param>
-/// <param name="family">The IP-family to use</param>
-/// <param name="protocol">The protocol to use</param>
-/// <returns>Whether the socket was set correctly</returns>
-KINC_FUNC bool kinc_socket_set(kinc_socket_t *socket, const char *host, int port, kinc_socket_family_t family, kinc_socket_protocol_t protocol);
-
-/// <summary>
-/// Destroys a socket-object.
-/// </summary>
-/// <param name="socket">The socket to destroy</param>
-KINC_FUNC void kinc_socket_destroy(kinc_socket_t *socket);
-
-/// <summary>
-/// Opens a socket-connection.
-/// </summary>
-/// <param name="socket">The socket-object to use</param>
-/// <param name="protocol">The protocol to use</param>
-/// <param name="port">The port to use</param>
-/// <param name="options">The options to use</param>
-/// <returns>Whether the socket-connection could be opened</returns>
-KINC_FUNC bool kinc_socket_open(kinc_socket_t *socket, kinc_socket_options_t *options);
-
-/// <summary>
-/// For use with non-blocking sockets to try to see if we are connected.
-/// </summary>
-/// <param name="socket">The socket-object to use</param>
-/// <param name="waittime">The amount of time in seconds the select function will timeout.</param>
-/// <param name="read">Check if the socket is ready to be read from.</param>
-/// <param name="write">Check if the socket is ready to be written to.</param>
-/// <returns>Whether the socket-connection can read or write or checks both.</returns>
-KINC_FUNC bool kinc_socket_select(kinc_socket_t *socket, uint32_t waittime, bool read, bool write);
-
-/*Typically these are server actions.*/
-KINC_FUNC bool kinc_socket_bind(kinc_socket_t *socket);
-KINC_FUNC bool kinc_socket_listen(kinc_socket_t *socket, int backlog);
-KINC_FUNC bool kinc_socket_accept(kinc_socket_t *socket, kinc_socket_t *new_socket, unsigned *remote_address, unsigned *remote_port);
-
-/*Typically this is a client action.*/
-KINC_FUNC bool kinc_socket_connect(kinc_socket_t *socket);
-
-KINC_FUNC int kinc_socket_send(kinc_socket_t *socket, const uint8_t *data, int size);
-KINC_FUNC int kinc_socket_send_address(kinc_socket_t *socket, unsigned address, int port, const uint8_t *data, int size);
-KINC_FUNC int kinc_socket_send_url(kinc_socket_t *socket, const char *url, int port, const uint8_t *data, int size);
-KINC_FUNC int kinc_socket_receive(kinc_socket_t *socket, uint8_t *data, int maxSize, unsigned *from_address, unsigned *from_port);
-
-/// <summary>
-/// Resolves a DNS-entry to an IP and returns its integer representation.
-/// </summary>
-/// <param name="url"></param>
-/// <param name="port"></param>
-/// <returns></returns>
-KINC_FUNC unsigned kinc_url_to_int(const char *url, int port);
-
-#ifdef KINC_IMPLEMENTATION_NETWORK
-#define KINC_IMPLEMENTATION
-#endif
-
-#ifdef KINC_IMPLEMENTATION
-
-#undef KINC_IMPLEMENTATION
+#include <kore3/network/socket.h>
 
 #include <kinc/log.h>
-
-#define KINC_IMPLEMENTATION
 
 #include <errno.h>
 #include <stdbool.h>
@@ -223,10 +94,10 @@ static int resolveAddress(const char *url, int port, struct addrinfo **result) {
 }
 #endif
 
-bool kinc_socket_bind(kinc_socket_t *sock) {
+bool kore_socket_bind(kore_socket *sock) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 	struct sockaddr_in address;
-	address.sin_family = sock->family == KINC_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6;
+	address.sin_family = sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6;
 	address.sin_addr.s_addr = sock->host;
 	address.sin_port = sock->port;
 	if (bind(sock->handle, (const struct sockaddr *)&address, sizeof(struct sockaddr_in)) < 0) {
@@ -239,20 +110,20 @@ bool kinc_socket_bind(kinc_socket_t *sock) {
 #endif
 }
 
-void kinc_socket_options_set_defaults(kinc_socket_options_t *options) {
-	options->non_blocking = true;
-	options->broadcast = false;
-	options->tcp_no_delay = false;
+void kore_socket_options_set_defaults(kore_socket_parameters *parameters) {
+	parameters->non_blocking = true;
+	parameters->broadcast = false;
+	parameters->tcp_no_delay = false;
 }
 
-void kinc_socket_init(kinc_socket_t *sock) {
+void kore_socket_init(kore_socket *sock) {
 	sock->handle = 0;
 
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 	sock->host = INADDR_ANY;
 	sock->port = htons((unsigned short)8080);
-	sock->protocol = KINC_SOCKET_PROTOCOL_TCP;
-	sock->family = KINC_SOCKET_FAMILY_IP4;
+	sock->protocol = KORE_SOCKET_PROTOCOL_TCP;
+	sock->family = KORE_SOCKET_FAMILY_IP4;
 #endif
 	sock->connected = false;
 
@@ -276,14 +147,14 @@ void kinc_socket_init(kinc_socket_t *sock) {
 	++counter;
 }
 
-bool kinc_socket_open(kinc_socket_t *sock, struct kinc_socket_options *options) {
+bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *parameters) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 	switch (sock->protocol) {
-	case KINC_SOCKET_PROTOCOL_UDP:
-		sock->handle = socket(sock->family == KINC_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
+	case KORE_SOCKET_PROTOCOL_UDP:
+		sock->handle = socket(sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
 		break;
-	case KINC_SOCKET_PROTOCOL_TCP:
-		sock->handle = socket(sock->family == KINC_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+	case KORE_SOCKET_PROTOCOL_TCP:
+		sock->handle = socket(sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6, SOCK_STREAM, IPPROTO_TCP);
 		break;
 	default:
 		kinc_log(KINC_LOG_LEVEL_ERROR, "Unsupported socket protocol.");
@@ -351,8 +222,8 @@ bool kinc_socket_open(kinc_socket_t *sock, struct kinc_socket_options *options) 
 	}
 #endif
 
-	if (options) {
-		if (options->non_blocking) {
+	if (parameters != NULL) {
+		if (parameters->non_blocking) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 			DWORD value = 1;
 			if (ioctlsocket(sock->handle, FIONBIO, &value) != 0) {
@@ -368,7 +239,7 @@ bool kinc_socket_open(kinc_socket_t *sock, struct kinc_socket_options *options) 
 #endif
 		}
 
-		if (options->broadcast) {
+		if (parameters->broadcast) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 			int value = 1;
 			if (setsockopt(sock->handle, SOL_SOCKET, SO_BROADCAST, (const char *)&value, sizeof(value)) < 0) {
@@ -378,7 +249,7 @@ bool kinc_socket_open(kinc_socket_t *sock, struct kinc_socket_options *options) 
 #endif
 		}
 
-		if (options->tcp_no_delay) {
+		if (parameters->tcp_no_delay) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 			int value = 1;
 			if (setsockopt(sock->handle, IPPROTO_TCP, TCP_NODELAY, (const char *)&value, sizeof(value)) != 0) {
@@ -392,14 +263,14 @@ bool kinc_socket_open(kinc_socket_t *sock, struct kinc_socket_options *options) 
 	return true;
 }
 
-void kinc_socket_destroy(kinc_socket_t *sock) {
+void kore_socket_destroy(kore_socket *sock) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 	closesocket(sock->handle);
 #elif defined(KINC_POSIX)
 	close(sock->handle);
 #endif
 
-	memset(sock, 0, sizeof(kinc_socket_t));
+	memset(sock, 0, sizeof(kore_socket));
 
 	--counter;
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
@@ -409,7 +280,7 @@ void kinc_socket_destroy(kinc_socket_t *sock) {
 #endif
 }
 
-bool kinc_socket_select(kinc_socket_t *sock, uint32_t waittime, bool read, bool write) {
+bool kore_socket_select(kore_socket *sock, uint32_t waittime, bool read, bool write) {
 #if !defined(KINC_EMSCRIPTEN) && (defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX))
 	fd_set r_fds, w_fds;
 	struct timeval timeout;
@@ -446,7 +317,7 @@ bool kinc_socket_select(kinc_socket_t *sock, uint32_t waittime, bool read, bool 
 #endif
 }
 
-bool kinc_socket_set(kinc_socket_t *sock, const char *host, int port, kinc_socket_family_t family, kinc_socket_protocol_t protocol) {
+bool kore_socket_set(kore_socket *sock, const char *host, int port, kore_socket_family family, kore_socket_protocol protocol) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 
 	sock->family = family;
@@ -456,11 +327,11 @@ bool kinc_socket_set(kinc_socket_t *sock, const char *host, int port, kinc_socke
 	if (host == NULL)
 		return true;
 
-	if (isdigit(host[0]) || (family == KINC_SOCKET_FAMILY_IP6 && host[4] == ':')) { // Is IPv4 or IPv6 string
+	if (isdigit(host[0]) || (family == KORE_SOCKET_FAMILY_IP6 && host[4] == ':')) { // Is IPv4 or IPv6 string
 		struct in_addr addr;
 
-		if (inet_pton(sock->family == KINC_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6, host, &addr) == 0) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Invalid %s address: %s\n", sock->family == KINC_SOCKET_FAMILY_IP4 ? "IPv4" : "IPv6", host);
+		if (inet_pton(sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6, host, &addr) == 0) {
+			kinc_log(KINC_LOG_LEVEL_ERROR, "Invalid %s address: %s\n", sock->family == KORE_SOCKET_FAMILY_IP4 ? "IPv4" : "IPv6", host);
 			return false;
 		}
 		sock->host = addr.s_addr;
@@ -487,7 +358,7 @@ bool kinc_socket_set(kinc_socket_t *sock, const char *host, int port, kinc_socke
 #endif
 }
 
-bool kinc_socket_listen(kinc_socket_t *socket, int backlog) {
+bool kore_socket_listen(kore_socket *socket, int backlog) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 	int res = listen(socket->handle, backlog);
 	return (res == 0);
@@ -496,7 +367,7 @@ bool kinc_socket_listen(kinc_socket_t *socket, int backlog) {
 #endif
 }
 
-bool kinc_socket_accept(kinc_socket_t *sock, kinc_socket_t *newSocket, unsigned *remoteAddress, unsigned *remotePort) {
+bool kore_socket_accept(kore_socket *sock, kore_socket *newSocket, unsigned *remoteAddress, unsigned *remotePort) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 	typedef int socklen_t;
 #endif
@@ -521,10 +392,10 @@ bool kinc_socket_accept(kinc_socket_t *sock, kinc_socket_t *newSocket, unsigned 
 #endif
 }
 
-bool kinc_socket_connect(kinc_socket_t *sock) {
+bool kore_socket_connect(kore_socket *sock) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 	struct sockaddr_in addr;
-	addr.sin_family = sock->family == KINC_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6;
+	addr.sin_family = sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6;
 	addr.sin_addr.s_addr = sock->host;
 	addr.sin_port = sock->port;
 
@@ -535,14 +406,14 @@ bool kinc_socket_connect(kinc_socket_t *sock) {
 #endif
 }
 
-int kinc_socket_send(kinc_socket_t *sock, const uint8_t *data, int size) {
+int kore_socket_send(kore_socket *sock, const uint8_t *data, int size) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 	typedef int socklen_t;
 #endif
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
-	if (sock->protocol == KINC_SOCKET_PROTOCOL_UDP) {
+	if (sock->protocol == KORE_SOCKET_PROTOCOL_UDP) {
 		struct sockaddr_in addr;
-		addr.sin_family = sock->family == KINC_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6;
+		addr.sin_family = sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6;
 		addr.sin_addr.s_addr = sock->host;
 		addr.sin_port = sock->port;
 
@@ -570,7 +441,7 @@ int kinc_socket_send(kinc_socket_t *sock, const uint8_t *data, int size) {
 #endif
 }
 
-int kinc_socket_send_address(kinc_socket_t *sock, unsigned address, int port, const uint8_t *data, int size) {
+int kore_socket_send_address(kore_socket *sock, unsigned address, int port, const uint8_t *data, int size) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
@@ -587,7 +458,7 @@ int kinc_socket_send_address(kinc_socket_t *sock, unsigned address, int port, co
 #endif
 }
 
-int kinc_socket_send_url(kinc_socket_t *sock, const char *url, int port, const uint8_t *data, int size) {
+int kore_socket_send_url(kore_socket *sock, const char *url, int port, const uint8_t *data, int size) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 	struct addrinfo *address = NULL;
 	int res = resolveAddress(url, port, &address);
@@ -607,14 +478,14 @@ int kinc_socket_send_url(kinc_socket_t *sock, const char *url, int port, const u
 #endif
 }
 
-int kinc_socket_receive(kinc_socket_t *sock, uint8_t *data, int maxSize, unsigned *fromAddress, unsigned *fromPort) {
+int kore_socket_receive(kore_socket *sock, uint8_t *data, int maxSize, unsigned *fromAddress, unsigned *fromPort) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 	typedef int socklen_t;
 	typedef int ssize_t;
 #endif
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
 
-	if (sock->protocol == KINC_SOCKET_PROTOCOL_UDP) {
+	if (sock->protocol == KORE_SOCKET_PROTOCOL_UDP) {
 		struct sockaddr_in from;
 		socklen_t fromLength = sizeof(from);
 		ssize_t bytes = recvfrom(sock->handle, (char *)data, maxSize, 0, (struct sockaddr *)&from, &fromLength);
@@ -641,7 +512,7 @@ int kinc_socket_receive(kinc_socket_t *sock, uint8_t *data, int maxSize, unsigne
 #endif
 }
 
-unsigned kinc_url_to_int(const char *url, int port) {
+unsigned kore_url_to_int(const char *url, int port) {
 #if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
 	struct addrinfo *address = NULL;
 	int res = resolveAddress(url, port, &address);
@@ -658,9 +529,3 @@ unsigned kinc_url_to_int(const char *url, int port) {
 	return 0;
 #endif
 }
-
-#endif
-
-#ifdef __cplusplus
-}
-#endif
