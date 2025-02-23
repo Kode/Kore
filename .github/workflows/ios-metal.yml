@@ -1,0 +1,21 @@
+name: iOS (Metal)
+
+on:
+  push:
+    branches:
+    - v3
+  pull_request:
+    branches:
+    - v3
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Get Submodules
+      run: ./get_dlc
+    - name: Compile
+      run: ./make ios -g metal --kore . --from tests/empty --nosigning --compile
