@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 . `dirname "$0"`/Tools/platform.sh
-if test -f "Tools/$KORE_PLATFORM/icon.png"; then
+if test -f `dirname "$0"`"/Tools/$KORE_PLATFORM/icon.png"; then
 git -C `dirname "$0"` submodule update --remote --merge "Tools/$KORE_PLATFORM"
 else
 git -C `dirname "$0"` submodule update --init --remote "Tools/$KORE_PLATFORM"
