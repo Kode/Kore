@@ -1,19 +1,19 @@
 #include <kore3/gpu/gpu.h>
 
-#include <kinc/input/gamepad.h>
+#include <kore3/input/gamepad.h>
 
 #include <kinc/backend/SystemMicrosoft.h>
 #include <kinc/backend/Windows.h>
 
 #include <kinc/display.h>
-#include <kinc/input/keyboard.h>
-#include <kinc/input/mouse.h>
-#include <kinc/input/pen.h>
-#include <kinc/input/surface.h>
 #include <kinc/log.h>
 #include <kinc/system.h>
 #include <kinc/video.h>
 #include <kinc/window.h>
+#include <kore3/input/keyboard.h>
+#include <kore3/input/mouse.h>
+#include <kore3/input/pen.h>
+#include <kore3/input/surface.h>
 #include <kore3/threads/thread.h>
 
 #define DIRECTINPUT_VERSION 0x0800
@@ -103,132 +103,132 @@ static void ReleaseTouchIndex(int dwID) {
 
 static void initKeyTranslation() {
 	for (int i = 0; i < 256; ++i)
-		keyTranslated[i] = KINC_KEY_UNKNOWN;
+		keyTranslated[i] = KORE_KEY_UNKNOWN;
 
-	keyTranslated[VK_BACK] = KINC_KEY_BACKSPACE;
-	keyTranslated[VK_TAB] = KINC_KEY_TAB;
-	keyTranslated[VK_CLEAR] = KINC_KEY_CLEAR;
-	keyTranslated[VK_RETURN] = KINC_KEY_RETURN;
-	keyTranslated[VK_SHIFT] = KINC_KEY_SHIFT;
-	keyTranslated[VK_CONTROL] = KINC_KEY_CONTROL;
-	keyTranslated[VK_MENU] = KINC_KEY_ALT;
-	keyTranslated[VK_PAUSE] = KINC_KEY_PAUSE;
-	keyTranslated[VK_CAPITAL] = KINC_KEY_CAPS_LOCK;
-	keyTranslated[VK_KANA] = KINC_KEY_KANA;
+	keyTranslated[VK_BACK] = KORE_KEY_BACKSPACE;
+	keyTranslated[VK_TAB] = KORE_KEY_TAB;
+	keyTranslated[VK_CLEAR] = KORE_KEY_CLEAR;
+	keyTranslated[VK_RETURN] = KORE_KEY_RETURN;
+	keyTranslated[VK_SHIFT] = KORE_KEY_SHIFT;
+	keyTranslated[VK_CONTROL] = KORE_KEY_CONTROL;
+	keyTranslated[VK_MENU] = KORE_KEY_ALT;
+	keyTranslated[VK_PAUSE] = KORE_KEY_PAUSE;
+	keyTranslated[VK_CAPITAL] = KORE_KEY_CAPS_LOCK;
+	keyTranslated[VK_KANA] = KORE_KEY_KANA;
 	// keyTranslated[VK_HANGUEL]
-	keyTranslated[VK_HANGUL] = KINC_KEY_HANGUL;
-	keyTranslated[VK_JUNJA] = KINC_KEY_JUNJA;
-	keyTranslated[VK_FINAL] = KINC_KEY_FINAL;
-	keyTranslated[VK_HANJA] = KINC_KEY_HANJA;
-	keyTranslated[VK_KANJI] = KINC_KEY_KANJI;
-	keyTranslated[VK_ESCAPE] = KINC_KEY_ESCAPE;
+	keyTranslated[VK_HANGUL] = KORE_KEY_HANGUL;
+	keyTranslated[VK_JUNJA] = KORE_KEY_JUNJA;
+	keyTranslated[VK_FINAL] = KORE_KEY_FINAL;
+	keyTranslated[VK_HANJA] = KORE_KEY_HANJA;
+	keyTranslated[VK_KANJI] = KORE_KEY_KANJI;
+	keyTranslated[VK_ESCAPE] = KORE_KEY_ESCAPE;
 	// keyTranslated[VK_CONVERT]
 	// keyTranslated[VK_NONCONVERT
 	// keyTranslated[VK_ACCEPT
 	// keyTranslated[VK_MODECHANGE
-	keyTranslated[VK_SPACE] = KINC_KEY_SPACE;
-	keyTranslated[VK_PRIOR] = KINC_KEY_PAGE_UP;
-	keyTranslated[VK_NEXT] = KINC_KEY_PAGE_DOWN;
-	keyTranslated[VK_END] = KINC_KEY_END;
-	keyTranslated[VK_HOME] = KINC_KEY_HOME;
-	keyTranslated[VK_LEFT] = KINC_KEY_LEFT;
-	keyTranslated[VK_UP] = KINC_KEY_UP;
-	keyTranslated[VK_RIGHT] = KINC_KEY_RIGHT;
-	keyTranslated[VK_DOWN] = KINC_KEY_DOWN;
+	keyTranslated[VK_SPACE] = KORE_KEY_SPACE;
+	keyTranslated[VK_PRIOR] = KORE_KEY_PAGE_UP;
+	keyTranslated[VK_NEXT] = KORE_KEY_PAGE_DOWN;
+	keyTranslated[VK_END] = KORE_KEY_END;
+	keyTranslated[VK_HOME] = KORE_KEY_HOME;
+	keyTranslated[VK_LEFT] = KORE_KEY_LEFT;
+	keyTranslated[VK_UP] = KORE_KEY_UP;
+	keyTranslated[VK_RIGHT] = KORE_KEY_RIGHT;
+	keyTranslated[VK_DOWN] = KORE_KEY_DOWN;
 	// keyTranslated[VK_SELECT
-	keyTranslated[VK_PRINT] = KINC_KEY_PRINT;
+	keyTranslated[VK_PRINT] = KORE_KEY_PRINT;
 	// keyTranslated[VK_EXECUTE
 	// keyTranslated[VK_SNAPSHOT
-	keyTranslated[VK_INSERT] = KINC_KEY_INSERT;
-	keyTranslated[VK_DELETE] = KINC_KEY_DELETE;
-	keyTranslated[VK_HELP] = KINC_KEY_HELP;
-	keyTranslated[0x30] = KINC_KEY_0;
-	keyTranslated[0x31] = KINC_KEY_1;
-	keyTranslated[0x32] = KINC_KEY_2;
-	keyTranslated[0x33] = KINC_KEY_3;
-	keyTranslated[0x34] = KINC_KEY_4;
-	keyTranslated[0x35] = KINC_KEY_5;
-	keyTranslated[0x36] = KINC_KEY_6;
-	keyTranslated[0x37] = KINC_KEY_7;
-	keyTranslated[0x38] = KINC_KEY_8;
-	keyTranslated[0x39] = KINC_KEY_9;
-	keyTranslated[0x41] = KINC_KEY_A;
-	keyTranslated[0x42] = KINC_KEY_B;
-	keyTranslated[0x43] = KINC_KEY_C;
-	keyTranslated[0x44] = KINC_KEY_D;
-	keyTranslated[0x45] = KINC_KEY_E;
-	keyTranslated[0x46] = KINC_KEY_F;
-	keyTranslated[0x47] = KINC_KEY_G;
-	keyTranslated[0x48] = KINC_KEY_H;
-	keyTranslated[0x49] = KINC_KEY_I;
-	keyTranslated[0x4A] = KINC_KEY_J;
-	keyTranslated[0x4B] = KINC_KEY_K;
-	keyTranslated[0x4C] = KINC_KEY_L;
-	keyTranslated[0x4D] = KINC_KEY_M;
-	keyTranslated[0x4E] = KINC_KEY_N;
-	keyTranslated[0x4F] = KINC_KEY_O;
-	keyTranslated[0x50] = KINC_KEY_P;
-	keyTranslated[0x51] = KINC_KEY_Q;
-	keyTranslated[0x52] = KINC_KEY_R;
-	keyTranslated[0x53] = KINC_KEY_S;
-	keyTranslated[0x54] = KINC_KEY_T;
-	keyTranslated[0x55] = KINC_KEY_U;
-	keyTranslated[0x56] = KINC_KEY_V;
-	keyTranslated[0x57] = KINC_KEY_W;
-	keyTranslated[0x58] = KINC_KEY_X;
-	keyTranslated[0x59] = KINC_KEY_Y;
-	keyTranslated[0x5A] = KINC_KEY_Z;
-	keyTranslated[VK_LWIN] = KINC_KEY_WIN;
-	keyTranslated[VK_RWIN] = KINC_KEY_WIN;
-	keyTranslated[VK_APPS] = KINC_KEY_CONTEXT_MENU;
+	keyTranslated[VK_INSERT] = KORE_KEY_INSERT;
+	keyTranslated[VK_DELETE] = KORE_KEY_DELETE;
+	keyTranslated[VK_HELP] = KORE_KEY_HELP;
+	keyTranslated[0x30] = KORE_KEY_0;
+	keyTranslated[0x31] = KORE_KEY_1;
+	keyTranslated[0x32] = KORE_KEY_2;
+	keyTranslated[0x33] = KORE_KEY_3;
+	keyTranslated[0x34] = KORE_KEY_4;
+	keyTranslated[0x35] = KORE_KEY_5;
+	keyTranslated[0x36] = KORE_KEY_6;
+	keyTranslated[0x37] = KORE_KEY_7;
+	keyTranslated[0x38] = KORE_KEY_8;
+	keyTranslated[0x39] = KORE_KEY_9;
+	keyTranslated[0x41] = KORE_KEY_A;
+	keyTranslated[0x42] = KORE_KEY_B;
+	keyTranslated[0x43] = KORE_KEY_C;
+	keyTranslated[0x44] = KORE_KEY_D;
+	keyTranslated[0x45] = KORE_KEY_E;
+	keyTranslated[0x46] = KORE_KEY_F;
+	keyTranslated[0x47] = KORE_KEY_G;
+	keyTranslated[0x48] = KORE_KEY_H;
+	keyTranslated[0x49] = KORE_KEY_I;
+	keyTranslated[0x4A] = KORE_KEY_J;
+	keyTranslated[0x4B] = KORE_KEY_K;
+	keyTranslated[0x4C] = KORE_KEY_L;
+	keyTranslated[0x4D] = KORE_KEY_M;
+	keyTranslated[0x4E] = KORE_KEY_N;
+	keyTranslated[0x4F] = KORE_KEY_O;
+	keyTranslated[0x50] = KORE_KEY_P;
+	keyTranslated[0x51] = KORE_KEY_Q;
+	keyTranslated[0x52] = KORE_KEY_R;
+	keyTranslated[0x53] = KORE_KEY_S;
+	keyTranslated[0x54] = KORE_KEY_T;
+	keyTranslated[0x55] = KORE_KEY_U;
+	keyTranslated[0x56] = KORE_KEY_V;
+	keyTranslated[0x57] = KORE_KEY_W;
+	keyTranslated[0x58] = KORE_KEY_X;
+	keyTranslated[0x59] = KORE_KEY_Y;
+	keyTranslated[0x5A] = KORE_KEY_Z;
+	keyTranslated[VK_LWIN] = KORE_KEY_WIN;
+	keyTranslated[VK_RWIN] = KORE_KEY_WIN;
+	keyTranslated[VK_APPS] = KORE_KEY_CONTEXT_MENU;
 	// keyTranslated[VK_SLEEP
-	keyTranslated[VK_NUMPAD0] = KINC_KEY_NUMPAD_0;
-	keyTranslated[VK_NUMPAD1] = KINC_KEY_NUMPAD_1;
-	keyTranslated[VK_NUMPAD2] = KINC_KEY_NUMPAD_2;
-	keyTranslated[VK_NUMPAD3] = KINC_KEY_NUMPAD_3;
-	keyTranslated[VK_NUMPAD4] = KINC_KEY_NUMPAD_4;
-	keyTranslated[VK_NUMPAD5] = KINC_KEY_NUMPAD_5;
-	keyTranslated[VK_NUMPAD6] = KINC_KEY_NUMPAD_6;
-	keyTranslated[VK_NUMPAD7] = KINC_KEY_NUMPAD_7;
-	keyTranslated[VK_NUMPAD8] = KINC_KEY_NUMPAD_8;
-	keyTranslated[VK_NUMPAD9] = KINC_KEY_NUMPAD_9;
-	keyTranslated[VK_MULTIPLY] = KINC_KEY_MULTIPLY;
-	keyTranslated[VK_ADD] = KINC_KEY_ADD;
+	keyTranslated[VK_NUMPAD0] = KORE_KEY_NUMPAD_0;
+	keyTranslated[VK_NUMPAD1] = KORE_KEY_NUMPAD_1;
+	keyTranslated[VK_NUMPAD2] = KORE_KEY_NUMPAD_2;
+	keyTranslated[VK_NUMPAD3] = KORE_KEY_NUMPAD_3;
+	keyTranslated[VK_NUMPAD4] = KORE_KEY_NUMPAD_4;
+	keyTranslated[VK_NUMPAD5] = KORE_KEY_NUMPAD_5;
+	keyTranslated[VK_NUMPAD6] = KORE_KEY_NUMPAD_6;
+	keyTranslated[VK_NUMPAD7] = KORE_KEY_NUMPAD_7;
+	keyTranslated[VK_NUMPAD8] = KORE_KEY_NUMPAD_8;
+	keyTranslated[VK_NUMPAD9] = KORE_KEY_NUMPAD_9;
+	keyTranslated[VK_MULTIPLY] = KORE_KEY_MULTIPLY;
+	keyTranslated[VK_ADD] = KORE_KEY_ADD;
 	// keyTranslated[VK_SEPARATOR
-	keyTranslated[VK_SUBTRACT] = KINC_KEY_SUBTRACT;
-	keyTranslated[VK_DECIMAL] = KINC_KEY_DECIMAL;
-	keyTranslated[VK_DIVIDE] = KINC_KEY_DIVIDE;
-	keyTranslated[VK_F1] = KINC_KEY_F1;
-	keyTranslated[VK_F2] = KINC_KEY_F2;
-	keyTranslated[VK_F3] = KINC_KEY_F3;
-	keyTranslated[VK_F4] = KINC_KEY_F4;
-	keyTranslated[VK_F5] = KINC_KEY_F5;
-	keyTranslated[VK_F6] = KINC_KEY_F6;
-	keyTranslated[VK_F7] = KINC_KEY_F7;
-	keyTranslated[VK_F8] = KINC_KEY_F8;
-	keyTranslated[VK_F9] = KINC_KEY_F9;
-	keyTranslated[VK_F10] = KINC_KEY_F10;
-	keyTranslated[VK_F11] = KINC_KEY_F11;
-	keyTranslated[VK_F12] = KINC_KEY_F12;
-	keyTranslated[VK_F13] = KINC_KEY_F13;
-	keyTranslated[VK_F14] = KINC_KEY_F14;
-	keyTranslated[VK_F15] = KINC_KEY_F15;
-	keyTranslated[VK_F16] = KINC_KEY_F16;
-	keyTranslated[VK_F17] = KINC_KEY_F17;
-	keyTranslated[VK_F18] = KINC_KEY_F18;
-	keyTranslated[VK_F19] = KINC_KEY_F19;
-	keyTranslated[VK_F20] = KINC_KEY_F20;
-	keyTranslated[VK_F21] = KINC_KEY_F21;
-	keyTranslated[VK_F22] = KINC_KEY_F22;
-	keyTranslated[VK_F23] = KINC_KEY_F23;
-	keyTranslated[VK_F24] = KINC_KEY_F24;
-	keyTranslated[VK_NUMLOCK] = KINC_KEY_NUM_LOCK;
-	keyTranslated[VK_SCROLL] = KINC_KEY_SCROLL_LOCK;
+	keyTranslated[VK_SUBTRACT] = KORE_KEY_SUBTRACT;
+	keyTranslated[VK_DECIMAL] = KORE_KEY_DECIMAL;
+	keyTranslated[VK_DIVIDE] = KORE_KEY_DIVIDE;
+	keyTranslated[VK_F1] = KORE_KEY_F1;
+	keyTranslated[VK_F2] = KORE_KEY_F2;
+	keyTranslated[VK_F3] = KORE_KEY_F3;
+	keyTranslated[VK_F4] = KORE_KEY_F4;
+	keyTranslated[VK_F5] = KORE_KEY_F5;
+	keyTranslated[VK_F6] = KORE_KEY_F6;
+	keyTranslated[VK_F7] = KORE_KEY_F7;
+	keyTranslated[VK_F8] = KORE_KEY_F8;
+	keyTranslated[VK_F9] = KORE_KEY_F9;
+	keyTranslated[VK_F10] = KORE_KEY_F10;
+	keyTranslated[VK_F11] = KORE_KEY_F11;
+	keyTranslated[VK_F12] = KORE_KEY_F12;
+	keyTranslated[VK_F13] = KORE_KEY_F13;
+	keyTranslated[VK_F14] = KORE_KEY_F14;
+	keyTranslated[VK_F15] = KORE_KEY_F15;
+	keyTranslated[VK_F16] = KORE_KEY_F16;
+	keyTranslated[VK_F17] = KORE_KEY_F17;
+	keyTranslated[VK_F18] = KORE_KEY_F18;
+	keyTranslated[VK_F19] = KORE_KEY_F19;
+	keyTranslated[VK_F20] = KORE_KEY_F20;
+	keyTranslated[VK_F21] = KORE_KEY_F21;
+	keyTranslated[VK_F22] = KORE_KEY_F22;
+	keyTranslated[VK_F23] = KORE_KEY_F23;
+	keyTranslated[VK_F24] = KORE_KEY_F24;
+	keyTranslated[VK_NUMLOCK] = KORE_KEY_NUM_LOCK;
+	keyTranslated[VK_SCROLL] = KORE_KEY_SCROLL_LOCK;
 	// 0x92-96 //OEM specific
-	keyTranslated[VK_LSHIFT] = KINC_KEY_SHIFT;
-	keyTranslated[VK_RSHIFT] = KINC_KEY_SHIFT;
-	keyTranslated[VK_LCONTROL] = KINC_KEY_CONTROL;
-	keyTranslated[VK_RCONTROL] = KINC_KEY_CONTROL;
+	keyTranslated[VK_LSHIFT] = KORE_KEY_SHIFT;
+	keyTranslated[VK_RSHIFT] = KORE_KEY_SHIFT;
+	keyTranslated[VK_LCONTROL] = KORE_KEY_CONTROL;
+	keyTranslated[VK_RCONTROL] = KORE_KEY_CONTROL;
 	// keyTranslated[VK_LMENU
 	// keyTranslated[VK_RMENU
 	// keyTranslated[VK_BROWSER_BACK
@@ -249,17 +249,17 @@ static void initKeyTranslation() {
 	// keyTranslated[VK_LAUNCH_MEDIA_SELECT
 	// keyTranslated[VK_LAUNCH_APP1
 	// keyTranslated[VK_LAUNCH_APP2
-	keyTranslated[VK_OEM_1] = KINC_KEY_SEMICOLON; // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ';:' key
-	keyTranslated[VK_OEM_PLUS] = KINC_KEY_PLUS;
-	keyTranslated[VK_OEM_COMMA] = KINC_KEY_COMMA;
-	keyTranslated[VK_OEM_MINUS] = KINC_KEY_HYPHEN_MINUS;
-	keyTranslated[VK_OEM_PERIOD] = KINC_KEY_PERIOD;
-	keyTranslated[VK_OEM_2] = KINC_KEY_SLASH;         // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '/?' key
-	keyTranslated[VK_OEM_3] = KINC_KEY_BACK_QUOTE;    // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '`~' key
-	keyTranslated[VK_OEM_4] = KINC_KEY_OPEN_BRACKET;  // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '[{' key
-	keyTranslated[VK_OEM_5] = KINC_KEY_BACK_SLASH;    // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '\|' key
-	keyTranslated[VK_OEM_6] = KINC_KEY_CLOSE_BRACKET; // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ']}' key
-	keyTranslated[VK_OEM_7] = KINC_KEY_QUOTE;         // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the
+	keyTranslated[VK_OEM_1] = KORE_KEY_SEMICOLON; // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ';:' key
+	keyTranslated[VK_OEM_PLUS] = KORE_KEY_PLUS;
+	keyTranslated[VK_OEM_COMMA] = KORE_KEY_COMMA;
+	keyTranslated[VK_OEM_MINUS] = KORE_KEY_HYPHEN_MINUS;
+	keyTranslated[VK_OEM_PERIOD] = KORE_KEY_PERIOD;
+	keyTranslated[VK_OEM_2] = KORE_KEY_SLASH;         // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '/?' key
+	keyTranslated[VK_OEM_3] = KORE_KEY_BACK_QUOTE;    // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '`~' key
+	keyTranslated[VK_OEM_4] = KORE_KEY_OPEN_BRACKET;  // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '[{' key
+	keyTranslated[VK_OEM_5] = KORE_KEY_BACK_SLASH;    // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '\|' key
+	keyTranslated[VK_OEM_6] = KORE_KEY_CLOSE_BRACKET; // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ']}' key
+	keyTranslated[VK_OEM_7] = KORE_KEY_QUOTE;         // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the
 	                                          // 'single-quote/double-quote' key keyTranslated[VK_OEM_8 //Used for miscellaneous characters; it can vary by
 	                                          // keyboard. keyTranslated[0xE1 //OEM specific keyTranslated[VK_OEM_102 //Either the angle bracket key or the
 	                                          // backslash key on the RT 102-key keyboard 0xE3-E4 //OEM specific keyTranslated[VK_PROCESSKEY 0xE6 //OEM specific
@@ -363,11 +363,11 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		return 1;
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE) {
-			kinc_internal_mouse_window_activated(kinc_windows_window_index_from_hwnd(hWnd));
+			kore_internal_mouse_window_activated(kinc_windows_window_index_from_hwnd(hWnd));
 			kinc_internal_foreground_callback();
 		}
 		else {
-			kinc_internal_mouse_window_deactivated(kinc_windows_window_index_from_hwnd(hWnd));
+			kore_internal_mouse_window_deactivated(kinc_windows_window_index_from_hwnd(hWnd));
 			kinc_internal_background_callback();
 #ifdef HANDLE_ALT_ENTER
 			altDown = false;
@@ -378,7 +378,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 	case WM_MOUSELEAVE:
 		windowId = kinc_windows_window_index_from_hwnd(hWnd);
 		//**windows[windowId]->isMouseInside = false;
-		kinc_internal_mouse_trigger_leave_window(windowId);
+		kore_internal_mouse_trigger_leave_window(windowId);
 		break;
 	case WM_MOUSEMOVE:
 		windowId = kinc_windows_window_index_from_hwnd(hWnd);
@@ -392,7 +392,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		}*/
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kinc_internal_mouse_trigger_move(windowId, mouseX, mouseY);
+		kore_internal_mouse_trigger_move(windowId, mouseX, mouseY);
 		break;
 	case WM_CREATE:
 		cursors[0] = LoadCursor(0, IDC_ARROW);
@@ -421,51 +421,51 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		}
 		break;
 	case WM_LBUTTONDOWN:
-		if (!kinc_mouse_is_locked())
+		if (!kore_mouse_is_locked())
 			SetCapture(hWnd);
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kinc_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), 0, mouseX, mouseY);
+		kore_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), 0, mouseX, mouseY);
 		break;
 	case WM_LBUTTONUP:
-		if (!kinc_mouse_is_locked())
+		if (!kore_mouse_is_locked())
 			ReleaseCapture();
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kinc_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), 0, mouseX, mouseY);
+		kore_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), 0, mouseX, mouseY);
 		break;
 	case WM_RBUTTONDOWN:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kinc_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), 1, mouseX, mouseY);
+		kore_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), 1, mouseX, mouseY);
 		break;
 	case WM_RBUTTONUP:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kinc_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), 1, mouseX, mouseY);
+		kore_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), 1, mouseX, mouseY);
 		break;
 	case WM_MBUTTONDOWN:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kinc_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), 2, mouseX, mouseY);
+		kore_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), 2, mouseX, mouseY);
 		break;
 	case WM_MBUTTONUP:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kinc_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), 2, mouseX, mouseY);
+		kore_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), 2, mouseX, mouseY);
 		break;
 	case WM_XBUTTONDOWN:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kinc_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), HIWORD(wParam) + 2, mouseX, mouseY);
+		kore_internal_mouse_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), HIWORD(wParam) + 2, mouseX, mouseY);
 		break;
 	case WM_XBUTTONUP:
 		mouseX = GET_X_LPARAM(lParam);
 		mouseY = GET_Y_LPARAM(lParam);
-		kinc_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), HIWORD(wParam) + 2, mouseX, mouseY);
+		kore_internal_mouse_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), HIWORD(wParam) + 2, mouseX, mouseY);
 		break;
 	case WM_MOUSEWHEEL:
-		kinc_internal_mouse_trigger_scroll(kinc_windows_window_index_from_hwnd(hWnd), GET_WHEEL_DELTA_WPARAM(wParam) / -120);
+		kore_internal_mouse_trigger_scroll(kinc_windows_window_index_from_hwnd(hWnd), GET_WHEEL_DELTA_WPARAM(wParam) / -120);
 		break;
 	case WM_POINTERDOWN:
 		pointerId = GET_POINTERID_WPARAM(wParam);
@@ -473,7 +473,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		if (pointerInfo.pointerType == PT_PEN) {
 			MyGetPointerPenInfo(pointerId, &penInfo);
 			ScreenToClient(hWnd, &pointerInfo.ptPixelLocation);
-			kinc_internal_pen_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
+			kore_internal_pen_trigger_press(kinc_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
 			                                penInfo.pressure / 1024.0f);
 		}
 		break;
@@ -483,7 +483,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		if (pointerInfo.pointerType == PT_PEN) {
 			MyGetPointerPenInfo(pointerId, &penInfo);
 			ScreenToClient(hWnd, &pointerInfo.ptPixelLocation);
-			kinc_internal_pen_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
+			kore_internal_pen_trigger_release(kinc_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
 			                                  penInfo.pressure / 1024.0f);
 		}
 		break;
@@ -493,7 +493,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		if (pointerInfo.pointerType == PT_PEN) {
 			MyGetPointerPenInfo(pointerId, &penInfo);
 			ScreenToClient(hWnd, &pointerInfo.ptPixelLocation);
-			kinc_internal_pen_trigger_move(kinc_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
+			kore_internal_pen_trigger_move(kinc_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
 			                               penInfo.pressure / 1024.0f);
 		}
 		break;
@@ -515,7 +515,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 						if (ti.dwFlags & TOUCHEVENTF_UP) {
 							tindex = GetTouchIndex(ti.dwID);
 							ReleaseTouchIndex(ti.dwID);
-							kinc_internal_surface_trigger_touch_end(tindex, ptInput.x, ptInput.y);
+							kore_internal_surface_trigger_touch_end(tindex, ptInput.x, ptInput.y);
 						}
 						else {
 							bool touchExisits = GetTouchIndex(ti.dwID) != -1;
@@ -525,13 +525,13 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 									if (touchPoints[tindex].x != ptInput.x || touchPoints[tindex].y != ptInput.y) {
 										touchPoints[tindex].x = ptInput.x;
 										touchPoints[tindex].y = ptInput.y;
-										kinc_internal_surface_trigger_move(tindex, ptInput.x, ptInput.y);
+										kore_internal_surface_trigger_move(tindex, ptInput.x, ptInput.y);
 									}
 								}
 								else {
 									touchPoints[tindex].x = ptInput.x;
 									touchPoints[tindex].y = ptInput.y;
-									kinc_internal_surface_trigger_touch_start(tindex, ptInput.x, ptInput.y);
+									kore_internal_surface_trigger_touch_start(tindex, ptInput.x, ptInput.y);
 								}
 							}
 						}
@@ -555,16 +555,16 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		if (!keyPressed[wParam]) {
 			keyPressed[wParam] = true;
 
-			if (keyTranslated[wParam] == KINC_KEY_CONTROL) {
+			if (keyTranslated[wParam] == KORE_KEY_CONTROL) {
 				controlDown = true;
 			}
 #ifdef HANDLE_ALT_ENTER
-			else if (keyTranslated[wParam] == KINC_KEY_ALT) {
+			else if (keyTranslated[wParam] == KORE_KEY_ALT) {
 				altDown = true;
 			}
 #endif
 			else {
-				if (controlDown && keyTranslated[wParam] == KINC_KEY_X) {
+				if (controlDown && keyTranslated[wParam] == KORE_KEY_X) {
 					char *text = kinc_internal_cut_callback();
 					if (text != NULL) {
 						wchar_t wtext[4096];
@@ -581,7 +581,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 					}
 				}
 
-				if (controlDown && keyTranslated[wParam] == KINC_KEY_C) {
+				if (controlDown && keyTranslated[wParam] == KORE_KEY_C) {
 					char *text = kinc_internal_copy_callback();
 					if (text != NULL) {
 						wchar_t wtext[4096];
@@ -598,7 +598,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 					}
 				}
 
-				if (controlDown && keyTranslated[wParam] == KINC_KEY_V) {
+				if (controlDown && keyTranslated[wParam] == KORE_KEY_V) {
 					if (IsClipboardFormatAvailable(CF_UNICODETEXT)) {
 						OpenClipboard(hWnd);
 						HANDLE handle = GetClipboardData(CF_UNICODETEXT);
@@ -616,7 +616,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 				}
 
 #ifdef HANDLE_ALT_ENTER
-				if (altDown && keyTranslated[wParam] == KINC_KEY_RETURN) {
+				if (altDown && keyTranslated[wParam] == KORE_KEY_RETURN) {
 					if (kinc_window_get_mode(0) == KINC_WINDOW_MODE_WINDOW) {
 						last_window_width = kinc_window_width(0);
 						last_window_height = kinc_window_height(0);
@@ -637,29 +637,29 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 #endif
 			}
 		}
-		kinc_internal_keyboard_trigger_key_down(keyTranslated[wParam]);
+		kore_internal_keyboard_trigger_key_down(keyTranslated[wParam]);
 		break;
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
 		keyPressed[wParam] = false;
 
-		if (keyTranslated[wParam] == KINC_KEY_CONTROL) {
+		if (keyTranslated[wParam] == KORE_KEY_CONTROL) {
 			controlDown = false;
 		}
 #ifdef HANDLE_ALT_ENTER
-		if (keyTranslated[wParam] == KINC_KEY_ALT) {
+		if (keyTranslated[wParam] == KORE_KEY_ALT) {
 			altDown = false;
 		}
 #endif
 
-		kinc_internal_keyboard_trigger_key_up(keyTranslated[wParam]);
+		kore_internal_keyboard_trigger_key_up(keyTranslated[wParam]);
 		break;
 	case WM_CHAR:
 		switch (wParam) {
 		case 0x1B: // escape
 			break;
 		default:
-			kinc_internal_keyboard_trigger_key_press((unsigned)wParam);
+			kore_internal_keyboard_trigger_key_press((unsigned)wParam);
 			break;
 		}
 		break;
@@ -1021,7 +1021,7 @@ bool handleDirectInputPad(int padIndex) {
 			}
 
 			if (*now != *last) {
-				kinc_internal_gamepad_trigger_axis(padIndex, axisIndex, *now / 32768.0f);
+				kore_internal_gamepad_trigger_axis(padIndex, axisIndex, *now / 32768.0f);
 			}
 		}
 
@@ -1030,7 +1030,7 @@ bool handleDirectInputPad(int padIndex) {
 			BYTE *last = &di_lastPadState[padIndex].rgbButtons[buttonIndex];
 
 			if (*now != *last) {
-				kinc_internal_gamepad_trigger_button(padIndex, buttonIndex, *now / 255.0f);
+				kore_internal_gamepad_trigger_button(padIndex, buttonIndex, *now / 255.0f);
 			}
 		}
 
@@ -1049,16 +1049,16 @@ bool handleDirectInputPad(int padIndex) {
 			bool lastRight = (*last == 9000 || *last == 4500 || *last == 13500);
 
 			if (up != lastUp) {
-				kinc_internal_gamepad_trigger_button(padIndex, 12, up ? 1.0f : 0.0f);
+				kore_internal_gamepad_trigger_button(padIndex, 12, up ? 1.0f : 0.0f);
 			}
 			if (down != lastDown) {
-				kinc_internal_gamepad_trigger_button(padIndex, 13, down ? 1.0f : 0.0f);
+				kore_internal_gamepad_trigger_button(padIndex, 13, down ? 1.0f : 0.0f);
 			}
 			if (left != lastLeft) {
-				kinc_internal_gamepad_trigger_button(padIndex, 14, left ? 1.0f : 0.0f);
+				kore_internal_gamepad_trigger_button(padIndex, 14, left ? 1.0f : 0.0f);
 			}
 			if (right != lastRight) {
-				kinc_internal_gamepad_trigger_button(padIndex, 15, right ? 1.0f : 0.0f);
+				kore_internal_gamepad_trigger_button(padIndex, 15, right ? 1.0f : 0.0f);
 			}
 		}
 
@@ -1139,7 +1139,7 @@ bool kinc_internal_handle_messages() {
 				newaxes[5] = state.Gamepad.bRightTrigger / 255.0f;
 				for (int i2 = 0; i2 < 6; ++i2) {
 					if (axes[i * 6 + i2] != newaxes[i2]) {
-						kinc_internal_gamepad_trigger_axis(i, i2, newaxes[i2]);
+						kore_internal_gamepad_trigger_axis(i, i2, newaxes[i2]);
 						axes[i * 6 + i2] = newaxes[i2];
 					}
 				}
@@ -1162,7 +1162,7 @@ bool kinc_internal_handle_messages() {
 				newbuttons[15] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) ? 1.0f : 0.0f;
 				for (int i2 = 0; i2 < 16; ++i2) {
 					if (buttons[i * 16 + i2] != newbuttons[i2]) {
-						kinc_internal_gamepad_trigger_button(i, i2, newbuttons[i2]);
+						kore_internal_gamepad_trigger_button(i, i2, newbuttons[i2]);
 						buttons[i * 16 + i2] = newbuttons[i2];
 					}
 				}

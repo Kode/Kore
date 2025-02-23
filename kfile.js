@@ -49,6 +49,7 @@ function addSimpleUnit(name) {
 
 addSimpleUnit('audio');
 addUnit('gpu');
+addUnit('input');
 addUnit('io');
 addUnit('math');
 addUnit('mixer');
