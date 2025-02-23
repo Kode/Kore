@@ -90,16 +90,16 @@
 #define KINC_FUNC
 #endif
 
+#if defined(__LP64__) || defined(_LP64) || defined(_WIN64)
+#define KINC_64
+#endif
+
 #ifdef __cplusplus
 
 namespace Kore {
 	typedef unsigned char u8;   // 1 Byte
 	typedef unsigned short u16; // 2 Byte
 	typedef unsigned int u32;   // 4 Byte
-
-#if defined(__LP64__) || defined(_LP64) || defined(_WIN64)
-#define KINC_64
-#endif
 
 #ifdef KINC_WINDOWS
 	typedef unsigned __int64 u64; // 8 Byte
