@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-#include <kinc/graphics1/graphics.h>
+#include <kore3/framebuffer/framebuffer.h>
 #include <kore3/math/core.h>
 #include <kore3/math/matrix.h>
 

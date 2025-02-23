@@ -48,6 +48,7 @@ function addSimpleUnit(name) {
 }
 
 addSimpleUnit('audio');
+addSimpleUnit('framebuffer');
 addUnit('gpu');
 addUnit('input');
 addUnit('io');

@@ -1,4 +1,4 @@
-#include "graphics.h"
+#include <kore3/framebuffer/framebuffer.h>
 
 #if 0
 
