@@ -587,7 +587,7 @@ static void wait_for_fence(kore_gpu_device *device, ID3D12Fence *fence, HANDLE e
 }
 
 kore_gpu_texture_format kore_d3d12_device_framebuffer_format(kore_gpu_device *device) {
-	return KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM;
+	return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
 }
 
 static bool check_for_fence(ID3D12Fence *fence, UINT64 completion_value) {
