@@ -44,12 +44,12 @@ void kore_semaphore_acquire(kore_semaphore *semaphore) {
 }
 
 bool kore_semaphore_try_to_acquire(kore_semaphore *semaphore, double seconds) {
-	double now = kinc_time();
+	double now = kore_time();
 	do {
 		if (sem_trywait(&semaphore->impl.semaphore) == 0) {
 			return true;
 		}
-	} while (kinc_time() < now + seconds);
+	} while (kore_time() < now + seconds);
 	return false;
 }
 

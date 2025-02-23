@@ -3,7 +3,7 @@
 #include <kore3/system.h>
 
 #ifdef KINC_ANDROID
-#include <kinc/backend/Android.h>
+#include <kore3/backend/android.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -171,8 +171,8 @@ bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filena
 	strcat(filepath, filename);
 #endif
 #if defined(KINC_LINUX) || defined(KINC_ANDROID)
-	if (type == KINC_FILE_TYPE_SAVE) {
-		strcpy(filepath, kinc_internal_save_path());
+	if (type == KORE_FILE_TYPE_SAVE) {
+		strcpy(filepath, kore_internal_save_path());
 		strcat(filepath, filename);
 	}
 	else {

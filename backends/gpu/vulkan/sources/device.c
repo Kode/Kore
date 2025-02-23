@@ -5,7 +5,9 @@
 #include <kore3/gpu/device.h>
 #include <kore3/util/align.h>
 
+#ifdef KINC_WINDOWS
 #include <kore3/backend/windows.h>
+#endif
 
 #include <kore3/error.h>
 #include <kore3/log.h>
@@ -241,9 +243,11 @@ void find_gpu(void) {
 		bool can_render = false;
 
 		for (uint32_t queue_index = 0; queue_index < queue_count; ++queue_index) {
+#ifdef KINC_WINDOWS
 			if (vkGetPhysicalDeviceWin32PresentationSupportKHR(current_gpu, queue_index)) {
 				can_present = true;
 			}
+#endif
 
 			if ((queue_props[queue_index].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0) {
 				can_render = true;
@@ -300,12 +304,14 @@ uint32_t find_graphics_queue_family(void) {
 
 	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_family_count, queue_family_props);
 
+#ifdef KINC_WINDOWS
 	for (uint32_t queue_family_index = 0; queue_family_index < queue_family_count; ++queue_family_index) {
 		if ((queue_family_props[queue_family_index].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0 &&
 		    vkGetPhysicalDeviceWin32PresentationSupportKHR(gpu, queue_family_index)) {
 			return queue_family_index;
 		}
 	}
+#endif
 
 	kore_error_message("Graphics or present queue not found");
 	return 0;
@@ -337,11 +343,14 @@ static VkSurfaceFormatKHR find_surface_format(VkSurfaceKHR surface) {
 }
 
 static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_family_index) {
+#ifdef KINC_WINDOWS
 	HWND window_handle = kore_windows_window_handle(0);
+#endif
 	uint32_t window_width = kore_window_width(0);
 	uint32_t window_height = kore_window_height(0);
 	bool vsync = true; // kore_window_vsynced(0); // TODO
 
+#ifdef KINC_WINDOWS
 	const VkWin32SurfaceCreateInfoKHR surface_create_info = {
 	    .sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
 	    .pNext = NULL,
@@ -349,9 +358,14 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 	    .hinstance = GetModuleHandle(NULL),
 	    .hwnd = window_handle,
 	};
+#endif
 
 	VkSurfaceKHR surface = {0};
-	VkResult result = vkCreateWin32SurfaceKHR(instance, &surface_create_info, NULL, &surface);
+	VkResult result = VK_SUCCESS;
+
+#ifdef KINC_WINDOWS
+	result = vkCreateWin32SurfaceKHR(instance, &surface_create_info, NULL, &surface);
+#endif
 
 	VkBool32 surface_supported = false;
 	result = vkGetPhysicalDeviceSurfaceSupportKHR(gpu, graphics_queue_family_index, surface, &surface_supported);
@@ -566,7 +580,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	};
 	VkResult result = vkCreateInstance(&instance_create_info, &allocator_callbacks, &instance);
 #else
-	VkResult result = vkCreateInstance(&instance_create_info, NULL, &vulkan_instance);
+	VkResult result = vkCreateInstance(&instance_create_info, NULL, &instance);
 #endif
 	if (result == VK_ERROR_INCOMPATIBLE_DRIVER) {
 		kore_error_message("Vulkan driver is incompatible");

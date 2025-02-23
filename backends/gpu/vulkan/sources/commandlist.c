@@ -71,7 +71,9 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	    .pStencilAttachment = VK_NULL_HANDLE,
 	};
 
+#ifndef KINC_ANDROID // TODO
 	vkCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
+#endif
 
 	VkViewport viewport = {.x = 0, .y = 0, .width = (float)texture->vulkan.width, .height = (float)texture->vulkan.height, .minDepth = 0.1f, .maxDepth = 1.0f};
 	vkCmdSetViewport(list->vulkan.command_buffer, 0, 1, &viewport);
@@ -92,7 +94,9 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 }
 
 void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
+#ifndef KINC_ANDROID // TODO
 	vkCmdEndRendering(list->vulkan.command_buffer);
+#endif
 }
 
 void kore_vulkan_command_list_present(kore_gpu_command_list *list) {

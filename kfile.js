@@ -306,7 +306,7 @@ else if (platform === Platform.iOS || platform === Platform.tvOS) {
 }
 else if (platform === Platform.Android) {
 	addKincDefine('ANDROID');
-	addBackend('system/android');
+	addBackend2('system/android');
 	addBackend2('system/posix');
 	if (graphics === GraphicsApi.Vulkan || graphics === GraphicsApi.Default) {
 		g4 = true;

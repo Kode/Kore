@@ -1,12 +1,12 @@
-#include <kinc/video.h>
+#include <kore3/video.h>
 
-#include <kinc/audio1/audio.h>
-#include <kinc/graphics4/texture.h>
-#include <kinc/io/filereader.h>
-#include <kinc/log.h>
-#include <kinc/system.h>
+#include <kore3/mixer/mixer.h>
+#include <kore3/gpu/texture.h>
+#include <kore3/io/filereader.h>
+#include <kore3/log.h>
+#include <kore3/system.h>
 
-#include <Android/android_native_app_glue.h>
+#include <kore3/backend/android_native_app_glue.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,7 +16,7 @@
 #endif
 #include <assert.h>
 #include <jni.h>
-#include <kinc/backend/Android.h>
+#include <kore3/backend/android.h>
 #include <pthread.h>
 #if KINC_ANDROID_API >= 15 && !defined(KINC_VULKAN)
 #include <android/asset_manager.h>
@@ -24,7 +24,7 @@
 #include <android/native_window_jni.h>
 #endif
 
-void kinc_video_sound_stream_impl_init(kinc_internal_video_sound_stream_t *stream, int channel_count, int frequency) {
+void kore_video_sound_stream_impl_init(kore_internal_video_sound_stream *stream, int channel_count, int frequency) {
 	stream->bufferSize = 1;
 	stream->bufferReadPosition = 0;
 	stream->bufferWritePosition = 0;
@@ -32,17 +32,17 @@ void kinc_video_sound_stream_impl_init(kinc_internal_video_sound_stream_t *strea
 	stream->written = 0;
 }
 
-void kinc_video_sound_stream_impl_destroy(kinc_internal_video_sound_stream_t *stream) {}
+void kore_video_sound_stream_impl_destroy(kore_internal_video_sound_stream *stream) {}
 
-void kinc_video_sound_stream_impl_insert_data(kinc_internal_video_sound_stream_t *stream, float *data, int sample_count) {}
+void kore_video_sound_stream_impl_insert_data(kore_internal_video_sound_stream *stream, float *data, int sample_count) {}
 
 static float samples[2] = {0};
 
-float *kinc_internal_video_sound_stream_next_frame(kinc_internal_video_sound_stream_t *stream) {
+float *kore_internal_video_sound_stream_next_frame(kore_internal_video_sound_stream *stream) {
 	return samples;
 }
 
-bool kinc_internal_video_sound_stream_ended(kinc_internal_video_sound_stream_t *stream) {
+bool kore_internal_video_sound_stream_ended(kore_internal_video_sound_stream *stream) {
 	return false;
 }
 
@@ -460,13 +460,13 @@ void KoreAndroidVideoInit() {
 
 	int failure = (*env)->RegisterNatives(env, clazz, methodTable, methodTableSize);
 	if (failure != 0) {
-		kinc_log(KINC_LOG_LEVEL_WARNING, "Failed to register KincMoviePlayer.nativeCreate");
+		kore_log(KORE_LOG_LEVEL_WARNING, "Failed to register KincMoviePlayer.nativeCreate");
 	}
 
 	(*kinc_android_get_activity()->vm)->DetachCurrentThread(kinc_android_get_activity()->vm);
 }
 
-void kinc_video_init(kinc_video_t *video, const char *filename) {
+void kore_video_init(kore_video *video, const char *filename) {
 	video->impl.playing = false;
 	video->impl.sound = NULL;
 #if KINC_ANDROID_API >= 15 && !defined(KINC_VULKAN)
@@ -505,7 +505,7 @@ void kinc_video_init(kinc_video_t *video, const char *filename) {
 #endif
 }
 
-void kinc_video_destroy(kinc_video_t *video) {
+void kore_video_destroy(kore_video *video) {
 #if KINC_ANDROID_API >= 15 && !defined(KINC_VULKAN)
 	kinc_video_stop(video);
 	kinc_android_video_t *av = (kinc_android_video_t *)video->impl.androidVideo;
@@ -519,28 +519,28 @@ void kinc_video_destroy(kinc_video_t *video) {
 #endif
 }
 
-void kinc_video_play(kinc_video_t *video, bool loop) {
+void kore_video_play(kore_video *video, bool loop) {
 #if KINC_ANDROID_API >= 15 && !defined(KINC_VULKAN)
 	video->impl.playing = true;
 	video->impl.start = kinc_time();
 #endif
 }
 
-void kinc_video_pause(kinc_video_t *video) {
+void kore_video_pause(kore_video *video) {
 #if KINC_ANDROID_API >= 15 && !defined(KINC_VULKAN)
 	video->impl.playing = false;
 #endif
 }
 
-void kinc_video_stop(kinc_video_t *video) {
+void kore_video_stop(kore_video *video) {
 #if KINC_ANDROID_API >= 15 && !defined(KINC_VULKAN)
 	kinc_video_pause(video);
 #endif
 }
 
-void kinc_video_update(kinc_video_t *video, double time) {}
+void kore_video_update(kore_video *video, double time) {}
 
-int kinc_video_width(kinc_video_t *video) {
+int kore_video_width(kore_video *video) {
 #if KINC_ANDROID_API >= 15 && !defined(KINC_VULKAN)
 	return video->impl.myWidth;
 #else
@@ -548,7 +548,7 @@ int kinc_video_width(kinc_video_t *video) {
 #endif
 }
 
-int kinc_video_height(kinc_video_t *video) {
+int kore_video_height(kore_video *video) {
 #if KINC_ANDROID_API >= 15 && !defined(KINC_VULKAN)
 	return video->impl.myHeight;
 #else
@@ -556,7 +556,7 @@ int kinc_video_height(kinc_video_t *video) {
 #endif
 }
 
-kinc_g4_texture_t *kinc_video_current_image(kinc_video_t *video) {
+kore_gpu_texture *kore_video_current_image(kore_video *video) {
 #if KINC_ANDROID_API >= 15 && !defined(KINC_VULKAN)
 	return &video->impl.image;
 #else
@@ -564,18 +564,18 @@ kinc_g4_texture_t *kinc_video_current_image(kinc_video_t *video) {
 #endif
 }
 
-double kinc_video_duration(kinc_video_t *video) {
+double kore_video_duration(kore_video *video) {
 	return 0.0;
 }
 
-double kinc_video_position(kinc_video_t *video) {
+double kore_video_position(kore_video *video) {
 	return 0.0;
 }
 
-bool kinc_video_finished(kinc_video_t *video) {
+bool kore_video_finished(kore_video *video) {
 	return false;
 }
 
-bool kinc_video_paused(kinc_video_t *video) {
+bool kore_video_paused(kore_video *video) {
 	return !video->impl.playing;
 }

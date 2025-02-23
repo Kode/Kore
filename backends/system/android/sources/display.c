@@ -1,7 +1,7 @@
-#include <kinc/backend/Android.h>
+#include <kore3/backend/android.h>
 
-#include <kinc/display.h>
-#include <kinc/log.h>
+#include <kore3/display.h>
+#include <kore3/log.h>
 
 typedef struct {
 	bool available;
@@ -11,15 +11,15 @@ typedef struct {
 	int height;
 	bool primary;
 	int number;
-} kinc_display_t;
+} kore_display;
 
-static kinc_display_t display;
+static kore_display display;
 
-int kinc_count_displays(void) {
+int kore_count_displays(void) {
 	return 1;
 }
 
-int kinc_primary_display(void) {
+int kore_primary_display(void) {
 	return 0;
 }
 
@@ -27,7 +27,7 @@ static int width() {
 	JNIEnv *env;
 	JavaVM *vm = kinc_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kinc_android_find_class(env, "tech.kore.KoreActivity");
 	jmethodID koreActivityGetScreenDpi = (*env)->GetStaticMethodID(env, koreActivityClass, "getDisplayWidth", "()I");
 	int width = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
 	(*vm)->DetachCurrentThread(vm);
@@ -67,10 +67,10 @@ static int refreshRate() {
 	return dpi;
 }
 
-void kinc_display_init() {}
+void kore_display_init() {}
 
-kinc_display_mode_t kinc_display_available_mode(int display_index, int mode_index) {
-	kinc_display_mode_t mode;
+kore_display_mode kore_display_available_mode(int display_index, int mode_index) {
+	kore_display_mode mode;
 	mode.x = 0;
 	mode.y = 0;
 	mode.width = width();
@@ -81,12 +81,12 @@ kinc_display_mode_t kinc_display_available_mode(int display_index, int mode_inde
 	return mode;
 }
 
-int kinc_display_count_available_modes(int display_index) {
+int kore_display_count_available_modes(int display_index) {
 	return 1;
 }
 
-kinc_display_mode_t kinc_display_current_mode(int display) {
-	kinc_display_mode_t mode;
+kore_display_mode kore_display_current_mode(int display) {
+	kore_display_mode mode;
 	mode.x = 0;
 	mode.y = 0;
 	mode.width = width();
@@ -97,10 +97,10 @@ kinc_display_mode_t kinc_display_current_mode(int display) {
 	return mode;
 }
 
-const char *kinc_display_name(int display) {
+const char *kore_display_name(int display) {
 	return "Display";
 }
 
-bool kinc_display_available(int display) {
+bool kore_display_available(int display) {
 	return display == 0;
 }

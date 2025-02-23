@@ -1,5 +1,7 @@
-#include "audio.c.h"
-#include "display.c.h"
-#include "system.c.h"
-#include "video.c.h"
-#include "window.c.h"
+#include "audio.c"
+#include "display.c"
+#include "system.c"
+#include "video.c"
+#include "window.c"
+
+#include "android_native_app_glue.c"

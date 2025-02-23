@@ -1,4 +1,4 @@
-#include <kinc/audio2/audio.h>
+#include <kore3/audio/audio.h>
 
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static kinc_a2_buffer_t a2_buffer;
+static kore_audio_buffer audio_buffer;
 
 static SLObjectItf engineObject;
 static SLEngineItf engineEngine;
@@ -18,18 +18,18 @@ static SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
 static int16_t tempBuffer[AUDIO_BUFFER_SIZE];
 
 static void copySample(void *buffer) {
-	float left_value = *(float *)&a2_buffer.channels[0][a2_buffer.read_location];
-	float right_value = *(float *)&a2_buffer.channels[1][a2_buffer.read_location];
-	a2_buffer.read_location += 1;
-	if (a2_buffer.read_location >= a2_buffer.data_size) {
-		a2_buffer.read_location = 0;
+	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
+	audio_buffer.read_location += 1;
+	if (audio_buffer.read_location >= audio_buffer.data_size) {
+		audio_buffer.read_location = 0;
 	}
 	((int16_t *)buffer)[0] = (int16_t)(left_value * 32767);
 	((int16_t *)buffer)[1] = (int16_t)(right_value * 32767);
 }
 
 static void bqPlayerCallback(SLAndroidSimpleBufferQueueItf caller, void *context) {
-	if (kinc_a2_internal_callback(&a2_buffer, AUDIO_BUFFER_SIZE / 2)) {
+	if (kore_audio_internal_callback(&audio_buffer, AUDIO_BUFFER_SIZE / 2)) {
 		for (int i = 0; i < AUDIO_BUFFER_SIZE; i += 2) {
 			copySample(&tempBuffer[i]);
 		}
@@ -42,20 +42,20 @@ static void bqPlayerCallback(SLAndroidSimpleBufferQueueItf caller, void *context
 
 static bool initialized = false;
 
-void kinc_a2_init() {
+void kore_audio_init() {
 	if (initialized) {
 		return;
 	}
 
-	kinc_a2_internal_init();
+	kore_audio_internal_init();
 	initialized = true;
 
-	a2_buffer.read_location = 0;
-	a2_buffer.write_location = 0;
-	a2_buffer.data_size = 128 * 1024;
-	a2_buffer.channel_count = 2;
-	a2_buffer.channels[0] = (float *)malloc(a2_buffer.data_size * sizeof(float));
-	a2_buffer.channels[1] = (float *)malloc(a2_buffer.data_size * sizeof(float));
+	audio_buffer.read_location = 0;
+	audio_buffer.write_location = 0;
+	audio_buffer.data_size = 128 * 1024;
+	audio_buffer.channel_count = 2;
+	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	SLresult result;
 	result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
@@ -108,9 +108,9 @@ void resumeAudio() {
 	SLresult result = (*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PLAYING);
 }
 
-void kinc_a2_update() {}
+void kore_audio_update() {}
 
-void kinc_a2_shutdown() {
+void kore_audio_shutdown() {
 	if (bqPlayerObject != NULL) {
 		(*bqPlayerObject)->Destroy(bqPlayerObject);
 		bqPlayerObject = NULL;
@@ -128,6 +128,6 @@ void kinc_a2_shutdown() {
 	}
 }
 
-uint32_t kinc_a2_samples_per_second(void) {
+uint32_t kore_audio_samples_per_second(void) {
 	return 44100;
 }
