@@ -11,7 +11,7 @@
 #include <kinc/io/filereader.h>
 #include <kinc/log.h>
 
-#ifndef KOPE
+#if 0
 
 #ifdef KORE_KONG
 #include <kong.h>

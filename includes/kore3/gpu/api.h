@@ -56,7 +56,7 @@ typedef enum kore_gpu_api { KORE_GPU_API_DIRECT3D12, KORE_GPU_API_VULKAN, KORE_G
 		kore_vulkan_##name(arg0, arg1, arg2);                                                                                                                  \
 		break;                                                                                                                                                 \
 	}                                                                                                                                                          \
-	#define KOPE_G5_CALL4(name, arg0, arg1, arg2, arg3) switch (selected_api) {                                                                                \
+	#define KORE_G5_CALL4(name, arg0, arg1, arg2, arg3) switch (selected_api) {                                                                                \
 	case KORE_GPU_API_DIRECT3D12:                                                                                                                               \
 		kore_d3d12_##name(arg0, arg1, arg2, arg3);                                                                                                             \
 		break;                                                                                                                                                 \

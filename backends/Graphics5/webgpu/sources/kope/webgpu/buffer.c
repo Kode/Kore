@@ -1,25 +1,25 @@
 #include "buffer_functions.h"
 
-#include <kope/graphics5/buffer.h>
+#include <kore3/gpu/buffer.h>
 
-void kope_webgpu_buffer_set_name(kope_g5_buffer *buffer, const char *name) {}
+void kore_webgpu_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {}
 
-void kope_webgpu_buffer_destroy(kope_g5_buffer *buffer) {}
+void kore_webgpu_buffer_destroy(kore_gpu_buffer *buffer) {}
 
-void *kope_webgpu_buffer_try_to_lock_all(kope_g5_buffer *buffer) {
+void *kore_webgpu_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
 	return NULL;
 }
 
-void *kope_webgpu_buffer_lock_all(kope_g5_buffer *buffer) {
+void *kore_webgpu_buffer_lock_all(kore_gpu_buffer *buffer) {
 	return NULL;
 }
 
-void *kope_webgpu_buffer_try_to_lock(kope_g5_buffer *buffer, uint64_t offset, uint64_t size) {
+void *kore_webgpu_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {
 	return NULL;
 }
 
-void *kope_webgpu_buffer_lock(kope_g5_buffer *buffer, uint64_t offset, uint64_t size) {
+void *kore_webgpu_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {
 	return NULL;
 }
 
-void kope_webgpu_buffer_unlock(kope_g5_buffer *buffer) {}
+void kore_webgpu_buffer_unlock(kore_gpu_buffer *buffer) {}

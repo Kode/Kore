@@ -2,6 +2,6 @@
 
 #include "webgpuunit.h"
 
-#include <kope/graphics5/texture.h>
+#include <kore/gpu/texture.h>
 
-void kope_webgpu_texture_set_name(kope_g5_texture *texture, const char *name) {}
+void kore_webgpu_texture_set_name(kore_gpu_texture *texture, const char *name) {}

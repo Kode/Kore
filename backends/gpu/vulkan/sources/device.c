@@ -541,7 +541,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .pNext = NULL,
 	    .pApplicationName = kinc_application_name(),
 	    .applicationVersion = 0,
-	    .pEngineName = "Kope",
+	    .pEngineName = "Kore",
 	    .engineVersion = 0,
 	    .apiVersion = VK_API_VERSION_1_3,
 	};

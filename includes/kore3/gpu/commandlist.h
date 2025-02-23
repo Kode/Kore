@@ -150,7 +150,7 @@ typedef struct kore_gpu_draw_arguments {
 	uint32_t first_instance;
 } kore_gpu_draw_arguments;
 
-typedef struct kope_gpu_draw_indexed_arguments {
+typedef struct kore_gpu_draw_indexed_arguments {
 #ifdef KORE_DIRECT3D12
 	uint32_t automatic_draw_index;
 #endif

@@ -1,4 +1,4 @@
-#if defined(KORE_KONG) && !defined(KOPE)
+#if 0
 #include "colored_painter.c.h"
 #include "image_painter.c.h"
 #include "text_painter.c.h"

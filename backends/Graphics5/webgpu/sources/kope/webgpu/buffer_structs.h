@@ -1,5 +1,5 @@
-#ifndef KOPE_WEBGPU_BUFFER_STRUCTS_HEADER
-#define KOPE_WEBGPU_BUFFER_STRUCTS_HEADER
+#ifndef KORE_WEBGPU_BUFFER_STRUCTS_HEADER
+#define KORE_WEBGPU_BUFFER_STRUCTS_HEADER
 
 #include <stdint.h>
 
@@ -7,11 +7,11 @@
 extern "C" {
 #endif
 
-struct kope_g5_device;
+struct kore_gpu_device;
 
-typedef struct kope_webgpu_buffer {
+typedef struct kore_webgpu_buffer {
 	int nothing;
-} kope_webgpu_buffer;
+} kore_webgpu_buffer;
 
 #ifdef __cplusplus
 }

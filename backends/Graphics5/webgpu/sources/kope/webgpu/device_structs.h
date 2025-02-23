@@ -1,32 +1,32 @@
-#ifndef KOPE_WEBGPU_DEVICE_STRUCTS_HEADER
-#define KOPE_WEBGPU_DEVICE_STRUCTS_HEADER
+#ifndef KORE_WEBGPU_DEVICE_STRUCTS_HEADER
+#define KORE_WEBGPU_DEVICE_STRUCTS_HEADER
 
-#include <kope/graphics5/commandlist.h>
-#include <kope/graphics5/texture.h>
-#include <kope/util/indexallocator.h>
-#include <kope/util/offalloc/offalloc.h>
+#include <kore3/graphics5/commandlist.h>
+#include <kore3/graphics5/texture.h>
+#include <kore3/util/indexallocator.h>
+#include <kore3/util/offalloc/offalloc.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define KOPE_WEBGPU_FRAME_COUNT 2
+#define KORE_WEBGPU_FRAME_COUNT 2
 
-typedef struct kope_webgpu_device {
+typedef struct kore_webgpu_device {
 	int nothing;
-} kope_webgpu_device;
+} kore_webgpu_device;
 
-typedef struct kope_webgpu_query_set {
+typedef struct kore_webgpu_query_set {
 	int nothing;
-} kope_webgpu_query_set;
+} kore_webgpu_query_set;
 
-typedef struct kope_webgpu_raytracing_volume {
+typedef struct kore_webgpu_raytracing_volume {
 	int nothing;
-} kope_webgpu_raytracing_volume;
+} kore_webgpu_raytracing_volume;
 
-typedef struct kope_webgpu_raytracing_hierarchy {
+typedef struct kore_webgpu_raytracing_hierarchy {
 	int nothing;
-} kope_webgpu_raytracing_hierarchy;
+} kore_webgpu_raytracing_hierarchy;
 
 #ifdef __cplusplus
 }

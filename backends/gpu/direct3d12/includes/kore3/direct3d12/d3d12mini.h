@@ -1,5 +1,5 @@
-#ifndef KOPE_D3D12_MINI_HEADER
-#define KOPE_D3D12_MINI_HEADER
+#ifndef KORE_D3D12_MINI_HEADER
+#define KORE_D3D12_MINI_HEADER
 
 #include <stdbool.h>
 

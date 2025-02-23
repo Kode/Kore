@@ -25,7 +25,7 @@ uint32_t kore_index_allocator_allocate(kore_index_allocator *allocator) {
 	return index;
 }
 
-void kope_index_allocator_free(kore_index_allocator *allocator, uint32_t index) {
+void kore_index_allocator_free(kore_index_allocator *allocator, uint32_t index) {
 	uint32_t indices_index = allocator->next_indices_index + allocator->remaining;
 	if (indices_index >= KORE_INDEX_ALLOCATOR_SIZE) {
 		indices_index -= KORE_INDEX_ALLOCATOR_SIZE;

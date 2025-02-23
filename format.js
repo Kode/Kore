@@ -3,14 +3,14 @@ const fs = require('fs');
 const path = require('path');
 
 const excludes = [
-	'Backends/Graphics3/OpenGL1/Sources/GL',
-	'Backends/Graphics4/OpenGL/Sources/GL',
-	'Backends/Graphics5/Direct3D12/Sources/d3dx12.h',
-	'Backends/Graphics5/Direct3D12/pix',
-	'Backends/System/Android/Sources/Android',
-	'Backends/System/Linux/Sources/kinc/backend/wayland',
-	'Sources/kope/util/offalloc',
-	'Tests/Shader/Sources/stb_image_write.h'
+	'backends/Graphics4/OpenGL/Sources/GL',
+	'backends/gpu/direct3d12/sources/d3dx12.h',
+	'backends/gpu/direct3d12/pix',
+	'backends/system/android/sources/Android',
+	'backends/system/linux/sources/kinc/backend/wayland',
+	'includes/kore3/util/offalloc',
+	'sources/util/offalloc',
+	'tests/shader/sources/stb_image_write.h'
 ];
 
 function excludeMatches(filepath) {

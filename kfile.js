@@ -35,7 +35,6 @@ const lz4x = true;
 
 project.addFile('sources/kinc/**');
 
-project.addDefine('KOPE');
 project.addFile('includes/**');
 
 function addUnit(name) {
@@ -59,9 +58,6 @@ function addBackend(name) {
 	project.addFile('backends/' + name + '/sources/kinc/**');
 	project.addFile('backends/' + name + '/sources/GL/**');
 	project.addFile('backends/' + name + '/sources/Android/**');
-	project.addFile('backends/' + name + '/sources/kope/**', {nocompile: true});
-	project.addFile('backends/' + name + '/sources/kope/**/*unit.c*');
-	project.addFile('backends/' + name + '/sources/kope/**/*unit.m');
 	project.addIncludeDir('backends/' + name + '/sources');
 }
 
@@ -192,9 +188,9 @@ if (platform === Platform.Windows) {
 	}
 
 	if (Options.pix) {
-		project.addDefine('KOPE_PIX');
-		project.addIncludeDir('backends/Graphics5/Direct3D12/pix/Include');
-		project.addLib('backends/Graphics5/Direct3D12/pix/bin/x64/WinPixEventRuntime');
+		project.addDefine('KORE_PIX');
+		project.addIncludeDir('backends/gpu/direct3d12/pix/Include');
+		project.addLib('backends/gpu/direct3d12/pix/bin/x64/WinPixEventRuntime');
 	}
 }
 else if (platform === Platform.WindowsApp) {

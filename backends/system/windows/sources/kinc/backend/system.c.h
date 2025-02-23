@@ -1417,10 +1417,6 @@ int kinc_init(const char *name, int width, int height, kinc_window_options_t *wi
 	loadXInput();
 	initializeDirectInput();
 
-#if defined(KORE_KONG) && !defined(KOPE)
-	kong_init();
-#endif
-
 	return window;
 }
 

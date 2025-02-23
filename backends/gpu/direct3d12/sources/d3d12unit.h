@@ -12,7 +12,7 @@
 #define NOCLIPBOARD
 #define NOCOLOR
 #define NOCOMM
-#ifndef KOPE_PIX
+#ifndef KORE_PIX
 #define NOCTLMGR
 #endif
 #define NODEFERWINDOWPOS
@@ -36,7 +36,7 @@
 #define NORASTEROPS
 #define NOSCROLL
 #define NOSERVICE
-#ifndef KOPE_PIX
+#ifndef KORE_PIX
 #define NOSHOWWINDOW
 #endif
 #define NOSOUND
@@ -46,7 +46,7 @@
 // #define NOUSER
 #define NOVIRTUALKEYCODES
 #define NOWH
-#ifndef KOPE_PIX
+#ifndef KORE_PIX
 #define NOWINMESSAGES
 #endif
 #define NOWINOFFSETS

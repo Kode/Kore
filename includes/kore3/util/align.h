@@ -1,5 +1,5 @@
-#ifndef KOPE_ALIGN_HEADER
-#define KOPE_ALIGN_HEADER
+#ifndef KORE_ALIGN_HEADER
+#define KORE_ALIGN_HEADER
 
 #include <stdint.h>
 

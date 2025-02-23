@@ -96,7 +96,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 
 	assert(result == S_OK);
 
-#if defined(KOPE_NVAPI) && !defined(NDEBUG)
+#if defined(KORE_NVAPI) && !defined(NDEBUG)
 	NvAPI_Initialize();
 	NvAPI_D3D12_EnableRaytracingValidation(device->d3d12.device, NVAPI_D3D12_RAYTRACING_VALIDATION_FLAG_NONE);
 	void *handle = nullptr;
@@ -580,7 +580,7 @@ static void wait_for_fence(kore_gpu_device *device, ID3D12Fence *fence, HANDLE e
 		kinc_microsoft_affirm(fence->SetEventOnCompletion(completion_value, event));
 		WaitForSingleObject(event, INFINITE);
 
-#if defined(KOPE_NVAPI) && !defined(NDEBUG)
+#if defined(KORE_NVAPI) && !defined(NDEBUG)
 		NvAPI_D3D12_FlushRaytracingValidationMessages(device->d3d12.device);
 #endif
 	}

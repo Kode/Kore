@@ -397,7 +397,7 @@ void kore_d3d12_compute_pipeline_destroy(kore_d3d12_compute_pipeline *pipe) {
 }
 
 #ifndef KONG_HAS_NO_RAY_SHADERS
-void kore_d3d12_ray_pipeline_init(kope_g5_device *device, kore_d3d12_ray_pipeline *pipe, const kore_d3d12_ray_pipeline_parameters *parameters,
+void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeline *pipe, const kore_d3d12_ray_pipeline_parameters *parameters,
                                   ID3D12RootSignature *root_signature) {
 	D3D12_DXIL_LIBRARY_DESC lib = {0};
 	lib.DXILLibrary.pShaderBytecode = ray_code;
@@ -459,15 +459,15 @@ void kore_d3d12_ray_pipeline_init(kope_g5_device *device, kore_d3d12_ray_pipelin
 	kinc_microsoft_affirm(device->d3d12.device->CreateStateObject(&desc, IID_PPV_ARGS(&pipe->pipe)));
 
 	uint32_t shader_id_count = 3;
-	kope_g5_buffer_parameters id_buffer_params;
+	kore_gpu_buffer_parameters id_buffer_params;
 	id_buffer_params.size = shader_id_count * D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT;
-	id_buffer_params.usage_flags = KOPE_G5_BUFFER_USAGE_CPU_WRITE;
-	kope_g5_device_create_buffer(device, &id_buffer_params, &pipe->shader_ids);
+	id_buffer_params.usage_flags = KORE_GPU_BUFFER_USAGE_CPU_WRITE;
+	kore_gpu_device_create_buffer(device, &id_buffer_params, &pipe->shader_ids);
 
 	ID3D12StateObjectProperties *props;
 	pipe->pipe->QueryInterface(&props);
 
-	uint8_t *data = (uint8_t *)kope_g5_buffer_lock_all(&pipe->shader_ids);
+	uint8_t *data = (uint8_t *)kore_gpu_buffer_lock_all(&pipe->shader_ids);
 
 	wchar_t raygen[1024];
 	kinc_microsoft_convert_string(raygen, parameters->gen_shader_name, 1024);
@@ -479,7 +479,7 @@ void kore_d3d12_ray_pipeline_init(kope_g5_device *device, kore_d3d12_ray_pipelin
 
 	memcpy(&data[D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT * 2], props->GetShaderIdentifier(L"HitGroup"), D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
 
-	kope_g5_buffer_unlock(&pipe->shader_ids);
+	kore_gpu_buffer_unlock(&pipe->shader_ids);
 
 	props->Release();
 

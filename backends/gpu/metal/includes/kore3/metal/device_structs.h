@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-#define KOPE_METAL_FRAME_COUNT 2
+#define KORE_METAL_FRAME_COUNT 2
 
 typedef struct kore_metal_device {
 	void *device;
