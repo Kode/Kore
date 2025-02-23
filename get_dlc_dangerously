@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if test -f "v2/get_dlc_dangerously"; then
+if test -f `dirname "$0"`"/v2/get_dlc_dangerously"; then
 git -C `dirname "$0"` submodule update --remote --merge v2
 else
 git -C `dirname "$0"` submodule update --init --remote v2
