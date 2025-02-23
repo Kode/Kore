@@ -1,5 +1,5 @@
 #include <kinc/backend/HIDManager.h>
-#include <kinc/log.h>
+#include <kore3/log.h>
 
 static int initHIDManager(struct HIDManager *manager);
 static bool addMatchingArray(struct HIDManager *manager, CFMutableArrayRef matchingCFArrayRef, CFDictionaryRef matchingCFDictRef);
@@ -37,7 +37,7 @@ static int initHIDManager(struct HIDManager *manager) {
 			addMatchingArray(manager, matchingCFArrayRef, matchingCFDictRef);
 		}
 		else {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "%s: CFArrayCreateMutable failed.", __PRETTY_FUNCTION__);
+			kore_log(KORE_LOG_LEVEL_ERROR, "%s: CFArrayCreateMutable failed.", __PRETTY_FUNCTION__);
 			return -1;
 		}
 
@@ -88,17 +88,17 @@ CFMutableDictionaryRef createDeviceMatchingDictionary(struct HIDManager *manager
 						CFRelease(usageCFNumberRef);
 					}
 					else {
-						kinc_log(KINC_LOG_LEVEL_ERROR, "%s: CFNumberCreate(usage) failed.", __PRETTY_FUNCTION__);
+						kore_log(KORE_LOG_LEVEL_ERROR, "%s: CFNumberCreate(usage) failed.", __PRETTY_FUNCTION__);
 					}
 				}
 			}
 			else {
-				kinc_log(KINC_LOG_LEVEL_ERROR, "%s: CFNumberCreate(usage page) failed.", __PRETTY_FUNCTION__);
+				kore_log(KORE_LOG_LEVEL_ERROR, "%s: CFNumberCreate(usage page) failed.", __PRETTY_FUNCTION__);
 			}
 		}
 	}
 	else {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "%s: CFDictionaryCreateMutable failed.", __PRETTY_FUNCTION__);
+		kore_log(KORE_LOG_LEVEL_ERROR, "%s: CFDictionaryCreateMutable failed.", __PRETTY_FUNCTION__);
 	}
 	return result;
 }

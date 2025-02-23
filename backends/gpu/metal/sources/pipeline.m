@@ -3,7 +3,7 @@
 
 #include "metalunit.h"
 
-#include <kinc/log.h>
+#include <kore3/log.h>
 
 static MTLBlendFactor convert_blending_factor(kore_metal_blend_factor factor) {
 	switch (factor) {

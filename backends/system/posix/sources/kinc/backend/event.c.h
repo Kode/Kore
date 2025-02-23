@@ -1,10 +1,10 @@
-#include <kinc/threads/event.h>
+#include <kore3/threads/event.h>
 
 #include <assert.h>
 #include <errno.h>
 #include <sys/time.h>
 
-void kinc_event_init(kinc_event_t *event, bool auto_reset) {
+void kore_event_init(kinc_event_t *event, bool auto_reset) {
 	event->impl.auto_reset = auto_reset;
 	event->impl.set = false;
 
@@ -16,12 +16,12 @@ void kinc_event_init(kinc_event_t *event, bool auto_reset) {
 	pthread_mutex_init(&event->impl.mutex, NULL); //&attr);
 }
 
-void kinc_event_destroy(kinc_event_t *event) {
+void kore_event_destroy(kinc_event_t *event) {
 	pthread_cond_destroy(&event->impl.event);
 	pthread_mutex_destroy(&event->impl.mutex);
 }
 
-void kinc_event_signal(kinc_event_t *event) {
+void kore_event_signal(kinc_event_t *event) {
 	pthread_mutex_lock(&event->impl.mutex);
 	if (!event->impl.set) {
 		event->impl.set = true;
@@ -30,7 +30,7 @@ void kinc_event_signal(kinc_event_t *event) {
 	pthread_mutex_unlock(&event->impl.mutex);
 }
 
-void kinc_event_wait(kinc_event_t *event) {
+void kore_event_wait(kinc_event_t *event) {
 	pthread_mutex_lock(&event->impl.mutex);
 	while (!event->impl.set) {
 		pthread_cond_wait(&event->impl.event, &event->impl.mutex);
@@ -41,7 +41,7 @@ void kinc_event_wait(kinc_event_t *event) {
 	pthread_mutex_unlock(&event->impl.mutex);
 }
 
-bool kinc_event_try_to_wait(kinc_event_t *event, double seconds) {
+bool kore_event_try_to_wait(kinc_event_t *event, double seconds) {
 	pthread_mutex_lock(&event->impl.mutex);
 
 	struct timeval tv;
@@ -71,7 +71,7 @@ bool kinc_event_try_to_wait(kinc_event_t *event, double seconds) {
 	return result;
 }
 
-void kinc_event_reset(kinc_event_t *event) {
+void kore_event_reset(kinc_event_t *event) {
 	pthread_mutex_lock(&event->impl.mutex);
 	event->impl.set = false;
 	pthread_mutex_unlock(&event->impl.mutex);

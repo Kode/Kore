@@ -1,9 +1,9 @@
-#include <kinc/network/http.h>
+#include <kore3/network/http.h>
 
 #import <Foundation/Foundation.h>
 
-void kinc_http_request(const char *url, const char *path, const char *data, int port, bool secure, int method, const char *header,
-                       kinc_http_callback_t callback, void *callbackdata) {
+void kore_http_request(const char *url, const char *path, const char *data, int port, bool secure, int method, const char *header,
+                       kore_http_callback callback, void *callbackdata) {
 	NSString *urlstring = secure ? @"https://" : @"http://";
 	urlstring = [urlstring stringByAppendingString:[NSString stringWithUTF8String:url]];
 	urlstring = [urlstring stringByAppendingString:@":"];
@@ -24,16 +24,16 @@ void kinc_http_request(const char *url, const char *path, const char *data, int 
 	}
 
 	switch (method) {
-	case KINC_HTTP_GET:
+	case KORE_HTTP_GET:
 		request.HTTPMethod = @"GET";
 		break;
-	case KINC_HTTP_POST:
+	case KORE_HTTP_POST:
 		request.HTTPMethod = @"POST";
 		break;
-	case KINC_HTTP_PUT:
+	case KORE_HTTP_PUT:
 		request.HTTPMethod = @"PUT";
 		break;
-	case KINC_HTTP_DELETE:
+	case KORE_HTTP_DELETE:
 		request.HTTPMethod = @"DELETE";
 		break;
 	}

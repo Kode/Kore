@@ -3,8 +3,8 @@
 
 #include <Foundation/Foundation.h>
 
-#include <kinc/threads/mutex.h>
-#include <kinc/threads/thread.h>
+#include <kore3/threads/mutex.h>
+#include <kore3/threads/thread.h>
 
 #include <pthread.h>
 #include <stdio.h>
@@ -19,7 +19,7 @@ static void *ThreadProc(void *arg) {
 	}
 }
 
-void kinc_thread_init(kinc_thread_t *t, void (*thread)(void *param), void *param) {
+void kore_thread_init(kinc_thread_t *t, void (*thread)(void *param), void *param) {
 	t->impl.param = param;
 	t->impl.thread = thread;
 	pthread_attr_t attr;
@@ -34,17 +34,17 @@ void kinc_thread_init(kinc_thread_t *t, void (*thread)(void *param), void *param
 	pthread_attr_destroy(&attr);
 }
 
-void kinc_thread_wait_and_destroy(kinc_thread_t *thread) {
+void kore_thread_wait_and_destroy(kinc_thread_t *thread) {
 	int ret;
 	do {
 		ret = pthread_join(thread->impl.pthread, NULL);
 	} while (ret != 0);
 }
 
-bool kinc_thread_try_to_destroy(kinc_thread_t *thread) {
+bool kore_thread_try_to_destroy(kinc_thread_t *thread) {
 	return pthread_join(thread->impl.pthread, NULL) == 0;
 }
 
-void kinc_threads_init(void) {}
+void kore_threads_init(void) {}
 
-void kinc_threads_quit(void) {}
+void kore_threads_quit(void) {}

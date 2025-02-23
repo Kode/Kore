@@ -1,9 +1,9 @@
 #import "BasicOpenGLView.h"
 
-#include <kinc/input/keyboard.h>
-#include <kinc/input/mouse.h>
-#include <kinc/input/pen.h>
-#include <kinc/system.h>
+#include <kore3/input/keyboard.h>
+#include <kore3/input/mouse.h>
+#include <kore3/input/pen.h>
+#include <kore3/system.h>
 
 #ifdef KINC_METAL
 //#include <kinc/graphics5/graphics.h>
@@ -46,36 +46,36 @@ static bool cmd = false;
 
 - (void)flagsChanged:(NSEvent *)theEvent {
 	if (shift) {
-		kinc_internal_keyboard_trigger_key_up(KINC_KEY_SHIFT);
+		kore_internal_keyboard_trigger_key_up(KORE_KEY_SHIFT);
 		shift = false;
 	}
 	if (ctrl) {
-		kinc_internal_keyboard_trigger_key_up(KINC_KEY_CONTROL);
+		kore_internal_keyboard_trigger_key_up(KORE_KEY_CONTROL);
 		ctrl = false;
 	}
 	if (alt) {
-		kinc_internal_keyboard_trigger_key_up(KINC_KEY_ALT);
+		kore_internal_keyboard_trigger_key_up(KORE_KEY_ALT);
 		alt = false;
 	}
 	if (cmd) {
-		kinc_internal_keyboard_trigger_key_up(KINC_KEY_META);
+		kore_internal_keyboard_trigger_key_up(KORE_KEY_META);
 		cmd = false;
 	}
 
 	if ([theEvent modifierFlags] & NSEventModifierFlagShift) {
-		kinc_internal_keyboard_trigger_key_down(KINC_KEY_SHIFT);
+		kore_internal_keyboard_trigger_key_down(KORE_KEY_SHIFT);
 		shift = true;
 	}
 	if ([theEvent modifierFlags] & NSEventModifierFlagControl) {
-		kinc_internal_keyboard_trigger_key_down(KINC_KEY_CONTROL);
+		kore_internal_keyboard_trigger_key_down(KORE_KEY_CONTROL);
 		ctrl = true;
 	}
 	if ([theEvent modifierFlags] & NSEventModifierFlagOption) {
-		kinc_internal_keyboard_trigger_key_down(KINC_KEY_ALT);
+		kore_internal_keyboard_trigger_key_down(KORE_KEY_ALT);
 		alt = true;
 	}
 	if ([theEvent modifierFlags] & NSEventModifierFlagCommand) {
-		kinc_internal_keyboard_trigger_key_down(KINC_KEY_META);
+		kore_internal_keyboard_trigger_key_down(KORE_KEY_META);
 		cmd = true;
 	}
 }
@@ -88,75 +88,75 @@ static bool cmd = false;
 		unichar ch = [characters characterAtIndex:0];
 		switch (ch) { // keys that exist in keydown and keypress events
 		case 59:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_SEMICOLON);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_SEMICOLON);
 			break;
 		case 91:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_OPEN_BRACKET);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_OPEN_BRACKET);
 			break;
 		case 93:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_CLOSE_BRACKET);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_CLOSE_BRACKET);
 			break;
 		case 39:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_QUOTE);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_QUOTE);
 			break;
 		case 92:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_BACK_SLASH);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_BACK_SLASH);
 			break;
 		case 44:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_COMMA);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_COMMA);
 			break;
 		case 46:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_PERIOD);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_PERIOD);
 			break;
 		case 47:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_SLASH);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_SLASH);
 			break;
 		case 96:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_BACK_QUOTE);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_BACK_QUOTE);
 			break;
 		case 32:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_SPACE);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_SPACE);
 			break;
 		case 45: // we need breaks because EQUALS triggered too for some reason
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_HYPHEN_MINUS);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_HYPHEN_MINUS);
 			break;
 		case 61:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_EQUALS);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_EQUALS);
 			break;
 		}
 		switch (ch) {
 		case NSRightArrowFunctionKey:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_RIGHT);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_RIGHT);
 			break;
 		case NSLeftArrowFunctionKey:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_LEFT);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_LEFT);
 			break;
 		case NSUpArrowFunctionKey:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_UP);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_UP);
 			break;
 		case NSDownArrowFunctionKey:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_DOWN);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_DOWN);
 			break;
 		case 27:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_ESCAPE);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_ESCAPE);
 			break;
 		case NSEnterCharacter:
 		case NSNewlineCharacter:
 		case NSCarriageReturnCharacter:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_RETURN);
-			kinc_internal_keyboard_trigger_key_press('\n');
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_RETURN);
+			kore_internal_keyboard_trigger_key_press('\n');
 			break;
 		case 0x7f:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_BACKSPACE);
-			kinc_internal_keyboard_trigger_key_press('\x08');
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_BACKSPACE);
+			kore_internal_keyboard_trigger_key_press('\x08');
 			break;
 		case 9:
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_TAB);
-			kinc_internal_keyboard_trigger_key_press('\t');
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_TAB);
+			kore_internal_keyboard_trigger_key_press('\t');
 			break;
 		default:
 			if (ch == 'x' && [theEvent modifierFlags] & NSEventModifierFlagCommand) {
-				char *text = kinc_internal_cut_callback();
+				char *text = kore_internal_cut_callback();
 				if (text != NULL) {
 					NSPasteboard *board = [NSPasteboard generalPasteboard];
 					[board clearContents];
@@ -164,7 +164,7 @@ static bool cmd = false;
 				}
 			}
 			if (ch == 'c' && [theEvent modifierFlags] & NSEventModifierFlagCommand) {
-				char *text = kinc_internal_copy_callback();
+				char *text = kore_internal_copy_callback();
 				if (text != NULL) {
 					NSPasteboard *board = [NSPasteboard generalPasteboard];
 					[board clearContents];
@@ -177,19 +177,19 @@ static bool cmd = false;
 				if (data != nil) {
 					char charData[4096];
 					strcpy(charData, [data UTF8String]);
-					kinc_internal_paste_callback(charData);
+					kore_internal_paste_callback(charData);
 				}
 			}
 			if (ch >= L'a' && ch <= L'z') {
-				kinc_internal_keyboard_trigger_key_down(ch - L'a' + KINC_KEY_A);
+				kore_internal_keyboard_trigger_key_down(ch - L'a' + KORE_KEY_A);
 			}
 			else if (ch >= L'A' && ch <= L'Z') {
-				kinc_internal_keyboard_trigger_key_down(ch - L'A' + KINC_KEY_A);
+				kore_internal_keyboard_trigger_key_down(ch - L'A' + KORE_KEY_A);
 			}
 			else if (ch >= L'0' && ch <= L'9') {
-				kinc_internal_keyboard_trigger_key_down(ch - L'0' + KINC_KEY_0);
+				kore_internal_keyboard_trigger_key_down(ch - L'0' + KORE_KEY_0);
 			}
-			kinc_internal_keyboard_trigger_key_press(ch);
+			kore_internal_keyboard_trigger_key_press(ch);
 			break;
 		}
 	}
@@ -201,76 +201,76 @@ static bool cmd = false;
 		unichar ch = [characters characterAtIndex:0];
 		switch (ch) {
 		case 59:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_SEMICOLON);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_SEMICOLON);
 			break;
 		case 91:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_OPEN_BRACKET);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_OPEN_BRACKET);
 			break;
 		case 93:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_CLOSE_BRACKET);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_CLOSE_BRACKET);
 			break;
 		case 39:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_QUOTE);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_QUOTE);
 			break;
 		case 92:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_BACK_SLASH);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_BACK_SLASH);
 			break;
 		case 44:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_COMMA);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_COMMA);
 			break;
 		case 46:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_PERIOD);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_PERIOD);
 			break;
 		case 47:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_SLASH);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_SLASH);
 			break;
 		case 96:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_BACK_QUOTE);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_BACK_QUOTE);
 			break;
 		case 45:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_HYPHEN_MINUS);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_HYPHEN_MINUS);
 			break;
 		case 61:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_EQUALS);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_EQUALS);
 			break;
 		case NSRightArrowFunctionKey:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_RIGHT);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_RIGHT);
 			break;
 		case NSLeftArrowFunctionKey:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_LEFT);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_LEFT);
 			break;
 		case NSUpArrowFunctionKey:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_UP);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_UP);
 			break;
 		case NSDownArrowFunctionKey:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_DOWN);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_DOWN);
 			break;
 		case 27:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_ESCAPE);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_ESCAPE);
 			break;
 		case NSEnterCharacter:
 		case NSNewlineCharacter:
 		case NSCarriageReturnCharacter:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_RETURN);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_RETURN);
 			break;
 		case 0x7f:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_BACKSPACE);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_BACKSPACE);
 			break;
 		case 9:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_TAB);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_TAB);
 			break;
 		case 32:
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_SPACE);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_SPACE);
 			break;
 		default:
 			if (ch >= L'a' && ch <= L'z') {
-				kinc_internal_keyboard_trigger_key_up(ch - L'a' + KINC_KEY_A);
+				kore_internal_keyboard_trigger_key_up(ch - L'a' + KORE_KEY_A);
 			}
 			else if (ch >= L'A' && ch <= L'Z') {
-				kinc_internal_keyboard_trigger_key_up(ch - L'A' + KINC_KEY_A);
+				kore_internal_keyboard_trigger_key_up(ch - L'A' + KORE_KEY_A);
 			}
 			else if (ch >= L'0' && ch <= L'9') {
-				kinc_internal_keyboard_trigger_key_up(ch - L'0' + KINC_KEY_0);
+				kore_internal_keyboard_trigger_key_up(ch - L'0' + KORE_KEY_0);
 			}
 			break;
 		}
@@ -288,7 +288,7 @@ static int getMouseY(NSEvent *event) {
 	// TODO (DK) map [theEvent window] to window id instead of 0
 	NSWindow *window = [[NSApplication sharedApplication] mainWindow];
 	float scale = [window backingScaleFactor];
-	return (int)(kinc_height() - [event locationInWindow].y * scale);
+	return (int)(kore_height() - [event locationInWindow].y * scale);
 }
 
 static bool controlKeyMouseButton = false;
@@ -297,78 +297,78 @@ static bool controlKeyMouseButton = false;
 	// TODO (DK) map [theEvent window] to window id instead of 0
 	if ([theEvent modifierFlags] & NSEventModifierFlagControl) {
 		controlKeyMouseButton = true;
-		kinc_internal_mouse_trigger_press(0, 1, getMouseX(theEvent), getMouseY(theEvent));
+		kore_internal_mouse_trigger_press(0, 1, getMouseX(theEvent), getMouseY(theEvent));
 	}
 	else {
 		controlKeyMouseButton = false;
-		kinc_internal_mouse_trigger_press(0, 0, getMouseX(theEvent), getMouseY(theEvent));
+		kore_internal_mouse_trigger_press(0, 0, getMouseX(theEvent), getMouseY(theEvent));
 	}
 
 	if ([theEvent subtype] == NSEventSubtypeTabletPoint) {
-		kinc_internal_pen_trigger_press(0, getMouseX(theEvent), getMouseY(theEvent), theEvent.pressure);
+		kore_internal_pen_trigger_press(0, getMouseX(theEvent), getMouseY(theEvent), theEvent.pressure);
 	}
 }
 
 - (void)mouseUp:(NSEvent *)theEvent {
 	// TODO (DK) map [theEvent window] to window id instead of 0
 	if (controlKeyMouseButton) {
-		kinc_internal_mouse_trigger_release(0, 1, getMouseX(theEvent), getMouseY(theEvent));
+		kore_internal_mouse_trigger_release(0, 1, getMouseX(theEvent), getMouseY(theEvent));
 	}
 	else {
-		kinc_internal_mouse_trigger_release(0, 0, getMouseX(theEvent), getMouseY(theEvent));
+		kore_internal_mouse_trigger_release(0, 0, getMouseX(theEvent), getMouseY(theEvent));
 	}
 	controlKeyMouseButton = false;
 
 	if ([theEvent subtype] == NSEventSubtypeTabletPoint) {
-		kinc_internal_pen_trigger_release(0, getMouseX(theEvent), getMouseY(theEvent), theEvent.pressure);
+		kore_internal_pen_trigger_release(0, getMouseX(theEvent), getMouseY(theEvent), theEvent.pressure);
 	}
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent {
 	// TODO (DK) map [theEvent window] to window id instead of 0
-	kinc_internal_mouse_trigger_move(0, getMouseX(theEvent), getMouseY(theEvent));
+	kore_internal_mouse_trigger_move(0, getMouseX(theEvent), getMouseY(theEvent));
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent {
 	// TODO (DK) map [theEvent window] to window id instead of 0
-	kinc_internal_mouse_trigger_move(0, getMouseX(theEvent), getMouseY(theEvent));
+	kore_internal_mouse_trigger_move(0, getMouseX(theEvent), getMouseY(theEvent));
 
 	if ([theEvent subtype] == NSEventSubtypeTabletPoint) {
-		kinc_internal_pen_trigger_move(0, getMouseX(theEvent), getMouseY(theEvent), theEvent.pressure);
+		kore_internal_pen_trigger_move(0, getMouseX(theEvent), getMouseY(theEvent), theEvent.pressure);
 	}
 }
 
 - (void)rightMouseDown:(NSEvent *)theEvent {
 	// TODO (DK) map [theEvent window] to window id instead of 0
-	kinc_internal_mouse_trigger_press(0, 1, getMouseX(theEvent), getMouseY(theEvent));
+	kore_internal_mouse_trigger_press(0, 1, getMouseX(theEvent), getMouseY(theEvent));
 }
 
 - (void)rightMouseUp:(NSEvent *)theEvent {
 	// TODO (DK) map [theEvent window] to window id instead of 0
-	kinc_internal_mouse_trigger_release(0, 1, getMouseX(theEvent), getMouseY(theEvent));
+	kore_internal_mouse_trigger_release(0, 1, getMouseX(theEvent), getMouseY(theEvent));
 }
 
 - (void)rightMouseDragged:(NSEvent *)theEvent {
 	// TODO (DK) map [theEvent window] to window id instead of 0
-	kinc_internal_mouse_trigger_move(0, getMouseX(theEvent), getMouseY(theEvent));
+	kore_internal_mouse_trigger_move(0, getMouseX(theEvent), getMouseY(theEvent));
 }
 
 - (void)otherMouseDown:(NSEvent *)theEvent {
-	kinc_internal_mouse_trigger_press(0, 2, getMouseX(theEvent), getMouseY(theEvent));
+	kore_internal_mouse_trigger_press(0, 2, getMouseX(theEvent), getMouseY(theEvent));
 }
 
 - (void)otherMouseUp:(NSEvent *)theEvent {
-	kinc_internal_mouse_trigger_release(0, 2, getMouseX(theEvent), getMouseY(theEvent));
+	kore_internal_mouse_trigger_release(0, 2, getMouseX(theEvent), getMouseY(theEvent));
 }
 
 - (void)otherMouseDragged:(NSEvent *)theEvent {
-	kinc_internal_mouse_trigger_move(0, getMouseX(theEvent), getMouseY(theEvent));
+	kore_internal_mouse_trigger_move(0, getMouseX(theEvent), getMouseY(theEvent));
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent {
 	// TODO (DK) map [theEvent window] to window id instead of 0
 	int delta = [theEvent deltaY];
-	kinc_internal_mouse_trigger_scroll(0, -delta);
+	kore_internal_mouse_trigger_scroll(0, -delta);
 }
 
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender {
@@ -388,7 +388,7 @@ static bool controlKeyMouseButton = false;
 	if ([[pboard types] containsObject:NSURLPboardType]) {
 		NSURL *fileURL = [NSURL URLFromPasteboard:pboard];
 		wchar_t *filePath = (wchar_t *)[fileURL.path cStringUsingEncoding:NSUTF32LittleEndianStringEncoding];
-		kinc_internal_drop_files_callback(filePath);
+		kore_internal_drop_files_callback(filePath);
 	}
 	return YES;
 }

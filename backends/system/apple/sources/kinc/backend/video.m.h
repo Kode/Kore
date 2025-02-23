@@ -1,6 +1,5 @@
 #include <kinc/video.h>
 
-#import <AVFoundation/AVFoundation.h>
 #include <kore3/mixer/mixer.h>
 #include <kore3/gpu/texture.h>
 #include <kinc/io/filereader.h>
@@ -9,6 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#import <AVFoundation/AVFoundation.h>
 
 extern const char *iphonegetresourcepath(void);
 extern const char *macgetresourcepath(void);
