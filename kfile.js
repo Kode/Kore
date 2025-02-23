@@ -43,6 +43,11 @@ function addUnit(name) {
 	project.addFile('sources/' + name + '/*unit.m');
 }
 
+function addSimpleUnit(name) {
+	project.addFile('sources/' + name + '/*');
+}
+
+addSimpleUnit('audio');
 addUnit('gpu');
 addUnit('math');
 addUnit('util');
@@ -67,6 +72,10 @@ function addBackend2(name) {
 	project.addFile('backends/' + name + '/sources/*', {nocompile: true});
 	project.addFile('backends/' + name + '/sources/*unit.c*');
 	project.addFile('backends/' + name + '/sources/*unit.m');
+}
+
+function addSimpleBackend(name) {
+	project.addFile('backends/' + name + '/sources/*');
 }
 
 let plugin = false;
@@ -153,10 +162,10 @@ if (platform === Platform.Windows) {
 	}
 
 	if (audio === AudioApi.DirectSound) {
-		addBackend('Audio2/directsound');
+		addSimpleBackend('audio/directsound');
 	}
 	else if (audio === AudioApi.WASAPI || audio === AudioApi.Default) {
-		addBackend('Audio2/wasapi');
+		addSimpleBackend('audio/wasapi');
 	}
 	else {
 		throw new Error('Audio API ' + audio + ' is not available for Windows.');
@@ -199,7 +208,7 @@ else if (platform === Platform.WindowsApp) {
 	addBackend('system/windowsapp');
 	addBackend('system/microsoft');
 	addBackend('Graphics4/direct3d11');
-	addBackend('Audio2/wasapi_winrt');
+	addSimpleBackend('audio/wasapi_winrt');
 	project.addDefine('_CRT_SECURE_NO_WARNINGS');
 	project.vsdeploy = true;
 

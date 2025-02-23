@@ -2,7 +2,7 @@
 
 #include <kinc/global.h>
 
-#include <kinc/audio2/audio.h>
+#include <kore3/audio/audio.h>
 
 #include <stdint.h>
 

@@ -1,4 +1,5 @@
-#include <kinc/audio2/audio.h>
+#include <kore3/audio/audio.h>
+
 #include <kinc/system.h>
 
 #include <kinc/backend/SystemMicrosoft.h>
@@ -21,25 +22,25 @@ namespace {
 	const int gap = 10 * 1024;
 	DWORD writePos = gap;
 
-	kinc_a2_buffer_t a2_buffer;
+	kore_audio_buffer audio_buffer;
 }
 
 static bool initialized = false;
 
-void kinc_a2_init() {
+void kore_audio_init() {
 	if (initialized) {
 		return;
 	}
 
-	kinc_a2_internal_init();
+	kore_audio_internal_init();
 	initialized = true;
 
-	a2_buffer.read_location = 0;
-	a2_buffer.write_location = 0;
-	a2_buffer.data_size = 128 * 1024;
-	a2_buffer.channel_count = 2;
-	a2_buffer.channels[0] = new float[a2_buffer.data_size];
-	a2_buffer.channels[1] = new float[a2_buffer.data_size];
+	audio_buffer.read_location = 0;
+	audio_buffer.write_location = 0;
+	audio_buffer.data_size = 128 * 1024;
+	audio_buffer.channel_count = 2;
+	audio_buffer.channels[0] = new float[audio_buffer.data_size];
+	audio_buffer.channels[1] = new float[audio_buffer.data_size];
 
 	kinc_microsoft_affirm(DirectSoundCreate8(nullptr, &dsound, nullptr));
 	// TODO (DK) only for the main window?
@@ -76,17 +77,17 @@ void kinc_a2_init() {
 	kinc_microsoft_affirm(dbuffer->Play(0, 0, DSBPLAY_LOOPING));
 }
 
-uint32_t kinc_a2_samples_per_second(void) {
+uint32_t kore_audio_samples_per_second(void) {
 	return samplesPerSecond;
 }
 
 namespace {
 	void copySample(uint8_t *buffer, DWORD &index, bool left) {
-		float value = *(float *)&a2_buffer.channels[left ? 0 : 1][a2_buffer.read_location];
+		float value = *(float *)&audio_buffer.channels[left ? 0 : 1][audio_buffer.read_location];
 		if (!left) {
-			a2_buffer.read_location += 1;
-			if (a2_buffer.read_location >= a2_buffer.data_size) {
-				a2_buffer.read_location = 0;
+			audio_buffer.read_location += 1;
+			if (audio_buffer.read_location >= audio_buffer.data_size) {
+				audio_buffer.read_location = 0;
 			}
 		}
 		*(int16_t *)&buffer[index] = static_cast<int16_t>(value * 32767);
@@ -94,7 +95,7 @@ namespace {
 	}
 }
 
-void kinc_a2_update() {
+void kore_audio_update() {
 	DWORD playPosition;
 	DWORD writePosition;
 	kinc_microsoft_affirm(dbuffer->GetCurrentPosition(&playPosition, &writePosition));
@@ -127,7 +128,7 @@ void kinc_a2_update() {
 		}
 	}
 
-	kinc_a2_internal_callback(&a2_buffer, (uint32_t)(gap / 4));
+	kore_audio_internal_callback(&audio_buffer, (uint32_t)(gap / 4));
 
 	DWORD size1;
 	uint8_t *buffer1;
@@ -145,7 +146,7 @@ void kinc_a2_update() {
 	}
 }
 
-void kinc_a2_shutdown() {
+void kore_audio_shutdown() {
 	if (dbuffer != nullptr) {
 		dbuffer->Release();
 		dbuffer = nullptr;

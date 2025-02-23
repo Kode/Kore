@@ -2,10 +2,10 @@
 
 #include <stdint.h>
 
-#include <kinc/audio2/audio.h>
 #include <kinc/threads/atomic.h>
 #include <kinc/threads/mutex.h>
 #include <kinc/video.h>
+#include <kore3/audio/audio.h>
 #include <kore3/math/core.h>
 
 #include <assert.h>
@@ -27,7 +27,7 @@ static float sampleLinear(int16_t *data, double position) {
 	return sample1 * (1 - a) + sample2 * a;
 }
 
-static void kinc_a2_on_a1_mix(kinc_a2_buffer_t *buffer, uint32_t samples, void *userdata) {
+static void kinc_a2_on_a1_mix(kore_audio_buffer *buffer, uint32_t samples, void *userdata) {
 	kinc_a1_mix(buffer, samples);
 }
 
@@ -47,7 +47,7 @@ static void kinc_a2_on_a1_mix(kinc_a2_buffer_t *buffer, uint32_t samples, void *
     return ((c3 * x + c2) * x + c1) * x + c0;
 }*/
 
-void kinc_a1_mix(kinc_a2_buffer_t *buffer, uint32_t samples) {
+void kinc_a1_mix(kore_audio_buffer *buffer, uint32_t samples) {
 	for (uint32_t i = 0; i < samples; ++i) {
 		float left_value = 0.0f;
 		float right_value = 0.0f;
@@ -143,8 +143,8 @@ void kinc_a1_init(void) {
 	}
 	kinc_mutex_init(&mutex);
 
-	kinc_a2_init();
-	kinc_a2_set_callback(kinc_a2_on_a1_mix, NULL);
+	kore_audio_init();
+	kore_audio_set_callback(kinc_a2_on_a1_mix, NULL);
 }
 
 kinc_a1_channel_t *kinc_a1_play_sound(kinc_a1_sound_t *sound, bool loop, float pitch, bool unique) {

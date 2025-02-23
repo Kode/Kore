@@ -1,4 +1,4 @@
-#include <kinc/audio2/audio.h>
+#include <kore3/audio/audio.h>
 
 #include <kinc/backend/SystemMicrosoft.h>
 
@@ -68,7 +68,7 @@ DEFINE_GUID(CLSID_MMDeviceEnumerator, 0xBCDE0395, 0xE52F, 0x467C, 0x8E, 0x3D, 0x
 #endif
 
 // based on the implementation in soloud and Microsoft sample code
-static kinc_a2_buffer_t a2_buffer;
+static kore_audio_buffer audio_buffer;
 
 static IMMDeviceEnumerator *deviceEnumerator;
 static IMMDevice *device;
@@ -81,7 +81,7 @@ static WAVEFORMATEX *closestFormat;
 static WAVEFORMATEX *format;
 static uint32_t samples_per_second = 44100;
 
-uint32_t kinc_a2_samples_per_second(void) {
+uint32_t kore_audio_samples_per_second(void) {
 	return samples_per_second;
 }
 
@@ -141,9 +141,9 @@ static bool initDefaultDevice() {
 		uint32_t old_samples_per_second = samples_per_second;
 		samples_per_second = format->nSamplesPerSec;
 		if (samples_per_second != old_samples_per_second) {
-			kinc_a2_internal_sample_rate_callback();
+			kore_audio_internal_sample_rate_callback();
 		}
-		a2_buffer.channel_count = 2;
+		audio_buffer.channel_count = 2;
 
 		bufferFrames = 0;
 		kinc_microsoft_affirm(audioClient->lpVtbl->GetBufferSize(audioClient, &bufferFrames));
@@ -181,22 +181,22 @@ static void restartAudio() {
 }
 
 static void copyS16Sample(int16_t *left, int16_t *right) {
-	float left_value = *(float *)&a2_buffer.channels[0][a2_buffer.read_location];
-	float right_value = *(float *)&a2_buffer.channels[1][a2_buffer.read_location];
-	a2_buffer.read_location += 1;
-	if (a2_buffer.read_location >= a2_buffer.data_size) {
-		a2_buffer.read_location = 0;
+	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
+	audio_buffer.read_location += 1;
+	if (audio_buffer.read_location >= audio_buffer.data_size) {
+		audio_buffer.read_location = 0;
 	}
 	*left = (int16_t)(left_value * 32767);
 	*right = (int16_t)(right_value * 32767);
 }
 
 static void copyFloatSample(float *left, float *right) {
-	float left_value = *(float *)&a2_buffer.channels[0][a2_buffer.read_location];
-	float right_value = *(float *)&a2_buffer.channels[1][a2_buffer.read_location];
-	a2_buffer.read_location += 1;
-	if (a2_buffer.read_location >= a2_buffer.data_size) {
-		a2_buffer.read_location = 0;
+	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
+	audio_buffer.read_location += 1;
+	if (audio_buffer.read_location >= audio_buffer.data_size) {
+		audio_buffer.read_location = 0;
 	}
 	*left = left_value;
 	*right = right_value;
@@ -212,7 +212,7 @@ static void submitBuffer(unsigned frames) {
 		return;
 	}
 
-	if (kinc_a2_internal_callback(&a2_buffer, frames)) {
+	if (kore_audio_internal_callback(&audio_buffer, frames)) {
 		if (format->wFormatTag == WAVE_FORMAT_PCM) {
 			for (UINT32 i = 0; i < frames; ++i) {
 				copyS16Sample((int16_t *)&buffer[i * format->nBlockAlign], (int16_t *)&buffer[i * format->nBlockAlign + 2]);
@@ -259,20 +259,20 @@ void kinc_windows_co_initialize(void);
 
 static bool initialized = false;
 
-void kinc_a2_init() {
+void kore_audio_init() {
 	if (initialized) {
 		return;
 	}
 
-	kinc_a2_internal_init();
+	kore_audio_internal_init();
 	initialized = true;
 
-	a2_buffer.read_location = 0;
-	a2_buffer.write_location = 0;
-	a2_buffer.data_size = 128 * 1024;
-	a2_buffer.channel_count = 2;
-	a2_buffer.channels[0] = (float *)malloc(a2_buffer.data_size * sizeof(float));
-	a2_buffer.channels[1] = (float *)malloc(a2_buffer.data_size * sizeof(float));
+	audio_buffer.read_location = 0;
+	audio_buffer.write_location = 0;
+	audio_buffer.data_size = 128 * 1024;
+	audio_buffer.channel_count = 2;
+	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	kinc_windows_co_initialize();
 	kinc_microsoft_affirm(CoCreateInstance(&CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL, &IID_IMMDeviceEnumerator, (void **)&deviceEnumerator));
@@ -282,7 +282,7 @@ void kinc_a2_init() {
 	}
 }
 
-void kinc_a2_update() {}
+void kore_audio_update() {}
 
 #define SAFE_RELEASE(punk)                                                                                                                                     \
 	if ((punk) != NULL) {                                                                                                                                      \
@@ -290,7 +290,7 @@ void kinc_a2_update() {}
 		(punk) = NULL;                                                                                                                                         \
 	}
 
-void kinc_a2_shutdown() {
+void kore_audio_shutdown() {
 	// Wait for last data in buffer to play before stopping.
 	// Sleep((DWORD)(hnsActualDuration/REFTIMES_PER_MILLISEC/2));
 

@@ -2,9 +2,9 @@
 
 #include <kore3/libs/stb_vorbis.h>
 
-#include <kinc/audio2/audio.h>
 #include <kinc/error.h>
 #include <kinc/io/filereader.h>
+#include <kore3/audio/audio.h>
 
 #include <assert.h>
 #include <string.h>
@@ -181,7 +181,7 @@ kinc_a1_sound_t *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const uin
 			kinc_affirm(false);
 		}
 	}
-	sound->sample_rate_pos = kinc_a2_samples_per_second() / (float)sound->samples_per_second;
+	sound->sample_rate_pos = kore_audio_samples_per_second() / (float)sound->samples_per_second;
 	free(data);
 
 	return sound;
