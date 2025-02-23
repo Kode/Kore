@@ -1,4 +1,4 @@
-#include "sound.h"
+#include <kore3/mixer/sound.h>
 
 #include <kore3/libs/stb_vorbis.h>
 
@@ -92,9 +92,9 @@ static void splitMono16(int16_t *data, int size, int16_t *left, int16_t *right) 
 }
 
 #define MAXIMUM_SOUNDS 4096
-static kinc_a1_sound_t sounds[MAXIMUM_SOUNDS] = {0};
+static kore_mixer_sound sounds[MAXIMUM_SOUNDS] = {0};
 
-static kinc_a1_sound_t *find_sound(void) {
+static kore_mixer_sound *find_sound(void) {
 	for (int i = 0; i < MAXIMUM_SOUNDS; ++i) {
 		if (!sounds[i].in_use) {
 			return &sounds[i];
@@ -103,8 +103,8 @@ static kinc_a1_sound_t *find_sound(void) {
 	return NULL;
 }
 
-kinc_a1_sound_t *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const uint32_t size, kinc_a1_audioformat_t format) {
-	kinc_a1_sound_t *sound = find_sound();
+kore_mixer_sound *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const uint32_t size, kore_mixer_audioformat format) {
+	kore_mixer_sound *sound = find_sound();
 	assert(sound != NULL);
 	sound->in_use = true;
 	sound->volume = 1.0f;
@@ -114,7 +114,7 @@ kinc_a1_sound_t *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const uin
 	// size_t filenameLength = strlen(filename);
 	uint8_t *data = NULL;
 
-	if (format == KINC_A1_AUDIOFORMAT_OGG) {
+	if (format == KORE_MIXER_AUDIOFORMAT_OGG) {
 		int channels, sample_rate;
 		int samples = stb_vorbis_decode_memory(audio_data, size, &channels, &sample_rate, (short **)&data);
 		kinc_affirm(samples > 0);
@@ -123,7 +123,7 @@ kinc_a1_sound_t *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const uin
 		sound->size = samples * 2 * sound->channel_count;
 		sound->bits_per_sample = 16;
 	}
-	else if (format == KINC_A1_AUDIOFORMAT_WAV) {
+	else if (format == KORE_MIXER_AUDIOFORMAT_WAV) {
 		struct WaveData wave = {0};
 		{
 			uint8_t *data = audio_data;
@@ -187,15 +187,15 @@ kinc_a1_sound_t *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const uin
 	return sound;
 }
 
-kinc_a1_sound_t *kinc_a1_sound_create(const char *filename) {
+kore_mixer_sound *kinc_a1_sound_create(const char *filename) {
 	size_t filenameLength = strlen(filename);
 
-	kinc_a1_audioformat_t fileformat;
+	kore_mixer_audioformat fileformat;
 	if (strncmp(&filename[filenameLength - 4], ".ogg", 4) == 0) {
-		fileformat = KINC_A1_AUDIOFORMAT_OGG;
+		fileformat = KORE_MIXER_AUDIOFORMAT_OGG;
 	}
 	else if (strncmp(&filename[filenameLength - 4], ".wav", 4) == 0) {
-		fileformat = KINC_A1_AUDIOFORMAT_WAV;
+		fileformat = KORE_MIXER_AUDIOFORMAT_WAV;
 	}
 	else {
 		assert(false);
@@ -211,14 +211,14 @@ kinc_a1_sound_t *kinc_a1_sound_create(const char *filename) {
 	kinc_file_reader_close(&file);
 	size_t filesize = kinc_file_reader_size(&file);
 
-	kinc_a1_sound_t *sound = kinc_a1_sound_create_from_buffer(filedata, (uint32_t)filesize, fileformat);
+	kore_mixer_sound *sound = kinc_a1_sound_create_from_buffer(filedata, (uint32_t)filesize, fileformat);
 
 	free(filedata);
 
 	return sound;
 }
 
-void kinc_a1_sound_destroy(kinc_a1_sound_t *sound) {
+void kinc_a1_sound_destroy(kore_mixer_sound *sound) {
 	free(sound->left);
 	free(sound->right);
 	sound->left = NULL;
@@ -226,10 +226,10 @@ void kinc_a1_sound_destroy(kinc_a1_sound_t *sound) {
 	sound->in_use = false;
 }
 
-float kinc_a1_sound_volume(kinc_a1_sound_t *sound) {
+float kinc_a1_sound_volume(kore_mixer_sound *sound) {
 	return sound->volume;
 }
 
-void kinc_a1_sound_set_volume(kinc_a1_sound_t *sound, float value) {
+void kinc_a1_sound_set_volume(kore_mixer_sound *sound, float value) {
 	sound->volume = value;
 }

@@ -1,4 +1,4 @@
-#include "audio.h"
+#include <kore3/mixer/mixer.h>
 
 #include <stdint.h>
 
@@ -14,8 +14,8 @@
 static kinc_mutex_t mutex;
 
 #define CHANNEL_COUNT 16
-static kinc_a1_channel_t channels[CHANNEL_COUNT];
-static kinc_a1_stream_channel_t streamchannels[CHANNEL_COUNT];
+static kore_mixer_channel channels[CHANNEL_COUNT];
+static kore_mixer_stream_channel streamchannels[CHANNEL_COUNT];
 static kinc_internal_video_channel_t videos[CHANNEL_COUNT];
 
 static float sampleLinear(int16_t *data, double position) {
@@ -25,10 +25,6 @@ static float sampleLinear(int16_t *data, double position) {
 	float sample2 = data[pos2] / 32767.0f;
 	float a = (float)(position - pos1);
 	return sample1 * (1 - a) + sample2 * a;
-}
-
-static void kinc_a2_on_a1_mix(kore_audio_buffer *buffer, uint32_t samples, void *userdata) {
-	kinc_a1_mix(buffer, samples);
 }
 
 /*float sampleHermite4pt3oX(s16* data, float position) {
@@ -47,7 +43,7 @@ static void kinc_a2_on_a1_mix(kore_audio_buffer *buffer, uint32_t samples, void 
     return ((c3 * x + c2) * x + c1) * x + c0;
 }*/
 
-void kinc_a1_mix(kore_audio_buffer *buffer, uint32_t samples) {
+void kore_mixer_mix(kore_audio_buffer *buffer, uint32_t samples) {
 	for (uint32_t i = 0; i < samples; ++i) {
 		float left_value = 0.0f;
 		float right_value = 0.0f;
@@ -95,12 +91,12 @@ void kinc_a1_mix(kore_audio_buffer *buffer, uint32_t samples) {
 		}
 		for (int i = 0; i < CHANNEL_COUNT; ++i) {
 			if (streamchannels[i].stream != NULL) {
-				float *samples = kinc_a1_sound_stream_next_frame(streamchannels[i].stream);
-				left_value += samples[0] * kinc_a1_sound_stream_volume(streamchannels[i].stream);
+				float *samples = kore_mixer_sound_stream_next_frame(streamchannels[i].stream);
+				left_value += samples[0] * kore_mixer_sound_stream_volume(streamchannels[i].stream);
 				left_value = kore_max(kore_min(left_value, 1.0f), -1.0f);
-				right_value += samples[1] * kinc_a1_sound_stream_volume(streamchannels[i].stream);
+				right_value += samples[1] * kore_mixer_sound_stream_volume(streamchannels[i].stream);
 				right_value = kore_max(kore_min(right_value, 1.0f), -1.0f);
-				if (kinc_a1_sound_stream_ended(streamchannels[i].stream)) {
+				if (kore_mixer_sound_stream_ended(streamchannels[i].stream)) {
 					streamchannels[i].stream = NULL;
 				}
 			}
@@ -132,7 +128,11 @@ void kinc_a1_mix(kore_audio_buffer *buffer, uint32_t samples) {
 	}
 }
 
-void kinc_a1_init(void) {
+static void kore_mixer_mix_callback(kore_audio_buffer *buffer, uint32_t samples, void *userdata) {
+	kore_mixer_mix(buffer, samples);
+}
+
+void kore_mixer_init(void) {
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		channels[i].sound = NULL;
 		channels[i].position = 0;
@@ -144,11 +144,11 @@ void kinc_a1_init(void) {
 	kinc_mutex_init(&mutex);
 
 	kore_audio_init();
-	kore_audio_set_callback(kinc_a2_on_a1_mix, NULL);
+	kore_audio_set_callback(kore_mixer_mix_callback, NULL);
 }
 
-kinc_a1_channel_t *kinc_a1_play_sound(kinc_a1_sound_t *sound, bool loop, float pitch, bool unique) {
-	kinc_a1_channel_t *channel = NULL;
+kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, float pitch, bool unique) {
+	kore_mixer_channel *channel = NULL;
 	kinc_mutex_lock(&mutex);
 	bool found = false;
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
@@ -174,7 +174,7 @@ kinc_a1_channel_t *kinc_a1_play_sound(kinc_a1_sound_t *sound, bool loop, float p
 	return channel;
 }
 
-void kinc_a1_stop_sound(kinc_a1_sound_t *sound) {
+void kore_mixer_stop_sound(kore_mixer_sound *sound) {
 	kinc_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (channels[i].sound == sound) {
@@ -186,7 +186,7 @@ void kinc_a1_stop_sound(kinc_a1_sound_t *sound) {
 	kinc_mutex_unlock(&mutex);
 }
 
-void kinc_a1_play_sound_stream(kinc_a1_sound_stream_t *stream) {
+void kore_mixer_play_sound_stream(kore_mixer_sound_stream *stream) {
 	kinc_mutex_lock(&mutex);
 
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
@@ -208,7 +208,7 @@ void kinc_a1_play_sound_stream(kinc_a1_sound_stream_t *stream) {
 	kinc_mutex_unlock(&mutex);
 }
 
-void kinc_a1_stop_sound_stream(kinc_a1_sound_stream_t *stream) {
+void kore_mixer_stop_sound_stream(kore_mixer_sound_stream *stream) {
 	kinc_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (streamchannels[i].stream == stream) {
@@ -244,10 +244,10 @@ void kinc_internal_stop_video_sound_stream(struct kinc_internal_video_sound_stre
 	kinc_mutex_unlock(&mutex);
 }
 
-float kinc_a1_channel_get_volume(kinc_a1_channel_t *channel) {
+float kore_mixer_channel_get_volume(kore_mixer_channel *channel) {
 	return channel->volume;
 }
 
-void kinc_a1_channel_set_volume(kinc_a1_channel_t *channel, float volume) {
+void kore_mixer_channel_set_volume(kore_mixer_channel *channel, float volume) {
 	KINC_ATOMIC_EXCHANGE_FLOAT(&channel->volume, volume);
 }

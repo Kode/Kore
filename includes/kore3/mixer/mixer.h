@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MIXER_HEADER
+#define KORE_MIXER_HEADER
 
 #include <kinc/global.h>
 
@@ -7,9 +8,8 @@
 
 #include <stdbool.h>
 
-/*! \file audio.h
-    \brief Audio1 is a high-level audio-API that lets you directly play audio-files. Depending on the target-system it either sits directly on a high-level
-   system audio-API or is implemented based on Audio2.
+/*! \file mixer.h
+    \brief Mixer is a high-level audio-API that lets you directly play audio-files.
 */
 
 #ifdef __cplusplus
@@ -18,19 +18,19 @@ extern "C" {
 
 struct kinc_internal_video_sound_stream;
 
-struct kinc_a1_channel;
-typedef struct kinc_a1_channel kinc_a1_channel_t;
+struct kore_mixer_channel;
+typedef struct kore_mixer_channel kore_mixer_channel;
 
-struct kinc_a1_stream_channel;
-typedef struct kinc_a1_stream_channel kinc_a1_stream_channel_t;
+struct kore_mixer_stream_channel;
+typedef struct kore_mixer_stream_channel kore_mixer_stream_channel;
 
 struct kinc_internal_video_channel;
 typedef struct kinc_internal_video_channel kinc_internal_video_channel_t;
 
 /// <summary>
-/// Initialize the Audio1-API.
+/// Initialize the Mixer-API.
 /// </summary>
-KINC_FUNC void kinc_a1_init(void);
+KORE_FUNC void kore_mixer_init(void);
 
 /// <summary>
 /// Plays a sound immediately.
@@ -41,32 +41,32 @@ KINC_FUNC void kinc_a1_init(void);
 /// <param name="unique">Makes sure that a sound is not played more than once at the same time</param>
 /// <returns>A channel object that can be used to control the playing sound. Please be aware that NULL is returned when the maximum number of simultaneously
 /// played channels was reached.</returns>
-KINC_FUNC kinc_a1_channel_t *kinc_a1_play_sound(kinc_a1_sound_t *sound, bool loop, float pitch, bool unique);
+KORE_FUNC kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, float pitch, bool unique);
 
 /// <summary>
 /// Stops the sound from playing.
 /// </summary>
 /// <param name="sound">The sound to stop</param>
-KINC_FUNC void kinc_a1_stop_sound(kinc_a1_sound_t *sound);
+KORE_FUNC void kore_mixer_stop_sound(kore_mixer_sound *sound);
 
 /// <summary>
 /// Starts playing a sound-stream.
 /// </summary>
 /// <param name="stream">The stream to play</param>
-KINC_FUNC void kinc_a1_play_sound_stream(kinc_a1_sound_stream_t *stream);
+KORE_FUNC void kore_mixer_play_sound_stream(kore_mixer_sound_stream *stream);
 
 /// <summary>
 /// Stops a sound-stream from playing.
 /// </summary>
 /// <param name="stream">The stream to stop.</param>
-KINC_FUNC void kinc_a1_stop_sound_stream(kinc_a1_sound_stream_t *stream);
+KORE_FUNC void kore_mixer_stop_sound_stream(kore_mixer_sound_stream *stream);
 
 /// <summary>
 /// Gets the current volume of a channel. Only works correctly if the channel is still playing.
 /// </summary>
 /// <param name="channel">The channel to get the volume from</param>
 /// <returns>The volume</returns>
-KINC_FUNC float kinc_a1_channel_get_volume(kinc_a1_channel_t *channel);
+KORE_FUNC float kore_mixer_channel_get_volume(kore_mixer_channel *channel);
 
 /// <summary>
 /// Sets the current volume of a channel. Only works correctly if the channel is still playing.
@@ -74,22 +74,24 @@ KINC_FUNC float kinc_a1_channel_get_volume(kinc_a1_channel_t *channel);
 /// <param name="channel">The channel to set the volume for</param>
 /// <param name="volume">The volume to set</param>
 /// <returns></returns>
-KINC_FUNC void kinc_a1_channel_set_volume(kinc_a1_channel_t *channel, float volume);
+KORE_FUNC void kore_mixer_channel_set_volume(kore_mixer_channel *channel, float volume);
 
 /// <summary>
-/// Mixes audio into the provided buffer. kinc_a1_init sets this as the callback for a2
-/// but you can also call it manually to mix a1-audio with your own audio. To do that,
-/// first call kinc_a1_init, then call kinc_a2_set_callback to set it to your own callback
-/// and call kinc_a1_mix from within that callback. Please be aware that the callback
+/// Mixes audio into the provided buffer. kore_mixer_init sets this as the audio-callback
+/// but you can also call it manually to mix with your own audio. To do that,
+/// first call kore_mixer_init, then call kore_audio_set_callback to set it to your own callback
+/// and call kore_mixer_mix from within that callback. Please be aware that the callback
 /// will run in a separate audio-thread.
 /// </summary>
 /// <param name="buffer">The audio-buffer to be filled</param>
 /// <param name="samples">The number of samples to be filled in</param>
-KINC_FUNC void kinc_a1_mix(kore_audio_buffer *buffer, uint32_t samples);
+KORE_FUNC void kore_mixer_mix(kore_audio_buffer *buffer, uint32_t samples);
 
 void kinc_internal_play_video_sound_stream(struct kinc_internal_video_sound_stream *stream);
 void kinc_internal_stop_video_sound_stream(struct kinc_internal_video_sound_stream *stream);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

@@ -50,6 +50,7 @@ function addSimpleUnit(name) {
 addSimpleUnit('audio');
 addUnit('gpu');
 addUnit('math');
+addUnit('mixer');
 addUnit('util');
 
 if (lz4x) {

@@ -1,17 +1,17 @@
-#include "audio.h"
+#include <kore3/mixer/mixer.h>
 
 #include <stdbool.h>
 
-struct kinc_a1_channel {
-	kinc_a1_sound_t *sound;
+struct kore_mixer_channel {
+	kore_mixer_sound *sound;
 	double position;
 	bool loop;
 	volatile float volume;
 	float pitch;
 };
 
-struct kinc_a1_stream_channel {
-	kinc_a1_sound_stream_t *stream;
+struct kore_mixer_stream_channel {
+	kore_mixer_sound_stream *stream;
 	int position;
 };
 
@@ -20,6 +20,6 @@ struct kinc_internal_video_channel {
 	int position;
 };
 
-#include "audio.c.h"
-#include "sound.c.h"
-#include "soundstream.c.h"
+#include "mixer.c"
+#include "sound.c"
+#include "soundstream.c"

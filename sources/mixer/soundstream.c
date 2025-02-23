@@ -1,4 +1,4 @@
-#include "soundstream.h"
+#include <kore3/mixer/soundstream.h>
 
 #define STB_VORBIS_HEADER_ONLY
 #include <kore3/libs/stb_vorbis.h>
@@ -8,13 +8,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-static kinc_a1_sound_stream_t streams[256];
+static kore_mixer_sound_stream streams[256];
 static int nextStream = 0;
 static uint8_t buffer[1024 * 1024 * 10];
 static int bufferIndex;
 
-kinc_a1_sound_stream_t *kinc_a1_sound_stream_create(const char *filename, bool looping) {
-	kinc_a1_sound_stream_t *stream = &streams[nextStream];
+kore_mixer_sound_stream *kore_mixer_sound_stream_create(const char *filename, bool looping) {
+	kore_mixer_sound_stream *stream = &streams[nextStream];
 	stream->myLooping = looping;
 	stream->myVolume = 1;
 	stream->rateDecodedHack = false;
@@ -42,54 +42,54 @@ kinc_a1_sound_stream_t *kinc_a1_sound_stream_create(const char *filename, bool l
 	return stream;
 }
 
-int kinc_a1_sound_stream_channels(kinc_a1_sound_stream_t *stream) {
+int kore_mixer_sound_stream_channels(kore_mixer_sound_stream *stream) {
 	return stream->chans;
 }
 
-int kinc_a1_sound_stream_sample_rate(kinc_a1_sound_stream_t *stream) {
+int kore_mixer_sound_stream_sample_rate(kore_mixer_sound_stream *stream) {
 	return stream->rate;
 }
 
-bool kinc_a1_sound_stream_looping(kinc_a1_sound_stream_t *stream) {
+bool kore_mixer_sound_stream_looping(kore_mixer_sound_stream *stream) {
 	return stream->myLooping;
 }
 
-void kinc_a1_sound_stream_set_looping(kinc_a1_sound_stream_t *stream, bool loop) {
+void kore_mixer_sound_stream_set_looping(kore_mixer_sound_stream *stream, bool loop) {
 	stream->myLooping = loop;
 }
 
-float kinc_a1_sound_stream_volume(kinc_a1_sound_stream_t *stream) {
+float kore_mixer_sound_stream_volume(kore_mixer_sound_stream *stream) {
 	return stream->myVolume;
 }
 
-void kinc_a1_sound_stream_set_volume(kinc_a1_sound_stream_t *stream, float value) {
+void kore_mixer_sound_stream_set_volume(kore_mixer_sound_stream *stream, float value) {
 	stream->myVolume = value;
 }
 
-bool kinc_a1_sound_stream_ended(kinc_a1_sound_stream_t *stream) {
+bool kore_mixer_sound_stream_ended(kore_mixer_sound_stream *stream) {
 	return stream->end;
 }
 
-float kinc_a1_sound_stream_length(kinc_a1_sound_stream_t *stream) {
+float kore_mixer_sound_stream_length(kore_mixer_sound_stream *stream) {
 	if (stream->vorbis == NULL)
 		return 0;
 	return stb_vorbis_stream_length_in_seconds(stream->vorbis);
 }
 
-float kinc_a1_sound_stream_position(kinc_a1_sound_stream_t *stream) {
+float kore_mixer_sound_stream_position(kore_mixer_sound_stream *stream) {
 	if (stream->vorbis == NULL)
 		return 0;
-	return stb_vorbis_get_sample_offset(stream->vorbis) / stb_vorbis_stream_length_in_samples(stream->vorbis) * kinc_a1_sound_stream_length(stream);
+	return stb_vorbis_get_sample_offset(stream->vorbis) / stb_vorbis_stream_length_in_samples(stream->vorbis) * kore_mixer_sound_stream_length(stream);
 }
 
-void kinc_a1_sound_stream_reset(kinc_a1_sound_stream_t *stream) {
+void kore_mixer_sound_stream_reset(kore_mixer_sound_stream *stream) {
 	if (stream->vorbis != NULL)
 		stb_vorbis_seek_start(stream->vorbis);
 	stream->end = false;
 	stream->rateDecodedHack = false;
 }
 
-float *kinc_a1_sound_stream_next_frame(kinc_a1_sound_stream_t *stream) {
+float *kore_mixer_sound_stream_next_frame(kore_mixer_sound_stream *stream) {
 	if (stream->vorbis == NULL) {
 		for (int i = 0; i < stream->chans; ++i) {
 			stream->samples[i] = 0;
@@ -107,7 +107,7 @@ float *kinc_a1_sound_stream_next_frame(kinc_a1_sound_stream_t *stream) {
 	float *samples_array[2] = {&left, &right};
 	int read = stb_vorbis_get_samples_float(stream->vorbis, stream->chans, samples_array, 1);
 	if (read == 0) {
-		if (kinc_a1_sound_stream_looping(stream)) {
+		if (kore_mixer_sound_stream_looping(stream)) {
 			stb_vorbis_seek_start(stream->vorbis);
 			stb_vorbis_get_samples_float(stream->vorbis, stream->chans, samples_array, 1);
 		}

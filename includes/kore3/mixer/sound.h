@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MIXER_SOUND_HEADER
+#define KORE_MIXER_SOUND_HEADER
 
 #include <kinc/global.h>
 
@@ -14,7 +15,7 @@
 extern "C" {
 #endif
 
-typedef struct kinc_a1_sound {
+typedef struct kore_mixer_sound {
 	uint8_t channel_count;
 	uint8_t bits_per_sample;
 	uint32_t samples_per_second;
@@ -24,44 +25,46 @@ typedef struct kinc_a1_sound {
 	float sample_rate_pos;
 	float volume;
 	bool in_use;
-} kinc_a1_sound_t;
+} kore_mixer_sound;
 
-typedef enum { KINC_A1_AUDIOFORMAT_WAV, KINC_A1_AUDIOFORMAT_OGG } kinc_a1_audioformat_t;
+typedef enum { KORE_MIXER_AUDIOFORMAT_WAV, KORE_MIXER_AUDIOFORMAT_OGG } kore_mixer_audioformat;
 
 /// <summary>
 /// Create a sound from a wav or ogg file.
 /// </summary>
 /// <param name="filename">Path to a wav or ogg file</param>
 /// <returns>The newly created sound</returns>
-KINC_FUNC kinc_a1_sound_t *kinc_a1_sound_create(const char *filename);
+KORE_FUNC kore_mixer_sound *kore_mixer_sound_create(const char *filename);
 
 /// <summary>
 /// Create a sound from a buffer.
 /// </summary>
 /// <param name="filename">Path to a wav file</param>
 /// <returns>The newly created sound</returns>
-KINC_FUNC kinc_a1_sound_t *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const uint32_t size, kinc_a1_audioformat_t format);
+KORE_FUNC kore_mixer_sound *kore_mixer_sound_create_from_buffer(uint8_t *audio_data, const uint32_t size, kore_mixer_audioformat format);
 
 /// <summary>
 /// Destroy a sound.
 /// </summary>
 /// <param name="sound">The sound to destroy.</param>
-KINC_FUNC void kinc_a1_sound_destroy(kinc_a1_sound_t *sound);
+KORE_FUNC void kore_mixer_sound_destroy(kore_mixer_sound *sound);
 
 /// <summary>
 /// Gets the current volume-multiplicator that's used when playing the sound.
 /// </summary>
 /// <param name="sound">The sound to query</param>
 /// <returns>The volume-multiplicator</returns>
-KINC_FUNC float kinc_a1_sound_volume(kinc_a1_sound_t *sound);
+KORE_FUNC float kore_mixer_sound_volume(kore_mixer_sound *sound);
 
 /// <summary>
 /// Sets the volume-multiplicator that's used when playing the sound.
 /// </summary>
 /// <param name="sound">The sound to modify</param>
 /// <param name="value">The volume-multiplicator to set</param>
-KINC_FUNC void kinc_a1_sound_set_volume(kinc_a1_sound_t *sound, float value);
+KORE_FUNC void kore_mixer_sound_set_volume(kore_mixer_sound *sound, float value);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
