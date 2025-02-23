@@ -43,6 +43,7 @@ project.addFile('sources/gpu/*unit.m');
 project.addFile('sources/util/**', {nocompile: true});
 project.addFile('sources/util/*unit.c*');
 project.addFile('sources/util/*unit.m');
+project.addFile('sources/libs/*');
 
 if (lz4x) {
 	addKincDefine('LZ4X');

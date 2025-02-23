@@ -193,7 +193,7 @@ KINC_FUNC int kinc_image_format_sizeof(kinc_image_format_t format);
 #include "image.h"
 
 #ifdef KINC_LZ4X
-#include <kinc/libs/lz4x.h>
+#include <kore3/libs/lz4x.h>
 #else
 #include <kinc/io/lz4/lz4.h>
 #endif
@@ -207,9 +207,9 @@ KINC_FUNC int kinc_image_format_sizeof(kinc_image_format_t format);
 #endif
 
 #undef KINC_IMPLEMENTATION
-#include <kore3/gpu/gpu.h>
 #include <kinc/io/filereader.h>
 #include <kinc/math/core.h>
+#include <kore3/gpu/gpu.h>
 #define KINC_IMPLEMENTATION
 
 #include <string.h>
@@ -269,7 +269,7 @@ static void buffer_free(void *p) {}
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wunused-function"
 #endif
-#include <kinc/libs/stb_image.h>
+#include <kore3/libs/stb_image.h>
 #include <stdio.h>
 #include <string.h>
 
