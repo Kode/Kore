@@ -617,20 +617,20 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 
 #ifdef HANDLE_ALT_ENTER
 				if (altDown && keyTranslated[wParam] == KORE_KEY_RETURN) {
-					if (kinc_window_get_mode(0) == KINC_WINDOW_MODE_WINDOW) {
-						last_window_width = kinc_window_width(0);
-						last_window_height = kinc_window_height(0);
-						last_window_x = kinc_window_x(0);
-						last_window_y = kinc_window_y(0);
-						kinc_window_change_mode(0, KINC_WINDOW_MODE_FULLSCREEN);
+					if (kore_window_get_mode(0) == KORE_WINDOW_MODE_WINDOW) {
+						last_window_width = kore_window_width(0);
+						last_window_height = kore_window_height(0);
+						last_window_x = kore_window_x(0);
+						last_window_y = kore_window_y(0);
+						kore_window_change_mode(0, KORE_WINDOW_MODE_FULLSCREEN);
 					}
 					else {
-						kinc_window_change_mode(0, KINC_WINDOW_MODE_WINDOW);
+						kore_window_change_mode(0, KORE_WINDOW_MODE_WINDOW);
 						if (last_window_width > 0 && last_window_height > 0) {
-							kinc_window_resize(0, last_window_width, last_window_height);
+							kore_window_resize(0, last_window_width, last_window_height);
 						}
 						if (last_window_x > INT_MIN && last_window_y > INT_MIN) {
-							kinc_window_move(0, last_window_x, last_window_y);
+							kore_window_move(0, last_window_x, last_window_y);
 						}
 					}
 				}

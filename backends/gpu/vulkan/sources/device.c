@@ -7,10 +7,10 @@
 
 #include <kinc/backend/Windows.h>
 
-#include <kinc/error.h>
-#include <kinc/log.h>
-#include <kinc/system.h>
-#include <kinc/window.h>
+#include <kore3/error.h>
+#include <kore3/log.h>
+#include <kore3/system.h>
+#include <kore3/window.h>
 
 #include <assert.h>
 #include <stdlib.h>
@@ -33,11 +33,11 @@ static const bool validation = false;
 static VkBool32 debug_callback(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity, VkDebugUtilsMessageTypeFlagsEXT message_types,
                                const VkDebugUtilsMessengerCallbackDataEXT *callback_data, void *user_data) {
 	if (message_severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Vulkan ERROR: Code %d : %s", callback_data->messageIdNumber, callback_data->pMessage);
-		kinc_debug_break();
+		kore_log(KORE_LOG_LEVEL_ERROR, "Vulkan ERROR: Code %d : %s", callback_data->messageIdNumber, callback_data->pMessage);
+		kore_debug_break();
 	}
 	else if (message_severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
-		kinc_log(KINC_LOG_LEVEL_WARNING, "Vulkan WARNING: Code %d : %s", callback_data->messageIdNumber, callback_data->pMessage);
+		kore_log(KORE_LOG_LEVEL_WARNING, "Vulkan WARNING: Code %d : %s", callback_data->messageIdNumber, callback_data->pMessage);
 	}
 	return VK_FALSE;
 }
@@ -114,7 +114,7 @@ static bool check_extensions(const char **extensions, int extensions_count, VkEx
 		}
 
 		if (!found) {
-			kinc_log(KINC_LOG_LEVEL_WARNING, "Failed to find extension %s", extensions[extension_index]);
+			kore_log(KORE_LOG_LEVEL_WARNING, "Failed to find extension %s", extensions[extension_index]);
 			return false;
 		}
 	}
@@ -156,7 +156,7 @@ static bool check_layers(const char **layers, int layers_count, VkLayerPropertie
 		}
 
 		if (!found) {
-			kinc_log(KINC_LOG_LEVEL_WARNING, "Failed to find extension %s", layers[layer_index]);
+			kore_log(KORE_LOG_LEVEL_WARNING, "Failed to find extension %s", layers[layer_index]);
 			return false;
 		}
 	}
@@ -191,7 +191,7 @@ static void load_extension_functions(void) {
 	{                                                                                                                                                          \
 		vulkan_##entrypoint = (PFN_vk##entrypoint)vkGetInstanceProcAddr(instance, "vk" #entrypoint);                                                           \
 		if (vulkan_##entrypoint == NULL) {                                                                                                                     \
-			kinc_error_message("vkGetInstanceProcAddr failed to find vk" #entrypoint);                                                                         \
+			kore_error_message("vkGetInstanceProcAddr failed to find vk" #entrypoint);                                                                         \
 		}                                                                                                                                                      \
 	}
 
@@ -224,7 +224,7 @@ void find_gpu(void) {
 	VkResult result = vkEnumeratePhysicalDevices(instance, &gpu_count, physical_devices);
 
 	if (result != VK_SUCCESS || gpu_count == 0) {
-		kinc_error_message("No Vulkan device found");
+		kore_error_message("No Vulkan device found");
 		return;
 	}
 
@@ -285,13 +285,13 @@ void find_gpu(void) {
 	}
 
 	if (gpu == VK_NULL_HANDLE) {
-		kinc_error_message("No Vulkan device that supports presentation found");
+		kore_error_message("No Vulkan device that supports presentation found");
 		return;
 	}
 
 	VkPhysicalDeviceProperties properties;
 	vkGetPhysicalDeviceProperties(gpu, &properties);
-	kinc_log(KINC_LOG_LEVEL_INFO, "Chosen Vulkan device: %s", properties.deviceName);
+	kore_log(KORE_LOG_LEVEL_INFO, "Chosen Vulkan device: %s", properties.deviceName);
 }
 
 uint32_t find_graphics_queue_family(void) {
@@ -307,7 +307,7 @@ uint32_t find_graphics_queue_family(void) {
 		}
 	}
 
-	kinc_error_message("Graphics or present queue not found");
+	kore_error_message("Graphics or present queue not found");
 	return 0;
 }
 
@@ -338,9 +338,9 @@ static VkSurfaceFormatKHR find_surface_format(VkSurfaceKHR surface) {
 
 static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_family_index) {
 	HWND window_handle = kinc_windows_window_handle(0);
-	uint32_t window_width = kinc_window_width(0);
-	uint32_t window_height = kinc_window_height(0);
-	bool vsync = true; // kinc_window_vsynced(0); // TODO
+	uint32_t window_width = kore_window_width(0);
+	uint32_t window_height = kore_window_height(0);
+	bool vsync = true; // kore_window_vsynced(0); // TODO
 
 	const VkWin32SurfaceCreateInfoKHR surface_create_info = {
 	    .sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
@@ -394,7 +394,7 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 		composite_alpha = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
 	}
 	else {
-		kinc_error_message("Vulkan driver problem, no supported composite alpha.");
+		kore_error_message("Vulkan driver problem, no supported composite alpha.");
 	}
 
 	const VkSwapchainCreateInfoKHR swapchain_info = {
@@ -511,7 +511,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 #endif
 
 	if (check_instance_layers(instance_layers, instance_layers_count)) {
-		kinc_log(KINC_LOG_LEVEL_INFO, "Running with Vulkan validation layers enabled.");
+		kore_log(KORE_LOG_LEVEL_INFO, "Running with Vulkan validation layers enabled.");
 #ifdef VALIDATE
 		validation = true;
 #endif
@@ -539,7 +539,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	const VkApplicationInfo application_info = {
 	    .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 	    .pNext = NULL,
-	    .pApplicationName = kinc_application_name(),
+	    .pApplicationName = kore_application_name(),
 	    .applicationVersion = 0,
 	    .pEngineName = "Kore",
 	    .engineVersion = 0,
@@ -569,13 +569,13 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	VkResult result = vkCreateInstance(&instance_create_info, NULL, &vulkan_instance);
 #endif
 	if (result == VK_ERROR_INCOMPATIBLE_DRIVER) {
-		kinc_error_message("Vulkan driver is incompatible");
+		kore_error_message("Vulkan driver is incompatible");
 	}
 	else if (result == VK_ERROR_EXTENSION_NOT_PRESENT) {
-		kinc_error_message("Vulkan extension not found");
+		kore_error_message("Vulkan extension not found");
 	}
 	else if (result != VK_SUCCESS) {
-		kinc_error_message("Can not create Vulkan instance");
+		kore_error_message("Can not create Vulkan instance");
 	}
 
 	find_gpu();
@@ -622,7 +622,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 		device_extensions_count -= 1; // remove VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME
 
 		if (!check_device_extensions(device_extensions, device_extensions_count)) {
-			kinc_error_message("Missing device extensions");
+			kore_error_message("Missing device extensions");
 		}
 	}
 
@@ -1019,10 +1019,10 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 		result = vulkan_QueuePresentKHR(device->vulkan.queue, &present_info);
 		if (result == VK_ERROR_SURFACE_LOST_KHR) {
-			kinc_error_message("Surface lost");
+			kore_error_message("Surface lost");
 		}
 		else if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-			kinc_error_message("Surface borked");
+			kore_error_message("Surface borked");
 		}
 		else {
 			assert(result == VK_SUCCESS);

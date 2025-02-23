@@ -260,7 +260,7 @@ static int createWindow(const wchar_t *title, int x, int y, int width, int heigh
 	return window_counter++;
 }
 
-void kinc_window_resize(int window_index, int width, int height) {
+void kore_window_resize(int window_index, int width, int height) {
 	WindowData *win = &windows[window_index];
 	win->manualWidth = width;
 	win->manualHeight = height;
@@ -285,7 +285,7 @@ void kinc_window_resize(int window_index, int width, int height) {
 	}
 }
 
-void kinc_window_move(int window_index, int x, int y) {
+void kore_window_move(int window_index, int x, int y) {
 	WindowData *win = &windows[window_index];
 
 	if (win->mode != 0) {
@@ -305,13 +305,13 @@ void kinc_window_move(int window_index, int x, int y) {
 	SetWindowPos(win->handle, NULL, x, y, rect.right - rect.left, rect.bottom - rect.top, 0);
 }
 
-void kinc_internal_change_framebuffer(int window, struct kinc_framebuffer_options *frame);
+void kore_internal_change_framebuffer(int window, struct kinc_framebuffer_options *frame);
 
-void kinc_window_change_framebuffer(int window, kore_framebuffer_parameters *frame) {
+void kore_window_change_framebuffer(int window, kore_framebuffer_parameters *frame) {
 	// kinc_internal_change_framebuffer(window, frame); // TODO
 }
 
-void kinc_window_change_features(int window_index, int features) {
+void kore_window_change_features(int window_index, int features) {
 	WindowData *win = &windows[window_index];
 	win->features = features;
 	SetWindowLongW(win->handle, GWL_STYLE, getStyle(features));
@@ -323,14 +323,14 @@ void kinc_window_change_features(int window_index, int features) {
 	kore_window_show(window_index);
 }
 
-void kinc_window_change_mode(int window_index, kore_window_mode mode) {
+void kore_window_change_mode(int window_index, kore_window_mode mode) {
 	WindowData *win = &windows[window_index];
 	int display_index = kore_window_display(window_index);
 	kore_display_mode display_mode = kore_display_current_mode(display_index);
 	switch (mode) {
 	case KORE_WINDOW_MODE_WINDOW:
 		kinc_windows_restore_display(display_index);
-		kinc_window_change_features(window_index, win->features);
+		kore_window_change_features(window_index, win->features);
 		kore_window_show(window_index);
 		break;
 	case KORE_WINDOW_MODE_FULLSCREEN: {

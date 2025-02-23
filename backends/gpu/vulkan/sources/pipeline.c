@@ -1,7 +1,7 @@
 #include <kore3/vulkan/pipeline_functions.h>
 #include <kore3/vulkan/pipeline_structs.h>
 
-#include <kinc/log.h>
+#include <kore3/log.h>
 
 static uint32_t vertex_attribute_size(kore_vulkan_vertex_format format) {
 	switch (format) {
