@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_2D_HEADER
+#define KORE_2D_HEADER
 
 #include <kinc/global.h>
 
@@ -77,6 +78,8 @@ void kinc_g2_set_rotation(float angle, float centerx, float centery);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif

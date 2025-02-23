@@ -47,6 +47,7 @@ function addSimpleUnit(name) {
 	project.addFile('sources/' + name + '/*');
 }
 
+addUnit('2d');
 addSimpleUnit('audio');
 addSimpleUnit('framebuffer');
 addUnit('gpu');
