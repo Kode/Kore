@@ -1,17 +1,17 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <Foundation/Foundation.h>
 
-#include <kinc/audio2/audio.h>
-#include <kinc/backend/video.h>
-#include <kinc/math/core.h>
+#include <kore3/audio/audio.h>
+#include <kore3/backend/video.h>
+#include <kore3/math/core.h>
 
 #include <stdio.h>
 
 #define kOutputBus 0
 
-static kinc_internal_video_sound_stream_t *video = NULL;
+static kore_internal_video_sound_stream *video = NULL;
 
-void iosPlayVideoSoundStream(kinc_internal_video_sound_stream_t *v) {
+void iosPlayVideoSoundStream(kore_internal_video_sound_stream *v) {
 	video = v;
 }
 
@@ -32,23 +32,23 @@ static AudioComponentInstance audioUnit;
 static bool isFloat = false;
 static bool isInterleaved = true;
 
-static kinc_a2_buffer_t a2_buffer;
+static kore_audio_buffer audio_buffer;
 
 static void copySample(void *buffer, void *secondary_buffer) {
-	float left_value = *(float *)&a2_buffer.channels[0][a2_buffer.read_location];
-	float right_value = *(float *)&a2_buffer.channels[1][a2_buffer.read_location];
-	a2_buffer.read_location += 1;
-	if (a2_buffer.read_location >= a2_buffer.data_size) {
-		a2_buffer.read_location = 0;
+	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
+	audio_buffer.read_location += 1;
+	if (audio_buffer.read_location >= audio_buffer.data_size) {
+		audio_buffer.read_location = 0;
 	}
 
 	if (video != NULL) {
-		float *frame = kinc_internal_video_sound_stream_next_frame(video);
+		float *frame = kore_internal_video_sound_stream_next_frame(video);
 		left_value += frame[0];
-		left_value = kinc_max(kinc_min(left_value, 1.0f), -1.0f);
+		left_value = kore_max(kore_min(left_value, 1.0f), -1.0f);
 		right_value += frame[1];
-		right_value = kinc_max(kinc_min(right_value, 1.0f), -1.0f);
-		if (kinc_internal_video_sound_stream_ended(video)) {
+		right_value = kore_max(kore_min(right_value, 1.0f), -1.0f);
+		if (kore_internal_video_sound_stream_ended(video)) {
 			video = NULL;
 		}
 	}
@@ -77,7 +77,7 @@ static void copySample(void *buffer, void *secondary_buffer) {
 
 static OSStatus renderInput(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber,
                             UInt32 inNumberFrames, AudioBufferList *outOutputData) {
-	kinc_a2_internal_callback(&a2_buffer, inNumberFrames);
+	kore_audio_internal_callback(&audio_buffer, inNumberFrames);
 	if (isInterleaved) {
 		if (isFloat) {
 			float *output = (float *)outOutputData->mBuffers[0].mData;
@@ -122,26 +122,26 @@ static void sampleRateListener(void *inRefCon, AudioUnit inUnit, AudioUnitProper
 
 	if (samples_per_second != (uint32_t)sampleRate) {
 		samples_per_second = (uint32_t)sampleRate;
-		kinc_a2_internal_sample_rate_callback();
+		kore_audio_internal_sample_rate_callback();
 	}
 }
 
 static bool initialized = false;
 
-void kinc_a2_init(void) {
+void kore_audio_init(void) {
 	if (initialized) {
 		return;
 	}
 
-	kinc_a2_internal_init();
+	kore_audio_internal_init();
 	initialized = true;
 
-	a2_buffer.read_location = 0;
-	a2_buffer.write_location = 0;
-	a2_buffer.data_size = 128 * 1024;
-	a2_buffer.channel_count = 2;
-	a2_buffer.channels[0] = (float *)malloc(a2_buffer.data_size * sizeof(float));
-	a2_buffer.channels[1] = (float *)malloc(a2_buffer.data_size * sizeof(float));
+	audio_buffer.read_location = 0;
+	audio_buffer.write_location = 0;
+	audio_buffer.data_size = 128 * 1024;
+	audio_buffer.channel_count = 2;
+	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	initialized = false;
 
@@ -194,7 +194,7 @@ void kinc_a2_init(void) {
 
 	if (samples_per_second != (uint32_t)deviceFormat.mSampleRate) {
 		samples_per_second = (uint32_t)deviceFormat.mSampleRate;
-		kinc_a2_internal_sample_rate_callback();
+		kore_audio_internal_sample_rate_callback();
 	}
 
 	AURenderCallbackStruct callbackStruct;
@@ -205,9 +205,9 @@ void kinc_a2_init(void) {
 	soundPlaying = true;
 }
 
-void kinc_a2_update(void) {}
+void kore_audio_update(void) {}
 
-void kinc_a2_shutdown(void) {
+void kore_audio_shutdown(void) {
 	if (!initialized)
 		return;
 	if (!soundPlaying)
@@ -218,6 +218,6 @@ void kinc_a2_shutdown(void) {
 	soundPlaying = false;
 }
 
-uint32_t kinc_a2_samples_per_second(void) {
+uint32_t kore_audio_samples_per_second(void) {
 	return samples_per_second;
 }

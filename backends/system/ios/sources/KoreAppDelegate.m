@@ -3,7 +3,7 @@
 #import "KoreAppDelegate.h"
 #import <AVFAudio/AVFAudio.h>
 
-#include <kinc/system.h>
+#include <kore3/system.h>
 #include <wchar.h>
 
 @implementation KoreAppDelegate
@@ -60,27 +60,27 @@ void KoreUpdateKeyboard(void);
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
 	[glViewController setVisible:YES];
-	kinc_internal_foreground_callback();
+	kore_internal_foreground_callback();
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-	kinc_internal_resume_callback();
+	kore_internal_resume_callback();
 	//[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 	//[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotate:) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-	kinc_internal_pause_callback();
+	kore_internal_pause_callback();
 	//[[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
 	[glViewController setVisible:NO];
-	kinc_internal_background_callback();
+	kore_internal_background_callback();
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-	kinc_internal_shutdown_callback();
+	kore_internal_shutdown_callback();
 }
 
 //- (void)dealloc {

@@ -273,7 +273,7 @@ else if (platform === Platform.iOS || platform === Platform.tvOS) {
 		addKincDefine('TVOS');
 	}
 	addBackend2('system/apple');
-	addBackend('system/ios');
+	addBackend2('system/ios');
 	addBackend2('system/posix');
 	if (graphics === GraphicsApi.Metal || graphics === GraphicsApi.Default) {
 		g4 = true;

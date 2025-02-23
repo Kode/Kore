@@ -330,7 +330,7 @@ bool kore_waiting_for_login(void) {
 
 #if !defined(KINC_WINDOWS) && !defined(KINC_LINUX) && !defined(KINC_MACOS)
 void kore_copy_to_clipboard(const char *text) {
-	kore_log(KINC_LOG_LEVEL_WARNING, "Oh no, kore_copy_to_clipboard is not implemented for this system.");
+	kore_log(KORE_LOG_LEVEL_WARNING, "Oh no, kore_copy_to_clipboard is not implemented for this system.");
 }
 #endif
 

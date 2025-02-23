@@ -134,8 +134,8 @@ static size_t kore_libc_file_reader_pos(kore_file_reader *reader) {
 bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filename, int type) {
 	char filepath[1001];
 #ifdef KINC_IOS
-	strcpy(filepath, type == KINC_FILE_TYPE_SAVE ? kinc_internal_save_path() : iphonegetresourcepath());
-	if (type != KINC_FILE_TYPE_SAVE) {
+	strcpy(filepath, type == KORE_FILE_TYPE_SAVE ? kore_internal_save_path() : iphonegetresourcepath());
+	if (type != KORE_FILE_TYPE_SAVE) {
 		strcat(filepath, "/");
 		strcat(filepath, KINC_DEBUGDIR);
 		strcat(filepath, "/");

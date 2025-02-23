@@ -3,8 +3,8 @@
 
 #import <Foundation/Foundation.h>
 
-#include <kinc/graphics5/rendertarget.h>
-#include <kinc/math/core.h>
+#include <kore3/gpu/texture.h>
+#include <kore3/math/core.h>
 
 #include <objc/runtime.h>
 

@@ -128,10 +128,20 @@ static MTLPixelFormat convert_format(kore_gpu_texture_format format) {
 		case KORE_GPU_TEXTURE_FORMAT_RGBA32_FLOAT:
 			return MTLPixelFormatRGBA32Float;
 		case KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM:
-			return MTLPixelFormatDepth16Unorm;
+#ifdef KINC_IOS
+			assert(false);
+			return MTLPixelFormatRGBA8Unorm;
+#else
+			return MTLPixelFormatDepth32Float; // only in new iOS
+#endif
 		case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_NOTHING8:
 		case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_STENCIL8:
-			return MTLPixelFormatDepth24Unorm_Stencil8;
+#ifdef KINC_IOS
+			assert(false);
+			return MTLPixelFormatDepth32Float_Stencil8;
+#else
+			return MTLPixelFormatDepth24Unorm_Stencil8; // not in iOS
+#endif
 		case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT:
 			return MTLPixelFormatDepth32Float;
 		case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8_NOTHING24:

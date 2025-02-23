@@ -1,14 +1,14 @@
 #import "GLView.h"
 
-#include <kinc/graphics5/graphics.h>
-#include <kinc/graphics5/rendertarget.h>
-#include <kinc/input/acceleration.h>
-#include <kinc/input/keyboard.h>
-#include <kinc/input/mouse.h>
-#include <kinc/input/pen.h>
-#include <kinc/input/rotation.h>
-#include <kinc/input/surface.h>
-#include <kinc/system.h>
+#include <kore3/gpu/gpu.h>
+#include <kore3/gpu/texture.h>
+#include <kore3/input/acceleration.h>
+#include <kore3/input/keyboard.h>
+#include <kore3/input/mouse.h>
+#include <kore3/input/pen.h>
+#include <kore3/input/rotation.h>
+#include <kore3/input/surface.h>
+#include <kore3/system.h>
 
 #ifdef KINC_OPENGL
 #include <kinc/backend/graphics4/OpenGLWindow.h>
@@ -53,11 +53,11 @@ static int removeTouch(void *touch) {
 
 static GLint backingWidth, backingHeight;
 
-int kinc_window_width(int window) {
+int kore_window_width(int window) {
 	return backingWidth;
 }
 
-int kinc_window_height(int window) {
+int kore_window_height(int window) {
 	return backingHeight;
 }
 
@@ -175,7 +175,7 @@ extern int kinc_ios_gl_framebuffer;
 
 		if (acc.x != lastAccelerometerX || acc.y != lastAccelerometerY || acc.z != lastAccelerometerZ) {
 
-			kinc_internal_on_acceleration(acc.x, acc.y, acc.z);
+			kore_internal_on_acceleration(acc.x, acc.y, acc.z);
 
 			lastAccelerometerX = acc.x;
 			lastAccelerometerY = acc.y;
@@ -196,7 +196,7 @@ extern int kinc_ios_gl_framebuffer;
 }
 #endif
 
-void kinc_internal_call_resize_callback(int window, int width, int height);
+void kore_internal_call_resize_callback(int window, int width, int height);
 
 #ifdef KINC_METAL
 - (void)layoutSubviews {
@@ -206,7 +206,7 @@ void kinc_internal_call_resize_callback(int window, int width, int height);
 	CAMetalLayer *metalLayer = (CAMetalLayer *)self.layer;
 	metalLayer.drawableSize = CGSizeMake(backingWidth, backingHeight);
 
-	kinc_internal_call_resize_callback(0, backingWidth, backingHeight);
+	kore_internal_call_resize_callback(0, backingWidth, backingHeight);
 }
 #else
 - (void)layoutSubviews {
@@ -225,7 +225,7 @@ void kinc_internal_call_resize_callback(int window, int width, int height);
 		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
 	}
 
-	kinc_internal_call_resize_callback(0, backingWidth, backingHeight);
+	kore_internal_call_resize_callback(0, backingWidth, backingHeight);
 }
 #endif
 
@@ -270,16 +270,16 @@ void kinc_internal_call_resize_callback(int window, int width, int height);
 			float y = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				if (@available(iOS 13.4, *)) {
-					kinc_internal_mouse_trigger_press(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
+					kore_internal_mouse_trigger_press(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
 				}
 				else {
-					kinc_internal_mouse_trigger_press(0, 0, x, y);
+					kore_internal_mouse_trigger_press(0, 0, x, y);
 				}
 			}
-			kinc_internal_surface_trigger_touch_start(index, x, y);
+			kore_internal_surface_trigger_touch_start(index, x, y);
 
 			if (touch.type == UITouchTypePencil) {
-				kinc_internal_pen_trigger_press(0, x, y, 0.0);
+				kore_internal_pen_trigger_press(0, x, y, 0.0);
 			}
 		}
 	}
@@ -293,9 +293,9 @@ void kinc_internal_call_resize_callback(int window, int width, int height);
 			float x = point.x * self.contentScaleFactor;
 			float y = point.y * self.contentScaleFactor;
 			if (index == 0) {
-				kinc_internal_mouse_trigger_move(0, x, y);
+				kore_internal_mouse_trigger_move(0, x, y);
 			}
-			kinc_internal_surface_trigger_move(index, x, y);
+			kore_internal_surface_trigger_move(index, x, y);
 		}
 	}
 }
@@ -306,7 +306,7 @@ void kinc_internal_call_resize_callback(int window, int width, int height);
 			CGPoint point = [touch locationInView:self];
 			float x = point.x * self.contentScaleFactor;
 			float y = point.y * self.contentScaleFactor;
-			kinc_internal_pen_trigger_move(0, x, y, touch.force);
+			kore_internal_pen_trigger_move(0, x, y, touch.force);
 		}
 	}
 }
@@ -320,16 +320,16 @@ void kinc_internal_call_resize_callback(int window, int width, int height);
 			float y = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				if (@available(iOS 13.4, *)) {
-					kinc_internal_mouse_trigger_release(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
+					kore_internal_mouse_trigger_release(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
 				}
 				else {
-					kinc_internal_mouse_trigger_release(0, 0, x, y);
+					kore_internal_mouse_trigger_release(0, 0, x, y);
 				}
 			}
-			kinc_internal_surface_trigger_touch_end(index, x, y);
+			kore_internal_surface_trigger_touch_end(index, x, y);
 
 			if (touch.type == UITouchTypePencil) {
-				kinc_internal_pen_trigger_release(0, x, y, 0.0);
+				kore_internal_pen_trigger_release(0, x, y, 0.0);
 			}
 		}
 	}
@@ -344,16 +344,16 @@ void kinc_internal_call_resize_callback(int window, int width, int height);
 			float y = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				if (@available(iOS 13.4, *)) {
-					kinc_internal_mouse_trigger_release(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
+					kore_internal_mouse_trigger_release(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
 				}
 				else {
-					kinc_internal_mouse_trigger_release(0, 0, x, y);
+					kore_internal_mouse_trigger_release(0, 0, x, y);
 				}
 			}
-			kinc_internal_surface_trigger_touch_end(index, x, y);
+			kore_internal_surface_trigger_touch_end(index, x, y);
 
 			if (touch.type == UITouchTypePencil) {
-				kinc_internal_pen_trigger_release(0, x, y, 0.0);
+				kore_internal_pen_trigger_release(0, x, y, 0.0);
 			}
 		}
 	}
@@ -381,59 +381,59 @@ static bool shiftDown = false;
 		if (ch == 8212)
 			ch = '_';
 		if (ch == L'\n') {
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_RETURN);
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_RETURN);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_RETURN);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_RETURN);
 			return;
 		}
 
 		if (ch == L'.') {
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_PERIOD);
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_PERIOD);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_PERIOD);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_PERIOD);
 		}
 		else if (ch == L'%') {
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_PERCENT);
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_PERCENT);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_PERCENT);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_PERCENT);
 		}
 		else if (ch == L'(') {
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_OPEN_PAREN);
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_OPEN_PAREN);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_OPEN_PAREN);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_OPEN_PAREN);
 		}
 		else if (ch == L'&') {
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_AMPERSAND);
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_AMPERSAND);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_AMPERSAND);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_AMPERSAND);
 		}
 		else if (ch == L'$') {
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_DOLLAR);
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_DOLLAR);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_DOLLAR);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_DOLLAR);
 		}
 		else if (ch == L'#') {
-			kinc_internal_keyboard_trigger_key_down(KINC_KEY_HASH);
-			kinc_internal_keyboard_trigger_key_up(KINC_KEY_HASH);
+			kore_internal_keyboard_trigger_key_down(KORE_KEY_HASH);
+			kore_internal_keyboard_trigger_key_up(KORE_KEY_HASH);
 		}
 		else if (ch >= L'a' && ch <= L'z') {
 			if (shiftDown) {
-				kinc_internal_keyboard_trigger_key_up(KINC_KEY_SHIFT);
+				kore_internal_keyboard_trigger_key_up(KORE_KEY_SHIFT);
 				shiftDown = false;
 			}
-			kinc_internal_keyboard_trigger_key_down(ch + KINC_KEY_A - L'a');
-			kinc_internal_keyboard_trigger_key_up(ch + KINC_KEY_A - L'a');
+			kore_internal_keyboard_trigger_key_down(ch + KORE_KEY_A - L'a');
+			kore_internal_keyboard_trigger_key_up(ch + KORE_KEY_A - L'a');
 		}
 		else {
 			if (!shiftDown) {
-				kinc_internal_keyboard_trigger_key_down(KINC_KEY_SHIFT);
+				kore_internal_keyboard_trigger_key_down(KORE_KEY_SHIFT);
 				shiftDown = true;
 			}
-			kinc_internal_keyboard_trigger_key_down(ch + KINC_KEY_A - L'A');
-			kinc_internal_keyboard_trigger_key_up(ch + KINC_KEY_A - L'A');
+			kore_internal_keyboard_trigger_key_down(ch + KORE_KEY_A - L'A');
+			kore_internal_keyboard_trigger_key_up(ch + KORE_KEY_A - L'A');
 		}
 
-		kinc_internal_keyboard_trigger_key_press(ch);
+		kore_internal_keyboard_trigger_key_press(ch);
 	}
 }
 
 - (void)deleteBackward {
-	kinc_internal_keyboard_trigger_key_down(KINC_KEY_BACKSPACE);
-	kinc_internal_keyboard_trigger_key_up(KINC_KEY_BACKSPACE);
+	kore_internal_keyboard_trigger_key_down(KORE_KEY_BACKSPACE);
+	kore_internal_keyboard_trigger_key_up(KORE_KEY_BACKSPACE);
 }
 
 - (BOOL)canBecomeFirstResponder {
@@ -441,7 +441,7 @@ static bool shiftDown = false;
 }
 
 - (void)onKeyboardHide:(NSNotification *)notification {
-	kinc_keyboard_hide();
+	kore_keyboard_hide();
 }
 
 #ifdef KINC_METAL
