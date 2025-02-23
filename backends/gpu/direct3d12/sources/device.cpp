@@ -809,7 +809,7 @@ void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gp
 	kore_gpu_device_create_buffer(device, &as_params, &volume->d3d12.acceleration_structure);
 }
 
-void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kinc_matrix4x4_t *volume_transforms,
+void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kore_matrix4x4 *volume_transforms,
                                                    uint32_t volumes_count, kore_gpu_raytracing_hierarchy *hierarchy) {
 	hierarchy->d3d12.volumes_count = volumes_count;
 

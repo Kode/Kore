@@ -73,12 +73,12 @@ void kore_gpu_device_create_sampler(kore_gpu_device *device, const kore_gpu_samp
 }
 
 void kore_gpu_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
-                                             uint32_t index_count, kore_gpu_raytracing_volume *volume) {
+                                              uint32_t index_count, kore_gpu_raytracing_volume *volume) {
 	KORE_GPU_CALL6(device_create_raytracing_volume, device, vertex_buffer, vertex_count, index_buffer, index_count, volume);
 }
 
-void kore_gpu_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kinc_matrix4x4_t *volume_transforms,
-                                                uint32_t volumes_count, kore_gpu_raytracing_hierarchy *hierarchy) {
+void kore_gpu_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kore_matrix4x4 *volume_transforms,
+                                                 uint32_t volumes_count, kore_gpu_raytracing_hierarchy *hierarchy) {
 	KORE_GPU_CALL5(device_create_raytracing_hierarchy, device, volumes, volume_transforms, volumes_count, hierarchy);
 }
 

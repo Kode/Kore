@@ -81,13 +81,17 @@
 #ifdef KINC_WINDOWS
 #if defined(KINC_DYNAMIC)
 #define KINC_FUNC __declspec(dllimport)
+#define KORE_FUNC __declspec(dllimport)
 #elif defined(KINC_DYNAMIC_COMPILE)
 #define KINC_FUNC __declspec(dllexport)
+#define KORE_FUNC __declspec(dllexport)
 #else
 #define KINC_FUNC
+#define KORE_FUNC
 #endif
 #else
 #define KINC_FUNC
+#define KORE_FUNC
 #endif
 
 #ifdef __cplusplus

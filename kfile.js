@@ -37,13 +37,16 @@ project.addFile('sources/kinc/**');
 
 project.addDefine('KOPE');
 project.addFile('includes/**');
-project.addFile('sources/gpu/**', {nocompile: true});
-project.addFile('sources/gpu/*unit.c*');
-project.addFile('sources/gpu/*unit.m');
-project.addFile('sources/util/**', {nocompile: true});
-project.addFile('sources/util/*unit.c*');
-project.addFile('sources/util/*unit.m');
-project.addFile('sources/libs/*');
+
+function addUnit(name) {
+	project.addFile('sources/' + name + '/**', {nocompile: true});
+	project.addFile('sources/' + name + '/*unit.c*');
+	project.addFile('sources/' + name + '/*unit.m');
+}
+
+addUnit('gpu');
+addUnit('math');
+addUnit('util');
 
 if (lz4x) {
 	addKincDefine('LZ4X');

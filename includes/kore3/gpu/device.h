@@ -3,7 +3,7 @@
 
 #include <kore3/global.h>
 
-#include <kinc/math/matrix.h>
+#include <kore3/math/matrix.h>
 
 #include "api.h"
 #include "buffer.h"
@@ -62,7 +62,11 @@ typedef struct kore_gpu_buffer_parameters {
 
 KORE_FUNC void kore_gpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer);
 
-typedef enum kore_gpu_texture_dimension { KORE_GPU_TEXTURE_DIMENSION_1D, KORE_GPU_TEXTURE_DIMENSION_2D, KORE_GPU_TEXTURE_DIMENSION_3D } kore_gpu_texture_dimension;
+typedef enum kore_gpu_texture_dimension {
+	KORE_GPU_TEXTURE_DIMENSION_1D,
+	KORE_GPU_TEXTURE_DIMENSION_2D,
+	KORE_GPU_TEXTURE_DIMENSION_3D
+} kore_gpu_texture_dimension;
 
 typedef enum kore_gpu_texture_usage {
 	KONG_G5_TEXTURE_USAGE_COPY_SRC = 0x01,
@@ -93,7 +97,11 @@ KORE_FUNC kore_gpu_texture *kore_gpu_device_get_framebuffer(kore_gpu_device *dev
 
 KORE_FUNC kore_gpu_texture_format kore_gpu_device_framebuffer_format(kore_gpu_device *device);
 
-typedef enum kore_gpu_address_mode { KORE_GPU_ADDRESS_MODE_CLAMP_TO_EDGE, KORE_GPU_ADDRESS_MODE_REPEAT, KORE_GPU_ADDRESS_MODE_MIRROR_REPEAT } kore_gpu_address_mode;
+typedef enum kore_gpu_address_mode {
+	KORE_GPU_ADDRESS_MODE_CLAMP_TO_EDGE,
+	KORE_GPU_ADDRESS_MODE_REPEAT,
+	KORE_GPU_ADDRESS_MODE_MIRROR_REPEAT
+} kore_gpu_address_mode;
 
 typedef enum kore_gpu_filter_mode { KORE_GPU_FILTER_MODE_NEAREST, KORE_GPU_FILTER_MODE_LINEAR } kore_gpu_filter_mode;
 
@@ -161,10 +169,10 @@ typedef struct kore_gpu_raytracing_hierarchy {
 } kore_gpu_raytracing_hierarchy;
 
 KORE_FUNC void kore_gpu_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count,
-                                                       kore_gpu_buffer *index_buffer, uint32_t index_count, kore_gpu_raytracing_volume *volume);
+                                                        kore_gpu_buffer *index_buffer, uint32_t index_count, kore_gpu_raytracing_volume *volume);
 
-KORE_FUNC void kore_gpu_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kinc_matrix4x4_t *volume_transforms,
-                                                          uint32_t volumes_count, kore_gpu_raytracing_hierarchy *hierarchy);
+KORE_FUNC void kore_gpu_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kore_matrix4x4 *volume_transforms,
+                                                           uint32_t volumes_count, kore_gpu_raytracing_hierarchy *hierarchy);
 
 KORE_FUNC uint32_t kore_gpu_device_align_texture_row_bytes(kore_gpu_device *device, uint32_t row_bytes);
 

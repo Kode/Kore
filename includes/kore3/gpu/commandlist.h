@@ -3,7 +3,7 @@
 
 #include <kore3/global.h>
 
-#include <kinc/math/matrix.h>
+#include <kore3/math/matrix.h>
 
 #include "api.h"
 #include "buffer.h"
@@ -21,7 +21,7 @@
 #include <kore3/vulkan/commandlist_structs.h>
 #endif
 
-#include <kinc/math/vector.h>
+#include <kore3/math/vector.h>
 
 #include <stdint.h>
 
@@ -110,35 +110,35 @@ typedef struct kore_gpu_image_copy_buffer {
 } kore_gpu_image_copy_buffer;
 
 KORE_FUNC void kore_gpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset,
-                                                          kore_gpu_buffer *destination, uint64_t destination_offset, uint64_t size);
+                                                           kore_gpu_buffer *destination, uint64_t destination_offset, uint64_t size);
 
 KORE_FUNC void kore_gpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
-                                                           const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
-                                                           uint32_t depth_or_array_layers);
-
-KORE_FUNC void kore_gpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
-                                                           const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
-                                                           uint32_t depth_or_array_layers);
-
-KORE_FUNC void kore_gpu_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                             const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                             uint32_t depth_or_array_layers);
+
+KORE_FUNC void kore_gpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
+                                                            const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
+                                                            uint32_t depth_or_array_layers);
+
+KORE_FUNC void kore_gpu_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
+                                                             const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
+                                                             uint32_t depth_or_array_layers);
 
 KORE_FUNC void kore_gpu_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size);
 
 KORE_FUNC void kore_gpu_command_list_resolve_query_set(kore_gpu_command_list *list, struct kore_gpu_query_set *query_set, uint32_t first_query,
-                                                      uint32_t query_count, kore_gpu_buffer *destination, uint64_t destination_offset);
+                                                       uint32_t query_count, kore_gpu_buffer *destination, uint64_t destination_offset);
 
 typedef enum kore_gpu_index_format { KORE_GPU_INDEX_FORMAT_UINT16, KORE_GPU_INDEX_FORMAT_UINT32 } kore_gpu_index_format;
 
 KORE_FUNC void kore_gpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                                     uint64_t size);
+                                                      uint64_t size);
 
 KORE_FUNC void kore_gpu_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,
-                                         uint32_t first_instance);
+                                          uint32_t first_instance);
 
 KORE_FUNC void kore_gpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
-                                                 int32_t base_vertex, uint32_t first_instance);
+                                                  int32_t base_vertex, uint32_t first_instance);
 
 typedef struct kore_gpu_draw_arguments {
 #ifdef KORE_DIRECT3D12
@@ -168,10 +168,10 @@ typedef struct kore_gpu_compute_arguments {
 } kore_gpu_compute_arguments;
 
 KORE_FUNC void kore_gpu_command_list_draw_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset,
-                                                  uint32_t max_draw_count, kore_gpu_buffer *count_buffer, uint64_t count_offset);
+                                                   uint32_t max_draw_count, kore_gpu_buffer *count_buffer, uint64_t count_offset);
 
 KORE_FUNC void kore_gpu_command_list_draw_indexed_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset,
-                                                          uint32_t max_draw_count, kore_gpu_buffer *count_buffer, uint64_t count_offset);
+                                                           uint32_t max_draw_count, kore_gpu_buffer *count_buffer, uint64_t count_offset);
 
 KORE_FUNC void kore_gpu_command_list_set_viewport(kore_gpu_command_list *list, float x, float y, float width, float height, float min_depth, float max_depth);
 
@@ -199,8 +199,8 @@ struct kore_gpu_raytracing_hierarchy;
 
 KORE_FUNC void kore_gpu_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list *list, struct kore_gpu_raytracing_hierarchy *hierarchy);
 
-KORE_FUNC void kore_gpu_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kinc_matrix4x4_t *volume_transforms, uint32_t volumes_count,
-                                                                struct kore_gpu_raytracing_hierarchy *hierarchy);
+KORE_FUNC void kore_gpu_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kore_matrix4x4 *volume_transforms, uint32_t volumes_count,
+                                                                 struct kore_gpu_raytracing_hierarchy *hierarchy);
 
 KORE_FUNC void kore_gpu_command_list_trace_rays(kore_gpu_command_list *list, uint32_t width, uint32_t height, uint32_t depth);
 

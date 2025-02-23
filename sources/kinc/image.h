@@ -208,8 +208,8 @@ KINC_FUNC int kinc_image_format_sizeof(kinc_image_format_t format);
 
 #undef KINC_IMPLEMENTATION
 #include <kinc/io/filereader.h>
-#include <kinc/math/core.h>
 #include <kore3/gpu/gpu.h>
+#include <kore3/math/core.h>
 #define KINC_IMPLEMENTATION
 
 #include <string.h>
@@ -579,10 +579,10 @@ static bool loadImage(kinc_image_read_callbacks_t callbacks, void *user_data, co
 				r *= a;
 				g *= a;
 				b *= a;
-				output[y * stride + x * 4 + 0] = (uint8_t)kinc_round(r * 255.0f);
-				output[y * stride + x * 4 + 1] = (uint8_t)kinc_round(g * 255.0f);
-				output[y * stride + x * 4 + 2] = (uint8_t)kinc_round(b * 255.0f);
-				output[y * stride + x * 4 + 3] = (uint8_t)kinc_round(a * 255.0f);
+				output[y * stride + x * 4 + 0] = (uint8_t)kore_round(r * 255.0f);
+				output[y * stride + x * 4 + 1] = (uint8_t)kore_round(g * 255.0f);
+				output[y * stride + x * 4 + 2] = (uint8_t)kore_round(b * 255.0f);
+				output[y * stride + x * 4 + 3] = (uint8_t)kore_round(a * 255.0f);
 			}
 		}
 		*outputSize = (size_t)(*width * *height * 4);

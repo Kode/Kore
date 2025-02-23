@@ -614,7 +614,7 @@ void kore_d3d12_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list 
 	list->d3d12.list->ResourceBarrier(1, &barrier);
 }
 
-void kore_d3d12_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kinc_matrix4x4_t *volume_transforms, uint32_t volumes_count,
+void kore_d3d12_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kore_matrix4x4 *volume_transforms, uint32_t volumes_count,
                                                          kore_gpu_raytracing_hierarchy *hierarchy) {
 	D3D12_RAYTRACING_INSTANCE_DESC *descs = (D3D12_RAYTRACING_INSTANCE_DESC *)kore_gpu_buffer_lock_all(&hierarchy->d3d12.instances);
 

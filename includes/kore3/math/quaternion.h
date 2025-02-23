@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MATH_QUATERNION_HEADER
+#define KORE_MATH_QUATERNION_HEADER
 
 #include "core.h"
 
@@ -10,13 +11,15 @@
 extern "C" {
 #endif
 
-typedef struct kinc_quaternion {
+typedef struct kore_quaternion {
 	float x;
 	float y;
 	float z;
 	float w;
-} kinc_quaternion_t;
+} kore_quaternion;
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

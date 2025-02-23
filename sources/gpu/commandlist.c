@@ -19,13 +19,13 @@ void kore_gpu_command_list_destroy(kore_gpu_command_list *list) {
 }
 
 void kore_gpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset, kore_gpu_buffer *destination,
-                                                uint64_t destination_offset, uint64_t size) {
+                                                 uint64_t destination_offset, uint64_t size) {
 	KORE_GPU_CALL6(command_list_copy_buffer_to_buffer, list, source, source_offset, destination, destination_offset, size);
 }
 
 void kore_gpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
-                                                 const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
-                                                 uint32_t depth_or_array_layers) {
+                                                  const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
+                                                  uint32_t depth_or_array_layers) {
 #ifdef KORE_GPU_VALIDATION
 	assert(source->offset % 512 == 0); // D3D12_TEXTURE_DATA_PLACEMENT_ALIGNMENT
 #endif
@@ -33,14 +33,14 @@ void kore_gpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, c
 }
 
 void kore_gpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
-                                                 const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
-                                                 uint32_t depth_or_array_layers) {
+                                                  const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
+                                                  uint32_t depth_or_array_layers) {
 	KORE_GPU_CALL6(command_list_copy_texture_to_buffer, list, source, destination, width, height, depth_or_array_layers);
 }
 
 void kore_gpu_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
-                                                  const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
-                                                  uint32_t depth_or_array_layers) {
+                                                   const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
+                                                   uint32_t depth_or_array_layers) {
 #ifdef KORE_GPU_VALIDATION
 	assert(source->texture->validation_format == destination->texture->validation_format);
 #endif
@@ -64,7 +64,7 @@ void kore_gpu_command_list_present(kore_gpu_command_list *list) {
 }
 
 void kore_gpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                           uint64_t size) {
+                                            uint64_t size) {
 	KORE_GPU_CALL5(command_list_set_index_buffer, list, buffer, index_format, offset, size);
 }
 
@@ -73,7 +73,7 @@ void kore_gpu_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_cou
 }
 
 void kore_gpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index, int32_t base_vertex,
-                                       uint32_t first_instance) {
+                                        uint32_t first_instance) {
 	KORE_GPU_CALL6(command_list_draw_indexed, list, index_count, instance_count, first_index, base_vertex, first_instance);
 }
 
@@ -88,8 +88,8 @@ void kore_gpu_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list *l
 	KORE_GPU_CALL2(command_list_prepare_raytracing_hierarchy, list, hierarchy);
 }
 
-void kore_gpu_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kinc_matrix4x4_t *volume_transforms, uint32_t volumes_count,
-                                                      kore_gpu_raytracing_hierarchy *hierarchy) {
+void kore_gpu_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kore_matrix4x4 *volume_transforms, uint32_t volumes_count,
+                                                       kore_gpu_raytracing_hierarchy *hierarchy) {
 	KORE_GPU_CALL4(command_list_update_raytracing_hierarchy, list, volume_transforms, volumes_count, hierarchy);
 }
 
@@ -138,17 +138,17 @@ void kore_gpu_command_list_end_occlusion_query(kore_gpu_command_list *list) {
 }
 
 void kore_gpu_command_list_resolve_query_set(kore_gpu_command_list *list, kore_gpu_query_set *query_set, uint32_t first_query, uint32_t query_count,
-                                            kore_gpu_buffer *destination, uint64_t destination_offset) {
+                                             kore_gpu_buffer *destination, uint64_t destination_offset) {
 	KORE_GPU_CALL6(command_list_resolve_query_set, list, query_set, first_query, query_count, destination, destination_offset);
 }
 
 void kore_gpu_command_list_draw_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset, uint32_t max_draw_count,
-                                        kore_gpu_buffer *count_buffer, uint64_t count_offset) {
+                                         kore_gpu_buffer *count_buffer, uint64_t count_offset) {
 	KORE_GPU_CALL6(command_list_draw_indirect, list, indirect_buffer, indirect_offset, max_draw_count, count_buffer, count_offset);
 }
 
-void kore_gpu_command_list_draw_indexed_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset, uint32_t max_draw_count,
-                                                kore_gpu_buffer *count_buffer, uint64_t count_offset) {
+void kore_gpu_command_list_draw_indexed_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset,
+                                                 uint32_t max_draw_count, kore_gpu_buffer *count_buffer, uint64_t count_offset) {
 	KORE_GPU_CALL6(command_list_draw_indexed_indirect, list, indirect_buffer, indirect_offset, max_draw_count, count_buffer, count_offset);
 }
 
