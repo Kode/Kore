@@ -1,11 +1,11 @@
-#include <kinc/graphics4/graphics.h>
-#include <kinc/input/gamepad.h>
-#include <kinc/input/keyboard.h>
-#include <kinc/input/mouse.h>
-#include <kinc/system.h>
-#include <kinc/threads/thread.h>
-#include <kinc/video.h>
-#include <kinc/window.h>
+//#include <kinc/graphics4/graphics.h>
+#include <kore3/input/gamepad.h>
+#include <kore3/input/keyboard.h>
+#include <kore3/input/mouse.h>
+#include <kore3/system.h>
+#include <kore3/threads/thread.h>
+#include <kore3/video.h>
+#include <kore3/window.h>
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -94,15 +94,15 @@ using namespace Windows::System;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
 
-const char *kinc_gamepad_vendor(int gamepad) {
+const char *kore_gamepad_vendor(int gamepad) {
 	return "Microsoft";
 }
 
-const char *kinc_gamepad_product_name(int gamepad) {
+const char *kore_gamepad_product_name(int gamepad) {
 	return "Xbox 360 Controller";
 }
 
-bool kinc_internal_handle_messages(void) {
+bool kore_internal_handle_messages(void) {
 	CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
 #if XINPUT
@@ -160,61 +160,53 @@ bool kinc_internal_handle_messages(void) {
 //	return vec2i(mouseX, mouseY);
 //}
 
-#ifdef KORE_KONG
-extern "C" void kong_init(void);
-#endif
-
 #undef CreateWindow
 
-int kinc_init(const char *name, int width, int height, struct kinc_window_options *win, struct kinc_framebuffer_options *frame) {
-	kinc_window_options_t defaultWin;
+int kore_init(const char *name, int width, int height, struct kore_window_parameters *win, struct kore_framebuffer_parameters *frame) {
+	kore_window_parameters defaultWin;
 	if (win == NULL) {
-		kinc_window_options_set_defaults(&defaultWin);
+		kore_window_options_set_defaults(&defaultWin);
 		win = &defaultWin;
 	}
 	win->width = width;
 	win->height = height;
 
-	kinc_framebuffer_options_t defaultFrame;
+	kore_framebuffer_parameters defaultFrame;
 	if (frame == NULL) {
-		kinc_framebuffer_options_set_defaults(&defaultFrame);
+		kore_framebuffer_options_set_defaults(&defaultFrame);
 		frame = &defaultFrame;
 	}
 
-	kinc_g4_internal_init();
-	kinc_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
-
-#ifdef KORE_KONG
-	kong_init();
-#endif
+	// kinc_g4_internal_init();
+	// kinc_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
 
 	return 0;
 }
 
-void kinc_set_keep_screen_on(bool on) {}
+void kore_set_keep_screen_on(bool on) {}
 
 namespace {
 	bool keyboardshown = false;
 	char language[3] = {0};
 }
 
-void kinc_keyboard_show() {
+void kore_keyboard_show() {
 	keyboardshown = true;
 }
 
-void kinc_keyboard_hide() {
+void kore_keyboard_hide() {
 	keyboardshown = false;
 }
 
-bool kinc_keyboard_active() {
+bool kore_keyboard_active() {
 	return keyboardshown;
 }
 
-void kinc_load_url(const char *url) {}
+void kore_load_url(const char *url) {}
 
-void kinc_vibrate(int ms) {}
+void kore_vibrate(int ms) {}
 
-const char *kinc_language() {
+const char *kore_language() {
 	wchar_t wlanguage[3] = {0};
 
 	if (GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SISO639LANGNAME, wlanguage, 3)) {
@@ -273,7 +265,7 @@ void Win8Application::Uninitialize() {}
 int kinc_uwp_window_width;
 int kinc_uwp_window_height;
 
-extern "C" void kinc_internal_resize(int window, int width, int height);
+extern "C" void kore_internal_resize(int window, int width, int height);
 
 void Win8Application::OnWindowSizeChanged(CoreWindow ^ sender, WindowSizeChangedEventArgs ^ args) {
 	kinc_uwp_window_width = (int)args->Size.Width;
@@ -299,41 +291,41 @@ void Win8Application::OnResuming(Platform::Object ^ sender, Platform::Object ^ a
 void Win8Application::OnPointerPressed(Windows::UI::Core::CoreWindow ^ sender, Windows::UI::Core::PointerEventArgs ^ args) {
 	mouseX = static_cast<int>(args->CurrentPoint->Position.X);
 	mouseY = static_cast<int>(args->CurrentPoint->Position.Y);
-	kinc_internal_mouse_trigger_press(0, 0, mouseX, mouseY);
+	kore_internal_mouse_trigger_press(0, 0, mouseX, mouseY);
 }
 
 void Win8Application::OnPointerReleased(Windows::UI::Core::CoreWindow ^ sender, Windows::UI::Core::PointerEventArgs ^ args) {
 	mouseX = static_cast<int>(args->CurrentPoint->Position.X);
 	mouseY = static_cast<int>(args->CurrentPoint->Position.Y);
-	kinc_internal_mouse_trigger_release(0, 0, mouseX, mouseY);
+	kore_internal_mouse_trigger_release(0, 0, mouseX, mouseY);
 }
 
 void Win8Application::OnPointerMoved(Windows::UI::Core::CoreWindow ^ sender, Windows::UI::Core::PointerEventArgs ^ args) {
 	mouseX = static_cast<int>(args->CurrentPoint->Position.X);
 	mouseY = static_cast<int>(args->CurrentPoint->Position.Y);
-	kinc_internal_mouse_trigger_move(0, mouseX, mouseY);
+	kore_internal_mouse_trigger_move(0, mouseX, mouseY);
 }
 
 void Win8Application::OnKeyDown(Windows::UI::Core::CoreWindow ^ sender, Windows::UI::Core::KeyEventArgs ^ args) {
 	switch (args->VirtualKey) {
 	case Windows::System::VirtualKey::Left:
-		kinc_internal_keyboard_trigger_key_down(KINC_KEY_LEFT);
+		kore_internal_keyboard_trigger_key_down(KORE_KEY_LEFT);
 		break;
 	case Windows::System::VirtualKey::Right:
-		kinc_internal_keyboard_trigger_key_down(KINC_KEY_RIGHT);
+		kore_internal_keyboard_trigger_key_down(KORE_KEY_RIGHT);
 		break;
 	case Windows::System::VirtualKey::Up:
-		kinc_internal_keyboard_trigger_key_down(KINC_KEY_UP);
+		kore_internal_keyboard_trigger_key_down(KORE_KEY_UP);
 		break;
 	case Windows::System::VirtualKey::Down:
-		kinc_internal_keyboard_trigger_key_down(KINC_KEY_DOWN);
+		kore_internal_keyboard_trigger_key_down(KORE_KEY_DOWN);
 		break;
 	default:
 		if (args->VirtualKey >= Windows::System::VirtualKey::A && args->VirtualKey <= Windows::System::VirtualKey::Z) {
-			kinc_internal_keyboard_trigger_key_down((int)args->VirtualKey);
+			kore_internal_keyboard_trigger_key_down((int)args->VirtualKey);
 		}
 		else if (args->VirtualKey >= Windows::System::VirtualKey::Number0 && args->VirtualKey <= Windows::System::VirtualKey::Number9) {
-			kinc_internal_keyboard_trigger_key_down((int)args->VirtualKey);
+			kore_internal_keyboard_trigger_key_down((int)args->VirtualKey);
 		}
 		break;
 	}
@@ -342,23 +334,23 @@ void Win8Application::OnKeyDown(Windows::UI::Core::CoreWindow ^ sender, Windows:
 void Win8Application::OnKeyUp(Windows::UI::Core::CoreWindow ^ sender, Windows::UI::Core::KeyEventArgs ^ args) {
 	switch (args->VirtualKey) {
 	case Windows::System::VirtualKey::Left:
-		kinc_internal_keyboard_trigger_key_up(KINC_KEY_LEFT);
+		kore_internal_keyboard_trigger_key_up(KORE_KEY_LEFT);
 		break;
 	case Windows::System::VirtualKey::Right:
-		kinc_internal_keyboard_trigger_key_up(KINC_KEY_RIGHT);
+		kore_internal_keyboard_trigger_key_up(KORE_KEY_RIGHT);
 		break;
 	case Windows::System::VirtualKey::Up:
-		kinc_internal_keyboard_trigger_key_up(KINC_KEY_UP);
+		kore_internal_keyboard_trigger_key_up(KORE_KEY_UP);
 		break;
 	case Windows::System::VirtualKey::Down:
-		kinc_internal_keyboard_trigger_key_up(KINC_KEY_DOWN);
+		kore_internal_keyboard_trigger_key_up(KORE_KEY_DOWN);
 		break;
 	default:
 		if (args->VirtualKey >= Windows::System::VirtualKey::A && args->VirtualKey <= Windows::System::VirtualKey::Z) {
-			kinc_internal_keyboard_trigger_key_up((int)args->VirtualKey);
+			kore_internal_keyboard_trigger_key_up((int)args->VirtualKey);
 		}
 		else if (args->VirtualKey >= Windows::System::VirtualKey::Number0 && args->VirtualKey <= Windows::System::VirtualKey::Number9) {
-			kinc_internal_keyboard_trigger_key_up((int)args->VirtualKey);
+			kore_internal_keyboard_trigger_key_up((int)args->VirtualKey);
 		}
 		break;
 	}
@@ -368,11 +360,11 @@ IFrameworkView ^ Win8ApplicationSource::CreateView() {
 	return ref new Win8Application;
 }
 
-const char *kinc_internal_save_path() {
+const char *kore_internal_save_path() {
 	return "\\";
 }
 
-const char *kinc_system_id() {
+const char *kore_system_id() {
 	return "WindowsApp";
 }
 
@@ -380,45 +372,45 @@ namespace {
 	const char *videoFormats[] = {"ogv", nullptr};
 }
 
-const char **kinc_video_formats() {
+const char **kore_video_formats() {
 	return ::videoFormats;
 }
 
-int kinc_window_width(int window_index) {
+int kore_window_width(int window_index) {
 	return kinc_uwp_window_width;
 }
 
-int kinc_window_height(int window_index) {
+int kore_window_height(int window_index) {
 	return kinc_uwp_window_height;
 }
 
-double kinc_frequency() {
-	kinc_ticks_t rate;
+double kore_frequency() {
+	kore_ticks rate;
 	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER *>(&rate));
 	return (double)rate;
 }
 
-void kinc_internal_shutdown() {}
+void kore_internal_shutdown() {}
 
-static kinc_ticks_t start_stamp;
+static kore_ticks start_stamp;
 
-kinc_ticks_t kinc_timestamp() {
-	kinc_ticks_t stamp;
+kore_ticks kore_timestamp() {
+	kore_ticks stamp;
 	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *>(&stamp));
 	return stamp - start_stamp;
 }
 
-void kinc_login() {}
+void kore_login() {}
 
-void kinc_unlock_achievement(int id) {}
+void kore_unlock_achievement(int id) {}
 
-void kinc_gamepad_set_count(int count) {}
+void kore_gamepad_set_count(int count) {}
 
-bool kinc_gamepad_connected(int num) {
+bool kore_gamepad_connected(int num) {
 	return true;
 }
 
-void kinc_gamepad_rumble(int gamepad, float left, float right){
+void kore_gamepad_rumble(int gamepad, float left, float right){
 
 }
 
@@ -428,7 +420,7 @@ void kinc_gamepad_rumble(int gamepad, float left, float right){
 	return 0;
 }
 
-int kinc_cpu_cores(void) {
+int kore_cpu_cores(void) {
 	SYSTEM_LOGICAL_PROCESSOR_INFORMATION info[1024];
 	DWORD returnLength = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) * 1024;
 	BOOL success = GetLogicalProcessorInformation(&info[0], &returnLength);
@@ -454,7 +446,7 @@ int kinc_cpu_cores(void) {
 	return proper_cpu_count;
 }
 
-int kinc_hardware_threads(void) {
+int kore_hardware_threads(void) {
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
 	return sysinfo.dwNumberOfProcessors;

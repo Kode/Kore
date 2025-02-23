@@ -1,6 +1,6 @@
-#include "gamepad.h"
+#include <kore3/backend/gamepad.h>
 
-#include <kinc/input/gamepad.h>
+#include <kore3/input/gamepad.h>
 
 #include <fcntl.h>
 #include <linux/joystick.h>
@@ -60,13 +60,13 @@ namespace {
 			if (ioctl(file_descriptor, JSIOCGNAME(sizeof(buf)), buf) < 0)
 				strncpy(buf, "Unknown", sizeof(buf));
 			snprintf(name, sizeof(name), "%s%s%s%s", buf, " (", gamepad_dev_name, ")");
-			kinc_internal_gamepad_trigger_connect(idx);
+			kore_internal_gamepad_trigger_connect(idx);
 		}
 	}
 
 	void HIDGamepad::close() {
 		if (connected) {
-			kinc_internal_gamepad_trigger_disconnect(idx);
+			kore_internal_gamepad_trigger_disconnect(idx);
 			::close(file_descriptor);
 			file_descriptor = -1;
 			connected = false;
@@ -84,11 +84,11 @@ namespace {
 	void HIDGamepad::processEvent(js_event e) {
 		switch (e.type) {
 		case JS_EVENT_BUTTON:
-			kinc_internal_gamepad_trigger_button(idx, e.number, e.value);
+			kore_internal_gamepad_trigger_button(idx, e.number, e.value);
 			break;
 		case JS_EVENT_AXIS: {
 			float value = e.number % 2 == 0 ? e.value : -e.value;
-			kinc_internal_gamepad_trigger_axis(idx, e.number, value / 32767.0f);
+			kore_internal_gamepad_trigger_axis(idx, e.number, value / 32767.0f);
 			break;
 		}
 		default:
@@ -96,35 +96,35 @@ namespace {
 		}
 	}
 
-	HIDGamepad gamepads[KINC_GAMEPAD_MAX_COUNT];
+	HIDGamepad gamepads[KORE_GAMEPAD_MAX_COUNT];
 }
 
 void Kore::initHIDGamepads() {
-	for (int i = 0; i < KINC_GAMEPAD_MAX_COUNT; ++i) {
+	for (int i = 0; i < KORE_GAMEPAD_MAX_COUNT; ++i) {
 		gamepads[i].init(i);
 	}
 }
 
 void Kore::updateHIDGamepads() {
-	for (int i = 0; i < KINC_GAMEPAD_MAX_COUNT; ++i) {
+	for (int i = 0; i < KORE_GAMEPAD_MAX_COUNT; ++i) {
 		gamepads[i].update();
 	}
 }
 
 void Kore::closeHIDGamepads() {}
 
-void kinc_gamepad_set_count(int count) {}
+void kore_gamepad_set_count(int count) {}
 
-const char *kinc_gamepad_vendor(int gamepad) {
+const char *kore_gamepad_vendor(int gamepad) {
 	return "Linux gamepad";
 }
 
-const char *kinc_gamepad_product_name(int gamepad) {
-	return gamepad >= 0 && gamepad < KINC_GAMEPAD_MAX_COUNT ? gamepads[gamepad].name : "";
+const char *kore_gamepad_product_name(int gamepad) {
+	return gamepad >= 0 && gamepad < KORE_GAMEPAD_MAX_COUNT ? gamepads[gamepad].name : "";
 }
 
-bool kinc_gamepad_connected(int gamepad) {
-	return gamepad >= 0 && gamepad < KINC_GAMEPAD_MAX_COUNT && gamepads[gamepad].connected;
+bool kore_gamepad_connected(int gamepad) {
+	return gamepad >= 0 && gamepad < KORE_GAMEPAD_MAX_COUNT && gamepads[gamepad].connected;
 }
 
-void kinc_gamepad_rumble(int gamepad, float left, float right) {}
+void kore_gamepad_rumble(int gamepad, float left, float right) {}
