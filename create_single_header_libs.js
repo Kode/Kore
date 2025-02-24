@@ -48,7 +48,7 @@ function miniPreprocessor(source) {
 					if (start >= 0 && end >= 0 && currentPragma.length > start + 1) {
 						const headerPath = currentPragma.substring(start + 1, end);
 
-						if (currentPragma.substring(start + 1).startsWith('kinc')) {
+						if (currentPragma.substring(start + 1).startsWith('kore')) {
 							let filePath = null;
 							if (headerPath.includes('FileReaderImpl') || headerPath.includes('Android')) {
 								if (!headers[headerPath]) {
@@ -129,10 +129,10 @@ function insertHeaders(file, headerPaths) {
 	return file;
 }
 
-const audio2_header = fs.readFileSync(path.resolve('Sources', 'kinc', 'audio2', 'audio.h'), {encoding: 'utf8'});
+const audio2_header = fs.readFileSync(path.resolve('Sources', 'kore', 'audio', 'audio.h'), {encoding: 'utf8'});
 let lib = '#pragma once\n' + miniPreprocessor(audio2_header);
 
-let windows_backend = fs.readFileSync(path.resolve('Backends', 'Audio2', 'WASAPI', 'Sources', 'kinc', 'backend', 'wasapi.c'), {encoding: 'utf8'});
+let windows_backend = fs.readFileSync(path.resolve('backends', 'audio', 'wasapi', 'sources', 'wasapi.c'), {encoding: 'utf8'});
 windows_backend = windows_backend.replace('#include <kore3/audio2/audio.h>', '');
 windows_backend = miniPreprocessor(windows_backend);
 

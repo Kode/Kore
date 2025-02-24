@@ -3,33 +3,33 @@ const path = require('path');
 
 const project = new Project('Kore');
 
-function addKincDefine(name) {
+function addKoreDefine(name) {
 	project.addDefine('KORE_' + name);
 }
 
 const g1 = true;
-addKincDefine('G1');
+addKoreDefine('G1');
 
 const g2 = true;
-addKincDefine('G2');
+addKoreDefine('G2');
 
 const g3 = true;
-addKincDefine('G3');
+addKoreDefine('G3');
 
 let g4 = false;
 
 let g5 = false;
 
 const a1 = true;
-addKincDefine('A1');
+addKoreDefine('A1');
 
 const a2 = true;
-addKincDefine('A2');
+addKoreDefine('A2');
 
 let a3 = false;
 
 // Setting lz4x to false adds a BSD 2-Clause licensed component,
-// which is a little more restrictive than Kinc's zlib license.
+// which is a little more restrictive than Kore's zlib license.
 const lz4x = true;
 
 project.addFile('includes/**');
@@ -57,7 +57,7 @@ addUnit('root');
 addUnit('util');
 
 if (lz4x) {
-	addKincDefine('LZ4X');
+	addKoreDefine('LZ4X');
 }
 else {
 	project.addFile('sources/libs/lz4/*');
@@ -107,22 +107,22 @@ if (platform === Platform.Windows) {
 	if (graphics === GraphicsApi.OpenGL) {
 		g4 = true;
 		addBackend('gpu/opengl');
-		addKincDefine('OPENGL');
+		addKoreDefine('OPENGL');
 		project.addDefine('GLEW_STATIC');
 	}
 	else if (graphics === GraphicsApi.Direct3D11) {
 		g4 = true;
 		addBackend('gpu/direct3d11');
-		addKincDefine('DIRECT3D');
-		addKincDefine('DIRECT3D11');
+		addKoreDefine('DIRECT3D');
+		addKoreDefine('DIRECT3D11');
 		project.addLib('d3d11');
 	}
 	else if (graphics === GraphicsApi.Direct3D12 || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
 		addBackend('gpu/direct3d12');
-		addKincDefine('DIRECT3D');
-		addKincDefine('DIRECT3D12');
+		addKoreDefine('DIRECT3D');
+		addKoreDefine('DIRECT3D12');
 		project.addLib('dxgi');
 		project.addLib('d3d12');
 	}
@@ -130,7 +130,7 @@ if (platform === Platform.Windows) {
 		g4 = true;
 		g5 = true;
 		addBackend('gpu/vulkan');
-		addKincDefine('VULKAN');
+		addKoreDefine('VULKAN');
 		project.addDefine('VK_USE_PLATFORM_WIN32_KHR');
 		if (!process.env.VULKAN_SDK) {
 			throw 'Could not find a Vulkan SDK';
@@ -159,8 +159,8 @@ if (platform === Platform.Windows) {
 	}
 
 	if (vr === VrApi.Oculus) {
-		addKincDefine('VR');
-		addKincDefine('OCULUS');
+		addKoreDefine('VR');
+		addKoreDefine('OCULUS');
 		project.addLibFor('x64', 'backends/system/windows/libraries/oculus/LibOVR/Lib/Windows/x64/Release/VS2017/LibOVR');
 		project.addLibFor('Win32', 'backends/system/windows/libraries/oculus/LibOVR/Lib/Windows/Win32/Release/VS2017/LibOVR');
 		project.addFile('backends/system/windows/libraries/oculus/LibOVRKernel/Src/GL/**');
@@ -168,8 +168,8 @@ if (platform === Platform.Windows) {
 		project.addIncludeDir('backends/system/windows/libraries/oculus/LibOVRKernel/Src/');
 	}
 	else if (vr === VrApi.SteamVR) {
-		addKincDefine('VR');
-		addKincDefine('STEAMVR');
+		addKoreDefine('VR');
+		addKoreDefine('STEAMVR');
 		project.addDefine('VR_API_PUBLIC');
 		project.addFile('backends/system/windows/libraries/steamvr/src/**');
 		project.addIncludeDir('backends/system/windows/libraries/steamvr/src');
@@ -191,7 +191,7 @@ if (platform === Platform.Windows) {
 }
 else if (platform === Platform.WindowsApp) {
 	g4 = true;
-	addKincDefine('WINDOWSAPP');
+	addKoreDefine('WINDOWSAPP');
 	addBackend('system/windowsapp');
 	addBackend('system/microsoft');
 	addBackend('gpu/direct3d11');
@@ -200,8 +200,8 @@ else if (platform === Platform.WindowsApp) {
 	project.vsdeploy = true;
 
 	if (vr === VrApi.HoloLens) {
-		addKincDefine('VR');
-		addKincDefine('HOLOLENS');
+		addKoreDefine('VR');
+		addKoreDefine('HOLOLENS');
 	}
 	else if (vr === VrApi.None) {
 
@@ -218,14 +218,14 @@ else if (platform === Platform.OSX) {
 		g4 = true;
 		g5 = true;
 		addBackend('gpu/metal');
-		addKincDefine('METAL');
+		addKoreDefine('METAL');
 		project.addLib('Metal');
 		project.addLib('MetalKit');
 	}
 	else if (graphics === GraphicsApi.OpenGL) {
 		g4 = true;
 		addBackend('gpu/opengl');
-		addKincDefine('OPENGL');
+		addKoreDefine('OPENGL');
 		project.addLib('OpenGL');
 	}
 	else {
@@ -243,7 +243,7 @@ else if (platform === Platform.OSX) {
 }
 else if (platform === Platform.iOS || platform === Platform.tvOS) {
 	if (platform === Platform.tvOS) {
-		addKincDefine('TVOS');
+		addKoreDefine('TVOS');
 	}
 	addBackend('system/apple');
 	addBackend('system/ios');
@@ -252,14 +252,14 @@ else if (platform === Platform.iOS || platform === Platform.tvOS) {
 		g4 = true;
 		g5 = true;
 		addBackend('gpu/metal');
-		addKincDefine('METAL');
+		addKoreDefine('METAL');
 		project.addLib('Metal');
 	}
 	else if (graphics === GraphicsApi.OpenGL) {
 		g4 = true;
 		addBackend('gpu/opengl');
-		addKincDefine('OPENGL');
-		addKincDefine('OPENGL_ES');
+		addKoreDefine('OPENGL');
+		addKoreDefine('OPENGL_ES');
 		project.addLib('OpenGLES');
 	}
 	else {
@@ -278,24 +278,24 @@ else if (platform === Platform.iOS || platform === Platform.tvOS) {
 	project.addLib('CoreMedia');
 }
 else if (platform === Platform.Android) {
-	addKincDefine('ANDROID');
+	addKoreDefine('ANDROID');
 	addBackend('system/android');
 	addBackend('system/posix');
 	if (graphics === GraphicsApi.Vulkan || graphics === GraphicsApi.Default) {
 		g4 = true;
 		g5 = true;
 		addBackend('gpu/vulkan');
-		addKincDefine('VULKAN');
+		addKoreDefine('VULKAN');
 		project.addDefine('VK_USE_PLATFORM_ANDROID_KHR');
 		project.addLib('vulkan');
-		addKincDefine('ANDROID_API=24');
+		addKoreDefine('ANDROID_API=24');
 	}
 	else if (graphics === GraphicsApi.OpenGL) {
 		g4 = true;
 		addBackend('gpu/opengl');
-		addKincDefine('OPENGL');
-		addKincDefine('OPENGL_ES');
-		addKincDefine('ANDROID_API=19');
+		addKoreDefine('OPENGL');
+		addKoreDefine('OPENGL_ES');
+		addKoreDefine('ANDROID_API=19');
 		project.addDefine('KORE_EGL');
 	}
 	else {
@@ -309,7 +309,7 @@ else if (platform === Platform.Android) {
 	project.addLib('OpenMAXAL');
 }
 else if (platform === Platform.Emscripten) {
-	addKincDefine('EMSCRIPTEN');
+	addKoreDefine('EMSCRIPTEN');
 	//project.addLib('websocket.js -sPROXY_POSIX_SOCKETS -sUSE_PTHREADS -sPROXY_TO_PTHREAD');
 	addBackend('system/emscripten');
 	project.addLib('USE_GLFW=2');
@@ -317,14 +317,14 @@ else if (platform === Platform.Emscripten) {
 		g4 = true;
 		g5 = true;
 		addBackend('gpu/webgpu');
-		addKincDefine('WEBGPU');
+		addKoreDefine('WEBGPU');
 	}
 	else if (graphics === GraphicsApi.OpenGL || graphics === GraphicsApi.Default) {
 		g4 = true;
 		addBackend('gpu/opengl');
 		project.addExclude('backends/Graphics4/opengl/sources/GL/**');
-		addKincDefine('OPENGL');
-		addKincDefine('OPENGL_ES');
+		addKoreDefine('OPENGL');
+		addKoreDefine('OPENGL_ES');
 		project.addLib('USE_WEBGL2=1');
 	}
 	else {
@@ -332,7 +332,7 @@ else if (platform === Platform.Emscripten) {
 	}
 }
 else if (platform === Platform.Wasm) {
-	addKincDefine('WASM');
+	addKoreDefine('WASM');
 	addBackend('system/wasm');
 	project.addIncludeDir('miniclib');
 	project.addFile('miniclib/**');
@@ -340,14 +340,14 @@ else if (platform === Platform.Wasm) {
 		g4 = true;
 		g5 = true;
 		addBackend('gpu/webgpu');
-		addKincDefine('WEBGPU');
+		addKoreDefine('WEBGPU');
 	}
 	else if (graphics === GraphicsApi.OpenGL || graphics === GraphicsApi.Default) {
 		g4 = true;
 		addBackend('gpu/opengl');
 		project.addExclude('backends/Graphics4/opengl/sources/GL/**');
-		addKincDefine('OPENGL');
-		addKincDefine('OPENGL_ES');
+		addKoreDefine('OPENGL');
+		addKoreDefine('OPENGL_ES');
 	}
 	else {
 		throw new Error('Graphics API ' + graphics + ' is not available for Wasm.');
@@ -355,7 +355,7 @@ else if (platform === Platform.Wasm) {
 }
 else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 	if (platform === Platform.FreeBSD) { // TODO
-		addKincDefine('LINUX');
+		addKoreDefine('LINUX');
 	}
 	addBackend('system/linux');
 	addBackend('system/posix');
@@ -473,14 +473,14 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 		g5 = true;
 		addBackend('gpu/vulkan');
 		project.addLib('vulkan');
-		addKincDefine('VULKAN');
+		addKoreDefine('VULKAN');
 	}
 	else if (graphics === GraphicsApi.OpenGL || (platform === Platform.FreeBSD && graphics === GraphicsApi.Default)) {
 		g4 = true;
 		addBackend('gpu/opengl');
 		project.addExclude('backends/Graphics4/opengl/sources/GL/glew.c');
 		project.addLib('GL');
-		addKincDefine('OPENGL');
+		addKoreDefine('OPENGL');
 		project.addLib('EGL');
 		project.addDefine('KORE_EGL');
 	}
@@ -488,21 +488,21 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 		throw new Error('Graphics API ' + graphics + ' is not available for Linux.');
 	}
 	if (platform === Platform.FreeBSD) { // TODO
-		addKincDefine('POSIX');
+		addKoreDefine('POSIX');
 	}
 	project.addDefine('_POSIX_C_SOURCE=200112L');
 	project.addDefine('_XOPEN_SOURCE=600');
 }
 else if (platform === Platform.Pi) {
 	g4 = true;
-	addKincDefine('RASPBERRY_PI');
+	addKoreDefine('RASPBERRY_PI');
 	addBackend('system/pi');
 	addBackend('system/posix');
 	addBackend('gpu/opengl');
 	project.addExclude('backends/Graphics4/opengl/sources/GL/**');
-	addKincDefine('OPENGL');
-	addKincDefine('OPENGL_ES');
-	addKincDefine('POSIX');
+	addKoreDefine('OPENGL');
+	addKoreDefine('OPENGL_ES');
+	addKoreDefine('POSIX');
 	project.addDefine('_POSIX_C_SOURCE=200112L');
 	project.addDefine('_XOPEN_SOURCE=600');
 	project.addIncludeDir('/opt/vc/include');
@@ -522,16 +522,16 @@ else {
 }
 
 if (g4) {
-	addKincDefine('G4');
+	addKoreDefine('G4');
 }
 else {
 	project.addExclude('sources/Kore/Graphics4/**');
 	project.addExclude('sources/kore3/graphics4/**');
 }
 
-addKincDefine('G5');
+addKoreDefine('G5');
 
-project.kincProcessed = true;
+project.koreProcessed = true;
 
 if (plugin) {
 	let backend = 'Unknown';

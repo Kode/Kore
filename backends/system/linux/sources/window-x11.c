@@ -48,7 +48,7 @@ int kore_x11_window_create(kore_window_parameters *win, kore_framebuffer_paramet
 	                                    InputOutput, visual, CWBorderPixel | CWColormap | CWEventMask, &set_window_attribs);
 
 	static char nameClass[256];
-	static const char *nameClassAddendum = "_KincApplication";
+	static const char *nameClassAddendum = "_KoreApplication";
 	strncpy(nameClass, kore_application_name(), sizeof(nameClass) - strlen(nameClassAddendum) - 1);
 	strcat(nameClass, nameClassAddendum);
 	char resNameBuffer[256];

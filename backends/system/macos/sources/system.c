@@ -7,7 +7,7 @@
 static int mouseX, mouseY;
 static bool keyboardShown = false;
 
-void Kinc_Mouse_GetPosition(int window, int *x, int *y) {
+void Kore_Mouse_GetPosition(int window, int *x, int *y) {
 	*x = mouseX;
 	*y = mouseY;
 }

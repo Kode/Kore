@@ -27,8 +27,8 @@ If applicable, add screenshots to help explain your problem.
 - Host system (where you compile your code):
 - Target system (where you run your code):
 - IDE and/or compiler used:
-- Kinc revision:
-- Kinc build output:
+- Kore revision:
+- Kore build output:
 - Application output (if it runs):
 
 **Additional context**

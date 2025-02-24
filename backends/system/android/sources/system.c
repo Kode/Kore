@@ -888,7 +888,7 @@ JNIEXPORT void JNICALL Java_tech_kore_KoreActivity_nativeKoreKeyPress(JNIEnv *en
 	(*env)->ReleaseStringChars(env, chars, text);
 }
 
-void KincAndroidKeyboardInit() {
+void KoreAndroidKeyboardInit() {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
 
@@ -913,7 +913,7 @@ void kore_keyboard_show() {
 	keyboard_active = true;
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "showKeyboard", "()V"));
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -922,7 +922,7 @@ void kore_keyboard_hide() {
 	keyboard_active = false;
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "hideKeyboard", "()V"));
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -934,7 +934,7 @@ bool kore_keyboard_active() {
 void kore_load_url(const char *url) {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jstring jurl = (*env)->NewStringUTF(env, url);
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "loadURL", "(Ljava/lang/String;)V"), jurl);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
@@ -943,7 +943,7 @@ void kore_load_url(const char *url) {
 void kore_vibrate(int ms) {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "vibrate", "(I)V"), ms);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -951,7 +951,7 @@ void kore_vibrate(int ms) {
 const char *kore_language() {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jstring s = (jstring)(*env)->CallStaticObjectMethod(env, koreActivityClass,
 	                                                    (*env)->GetStaticMethodID(env, koreActivityClass, "getLanguage", "()Ljava/lang/String;"));
 	const char *str = (*env)->GetStringUTFChars(env, s, 0);
@@ -1153,7 +1153,7 @@ void android_main(struct android_app *application) {
 	activity = application->activity;
 	initAndroidFileReader();
 	KoreAndroidVideoInit();
-	KincAndroidKeyboardInit();
+	KoreAndroidKeyboardInit();
 	application->onAppCmd = cmd;
 	application->onInputEvent = input;
 	activity->callbacks->onNativeWindowResized = resize;
@@ -1168,7 +1168,7 @@ void android_main(struct android_app *application) {
 	JNIEnv *env = NULL;
 	(*kore_android_get_activity()->vm)->AttachCurrentThread(kore_android_get_activity()->vm, &env, NULL);
 
-	jclass koreMoviePlayerClass = kore_android_find_class(env, "tech.kinc.KincMoviePlayer");
+	jclass koreMoviePlayerClass = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
 	jmethodID updateAll = (*env)->GetStaticMethodID(env, koreMoviePlayerClass, "updateAll", "()V");
 
 	while (!started) {
@@ -1179,7 +1179,7 @@ void android_main(struct android_app *application) {
 	kickstart(0, NULL);
 
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jmethodID FinishHim = (*env)->GetStaticMethodID(env, koreActivityClass, "stop", "()V");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, FinishHim);
 	(*activity->vm)->DetachCurrentThread(activity->vm);

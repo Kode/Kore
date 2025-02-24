@@ -107,9 +107,9 @@ class KoreActivity: NativeActivity(), KeyEvent.Callback {
 			}
 		}
 
-		class MyHandler(private val kincActivity: KoreActivity) : Handler() {
+		class MyHandler(private val koreActivity: KoreActivity) : Handler() {
 			override fun handleMessage(msg: Message) {
-				kincActivity.hideSystemUI()
+				koreActivity.hideSystemUI()
 			}
 		}
 	}

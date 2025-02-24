@@ -308,7 +308,7 @@ void wl_pointer_handle_motion(void *data, struct wl_pointer *wl_pointer, uint32_
 void wl_pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state) {
 	struct kore_wl_mouse *mouse = data;
 	struct kore_wl_window *window = &wl_ctx.windows[mouse->current_window];
-	int kore_button = button - BTN_MOUSE; // evdev codes should have the same order as Kinc buttons
+	int kore_button = button - BTN_MOUSE; // evdev codes should have the same order as Kore buttons
 	if (!window->decorations.server_side) {
 		if (kore_button == 0) {
 			enum xdg_toplevel_resize_edge edges = XDG_TOPLEVEL_RESIZE_EDGE_NONE;
@@ -465,7 +465,7 @@ void wl_keyboard_handle_leave(void *data, struct wl_keyboard *wl_keyboard, uint3
 	// struct kore_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
 }
 
-int xkb_to_kinc(xkb_keysym_t symbol);
+int xkb_to_kore(xkb_keysym_t symbol);
 
 void handle_paste(void *data, size_t data_size, void *user_data) {
 	kore_internal_paste_callback(data);
@@ -478,7 +478,7 @@ void wl_keyboard_handle_key(void *data, struct wl_keyboard *wl_keyboard, uint32_
 	if (keyboard->keymap && keyboard->state) {
 		xkb_keysym_t symbol = wl_xkb.xkb_state_key_get_one_sym(keyboard->state, key + 8);
 		uint32_t character = wl_xkb.xkb_state_key_get_utf32(keyboard->state, key + 8);
-		int kore_key = xkb_to_kinc(symbol);
+		int kore_key = xkb_to_kore(symbol);
 		if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
 			if (keyboard->ctrlDown && (symbol == XKB_KEY_c || symbol == XKB_KEY_C)) {
 				char *text = kore_internal_copy_callback();

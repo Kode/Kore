@@ -21,8 +21,8 @@ struct kore_window_parameters;
 struct kore_framebuffer_parameters;
 
 /// <summary>
-/// Initializes a Kinc application and creates an initial window for systems which support windows (systems which do not support windows are treated as if the
-/// would provide a single window which cannot change). This has to be called before any other Kinc-function with the exception of the Display-API which can
+/// Initializes a Kore application and creates an initial window for systems which support windows (systems which do not support windows are treated as if the
+/// would provide a single window which cannot change). This has to be called before any other Kore-function with the exception of the Display-API which can
 /// optionally be initialized beforehand using kore_display_init.
 /// </summary>
 /// <returns>The id of the initial window</returns>
@@ -127,12 +127,12 @@ KORE_FUNC int kore_hardware_threads(void);
 KORE_FUNC double kore_time(void);
 
 /// <summary>
-/// Starts Kinc's main-loop. kore_set_update_callback should be called before kore_start so the main-loop actually has something to do.
+/// Starts Kore's main-loop. kore_set_update_callback should be called before kore_start so the main-loop actually has something to do.
 /// </summary>
 KORE_FUNC void kore_start(void);
 
 /// <summary>
-/// Stops Kinc's main loop and thereby returns to the function which called kore_start.
+/// Stops Kore's main loop and thereby returns to the function which called kore_start.
 /// </summary>
 KORE_FUNC void kore_stop(void);
 
@@ -253,7 +253,7 @@ KORE_FUNC void kore_set_drop_files_callback(void (*callback)(wchar_t *, void *),
 
 /// <summary>
 /// Sets a callback which is called when the application is instructed to cut, typically via ctrl+x or cmd+x.
-/// Kinc does not take ownership of the provided string.
+/// Kore does not take ownership of the provided string.
 /// </summary>
 /// <param name="callback">The cut-callback</param>
 /// <param name="data">Arbitrary data-pointer that's passed to the callback</param>
@@ -261,7 +261,7 @@ KORE_FUNC void kore_set_cut_callback(char *(*callback)(void *), void *data);
 
 /// <summary>
 /// Sets a callback which is called when the application is instructed to copy, typically via ctrl+c or cmd+c.
-/// Kinc does not take ownership of the provided string.
+/// Kore does not take ownership of the provided string.
 /// </summary>
 /// <param name="callback">The copy-callback</param>
 /// <param name="data">Arbitrary data-pointer that's passed to the callback</param>

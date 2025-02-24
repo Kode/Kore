@@ -119,7 +119,7 @@ static int create_shm_fd(off_t size) {
 	// Alpine 3.12
 	// Fedora 34
 
-	fd = memfd_create("kinc-wayland-shm", MFD_CLOEXEC | MFD_ALLOW_SEALING);
+	fd = memfd_create("kore-wayland-shm", MFD_CLOEXEC | MFD_ALLOW_SEALING);
 	if (fd >= 0) {
 		fcntl(fd, F_ADD_SEALS, F_SEAL_SHRINK | F_SEAL_SEAL);
 		int ret = posix_fallocate(fd, 0, size);
@@ -134,7 +134,7 @@ static int create_shm_fd(off_t size) {
 #endif
 	{
 
-		static const char template[] = "/kinc-shared-XXXXXX";
+		static const char template[] = "/kore-shared-XXXXXX";
 
 		const char *path = getenv("XDG_RUNTIME_DIR");
 		if (!path) {
@@ -206,7 +206,7 @@ static int close_data[] = {
     0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xFFFFFFFF,
 };
 
-// image format is argb32, but kinc does not have that, so let's lie to it
+// image format is argb32, but Kore does not have that, so let's lie to it
 
 static kore_image grey_image = {
     1, 1, 0, KORE_IMAGE_FORMAT_RGBA32, 0, KORE_IMAGE_COMPRESSION_NONE, grey_data, sizeof(grey_data),
@@ -359,7 +359,7 @@ void kore_wayland_window_set_title(int window_index, const char *title);
 void kore_wayland_window_change_mode(int window_index, kore_window_mode mode);
 
 #ifndef KORE_WAYLAND_APP_ID
-#define KORE_WAYLAND_APP_ID "_KincApplication"
+#define KORE_WAYLAND_APP_ID "_KoreApplication"
 #endif
 
 int kore_wayland_window_create(kore_window_parameters *win, kore_framebuffer_parameters *frame) {

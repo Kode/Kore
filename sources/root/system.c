@@ -179,7 +179,7 @@ void kore_internal_logout_callback(void) {
 
 static bool running = false;
 // static bool showWindowFlag = true;
-static char application_name[1024] = {"Kinc Application"};
+static char application_name[1024] = {"Kore Application"};
 
 const char *kore_application_name(void) {
 	return application_name;

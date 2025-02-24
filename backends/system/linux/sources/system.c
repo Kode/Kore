@@ -285,10 +285,10 @@ int kore_hardware_threads(void) {
 
 #include <xkbcommon/xkbcommon.h>
 
-int xkb_to_kinc(xkb_keysym_t symbol) {
-#define KEY(xkb, kinc)                                                                                                                                         \
+int xkb_to_kore(xkb_keysym_t symbol) {
+#define KEY(xkb, kore)                                                                                                                                         \
 	case xkb:                                                                                                                                                  \
-		return kinc;
+		return kore;
 	switch (symbol) {
 		KEY(XKB_KEY_Right, KORE_KEY_RIGHT)
 		KEY(XKB_KEY_Left, KORE_KEY_LEFT)

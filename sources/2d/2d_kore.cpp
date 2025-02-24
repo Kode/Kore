@@ -30,7 +30,7 @@ void kore_g2_end(void) {
 }
 
 void kore_g2_draw_image(kore_g4_texture_t *img, float x, float y) {
-	tex->kincTexture = *img;
+	tex->koreTexture = *img;
 	tex->width = img->tex_width;
 	tex->height = img->tex_height;
 	tex->texWidth = img->tex_width;

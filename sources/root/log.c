@@ -27,13 +27,13 @@ void kore_log_args(kore_log_level level, const char *format, va_list args) {
 	va_copy(args_android_copy, args);
 	switch (level) {
 	case KORE_LOG_LEVEL_INFO:
-		__android_log_vprint(ANDROID_LOG_INFO, "Kinc", format, args_android_copy);
+		__android_log_vprint(ANDROID_LOG_INFO, "Kore", format, args_android_copy);
 		break;
 	case KORE_LOG_LEVEL_WARNING:
-		__android_log_vprint(ANDROID_LOG_WARN, "Kinc", format, args_android_copy);
+		__android_log_vprint(ANDROID_LOG_WARN, "Kore", format, args_android_copy);
 		break;
 	case KORE_LOG_LEVEL_ERROR:
-		__android_log_vprint(ANDROID_LOG_ERROR, "Kinc", format, args_android_copy);
+		__android_log_vprint(ANDROID_LOG_ERROR, "Kore", format, args_android_copy);
 		break;
 	}
 	va_end(args_android_copy);

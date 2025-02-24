@@ -707,7 +707,7 @@ bool kore_x11_handle_messages() {
 			case Button5:
 				kore_internal_mouse_trigger_scroll(window_index, 1);
 				break;
-			// button 6 and 7 seem to be horizontal scrolling, which is not exposed in Kinc's api at the moment
+			// button 6 and 7 seem to be horizontal scrolling, which is not exposed in Kore's api at the moment
 			case Button6:
 			case Button7:
 				break;

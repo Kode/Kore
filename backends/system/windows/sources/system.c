@@ -1342,7 +1342,7 @@ typedef BOOL(__stdcall *MiniDumpWriteDumpType)(IN HANDLE hProcess, IN DWORD Proc
 static MiniDumpWriteDumpType MyMiniDumpWriteDump;
 
 static LONG __stdcall MyCrashHandlerExceptionFilter(EXCEPTION_POINTERS *pEx) {
-	HANDLE file = CreateFileA("kinc.dmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE file = CreateFileA("kore.dmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (file != INVALID_HANDLE_VALUE) {
 		MINIDUMP_EXCEPTION_INFORMATION stMDEI;
 		stMDEI.ThreadId = GetCurrentThreadId();
@@ -1361,10 +1361,6 @@ static void init_crash_handler() {
 		SetUnhandledExceptionFilter(MyCrashHandlerExceptionFilter);
 	}
 }
-
-#ifdef KORE_KONG
-void kong_init(void);
-#endif
 
 int kore_init(const char *name, int width, int height, kore_window_parameters *win, kore_framebuffer_parameters *frame) {
 	init_crash_handler();

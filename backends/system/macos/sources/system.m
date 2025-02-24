@@ -24,12 +24,12 @@ const char *macgetresourcepath(void) {
 	return [[[NSBundle mainBundle] resourcePath] cStringUsingEncoding:NSUTF8StringEncoding];
 }
 
-@interface KincApplication : NSApplication {
+@interface KoreApplication : NSApplication {
 }
 - (void)terminate:(id)sender;
 @end
 
-@interface KincAppDelegate : NSObject <NSWindowDelegate> {
+@interface KoreAppDelegate : NSObject <NSWindowDelegate> {
 }
 - (void)windowWillClose:(NSNotification *)notification;
 - (void)windowDidResize:(NSNotification *)notification;
@@ -42,7 +42,7 @@ const char *macgetresourcepath(void) {
 static NSApplication *myapp;
 static NSWindow *window;
 static BasicOpenGLView *view;
-static KincAppDelegate *delegate;
+static KoreAppDelegate *delegate;
 static struct HIDManager *hidManager;
 
 /*struct KoreWindow : public KoreWindowBase {
@@ -110,7 +110,7 @@ static int createWindow(kore_window_parameters *parameters) {
 	view = [[BasicOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
 	[view registerForDraggedTypes:[NSArray arrayWithObjects:NSURLPboardType, nil]];
 	window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height) styleMask:styleMask backing:NSBackingStoreBuffered defer:TRUE];
-	delegate = [KincAppDelegate alloc];
+	delegate = [KoreAppDelegate alloc];
 	[window setDelegate:delegate];
 	[window setTitle:[NSString stringWithCString:parameters->title encoding:NSUTF8StringEncoding]];
 	[window setAcceptsMouseMovedEvents:YES];
@@ -175,7 +175,7 @@ static void addMenubar(void) {
 
 int kore_init(const char *name, int width, int height, kore_window_parameters *win, kore_framebuffer_parameters *frame) {
 	@autoreleasepool {
-		myapp = [KincApplication sharedApplication];
+		myapp = [KoreApplication sharedApplication];
 		[myapp finishLaunching];
 		[[NSRunningApplication currentApplication] activateWithOptions:(NSApplicationActivateAllWindows | NSApplicationActivateIgnoringOtherApps)];
 		NSApp.activationPolicy = NSApplicationActivationPolicyRegular;
@@ -269,7 +269,7 @@ int main(int argc, char **argv) {
 }
 #endif
 
-@implementation KincApplication
+@implementation KoreApplication
 
 - (void)terminate:(id)sender {
 	kore_stop();
@@ -277,7 +277,7 @@ int main(int argc, char **argv) {
 
 @end
 
-@implementation KincAppDelegate
+@implementation KoreAppDelegate
 - (BOOL)windowShouldClose:(NSWindow *)sender {
 	if (windows[0].closeCallback != NULL) {
 		if (windows[0].closeCallback(windows[0].closeCallbackData)) {

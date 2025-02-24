@@ -430,7 +430,7 @@ void kore_android_video_shutdown(kore_android_video_t *video) {
 
 #endif
 
-JNIEXPORT void JNICALL Java_tech_kore_KincMoviePlayer_nativeCreate(JNIEnv *env, jobject jobj, jstring jpath, jobject surface, jint id) {
+JNIEXPORT void JNICALL Java_tech_kore_KoreMoviePlayer_nativeCreate(JNIEnv *env, jobject jobj, jstring jpath, jobject surface, jint id) {
 #if KORE_ANDROID_API >= 15 && !defined(KORE_VULKAN)
 	const char *path = (*env)->GetStringUTFChars(env, jpath, NULL);
 	kore_android_video_t *av = malloc(sizeof *av);
@@ -451,16 +451,16 @@ void KoreAndroidVideoInit() {
 	JNIEnv *env;
 	(*kore_android_get_activity()->vm)->AttachCurrentThread(kore_android_get_activity()->vm, &env, NULL);
 
-	jclass clazz = kore_android_find_class(env, "tech.kinc.KincMoviePlayer");
+	jclass clazz = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
 
 	// String path, Surface surface, int id
-	JNINativeMethod methodTable[] = {{"nativeCreate", "(Ljava/lang/String;Landroid/view/Surface;I)V", (void *)Java_tech_kore_KincMoviePlayer_nativeCreate}};
+	JNINativeMethod methodTable[] = {{"nativeCreate", "(Ljava/lang/String;Landroid/view/Surface;I)V", (void *)Java_tech_kore_KoreMoviePlayer_nativeCreate}};
 
 	int methodTableSize = sizeof(methodTable) / sizeof(methodTable[0]);
 
 	int failure = (*env)->RegisterNatives(env, clazz, methodTable, methodTableSize);
 	if (failure != 0) {
-		kore_log(KORE_LOG_LEVEL_WARNING, "Failed to register KincMoviePlayer.nativeCreate");
+		kore_log(KORE_LOG_LEVEL_WARNING, "Failed to register KoreMoviePlayer.nativeCreate");
 	}
 
 	(*kore_android_get_activity()->vm)->DetachCurrentThread(kore_android_get_activity()->vm);
@@ -479,7 +479,7 @@ void kore_video_init(kore_video *video, const char *filename) {
 
 	JNIEnv *env = NULL;
 	(*kore_android_get_activity()->vm)->AttachCurrentThread(kore_android_get_activity()->vm, &env, NULL);
-	jclass koreMoviePlayerClass = kore_android_find_class(env, "tech.kinc.KincMoviePlayer");
+	jclass koreMoviePlayerClass = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
 	jmethodID constructor = (*env)->GetMethodID(env, koreMoviePlayerClass, "<init>", "(Ljava/lang/String;)V");
 	jobject object = (*env)->NewObject(env, koreMoviePlayerClass, constructor, (*env)->NewStringUTF(env, filename));
 
