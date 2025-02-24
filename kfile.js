@@ -32,8 +32,6 @@ let a3 = false;
 // which is a little more restrictive than Kinc's zlib license.
 const lz4x = true;
 
-project.addFile('sources/kinc/**');
-
 project.addFile('includes/**');
 
 function addUnit(name) {
@@ -528,7 +526,7 @@ if (g4) {
 }
 else {
 	project.addExclude('sources/Kore/Graphics4/**');
-	project.addExclude('sources/kinc/graphics4/**');
+	project.addExclude('sources/kore3/graphics4/**');
 }
 
 addKincDefine('G5');

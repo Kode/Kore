@@ -1,4 +1,4 @@
-//#include "kinc/graphics4/graphics.h"
+//#include "kore3/graphics4/graphics.h"
 #include <kore3/display.h>
 #include <kore3/input/gamepad.h>
 #include <kore3/input/keyboard.h>

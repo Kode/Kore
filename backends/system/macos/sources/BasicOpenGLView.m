@@ -6,7 +6,7 @@
 #include <kore3/system.h>
 
 #ifdef KORE_METAL
-//#include <kinc/graphics5/graphics.h>
+//#include <kore3/graphics5/graphics.h>
 #endif
 
 @implementation BasicOpenGLView

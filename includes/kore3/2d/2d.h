@@ -1,12 +1,12 @@
 #ifndef KORE_2D_HEADER
 #define KORE_2D_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #if 0
 
-#include <kinc/graphics4/texture.h>
-#include <kinc/math/matrix.h>
+#include <kore3/graphics4/texture.h>
+#include <kore3/math/matrix.h>
 
 /*! \file graphics.h
     \brief This is still in progress, please don't use it.

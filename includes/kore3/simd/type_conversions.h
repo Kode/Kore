@@ -2,7 +2,7 @@
 #define KORE_SIMD_TYPE_CONVERSIONS_HEADER
 
 #include "types.h"
-#include <kinc/global.h>
+#include <kore3/global.h>
 #include <string.h>
 
 /*! \file type_conversions.h

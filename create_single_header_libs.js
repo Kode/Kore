@@ -57,7 +57,7 @@ function miniPreprocessor(source) {
 								}
 							}
 							else {
-								if (headerPath.startsWith('kinc/backend')) {
+								if (headerPath.startsWith('kore3/backend')) {
 									filePath = path.resolve('Backends', 'System', 'Microsoft', 'Sources', headerPath);
 								}
 								else {
@@ -133,7 +133,7 @@ const audio2_header = fs.readFileSync(path.resolve('Sources', 'kinc', 'audio2', 
 let lib = '#pragma once\n' + miniPreprocessor(audio2_header);
 
 let windows_backend = fs.readFileSync(path.resolve('Backends', 'Audio2', 'WASAPI', 'Sources', 'kinc', 'backend', 'wasapi.c'), {encoding: 'utf8'});
-windows_backend = windows_backend.replace('#include <kinc/audio2/audio.h>', '');
+windows_backend = windows_backend.replace('#include <kore3/audio2/audio.h>', '');
 windows_backend = miniPreprocessor(windows_backend);
 
 lib = lib.replace('// BACKENDS-PLACEHOLDER', '#ifdef KORE_WINDOWS\n' + windows_backend + '\n#endif');

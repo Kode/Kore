@@ -1,8 +1,8 @@
-#include <kinc/graphics4/graphics.h>
-#include <kinc/graphics4/indexbuffer.h>
-#include <kinc/graphics4/texture.h>
-#include <kinc/graphics4/vertexbuffer.h>
-#include <kinc/math/matrix.h>
+#include <kore3/graphics4/graphics.h>
+#include <kore3/graphics4/indexbuffer.h>
+#include <kore3/graphics4/texture.h>
+#include <kore3/graphics4/vertexbuffer.h>
+#include <kore3/math/matrix.h>
 
 #include <kong.h>
 

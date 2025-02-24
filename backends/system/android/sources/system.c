@@ -3,11 +3,11 @@
 #include <kore3/error.h>
 // #include <GLContext.h>
 #include <kore3/backend/android.h>
-//#include <kinc/graphics4/graphics.h>
+//#include <kore3/graphics4/graphics.h>
 #include <kore3/input/gamepad.h>
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
-// #include <kinc/input/sensor.h>
+// #include <kore3/input/sensor.h>
 #include <kore3/backend/android_native_app_glue.h>
 #include <android/sensor.h>
 #include <android/window.h>

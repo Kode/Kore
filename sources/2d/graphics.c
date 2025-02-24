@@ -1,8 +1,8 @@
 #include "graphics.h"
 
-#include <kinc/image.h>
-#include <kinc/math/matrix.h>
-#include <kinc/video.h>
+#include <kore3/image.h>
+#include <kore3/math/matrix.h>
+#include <kore3/video.h>
 
 #include <assert.h>
 #include <math.h>

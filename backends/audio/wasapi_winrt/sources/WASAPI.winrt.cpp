@@ -1,10 +1,10 @@
-#include <kinc/audio2/audio.h>
+#include <kore3/audio2/audio.h>
 
-#include <kinc/backend/SystemMicrosoft.h>
+#include <kore3/backend/SystemMicrosoft.h>
 
-#include <kinc/error.h>
-#include <kinc/log.h>
-#include <kinc/threads/thread.h>
+#include <kore3/error.h>
+#include <kore3/log.h>
+#include <kore3/threads/thread.h>
 
 #include <AudioClient.h>
 #include <Windows.h>

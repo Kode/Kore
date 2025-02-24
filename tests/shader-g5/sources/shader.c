@@ -1,13 +1,13 @@
-#include <kinc/global.h>
-#include <kinc/graphics5/commandlist.h>
-#include <kinc/graphics5/graphics.h>
-#include <kinc/graphics5/indexbuffer.h>
-#include <kinc/graphics5/pipeline.h>
-#include <kinc/graphics5/shader.h>
-#include <kinc/graphics5/vertexbuffer.h>
-#include <kinc/io/filereader.h>
-#include <kinc/system.h>
-#include <kinc/window.h>
+#include <kore3/global.h>
+#include <kore3/graphics5/commandlist.h>
+#include <kore3/graphics5/graphics.h>
+#include <kore3/graphics5/indexbuffer.h>
+#include <kore3/graphics5/pipeline.h>
+#include <kore3/graphics5/shader.h>
+#include <kore3/graphics5/vertexbuffer.h>
+#include <kore3/io/filereader.h>
+#include <kore3/system.h>
+#include <kore3/window.h>
 
 #include <assert.h>
 #include <stdlib.h>

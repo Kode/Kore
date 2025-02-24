@@ -1,5 +1,5 @@
 #include <kore3/display.h>
-// #include <kinc/graphics4/graphics.h>
+// #include <kore3/graphics4/graphics.h>
 #include <kore3/window.h>
 
 static void (*resizeCallback)(int x, int y, void *data) = NULL;

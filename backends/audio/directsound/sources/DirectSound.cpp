@@ -1,9 +1,9 @@
 #include <kore3/audio/audio.h>
 
-#include <kinc/system.h>
+#include <kore3/system.h>
 
-#include <kinc/backend/SystemMicrosoft.h>
-#include <kinc/backend/Windows.h>
+#include <kore3/backend/SystemMicrosoft.h>
+#include <kore3/backend/Windows.h>
 
 #include <dsound.h>
 

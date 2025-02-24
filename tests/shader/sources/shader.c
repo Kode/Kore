@@ -1,11 +1,11 @@
-#include <kinc/graphics4/graphics.h>
-#include <kinc/graphics4/indexbuffer.h>
-#include <kinc/graphics4/pipeline.h>
-#include <kinc/graphics4/rendertarget.h>
-#include <kinc/graphics4/shader.h>
-#include <kinc/graphics4/vertexbuffer.h>
-#include <kinc/io/filereader.h>
-#include <kinc/system.h>
+#include <kore3/graphics4/graphics.h>
+#include <kore3/graphics4/indexbuffer.h>
+#include <kore3/graphics4/pipeline.h>
+#include <kore3/graphics4/rendertarget.h>
+#include <kore3/graphics4/shader.h>
+#include <kore3/graphics4/vertexbuffer.h>
+#include <kore3/io/filereader.h>
+#include <kore3/system.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"

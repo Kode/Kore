@@ -3,7 +3,7 @@
 
 #include <kore3/gpu/device.h>
 
-#include <kinc/math/matrix.h>
+#include <kore3/math/matrix.h>
 
 #include "descriptorset_structs.h"
 

@@ -5,8 +5,8 @@
 #include <kore3/gpu/device.h>
 #include <kore3/util/align.h>
 
-#include <kinc/log.h>
-#include <kinc/window.h>
+#include <kore3/log.h>
+#include <kore3/window.h>
 
 #include <assert.h>
 

@@ -5,7 +5,7 @@
 #include <emscripten/emscripten.h>
 
 #include <kore3/audio/audio.h>
-//#include <kinc/graphics4/graphics.h>
+//#include <kore3/graphics4/graphics.h>
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
 #include <kore3/log.h>

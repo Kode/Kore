@@ -5,7 +5,7 @@ extern "C" {
 #endif
 
 #if defined(KORE_VIDEO_GSTREAMER)
-#include <kinc/backend/video_gstreamer.h>
+#include <kore3/backend/video_gstreamer.h>
 #else
 typedef struct {
 	int nothing;

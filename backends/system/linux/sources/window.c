@@ -1,7 +1,7 @@
 #include <kore3/backend/funcs.h>
 
 #include <kore3/display.h>
-//#include <kinc/graphics4/graphics.h>
+//#include <kore3/graphics4/graphics.h>
 #include <kore3/window.h>
 
 #include <string.h>

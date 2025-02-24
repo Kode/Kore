@@ -2,14 +2,14 @@
 
 #if 0
 
-#include <kinc/graphics4/graphics.h>
-#include <kinc/graphics4/indexbuffer.h>
-#include <kinc/graphics4/pipeline.h>
-#include <kinc/graphics4/shader.h>
-#include <kinc/graphics4/texture.h>
-#include <kinc/graphics4/vertexbuffer.h>
-#include <kinc/io/filereader.h>
-#include <kinc/log.h>
+#include <kore3/graphics4/graphics.h>
+#include <kore3/graphics4/indexbuffer.h>
+#include <kore3/graphics4/pipeline.h>
+#include <kore3/graphics4/shader.h>
+#include <kore3/graphics4/texture.h>
+#include <kore3/graphics4/vertexbuffer.h>
+#include <kore3/io/filereader.h>
+#include <kore3/log.h>
 
 #if 0
 

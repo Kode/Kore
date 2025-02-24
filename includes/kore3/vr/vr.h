@@ -1,7 +1,7 @@
 #ifndef KORE_VR_HEADER
 #define KORE_VR_HEADER
 
-#include <kinc/global.h>
+#include <kore3/global.h>
 
 #include <kore3/math/matrix.h>
 #include <kore3/math/quaternion.h>

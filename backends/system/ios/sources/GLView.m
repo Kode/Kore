@@ -11,7 +11,7 @@
 #include <kore3/system.h>
 
 #ifdef KORE_OPENGL
-#include <kinc/backend/graphics4/OpenGLWindow.h>
+#include <kore3/backend/graphics4/OpenGLWindow.h>
 #endif
 
 static const int touchmaxcount = 20;

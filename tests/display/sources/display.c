@@ -1,5 +1,5 @@
-#include <kinc/display.h>
-#include <kinc/log.h>
+#include <kore3/display.h>
+#include <kore3/log.h>
 
 void print_mode(const char *indent, kore_display_mode_t mode) {
 	kore_log(KORE_LOG_LEVEL_INFO, "%sx: %i", indent, mode.x);

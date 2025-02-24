@@ -2,9 +2,9 @@
 
 #if 0
 
-#include <kinc/graphics1/graphics.h>
-#include <kinc/math/core.h>
-#include <kinc/math/matrix.h>
+#include <kore3/graphics1/graphics.h>
+#include <kore3/math/core.h>
+#include <kore3/math/matrix.h>
 
 #include <stdint.h>
 #include <string.h>

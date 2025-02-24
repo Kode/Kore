@@ -1,8 +1,8 @@
-#include "kinc/input/keyboard.h"
-#include "kinc/log.h"
-#include <kinc/graphics4/graphics.h>
-#include <kinc/input/mouse.h>
-#include <kinc/system.h>
+#include "kore3/input/keyboard.h"
+#include "kore3/log.h"
+#include <kore3/graphics4/graphics.h>
+#include <kore3/input/mouse.h>
+#include <kore3/system.h>
 
 #include <assert.h>
 #include <stdlib.h>
