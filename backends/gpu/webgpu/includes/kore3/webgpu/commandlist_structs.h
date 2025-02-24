@@ -1,7 +1,7 @@
 #ifndef KORE_WEBGPU_COMMANDLIST_STRUCTS_HEADER
 #define KORE_WEBGPU_COMMANDLIST_STRUCTS_HEADER
 
-#include <kore3/util/offalloc/offalloc.h>
+#include "webgpu.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,7 +20,8 @@ typedef struct kore_webgpu_buffer_access {
 } kore_webgpu_buffer_access;
 
 typedef struct kore_webgpu_command_list {
-	int nothing;
+	WGPUCommandEncoder command_encoder;
+	WGPURenderPassEncoder render_pass_encoder;
 } kore_webgpu_command_list;
 
 #ifdef __cplusplus

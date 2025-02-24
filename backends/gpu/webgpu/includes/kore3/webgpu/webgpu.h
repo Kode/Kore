@@ -62,25 +62,87 @@ typedef struct WGPUSwapChainDescriptor {
     WGPUPresentMode presentMode;
 } WGPUSwapChainDescriptor;
 
+typedef struct WGPUCommandEncoderDescriptor {
+	int nothing;
+} WGPUCommandEncoderDescriptor;
+
+typedef struct WGPUCommandEncoder {
+	int nothing;
+} WGPUCommandEncoder;
+
+typedef struct WGPUCommandBuffer {
+	int nothing;
+} WGPUCommandBuffer;
+
+typedef struct WGPUCommandBufferDescriptor {
+	int nothing;
+} WGPUCommandBufferDescriptor;
+
+typedef struct WGPURenderPassEncoder {
+	int nothing;
+} WGPURenderPassEncoder;
+
+typedef enum WGPULoadOp {
+	WGPULoadOp_Clear
+} WGPULoadOp;
+
+typedef enum WGPUStoreOp {
+	WGPUStoreOp_Store
+} WGPUStoreOp;
+
+typedef struct WGPUColor {
+	double r;
+	double g;
+	double b;
+	double a;
+} WGPUColor;
+
+typedef struct WGPURenderPassColorAttachment {
+	WGPULoadOp loadOp;
+	WGPUStoreOp storeOp;
+	WGPUColor clearValue;
+} WGPURenderPassColorAttachment;
+
+typedef struct WGPURenderPassDescriptor {
+	uint32_t colorAttachmentCount;
+	WGPURenderPassColorAttachment *colorAttachments;
+} WGPURenderPassDescriptor;
+
 static inline WGPUQueue wgpuDeviceGetQueue(WGPUDevice device) {
-	WGPUQueue queue = {
-		.nothing = 0,
-	};
+	WGPUQueue queue = {0};
 	return queue;
 }
 
 static inline WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor *surfaceDescriptor) {
-	WGPUSurface surface = {
-		.nothing = 0,
-	};
+	WGPUSurface surface = {0};
 	return surface;
 }
 
-static inline WGPUSwapChain wgpuDeviceCreateSwapChain(WGPUDevice device, WGPUSurface surface, const WGPUSwapChainDescriptor* swapChainDescriptor) {
-	WGPUSwapChain swapChain = {
-		.nothing = 0,
-	};
+static inline WGPUSwapChain wgpuDeviceCreateSwapChain(WGPUDevice device, WGPUSurface surface, const WGPUSwapChainDescriptor *swapChainDescriptor) {
+	WGPUSwapChain swapChain = {0};
 	return swapChain;
+}
+
+static inline WGPUCommandEncoder wgpuDeviceCreateCommandEncoder(WGPUDevice device, const WGPUCommandEncoderDescriptor *commandEncoderDescriptor) {
+	WGPUCommandEncoder encoder = {0};
+	return encoder;
+}
+
+static inline WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, const WGPUCommandBufferDescriptor *commandBufferDescriptor) {
+	WGPUCommandBuffer commandBuffer = {0};
+	return commandBuffer;
+}
+
+static inline void wgpuQueueSubmit(WGPUQueue queue, uint32_t count, WGPUCommandBuffer *commandBuffer) {}
+
+static inline void wgpuRenderPassEncoderDrawIndexed(WGPURenderPassEncoder renderPassEncoder, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex,
+	uint32_t firstInstance) {}
+
+static inline void wgpuRenderPassEncoderEnd(WGPURenderPassEncoder renderPassEncoder) {}
+
+static inline WGPURenderPassEncoder wgpuCommandEncoderBeginRenderPass(WGPUCommandEncoder commandEncoder, const WGPURenderPassDescriptor *renderPassDescriptor) {
+	WGPURenderPassEncoder renderPassEncoder = {0};
+	return renderPassEncoder;
 }
 
 #endif
