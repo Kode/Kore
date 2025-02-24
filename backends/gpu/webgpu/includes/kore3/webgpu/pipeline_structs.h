@@ -62,8 +62,7 @@ typedef struct kore_webgpu_vertex_buffer_layout {
 } kore_webgpu_vertex_buffer_layout;
 
 typedef struct kore_webgpu_shader {
-	uint8_t *data;
-	size_t size;
+	const char *function_name;
 } kore_webgpu_shader;
 
 #define KORE_WEBGPU_MAX_VERTEX_BUFFERS 16
