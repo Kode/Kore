@@ -1,0 +1,4 @@
+#ifndef KORE_OPENGL_UNIT_HEADER
+#define KORE_OPENGL_UNIT_HEADER
+
+#endif

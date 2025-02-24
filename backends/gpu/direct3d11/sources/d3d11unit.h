@@ -1,0 +1,4 @@
+#ifndef KORE_D3D11_UNIT_HEADER
+#define KORE_D3D11_UNIT_HEADER
+
+#endif
