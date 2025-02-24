@@ -3,10 +3,10 @@ name: Emscripten (WebGPU)
 on:
   push:
     branches:
-    - main
+    - v3
   pull_request:
     branches:
-    - main
+    - v3
 
 jobs:
   build:
