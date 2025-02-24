@@ -240,7 +240,7 @@ void kore_d3d12_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 	// buffer->impl.format = format;
 
 	// static_assert(sizeof(D3D12IindexBufferView) == sizeof(D3D12_INDEX_BUFFER_VIEW), "Something is wrong with D3D12IindexBufferView");
-	// int uploadBufferSize = format == KINC_G5_INDEX_BUFFER_FORMAT_16BIT ? sizeof(uint16_t) * count : sizeof(uint32_t) * count;
+	// int uploadBufferSize = format == KORE_G5_INDEX_BUFFER_FORMAT_16BIT ? sizeof(uint16_t) * count : sizeof(uint32_t) * count;
 
 	D3D12_HEAP_PROPERTIES props;
 	props.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;

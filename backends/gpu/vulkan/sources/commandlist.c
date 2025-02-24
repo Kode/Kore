@@ -71,7 +71,7 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	    .pStencilAttachment = VK_NULL_HANDLE,
 	};
 
-#ifndef KINC_ANDROID // TODO
+#ifndef KORE_ANDROID // TODO
 	vkCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
 #endif
 
@@ -94,7 +94,7 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 }
 
 void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
-#ifndef KINC_ANDROID // TODO
+#ifndef KORE_ANDROID // TODO
 	vkCmdEndRendering(list->vulkan.command_buffer);
 #endif
 }

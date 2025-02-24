@@ -1,10 +1,10 @@
 #include <kore3/threads/thread.h>
 
-#ifdef KINC_VTUNE
+#ifdef KORE_VTUNE
 #include <ittnotify.h>
 #endif
 
-#ifdef KINC_SUPERLUMINAL
+#ifdef KORE_SUPERLUMINAL
 #include <Superluminal/PerformanceAPI_capi.h>
 #endif
 
@@ -73,11 +73,11 @@ void kore_thread_set_name(const char *name) {
 		MySetThreadDescription(GetCurrentThread(), wide_name);
 	}
 
-#ifdef KINC_VTUNE
+#ifdef KORE_VTUNE
 	__itt_thread_set_name(name);
 #endif
 
-#ifdef KINC_SUPERLUMINAL
+#ifdef KORE_SUPERLUMINAL
 	PerformanceAPI_SetCurrentThreadName(name);
 #endif
 }

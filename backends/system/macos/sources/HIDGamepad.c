@@ -375,10 +375,10 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 	} while (1);
 }
 
-const char *kinc_gamepad_vendor(int gamepad) {
+const char *kore_gamepad_vendor(int gamepad) {
 	return "unknown";
 }
 
-const char *kinc_gamepad_product_name(int gamepad) {
+const char *kore_gamepad_product_name(int gamepad) {
 	return "unknown";
 }

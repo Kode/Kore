@@ -29,8 +29,8 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 	kore_internal_window_width = width;
 	kore_internal_window_height = height;
 
-	//kinc_g4_internal_init();
-	//kinc_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
+	//kore_g4_internal_init();
+	//kore_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
 
 	return 0;
 }

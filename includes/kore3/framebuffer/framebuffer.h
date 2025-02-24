@@ -41,7 +41,7 @@ KORE_FUNC void kore_fb_begin(void);
 
 /// <summary>
 /// Typically called once per frame after all G1-drawing is finished. This also swaps the framebuffers
-/// so an equivalent call to kinc_g4_swap_buffers is not needed.
+/// so an equivalent call to kore_g4_swap_buffers is not needed.
 /// </summary>
 KORE_FUNC void kore_fb_end(void);
 

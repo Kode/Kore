@@ -22,7 +22,7 @@ void kore_mutex_unlock(kore_mutex *mutex) {
 }
 
 bool kore_uber_mutex_init(kore_uber_mutex *mutex, const char *name) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	mutex->impl.id = (void *)CreateMutexA(NULL, FALSE, name);
 	HRESULT res = GetLastError();
 	if (res && res != ERROR_ALREADY_EXISTS) {
@@ -37,7 +37,7 @@ bool kore_uber_mutex_init(kore_uber_mutex *mutex, const char *name) {
 }
 
 void kore_uber_mutex_destroy(kore_uber_mutex *mutex) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	if (mutex->impl.id) {
 		CloseHandle((HANDLE)mutex->impl.id);
 		mutex->impl.id = NULL;
@@ -46,14 +46,14 @@ void kore_uber_mutex_destroy(kore_uber_mutex *mutex) {
 }
 
 void kore_uber_mutex_lock(kore_uber_mutex *mutex) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	bool succ = WaitForSingleObject((HANDLE)mutex->impl.id, INFINITE) == WAIT_FAILED ? false : true;
 	assert(succ);
 #endif
 }
 
 void kore_uber_mutex_unlock(kore_uber_mutex *mutex) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	bool succ = ReleaseMutex((HANDLE)mutex->impl.id) == FALSE ? false : true;
 	assert(succ);
 #endif

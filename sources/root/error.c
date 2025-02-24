@@ -4,7 +4,7 @@
 
 #include <stdlib.h>
 
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 
 #include <kore3/backend/microsoft.h>
 #include <kore3/backend/windowsmini.h>
@@ -43,7 +43,7 @@ void kore_error_message(const char *format, ...) {
 		va_end(args);
 	}
 
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 	{
 		va_list args;
 		va_start(args, format);
@@ -54,7 +54,7 @@ void kore_error_message(const char *format, ...) {
 	}
 #endif
 
-#ifndef KINC_NO_CLIB
+#ifndef KORE_NO_CLIB
 	exit(EXIT_FAILURE);
 #endif
 }
@@ -62,13 +62,13 @@ void kore_error_message(const char *format, ...) {
 void kore_error_args(const char *format, va_list args) {
 	kore_log_args(KORE_LOG_LEVEL_ERROR, format, args);
 
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 	wchar_t buffer[4096];
 	kore_microsoft_format(format, args, buffer);
 	MessageBoxW(NULL, buffer, L"Error", 0);
 #endif
 
-#ifndef KINC_NO_CLIB
+#ifndef KORE_NO_CLIB
 	exit(EXIT_FAILURE);
 #endif
 }

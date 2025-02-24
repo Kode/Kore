@@ -127,13 +127,13 @@ void kore_video_init(kore_video *video, const char *filename) {
 	video->impl.sound = NULL;
 	video->impl.image_initialized = false;
 	char name[2048];
-#ifdef KINC_IOS
+#ifdef KORE_IOS
 	strcpy(name, iphonegetresourcepath());
 #else
 	strcpy(name, macgetresourcepath());
 #endif
 	strcat(name, "/");
-	strcat(name, KINC_DEBUGDIR);
+	strcat(name, KORE_DEBUGDIR);
 	strcat(name, "/");
 	strcat(name, filename);
 	video->impl.url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:name]];
@@ -148,7 +148,7 @@ void kore_video_destroy(kore_video *video) {
 	kore_video_stop(video);
 }
 
-#ifdef KINC_IOS
+#ifdef KORE_IOS
 void iosPlayVideoSoundStream(kore_internal_video_sound_stream *video);
 void iosStopVideoSoundStream(void);
 #else
@@ -163,7 +163,7 @@ void kore_video_play(kore_video *video, bool loop) {
 	kore_internal_video_sound_stream *stream = (kore_internal_video_sound_stream *)malloc(sizeof(kore_internal_video_sound_stream));
 	kore_internal_video_sound_stream_init(stream, 2, 44100);
 	video->impl.sound = stream;
-#ifdef KINC_IOS
+#ifdef KORE_IOS
 	iosPlayVideoSoundStream((kore_internal_video_sound_stream *)video->impl.sound);
 #else
 	macPlayVideoSoundStream((kore_internal_video_sound_stream *)video->impl.sound);
@@ -178,7 +178,7 @@ void kore_video_pause(kore_video *video) {
 	video->impl.playing = false;
 	if (video->impl.sound != NULL) {
 // Mixer::stop(sound);
-#ifdef KINC_IOS
+#ifdef KORE_IOS
 		iosStopVideoSoundStream();
 #else
 		macStopVideoSoundStream();
@@ -230,17 +230,17 @@ static void updateImage(kore_video *video) {
 			CGSize size = CVImageBufferGetDisplaySize(pixelBuffer);
 			video->impl.myWidth = size.width;
 			video->impl.myHeight = size.height;
-			// kinc_g4_texture_init(&video->impl.image, kinc_video_width(video), kinc_video_height(video), KINC_IMAGE_FORMAT_BGRA32); // TODO
+			// kore_g4_texture_init(&video->impl.image, kore_video_width(video), kore_video_height(video), KORE_IMAGE_FORMAT_BGRA32); // TODO
 			video->impl.image_initialized = true;
 		}
 
 		if (pixelBuffer != NULL) {
 			CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-#ifdef KINC_OPENGL
-			kinc_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer),
+#ifdef KORE_OPENGL
+			kore_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer),
 			                       (int)(CVPixelBufferGetBytesPerRow(pixelBuffer) / 4));
 #else
-			// kinc_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer), (int)(CVPixelBufferGetBytesPerRow(pixelBuffer))); // TODO
+			// kore_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer), (int)(CVPixelBufferGetBytesPerRow(pixelBuffer))); // TODO
 #endif
 			CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 		}

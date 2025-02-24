@@ -25,9 +25,9 @@ int kore_primary_display(void) {
 
 static int width() {
 	JNIEnv *env;
-	JavaVM *vm = kinc_android_get_activity()->vm;
+	JavaVM *vm = kore_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kore.KoreActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jmethodID koreActivityGetScreenDpi = (*env)->GetStaticMethodID(env, koreActivityClass, "getDisplayWidth", "()I");
 	int width = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
 	(*vm)->DetachCurrentThread(vm);
@@ -36,9 +36,9 @@ static int width() {
 
 static int height() {
 	JNIEnv *env;
-	JavaVM *vm = kinc_android_get_activity()->vm;
+	JavaVM *vm = kore_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kinc.KincActivity");
 	jmethodID koreActivityGetScreenDpi = (*env)->GetStaticMethodID(env, koreActivityClass, "getDisplayHeight", "()I");
 	int height = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
 	(*vm)->DetachCurrentThread(vm);
@@ -47,9 +47,9 @@ static int height() {
 
 static int pixelsPerInch() {
 	JNIEnv *env;
-	JavaVM *vm = kinc_android_get_activity()->vm;
+	JavaVM *vm = kore_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kinc.KincActivity");
 	jmethodID koreActivityGetScreenDpi = (*env)->GetStaticMethodID(env, koreActivityClass, "getScreenDpi", "()I");
 	int dpi = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
 	(*vm)->DetachCurrentThread(vm);
@@ -58,9 +58,9 @@ static int pixelsPerInch() {
 
 static int refreshRate() {
 	JNIEnv *env;
-	JavaVM *vm = kinc_android_get_activity()->vm;
+	JavaVM *vm = kore_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kinc.KincActivity");
 	jmethodID koreActivityGetScreenDpi = (*env)->GetStaticMethodID(env, koreActivityClass, "getRefreshRate", "()I");
 	int dpi = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
 	(*vm)->DetachCurrentThread(vm);

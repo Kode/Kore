@@ -5,7 +5,7 @@
 #include <kore3/gpu/device.h>
 #include <kore3/util/align.h>
 
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 #include <kore3/backend/windows.h>
 #endif
 
@@ -44,7 +44,7 @@ static VkBool32 debug_callback(VkDebugUtilsMessageSeverityFlagBitsEXT message_se
 	return VK_FALSE;
 }
 
-#ifndef KINC_ANDROID
+#ifndef KORE_ANDROID
 static VKAPI_ATTR void *VKAPI_CALL vulkan_realloc(void *pUserData, void *pOriginal, size_t size, size_t alignment, VkSystemAllocationScope allocationScope) {
 #ifdef _MSC_VER
 	return _aligned_realloc(pOriginal, size, alignment);
@@ -243,7 +243,7 @@ void find_gpu(void) {
 		bool can_render = false;
 
 		for (uint32_t queue_index = 0; queue_index < queue_count; ++queue_index) {
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 			if (vkGetPhysicalDeviceWin32PresentationSupportKHR(current_gpu, queue_index)) {
 				can_present = true;
 			}
@@ -304,7 +304,7 @@ uint32_t find_graphics_queue_family(void) {
 
 	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_family_count, queue_family_props);
 
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 	for (uint32_t queue_family_index = 0; queue_family_index < queue_family_count; ++queue_family_index) {
 		if ((queue_family_props[queue_family_index].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0 &&
 		    vkGetPhysicalDeviceWin32PresentationSupportKHR(gpu, queue_family_index)) {
@@ -343,14 +343,14 @@ static VkSurfaceFormatKHR find_surface_format(VkSurfaceKHR surface) {
 }
 
 static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_family_index) {
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 	HWND window_handle = kore_windows_window_handle(0);
 #endif
 	uint32_t window_width = kore_window_width(0);
 	uint32_t window_height = kore_window_height(0);
 	bool vsync = true; // kore_window_vsynced(0); // TODO
 
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 	const VkWin32SurfaceCreateInfoKHR surface_create_info = {
 	    .sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
 	    .pNext = NULL,
@@ -363,7 +363,7 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 	VkSurfaceKHR surface = {0};
 	VkResult result = VK_SUCCESS;
 
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 	result = vkCreateWin32SurfaceKHR(instance, &surface_create_info, NULL, &surface);
 #endif
 
@@ -540,7 +540,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	instance_extensions[instance_extensions_count++] = VK_KHR_SURFACE_EXTENSION_NAME;
 	instance_extensions[instance_extensions_count++] = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME;
 	instance_extensions[instance_extensions_count++] = VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 	instance_extensions[instance_extensions_count++] = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
 #endif
 
@@ -572,7 +572,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .ppEnabledExtensionNames = (const char *const *)instance_extensions,
 	};
 
-#ifndef KINC_ANDROID
+#ifndef KORE_ANDROID
 	const VkAllocationCallbacks allocator_callbacks = {
 	    .pfnAllocation = vulkan_alloc,
 	    .pfnFree = vulkan_free,
@@ -616,7 +616,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	// Allows negative viewport height to flip viewport
 	device_extensions[device_extensions_count++] = VK_KHR_MAINTENANCE1_EXTENSION_NAME;
 
-#ifdef KINC_VKRT
+#ifdef KORE_VKRT
 	device_extensions[device_extensions_count++] = VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME;
 	device_extensions[device_extensions_count++] = VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME;
 	device_extensions[device_extensions_count++] = VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME;
@@ -677,7 +677,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .dynamicRendering = VK_TRUE,
 	};
 
-#ifdef KINC_VKRT
+#ifdef KORE_VKRT
 	const VkPhysicalDeviceRayTracingPipelineFeaturesKHR raytracing_pipeline = {
 	    .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
 	    .pNext = dynamic_rendering,
@@ -709,7 +709,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .enabledExtensionCount = device_extensions_count,
 	    .ppEnabledExtensionNames = (const char *const *)device_extensions,
 
-#ifdef KINC_VKRT
+#ifdef KORE_VKRT
 	    .pNext = &buffer_device_address,
 #else
 	    .pNext = &dynamic_rendering,
@@ -785,7 +785,7 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_INDIRECT) != 0) {
 		usage |= VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
 	}
-#ifdef KINC_VKRT
+#ifdef KORE_VKRT
 	usage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
 #endif
 
@@ -814,7 +814,7 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	    memory_type_from_properties(device, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memory_allocate_info.memoryTypeIndex);
 	assert(memory_type_found);
 
-#ifdef KINC_VKRT
+#ifdef KORE_VKRT
 	const VkMemoryAllocateFlagsInfo memory_allocate_flags_info = {
 	    .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO,
 	    .flags = VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT_KHR,

@@ -1,21 +1,21 @@
-const kinc_g2_constants: {
+const kore_g2_constants: {
 	projection: float4x4;
 };
 
-struct kinc_g2_colored_vertex_in {
+struct kore_g2_colored_vertex_in {
 	pos: float3;
 	col: float4;
 }
 
-struct kinc_g2_colored_vertex_out {
+struct kore_g2_colored_vertex_out {
 	pos: float4;
 	col: float4;
 }
 
-fun kinc_g2_colored_vertex(input: kinc_g2_colored_vertex_in): kinc_g2_colored_vertex_out {
-	var output: kinc_g2_colored_vertex_out;
+fun kore_g2_colored_vertex(input: kore_g2_colored_vertex_in): kore_g2_colored_vertex_out {
+	var output: kore_g2_colored_vertex_out;
 
-	output.pos = kinc_g2_constants.projection * float4(input.pos, 1.0);
+	output.pos = kore_g2_constants.projection * float4(input.pos, 1.0);
 	output.pos.z = 0.5;
 	output.pos.w = 1.0;
 	output.col = input.col;
@@ -23,36 +23,36 @@ fun kinc_g2_colored_vertex(input: kinc_g2_colored_vertex_in): kinc_g2_colored_ve
 	return output;
 }
 
-fun kinc_g2_colored_fragment(input: kinc_g2_colored_vertex_out): float4 {
+fun kore_g2_colored_fragment(input: kore_g2_colored_vertex_out): float4 {
 	return input.col;
 }
 
 #[pipe]
-struct kinc_g2_colored_pipeline {
-	vertex = kinc_g2_colored_vertex;
-	fragment = kinc_g2_colored_fragment;
+struct kore_g2_colored_pipeline {
+	vertex = kore_g2_colored_vertex;
+	fragment = kore_g2_colored_fragment;
 	blend_source = BLEND_ONE;
 	blend_destination = BLEND_INV_SOURCE_ALPHA;
 	alpha_blend_source = BLEND_ONE;
 	alpha_blend_destination = BLEND_INV_SOURCE_ALPHA;
 }
 
-struct kinc_g2_image_vertex_in {
+struct kore_g2_image_vertex_in {
 	pos: float3;
 	tex: float2;
 	col: float4;
 }
 
-struct kinc_g2_image_vertex_out {
+struct kore_g2_image_vertex_out {
 	pos: float4;
 	tex: float2;
 	col: float4;
 }
 
-fun kinc_g2_image_vertex(input: kinc_g2_image_vertex_in): kinc_g2_image_vertex_out {
-	var output: kinc_g2_image_vertex_out;
+fun kore_g2_image_vertex(input: kore_g2_image_vertex_in): kore_g2_image_vertex_out {
+	var output: kore_g2_image_vertex_out;
 
-	output.pos = kinc_g2_constants.projection * float4(input.pos, 1.0);
+	output.pos = kore_g2_constants.projection * float4(input.pos, 1.0);
 	output.pos.z = 0.5;
 	output.pos.w = 1.0;
 	output.tex = input.tex;
@@ -61,19 +61,19 @@ fun kinc_g2_image_vertex(input: kinc_g2_image_vertex_in): kinc_g2_image_vertex_o
 	return output;
 }
 
-const kinc_g2_texture: tex2d;
-const kinc_g2_sampler: sampler;
+const kore_g2_texture: tex2d;
+const kore_g2_sampler: sampler;
 
-fun kinc_g2_image_fragment(input: kinc_g2_image_vertex_out): float4 {
-	var texcolor: float4 = sample(kinc_g2_texture, kinc_g2_sampler, input.tex) * input.col;
+fun kore_g2_image_fragment(input: kore_g2_image_vertex_out): float4 {
+	var texcolor: float4 = sample(kore_g2_texture, kore_g2_sampler, input.tex) * input.col;
 	texcolor.rgb *= input.col.a;
 	return texcolor;
 }
 
 #[pipe]
-struct kinc_g2_image_pipeline {
-	vertex = kinc_g2_image_vertex;
-	fragment = kinc_g2_image_fragment;
+struct kore_g2_image_pipeline {
+	vertex = kore_g2_image_vertex;
+	fragment = kore_g2_image_fragment;
 	blend_source = BLEND_ONE;
 	blend_destination = BLEND_INV_SOURCE_ALPHA;
 	alpha_blend_source = BLEND_ONE;

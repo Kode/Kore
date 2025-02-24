@@ -146,11 +146,11 @@ static bool check_u32(const char *name, kore_uint32x4 result, const uint32_t exp
 }
 
 int kickstart(int argc, char **argv) {
-#if defined(KINC_SSE2)
+#if defined(KORE_SSE2)
 	kore_log(KORE_LOG_LEVEL_INFO, "Using SSE2\n");
-#elif defined(KINC_SSE)
+#elif defined(KORE_SSE)
 	kore_log(KORE_LOG_LEVEL_INFO, "Using SSE for float32x4 and scalar fallback for all integer types\n");
-#elif defined(KINC_NEON)
+#elif defined(KORE_NEON)
 	kore_log(KORE_LOG_LEVEL_INFO, "Using NEON\n");
 #else
 	kore_log(KORE_LOG_LEVEL_INFO, "Using scalar fallback implementation\n");

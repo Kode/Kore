@@ -128,7 +128,7 @@ static MTLPixelFormat convert_format(kore_gpu_texture_format format) {
 		case KORE_GPU_TEXTURE_FORMAT_RGBA32_FLOAT:
 			return MTLPixelFormatRGBA32Float;
 		case KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM:
-#ifdef KINC_IOS
+#ifdef KORE_IOS
 			assert(false);
 			return MTLPixelFormatRGBA8Unorm;
 #else
@@ -136,7 +136,7 @@ static MTLPixelFormat convert_format(kore_gpu_texture_format format) {
 #endif
 		case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_NOTHING8:
 		case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_STENCIL8:
-#ifdef KINC_IOS
+#ifdef KORE_IOS
 			assert(false);
 			return MTLPixelFormatDepth32Float_Stencil8;
 #else

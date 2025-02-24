@@ -1,6 +1,6 @@
 #include <kore3/video.h>
 
-#if !defined(KINC_VIDEO_GSTREAMER)
+#if !defined(KORE_VIDEO_GSTREAMER)
 void kore_video_init(kore_video *video, const char *filename) {}
 
 void kore_video_destroy(kore_video *video) {}

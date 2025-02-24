@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef KINC_MICROSOFT
+#ifdef KORE_MICROSOFT
 #include <kore3/backend/microsoft.h>
 #include <kore3/backend/windowsmini.h>
 #endif
 
-#ifdef KINC_ANDROID
+#ifdef KORE_ANDROID
 #include <android/log.h>
 #endif
 
@@ -22,7 +22,7 @@ void kore_log(kore_log_level level, const char *format, ...) {
 #define UTF8
 
 void kore_log_args(kore_log_level level, const char *format, va_list args) {
-#ifdef KINC_ANDROID
+#ifdef KORE_ANDROID
 	va_list args_android_copy;
 	va_copy(args_android_copy, args);
 	switch (level) {
@@ -38,13 +38,13 @@ void kore_log_args(kore_log_level level, const char *format, va_list args) {
 	}
 	va_end(args_android_copy);
 #endif
-#ifdef KINC_MICROSOFT
+#ifdef KORE_MICROSOFT
 #ifdef UTF8
 	wchar_t buffer[4096];
 	kore_microsoft_format(format, args, buffer);
 	wcscat(buffer, L"\r\n");
 	OutputDebugStringW(buffer);
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 	DWORD written;
 	WriteConsoleW(GetStdHandle(level == KORE_LOG_LEVEL_INFO ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE), buffer, (DWORD)wcslen(buffer), &written, NULL);
 #endif
@@ -53,7 +53,7 @@ void kore_log_args(kore_log_level level, const char *format, va_list args) {
 	vsnprintf(buffer, 4090, format, args);
 	strcat(buffer, "\r\n");
 	OutputDebugStringA(buffer);
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 	DWORD written;
 	WriteConsoleA(GetStdHandle(level == KORE_LOG_LEVEL_INFO ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE), buffer, (DWORD)strlen(buffer), &written, NULL);
 #endif

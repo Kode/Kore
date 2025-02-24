@@ -55,7 +55,7 @@ static struct HIDManager *hidManager;
     }
 };*/
 
-#ifdef KINC_METAL
+#ifdef KORE_METAL
 CAMetalLayer *getMetalLayer(void) {
 	return [view metalLayer];
 }
@@ -91,7 +91,7 @@ bool kore_internal_handle_messages(void) {
 }
 
 void swapBuffersMac(int windowId) {
-#ifndef KINC_METAL
+#ifndef KORE_METAL
 	[windows[windowId].view switchBuffers];
 #endif
 }
@@ -205,8 +205,8 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 	}
 
 	/*int windowId = */createWindow(win);
-	// kinc_g4_internal_init(); // TODO
-	// kinc_g4_internal_init_window(windowId, frame->depth_bits, frame->stencil_bits, true); // TODO
+	// kore_g4_internal_init(); // TODO
+	// kore_g4_internal_init_window(windowId, frame->depth_bits, frame->stencil_bits, true); // TODO
 
 	return 0;
 }
@@ -263,7 +263,7 @@ const char *kore_internal_save_path(void) {
 	return getSavePath();
 }
 
-#ifndef KINC_NO_MAIN
+#ifndef KORE_NO_MAIN
 int main(int argc, char **argv) {
 	return kickstart(argc, argv);
 }

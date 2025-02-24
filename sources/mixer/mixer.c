@@ -220,7 +220,7 @@ void kore_mixer_stop_sound_stream(kore_mixer_sound_stream *stream) {
 	kore_mutex_unlock(&mutex);
 }
 
-void kinc_internal_play_video_sound_stream(struct kore_internal_video_sound_stream *stream) {
+void kore_internal_play_video_sound_stream(struct kore_internal_video_sound_stream *stream) {
 	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (videos[i].stream == NULL) {
@@ -232,7 +232,7 @@ void kinc_internal_play_video_sound_stream(struct kore_internal_video_sound_stre
 	kore_mutex_unlock(&mutex);
 }
 
-void kinc_internal_stop_video_sound_stream(struct kore_internal_video_sound_stream *stream) {
+void kore_internal_stop_video_sound_stream(struct kore_internal_video_sound_stream *stream) {
 	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (videos[i].stream == stream) {

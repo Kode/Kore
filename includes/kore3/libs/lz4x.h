@@ -445,7 +445,7 @@ static size_t kwrite(void* src, size_t size, char* dst, size_t* offset, int maxO
 }
 
 //int decompress()
-#ifdef KINC_LZ4X
+#ifdef KORE_LZ4X
 #include <kore3/error.h>
 
 int LZ4_decompress_safe(const char *source, char *buf, int compressedSize, int maxOutputSize)

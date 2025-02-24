@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 
 // Windows 7
 #define WINVER 0x0601
@@ -54,7 +54,7 @@
 
 #include <Ws2tcpip.h>
 #include <winsock2.h>
-#elif defined(KINC_POSIX) || defined(KINC_EMSCRIPTEN)
+#elif defined(KORE_POSIX) || defined(KORE_EMSCRIPTEN)
 #include <arpa/inet.h> // for inet_addr()
 #include <ctype.h>
 #include <fcntl.h>
@@ -66,20 +66,20 @@
 #include <unistd.h>
 #endif
 
-#if defined(KINC_EMSCRIPTEN)
+#if defined(KORE_EMSCRIPTEN)
 #include <emscripten.h>
 #include <emscripten/posix_socket.h>
 #include <emscripten/threading.h>
 #include <emscripten/websocket.h>
 
 static EMSCRIPTEN_WEBSOCKET_T bridgeSocket = 0;
-#elif defined(KINC_POSIX)
+#elif defined(KORE_POSIX)
 #include <sys/select.h>
 #endif
 
 static int counter = 0;
 
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 // Important: Must be cleaned with freeaddrinfo(address) later if the result is 0 in order to prevent memory leaks
 static int resolveAddress(const char *url, int port, struct addrinfo **result) {
 	struct addrinfo hints = {0};
@@ -95,7 +95,7 @@ static int resolveAddress(const char *url, int port, struct addrinfo **result) {
 #endif
 
 bool kore_socket_bind(kore_socket *sock) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	struct sockaddr_in address;
 	address.sin_family = sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6;
 	address.sin_addr.s_addr = sock->host;
@@ -119,7 +119,7 @@ void kore_socket_options_set_defaults(kore_socket_parameters *parameters) {
 void kore_socket_init(kore_socket *sock) {
 	sock->handle = 0;
 
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	sock->host = INADDR_ANY;
 	sock->port = htons((unsigned short)8080);
 	sock->protocol = KORE_SOCKET_PROTOCOL_TCP;
@@ -127,12 +127,12 @@ void kore_socket_init(kore_socket *sock) {
 #endif
 	sock->connected = false;
 
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	if (counter == 0) {
 		WSADATA WsaData;
 		WSAStartup(MAKEWORD(2, 2), &WsaData);
 	}
-#if defined(KINC_EMSCRIPTEN)
+#if defined(KORE_EMSCRIPTEN)
 	if (!bridgeSocket) {
 		bridgeSocket = emscripten_init_websocket_to_posix_socket_bridge("ws://localhost:8080");
 		// Synchronously wait until connection has been established.
@@ -148,7 +148,7 @@ void kore_socket_init(kore_socket *sock) {
 }
 
 bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *parameters) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	switch (sock->protocol) {
 	case KORE_SOCKET_PROTOCOL_UDP:
 		sock->handle = socket(sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
@@ -163,7 +163,7 @@ bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *pa
 
 	if (sock->handle <= 0) {
 		kore_log(KORE_LOG_LEVEL_ERROR, "Could not create socket.");
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 		int errorCode = WSAGetLastError();
 		switch (errorCode) {
 		case (WSANOTINITIALISED):
@@ -215,7 +215,7 @@ bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *pa
 		default:
 			kore_log(KORE_LOG_LEVEL_ERROR, "Unknown error.");
 		}
-#elif defined(KINC_POSIX) && !defined(KINC_EMSCRIPTEN)
+#elif defined(KORE_POSIX) && !defined(KORE_EMSCRIPTEN)
 		kore_log(KORE_LOG_LEVEL_ERROR, "%s", strerror(errno));
 #endif
 		return false;
@@ -224,13 +224,13 @@ bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *pa
 
 	if (parameters != NULL) {
 		if (parameters->non_blocking) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 			DWORD value = 1;
 			if (ioctlsocket(sock->handle, FIONBIO, &value) != 0) {
 				kore_log(KORE_LOG_LEVEL_ERROR, "Could not set non-blocking mode.");
 				return false;
 			}
-#elif defined(KINC_POSIX)
+#elif defined(KORE_POSIX)
 			int value = 1;
 			if (fcntl(sock->handle, F_SETFL, O_NONBLOCK, value) == -1) {
 				kore_log(KORE_LOG_LEVEL_ERROR, "Could not set non-blocking mode.");
@@ -240,7 +240,7 @@ bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *pa
 		}
 
 		if (parameters->broadcast) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 			int value = 1;
 			if (setsockopt(sock->handle, SOL_SOCKET, SO_BROADCAST, (const char *)&value, sizeof(value)) < 0) {
 				kore_log(KORE_LOG_LEVEL_ERROR, "Could not set broadcast mode.");
@@ -250,7 +250,7 @@ bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *pa
 		}
 
 		if (parameters->tcp_no_delay) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 			int value = 1;
 			if (setsockopt(sock->handle, IPPROTO_TCP, TCP_NODELAY, (const char *)&value, sizeof(value)) != 0) {
 				kore_log(KORE_LOG_LEVEL_ERROR, "Could not set no-delay mode.");
@@ -264,16 +264,16 @@ bool kore_socket_open(kore_socket *sock, const struct kore_socket_parameters *pa
 }
 
 void kore_socket_destroy(kore_socket *sock) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	closesocket(sock->handle);
-#elif defined(KINC_POSIX)
+#elif defined(KORE_POSIX)
 	close(sock->handle);
 #endif
 
 	memset(sock, 0, sizeof(kore_socket));
 
 	--counter;
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	if (counter == 0) {
 		WSACleanup();
 	}
@@ -281,7 +281,7 @@ void kore_socket_destroy(kore_socket *sock) {
 }
 
 bool kore_socket_select(kore_socket *sock, uint32_t waittime, bool read, bool write) {
-#if !defined(KINC_EMSCRIPTEN) && (defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX))
+#if !defined(KORE_EMSCRIPTEN) && (defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX))
 	fd_set r_fds, w_fds;
 	struct timeval timeout;
 
@@ -295,7 +295,7 @@ bool kore_socket_select(kore_socket *sock, uint32_t waittime, bool read, bool wr
 	timeout.tv_usec = 0;
 
 	if (select(0, &r_fds, &w_fds, NULL, &timeout) < 0) {
-		kore_log(KORE_LOG_LEVEL_ERROR, "kinc_socket_select didn't work: %s", strerror(errno));
+		kore_log(KORE_LOG_LEVEL_ERROR, "kore_socket_select didn't work: %s", strerror(errno));
 		return false;
 	}
 
@@ -309,7 +309,7 @@ bool kore_socket_select(kore_socket *sock, uint32_t waittime, bool read, bool wr
 		return FD_ISSET(sock->handle, &w_fds);
 	}
 	else {
-		kore_log(KORE_LOG_LEVEL_ERROR, "Calling kinc_socket_select with both read and write set to false is useless.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Calling kore_socket_select with both read and write set to false is useless.");
 		return false;
 	}
 #else
@@ -318,7 +318,7 @@ bool kore_socket_select(kore_socket *sock, uint32_t waittime, bool read, bool wr
 }
 
 bool kore_socket_set(kore_socket *sock, const char *host, int port, kore_socket_family family, kore_socket_protocol protocol) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 
 	sock->family = family;
 	sock->protocol = protocol;
@@ -344,7 +344,7 @@ bool kore_socket_set(kore_socket *sock, const char *host, int port, kore_socket_
 			kore_log(KORE_LOG_LEVEL_ERROR, "Could not resolve address.");
 			return false;
 		}
-#if defined(KINC_POSIX)
+#if defined(KORE_POSIX)
 		sock->host = ((struct sockaddr_in *)address->ai_addr)->sin_addr.s_addr;
 #else
 		sock->host = ((struct sockaddr_in *)address->ai_addr)->sin_addr.S_un.S_addr;
@@ -359,7 +359,7 @@ bool kore_socket_set(kore_socket *sock, const char *host, int port, kore_socket_
 }
 
 bool kore_socket_listen(kore_socket *socket, int backlog) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	int res = listen(socket->handle, backlog);
 	return (res == 0);
 #else
@@ -368,10 +368,10 @@ bool kore_socket_listen(kore_socket *socket, int backlog) {
 }
 
 bool kore_socket_accept(kore_socket *sock, kore_socket *newSocket, unsigned *remoteAddress, unsigned *remotePort) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	typedef int socklen_t;
 #endif
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	struct sockaddr_in addr;
 	socklen_t addrLength = sizeof(addr);
 	newSocket->handle = accept(sock->handle, (struct sockaddr *)&addr, &addrLength);
@@ -393,7 +393,7 @@ bool kore_socket_accept(kore_socket *sock, kore_socket *newSocket, unsigned *rem
 }
 
 bool kore_socket_connect(kore_socket *sock) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	struct sockaddr_in addr;
 	addr.sin_family = sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6;
 	addr.sin_addr.s_addr = sock->host;
@@ -407,10 +407,10 @@ bool kore_socket_connect(kore_socket *sock) {
 }
 
 int kore_socket_send(kore_socket *sock, const uint8_t *data, int size) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	typedef int socklen_t;
 #endif
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	if (sock->protocol == KORE_SOCKET_PROTOCOL_UDP) {
 		struct sockaddr_in addr;
 		addr.sin_family = sock->family == KORE_SOCKET_FAMILY_IP4 ? AF_INET : AF_INET6;
@@ -426,7 +426,7 @@ int kore_socket_send(kore_socket *sock, const uint8_t *data, int size) {
 	}
 	else {
 		if (!sock->connected) {
-			kore_log(KORE_LOG_LEVEL_ERROR, "Call kinc_sockect_connect/bind before send/recv can be called for TCP sockets.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "Call kore_sockect_connect/bind before send/recv can be called for TCP sockets.");
 			return -1;
 		}
 
@@ -442,7 +442,7 @@ int kore_socket_send(kore_socket *sock, const uint8_t *data, int size) {
 }
 
 int kore_socket_send_address(kore_socket *sock, unsigned address, int port, const uint8_t *data, int size) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = htonl(address);
@@ -459,7 +459,7 @@ int kore_socket_send_address(kore_socket *sock, unsigned address, int port, cons
 }
 
 int kore_socket_send_url(kore_socket *sock, const char *url, int port, const uint8_t *data, int size) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	struct addrinfo *address = NULL;
 	int res = resolveAddress(url, port, &address);
 	if (res != 0) {
@@ -479,11 +479,11 @@ int kore_socket_send_url(kore_socket *sock, const char *url, int port, const uin
 }
 
 int kore_socket_receive(kore_socket *sock, uint8_t *data, int maxSize, unsigned *fromAddress, unsigned *fromPort) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	typedef int socklen_t;
 	typedef int ssize_t;
 #endif
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP) || defined(KINC_POSIX)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 
 	if (sock->protocol == KORE_SOCKET_PROTOCOL_UDP) {
 		struct sockaddr_in from;
@@ -499,7 +499,7 @@ int kore_socket_receive(kore_socket *sock, uint8_t *data, int maxSize, unsigned 
 	else {
 
 		if (!sock->connected) {
-			kore_log(KORE_LOG_LEVEL_ERROR, "Call kinc_sockect_connect/bind before send/recv can be called for TCP sockets.");
+			kore_log(KORE_LOG_LEVEL_ERROR, "Call kore_sockect_connect/bind before send/recv can be called for TCP sockets.");
 			return -1;
 		}
 		ssize_t bytes = recv(sock->handle, (char *)data, maxSize, 0);
@@ -513,7 +513,7 @@ int kore_socket_receive(kore_socket *sock, uint8_t *data, int maxSize, unsigned 
 }
 
 unsigned kore_url_to_int(const char *url, int port) {
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	struct addrinfo *address = NULL;
 	int res = resolveAddress(url, port, &address);
 	if (res != 0) {

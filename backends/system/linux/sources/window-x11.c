@@ -12,10 +12,10 @@ struct MwmHints {
 };
 #define MWM_HINTS_DECORATIONS (1L << 1)
 
-void kinc_x11_window_set_title(int window_index, const char *title);
-void kinc_x11_window_change_mode(int window_index, kore_window_mode mode);
+void kore_x11_window_set_title(int window_index, const char *title);
+void kore_x11_window_change_mode(int window_index, kore_window_mode mode);
 
-int kinc_x11_window_create(kore_window_parameters *win, kore_framebuffer_parameters *frame) {
+int kore_x11_window_create(kore_window_parameters *win, kore_framebuffer_parameters *frame) {
 	int window_index = -1;
 	for (int i = 0; i < MAXIMUM_WINDOWS; i++) {
 		if (x11_ctx.windows[i].window == None) {
@@ -29,7 +29,7 @@ int kinc_x11_window_create(kore_window_parameters *win, kore_framebuffer_paramet
 		exit(1);
 	}
 
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	window->window_index = window_index;
 	window->width = win->width;
 	window->height = win->height;
@@ -62,7 +62,7 @@ int kinc_x11_window_create(kore_window_parameters *win, kore_framebuffer_paramet
 	xlib.XSetICFocus(window->xInputContext);
 
 	window->mode = KORE_WINDOW_MODE_WINDOW;
-	kinc_x11_window_change_mode(window_index, win->mode);
+	kore_x11_window_change_mode(window_index, win->mode);
 
 	xlib.XMapWindow(x11_ctx.display, window->window);
 
@@ -70,7 +70,7 @@ int kinc_x11_window_create(kore_window_parameters *win, kore_framebuffer_paramet
 	xlib.XChangeProperty(x11_ctx.display, window->window, x11_ctx.atoms.XdndAware, XA_ATOM, 32, PropModeReplace, (unsigned char *)&XdndVersion, 1);
 	xlib.XSetWMProtocols(x11_ctx.display, window->window, &x11_ctx.atoms.WM_DELETE_WINDOW, 1);
 
-	kinc_x11_window_set_title(window_index, win->title);
+	kore_x11_window_set_title(window_index, win->title);
 
 	if (x11_ctx.pen.id != -1) {
 		xlib.XSelectExtensionEvent(x11_ctx.display, window->window, &x11_ctx.pen.motionClass, 1);
@@ -84,20 +84,20 @@ int kinc_x11_window_create(kore_window_parameters *win, kore_framebuffer_paramet
 	return window_index;
 }
 
-void kinc_x11_window_destroy(int window_index) {
+void kore_x11_window_destroy(int window_index) {
 	xlib.XFlush(x11_ctx.display);
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	xlib.XDestroyIC(window->xInputContext);
 	xlib.XCloseIM(window->xInputMethod);
 	xlib.XDestroyWindow(x11_ctx.display, window->window);
 	xlib.XFlush(x11_ctx.display);
-	*window = (struct kinc_x11_window){0};
+	*window = (struct kore_x11_window){0};
 	x11_ctx.num_windows--;
 }
 
-void kinc_x11_window_set_title(int window_index, const char *_title) {
+void kore_x11_window_set_title(int window_index, const char *_title) {
 	const char *title = _title == NULL ? "" : _title;
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	xlib.XChangeProperty(x11_ctx.display, window->window, x11_ctx.atoms.NET_WM_NAME, x11_ctx.atoms.UTF8_STRING, 8, PropModeReplace, (unsigned char *)title,
 	                     strlen(title));
 
@@ -107,50 +107,50 @@ void kinc_x11_window_set_title(int window_index, const char *_title) {
 	xlib.XFlush(x11_ctx.display);
 }
 
-int kinc_x11_window_x(int window_index) {
+int kore_x11_window_x(int window_index) {
 	kore_log(KORE_LOG_LEVEL_ERROR, "x11 does not support getting the window position.");
 	return 0;
 }
 
-int kinc_x11_window_y(int window_index) {
+int kore_x11_window_y(int window_index) {
 	kore_log(KORE_LOG_LEVEL_ERROR, "x11 does not support getting the window position.");
 	return 0;
 }
 
-void kinc_x11_window_move(int window_index, int x, int y) {
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+void kore_x11_window_move(int window_index, int x, int y) {
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	xlib.XMoveWindow(x11_ctx.display, window->window, x, y);
 }
 
-int kinc_x11_window_width(int window_index) {
+int kore_x11_window_width(int window_index) {
 	return x11_ctx.windows[window_index].width;
 }
 
-int kinc_x11_window_height(int window_index) {
+int kore_x11_window_height(int window_index) {
 	return x11_ctx.windows[window_index].height;
 }
 
-void kinc_x11_window_resize(int window_index, int width, int height) {
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+void kore_x11_window_resize(int window_index, int width, int height) {
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	xlib.XResizeWindow(x11_ctx.display, window->window, width, height);
 }
 
-void kinc_x11_window_show(int window_index) {
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+void kore_x11_window_show(int window_index) {
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	xlib.XMapWindow(x11_ctx.display, window->window);
 }
 
-void kinc_x11_window_hide(int window_index) {
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+void kore_x11_window_hide(int window_index) {
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	xlib.XUnmapWindow(x11_ctx.display, window->window);
 }
 
-kore_window_mode kinc_x11_window_get_mode(int window_index) {
+kore_window_mode kore_x11_window_get_mode(int window_index) {
 	return x11_ctx.windows[window_index].mode;
 }
 
-void kinc_x11_window_change_mode(int window_index, kore_window_mode mode) {
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+void kore_x11_window_change_mode(int window_index, kore_window_mode mode) {
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	if (mode == window->mode) {
 		return;
 	}
@@ -196,11 +196,11 @@ void kinc_x11_window_change_mode(int window_index, kore_window_mode mode) {
 	xlib.XFlush(x11_ctx.display);
 }
 
-int kinc_x11_window_display(int window_index) {
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+int kore_x11_window_display(int window_index) {
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	return window->display_index;
 }
 
-int kinc_x11_count_windows() {
+int kore_x11_count_windows() {
 	return x11_ctx.num_windows;
 }

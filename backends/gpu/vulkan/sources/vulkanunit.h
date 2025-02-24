@@ -3,7 +3,7 @@
 
 #include <kore3/gpu/textureformat.h>
 
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 
 // Windows 7
 #define WINVER 0x0601

@@ -10,7 +10,7 @@
 #include <kore3/input/surface.h>
 #include <kore3/system.h>
 
-#ifdef KINC_OPENGL
+#ifdef KORE_OPENGL
 #include <kinc/backend/graphics4/OpenGLWindow.h>
 #endif
 
@@ -63,7 +63,7 @@ int kore_window_height(int window) {
 
 @implementation GLView
 
-#ifdef KINC_METAL
+#ifdef KORE_METAL
 + (Class)layerClass {
 	return [CAMetalLayer class];
 }
@@ -73,11 +73,11 @@ int kore_window_height(int window) {
 }
 #endif
 
-#ifdef KINC_OPENGL
-extern int kinc_ios_gl_framebuffer;
+#ifdef KORE_OPENGL
+extern int kore_ios_gl_framebuffer;
 #endif
 
-#ifdef KINC_METAL
+#ifdef KORE_METAL
 - (id)initWithFrame:(CGRect)frame {
 	self = [super initWithFrame:(CGRect)frame];
 	self.contentScaleFactor = [UIScreen mainScreen].scale;
@@ -128,7 +128,7 @@ extern int kinc_ios_gl_framebuffer;
 
 	glGenFramebuffersOES(1, &defaultFramebuffer);
 	glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
-	kinc_ios_gl_framebuffer = defaultFramebuffer;
+	kore_ios_gl_framebuffer = defaultFramebuffer;
 
 	glGenRenderbuffersOES(1, &colorRenderbuffer);
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
@@ -141,7 +141,7 @@ extern int kinc_ios_gl_framebuffer;
 
 	// Start acceletometer
 	hasAccelerometer = false;
-#ifndef KINC_TVOS
+#ifndef KORE_TVOS
 	motionManager = [[CMMotionManager alloc] init];
 	if ([motionManager isAccelerometerAvailable]) {
 		motionManager.accelerometerUpdateInterval = 0.033;
@@ -150,7 +150,7 @@ extern int kinc_ios_gl_framebuffer;
 	}
 #endif
 
-#ifndef KINC_TVOS
+#ifndef KORE_TVOS
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onKeyboardHide:) name:UIKeyboardWillHideNotification object:nil];
 #endif
 
@@ -158,7 +158,7 @@ extern int kinc_ios_gl_framebuffer;
 }
 #endif
 
-#ifdef KINC_METAL
+#ifdef KORE_METAL
 - (void)begin {
 }
 #else
@@ -167,7 +167,7 @@ extern int kinc_ios_gl_framebuffer;
 	// glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
 	// glViewport(0, 0, backingWidth, backingHeight);
 
-#ifndef KINC_TVOS
+#ifndef KORE_TVOS
 	// Accelerometer updates
 	if (hasAccelerometer) {
 
@@ -186,7 +186,7 @@ extern int kinc_ios_gl_framebuffer;
 }
 #endif
 
-#ifdef KINC_METAL
+#ifdef KORE_METAL
 - (void)end {
 }
 #else
@@ -198,7 +198,7 @@ extern int kinc_ios_gl_framebuffer;
 
 void kore_internal_call_resize_callback(int window, int width, int height);
 
-#ifdef KINC_METAL
+#ifdef KORE_METAL
 - (void)layoutSubviews {
 	backingWidth = self.frame.size.width * self.contentScaleFactor;
 	backingHeight = self.frame.size.height * self.contentScaleFactor;
@@ -229,7 +229,7 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 }
 #endif
 
-#ifdef KINC_METAL
+#ifdef KORE_METAL
 - (void)dealloc {
 }
 #else
@@ -444,7 +444,7 @@ static bool shiftDown = false;
 	kore_keyboard_hide();
 }
 
-#ifdef KINC_METAL
+#ifdef KORE_METAL
 - (CAMetalLayer *)metalLayer {
 	return (CAMetalLayer *)self.layer;
 }

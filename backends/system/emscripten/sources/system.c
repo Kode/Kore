@@ -1,4 +1,4 @@
-#ifdef KINC_OPENGL
+#ifdef KORE_OPENGL
 #include <GL/glfw.h>
 #endif
 
@@ -24,22 +24,22 @@ static void drawfunc() {
 		return;
 	kore_internal_update_callback();
 	kore_audio_update();
-#ifdef KINC_OPENGL
+#ifdef KORE_OPENGL
 	glfwSwapBuffers();
 #endif
 }
 
-#define KEY_DOWN(GLFW_KEYCODE, KINC_KEY)                                                                                                                       \
+#define KEY_DOWN(GLFW_KEYCODE, KORE_KEY)                                                                                                                       \
 	case GLFW_KEYCODE:                                                                                                                                         \
-		kore_internal_keyboard_trigger_key_down(KINC_KEY);                                                                                                     \
+		kore_internal_keyboard_trigger_key_down(KORE_KEY);                                                                                                     \
 		break;
 
-#define KEY_UP(GLFW_KEYCODE, KINC_KEY)                                                                                                                         \
+#define KEY_UP(GLFW_KEYCODE, KORE_KEY)                                                                                                                         \
 	case GLFW_KEYCODE:                                                                                                                                         \
-		kore_internal_keyboard_trigger_key_up(KINC_KEY);                                                                                                       \
+		kore_internal_keyboard_trigger_key_up(KORE_KEY);                                                                                                       \
 		break;
 
-#ifdef KINC_OPENGL
+#ifdef KORE_OPENGL
 // glfw mappings as state here: https://www.glfw.org/docs/3.3/group__keys.html
 static void onKeyPressed(int key, int action) {
 	if (action == GLFW_PRESS) {
@@ -266,7 +266,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 	win->width = width;
 	win->height = height;
 
-#ifdef KINC_OPENGL
+#ifdef KORE_OPENGL
 	glfwInit();
 	glfwOpenWindow(width, height, 8, 8, 8, 0, frame->depth_bits, frame->stencil_bits, GLFW_WINDOW);
 	glfwSetWindowTitle(name);
@@ -276,8 +276,8 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 #endif
 	kore_internal_window_width = width;
 	kore_internal_window_height = height;
-	//kinc_g4_internal_init();
-	//kinc_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
+	//kore_g4_internal_init();
+	//kore_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
 
 	return 0;
 }
@@ -293,7 +293,7 @@ double kore_frequency(void) {
 }
 
 kore_ticks kore_timestamp(void) {
-#ifdef KINC_OPENGL
+#ifdef KORE_OPENGL
 	return (kore_ticks)(glfwGetTime() * 1000.0);
 #else
 	return (kore_ticks)(0.0);
@@ -301,7 +301,7 @@ kore_ticks kore_timestamp(void) {
 }
 
 double kore_time(void) {
-#ifdef KINC_OPENGL
+#ifdef KORE_OPENGL
 	return glfwGetTime();
 #else
 	return 0.0;
@@ -318,8 +318,8 @@ int kore_hardware_threads(void) {
 
 extern int kickstart(int argc, char **argv);
 
-#ifdef KINC_WEBGPU
-EMSCRIPTEN_KEEPALIVE void kinc_internal_webgpu_initialized() {
+#ifdef KORE_WEBGPU
+EMSCRIPTEN_KEEPALIVE void kore_internal_webgpu_initialized() {
 	kickstart(html5_argc, html5_argv);
 	initialized = true;
 }
@@ -328,12 +328,12 @@ EMSCRIPTEN_KEEPALIVE void kinc_internal_webgpu_initialized() {
 int main(int argc, char **argv) {
 	html5_argc = argc;
 	html5_argv = argv;
-#ifdef KINC_WEBGPU
+#ifdef KORE_WEBGPU
 	char *code = "(async () => {\
 		const adapter = await navigator.gpu.requestAdapter();\
 		const device = await adapter.requestDevice();\
 		Module.preinitializedWebGPUDevice = device;\
-		_kinc_internal_webgpu_initialized();\
+		_kore_internal_webgpu_initialized();\
 	})();";
 	emscripten_run_script(code);
 #else

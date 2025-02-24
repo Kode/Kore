@@ -1,4 +1,4 @@
-#ifdef KINC_STEAMVR
+#ifdef KORE_STEAMVR
 
 #include <Kinc/graphics4/graphics.h>
 #include <Kinc/graphics4/rendertarget.h>
@@ -18,50 +18,50 @@ using namespace Kore;
 
 namespace {
 	vr::IVRSystem *hmd;
-	kinc_g4_render_target_t leftTexture;
-	kinc_g4_render_target_t rightTexture;
-	kinc_vr_sensor_state_t sensorStates[2];
-	kinc_vr_pose_state_t controller[vr::k_unMaxTrackedDeviceCount];
+	kore_g4_render_target_t leftTexture;
+	kore_g4_render_target_t rightTexture;
+	kore_vr_sensor_state_t sensorStates[2];
+	kore_vr_pose_state_t controller[vr::k_unMaxTrackedDeviceCount];
 
-	kinc_matrix4x4_t convert3x4(vr::HmdMatrix34_t &m) {
-		kinc_matrix4x4_t mat;
-		kinc_matrix4x4_set(&mat, 0, 0, m.m[0][0]);
-		kinc_matrix4x4_set(&mat, 0, 1, m.m[0][1]);
-		kinc_matrix4x4_set(&mat, 0, 2, m.m[0][2]);
-		kinc_matrix4x4_set(&mat, 0, 3, m.m[0][3]);
-		kinc_matrix4x4_set(&mat, 1, 0, m.m[1][0]);
-		kinc_matrix4x4_set(&mat, 1, 1, m.m[1][1]);
-		kinc_matrix4x4_set(&mat, 1, 2, m.m[1][2]);
-		kinc_matrix4x4_set(&mat, 1, 3, m.m[1][3]);
-		kinc_matrix4x4_set(&mat, 2, 0, m.m[2][0]);
-		kinc_matrix4x4_set(&mat, 2, 1, m.m[2][1]);
-		kinc_matrix4x4_set(&mat, 2, 2, m.m[2][2]);
-		kinc_matrix4x4_set(&mat, 2, 3, m.m[2][3]);
-		kinc_matrix4x4_set(&mat, 3, 0, 0);
-		kinc_matrix4x4_set(&mat, 3, 1, 0);
-		kinc_matrix4x4_set(&mat, 3, 2, 0);
-		kinc_matrix4x4_set(&mat, 3, 3, 1);
+	kore_matrix4x4_t convert3x4(vr::HmdMatrix34_t &m) {
+		kore_matrix4x4_t mat;
+		kore_matrix4x4_set(&mat, 0, 0, m.m[0][0]);
+		kore_matrix4x4_set(&mat, 0, 1, m.m[0][1]);
+		kore_matrix4x4_set(&mat, 0, 2, m.m[0][2]);
+		kore_matrix4x4_set(&mat, 0, 3, m.m[0][3]);
+		kore_matrix4x4_set(&mat, 1, 0, m.m[1][0]);
+		kore_matrix4x4_set(&mat, 1, 1, m.m[1][1]);
+		kore_matrix4x4_set(&mat, 1, 2, m.m[1][2]);
+		kore_matrix4x4_set(&mat, 1, 3, m.m[1][3]);
+		kore_matrix4x4_set(&mat, 2, 0, m.m[2][0]);
+		kore_matrix4x4_set(&mat, 2, 1, m.m[2][1]);
+		kore_matrix4x4_set(&mat, 2, 2, m.m[2][2]);
+		kore_matrix4x4_set(&mat, 2, 3, m.m[2][3]);
+		kore_matrix4x4_set(&mat, 3, 0, 0);
+		kore_matrix4x4_set(&mat, 3, 1, 0);
+		kore_matrix4x4_set(&mat, 3, 2, 0);
+		kore_matrix4x4_set(&mat, 3, 3, 1);
 		return mat;
 	}
 
-	kinc_matrix4x4_t convert4x4(vr::HmdMatrix44_t &m) {
-		kinc_matrix4x4_t mat;
-		kinc_matrix4x4_set(&mat, 0, 0, m.m[0][0]);
-		kinc_matrix4x4_set(&mat, 0, 1, m.m[0][1]);
-		kinc_matrix4x4_set(&mat, 0, 2, m.m[0][2]);
-		kinc_matrix4x4_set(&mat, 0, 3, m.m[0][3]);
-		kinc_matrix4x4_set(&mat, 1, 0, m.m[1][0]);
-		kinc_matrix4x4_set(&mat, 1, 1, m.m[1][1]);
-		kinc_matrix4x4_set(&mat, 1, 2, m.m[1][2]);
-		kinc_matrix4x4_set(&mat, 1, 3, m.m[1][3]);
-		kinc_matrix4x4_set(&mat, 2, 0, m.m[2][0]);
-		kinc_matrix4x4_set(&mat, 2, 1, m.m[2][1]);
-		kinc_matrix4x4_set(&mat, 2, 2, m.m[2][2]);
-		kinc_matrix4x4_set(&mat, 2, 3, m.m[2][3]);
-		kinc_matrix4x4_set(&mat, 3, 0, m.m[3][0]);
-		kinc_matrix4x4_set(&mat, 3, 1, m.m[3][1]);
-		kinc_matrix4x4_set(&mat, 3, 2, m.m[3][2]);
-		kinc_matrix4x4_set(&mat, 3, 3, m.m[3][3]);
+	kore_matrix4x4_t convert4x4(vr::HmdMatrix44_t &m) {
+		kore_matrix4x4_t mat;
+		kore_matrix4x4_set(&mat, 0, 0, m.m[0][0]);
+		kore_matrix4x4_set(&mat, 0, 1, m.m[0][1]);
+		kore_matrix4x4_set(&mat, 0, 2, m.m[0][2]);
+		kore_matrix4x4_set(&mat, 0, 3, m.m[0][3]);
+		kore_matrix4x4_set(&mat, 1, 0, m.m[1][0]);
+		kore_matrix4x4_set(&mat, 1, 1, m.m[1][1]);
+		kore_matrix4x4_set(&mat, 1, 2, m.m[1][2]);
+		kore_matrix4x4_set(&mat, 1, 3, m.m[1][3]);
+		kore_matrix4x4_set(&mat, 2, 0, m.m[2][0]);
+		kore_matrix4x4_set(&mat, 2, 1, m.m[2][1]);
+		kore_matrix4x4_set(&mat, 2, 2, m.m[2][2]);
+		kore_matrix4x4_set(&mat, 2, 3, m.m[2][3]);
+		kore_matrix4x4_set(&mat, 3, 0, m.m[3][0]);
+		kore_matrix4x4_set(&mat, 3, 1, m.m[3][1]);
+		kore_matrix4x4_set(&mat, 3, 2, m.m[3][2]);
+		kore_matrix4x4_set(&mat, 3, 3, m.m[3][3]);
 		return mat;
 	}
 
@@ -147,13 +147,13 @@ namespace {
 		getButtonEvent(event);
 	}
 
-	void getPosition(const vr::HmdMatrix34_t *m, kinc_vector3_t *position) {
+	void getPosition(const vr::HmdMatrix34_t *m, kore_vector3_t *position) {
 		position->x = m->m[0][3];
 		position->y = m->m[1][3];
 		position->z = m->m[2][3];
 	}
 
-	void getOrientation(const vr::HmdMatrix34_t *m, kinc_quaternion_t *orientation) {
+	void getOrientation(const vr::HmdMatrix34_t *m, kore_quaternion_t *orientation) {
 		orientation->w = sqrt(fmax(0, 1 + m->m[0][0] + m->m[1][1] + m->m[2][2])) / 2;
 		orientation->x = sqrt(fmax(0, 1 + m->m[0][0] - m->m[1][1] - m->m[2][2])) / 2;
 		orientation->y = sqrt(fmax(0, 1 - m->m[0][0] + m->m[1][1] - m->m[2][2])) / 2;
@@ -171,7 +171,7 @@ namespace {
 		for (int device = 0; device < vr::k_unMaxTrackedDeviceCount; ++device) {
 			if (poses[device].bPoseIsValid) {
 				if (hmd->GetTrackedDeviceClass(device) == vr::TrackedDeviceClass_HMD) {
-					kinc_vr_pose_state_t poseState;
+					kore_vr_pose_state_t poseState;
 					poseState.linearVelocity.x = poses[device].vVelocity.v[0];
 					poseState.linearVelocity.y = poses[device].vVelocity.v[1];
 					poseState.linearVelocity.z = poses[device].vVelocity.v[2];
@@ -200,7 +200,7 @@ namespace {
 				}
 				else if (hmd->GetTrackedDeviceClass(device) == vr::TrackedDeviceClass_Controller ||
 				         hmd->GetTrackedDeviceClass(device) == vr::TrackedDeviceClass_GenericTracker) {
-					kinc_vr_pose_state_t poseState;
+					kore_vr_pose_state_t poseState;
 					poseState.linearVelocity.x = poses[device].vVelocity.v[0];
 					poseState.linearVelocity.x = poses[device].vVelocity.v[1];
 					poseState.linearVelocity.x = poses[device].vVelocity.v[2];
@@ -217,9 +217,9 @@ namespace {
 					// poseState.vrPose.position.z());
 
 					if (hmd->GetTrackedDeviceClass(device) == vr::TrackedDeviceClass_Controller)
-						poseState.trackedDevice = KINC_TRACKED_DEVICE_CONTROLLER;
+						poseState.trackedDevice = KORE_TRACKED_DEVICE_CONTROLLER;
 					else if (hmd->GetTrackedDeviceClass(device) == vr::TrackedDeviceClass_GenericTracker)
-						poseState.trackedDevice = KINC_TRACKED_DEVICE_VIVE_TRACKER;
+						poseState.trackedDevice = KORE_TRACKED_DEVICE_VIVE_TRACKER;
 					controller[device] = poseState;
 				}
 			}
@@ -227,7 +227,7 @@ namespace {
 	}
 }
 
-void *kinc_vr_interface_init(void *hinst, const char *title, const char *windowClassName) {
+void *kore_vr_interface_init(void *hinst, const char *title, const char *windowClassName) {
 	vr::HmdError error;
 	hmd = vr::VR_Init(&error, vr::VRApplication_Scene);
 	// vr::IVRRenderModels* renderModels = (vr::IVRRenderModels*)vr::VR_GetGenericInterface(vr::IVRRenderModels_Version, &error);
@@ -236,13 +236,13 @@ void *kinc_vr_interface_init(void *hinst, const char *title, const char *windowC
 	uint32_t width, height;
 	hmd->GetRecommendedRenderTargetSize(&width, &height);
 
-	kinc_g4_render_target_init(&leftTexture, width, height, 0, false, KINC_G4_RENDER_TARGET_FORMAT_32BIT, 0, 0);
-	kinc_g4_render_target_init(&rightTexture, width, height, 0, false, KINC_G4_RENDER_TARGET_FORMAT_32BIT, 0, 0);
+	kore_g4_render_target_init(&leftTexture, width, height, 0, false, KORE_G4_RENDER_TARGET_FORMAT_32BIT, 0, 0);
+	kore_g4_render_target_init(&rightTexture, width, height, 0, false, KORE_G4_RENDER_TARGET_FORMAT_32BIT, 0, 0);
 
 	return nullptr;
 }
 
-void kinc_vr_interface_begin() {
+void kore_vr_interface_begin() {
 	vr::VREvent_t event;
 	while (hmd->PollNextEvent(&event, sizeof(event))) {
 		processVREvent(event);
@@ -258,29 +258,29 @@ void kinc_vr_interface_begin() {
 	readSensorStates();
 }
 
-void kinc_vr_interface_begin_render(int eye) {
+void kore_vr_interface_begin_render(int eye) {
 	if (eye == 0) {
-		kinc_g4_render_target_t *renderTargets[1] = {&leftTexture};
-		kinc_g4_set_render_targets(renderTargets, 1);
+		kore_g4_render_target_t *renderTargets[1] = {&leftTexture};
+		kore_g4_set_render_targets(renderTargets, 1);
 	}
 	else {
-		kinc_g4_render_target_t *renderTargets[1] = {&rightTexture};
-		kinc_g4_set_render_targets(renderTargets, 1);
+		kore_g4_render_target_t *renderTargets[1] = {&rightTexture};
+		kore_g4_set_render_targets(renderTargets, 1);
 	}
 }
 
-void kinc_vr_interface_end_render(int eye) {}
+void kore_vr_interface_end_render(int eye) {}
 
-kinc_vr_sensor_state_t kinc_vr_interface_get_sensor_state(int eye) {
+kore_vr_sensor_state_t kore_vr_interface_get_sensor_state(int eye) {
 	return sensorStates[eye];
 }
 
-kinc_vr_pose_state_t kinc_vr_interface_get_controller(int index) {
+kore_vr_pose_state_t kore_vr_interface_get_controller(int index) {
 	return controller[index];
 }
 
-void kinc_vr_interface_warp_swap() {
-#ifdef KINC_OPENGL
+void kore_vr_interface_warp_swap() {
+#ifdef KORE_OPENGL
 	vr::Texture_t leftEyeTexture = {(void *)(uintptr_t)leftTexture.impl._texture, vr::TextureType_OpenGL, vr::ColorSpace_Gamma};
 	vr::VRCompositor()->Submit(vr::Eye_Left, &leftEyeTexture);
 	vr::Texture_t rightEyeTexture = {(void *)(uintptr_t)rightTexture.impl._texture, vr::TextureType_OpenGL, vr::ColorSpace_Gamma};
@@ -293,11 +293,11 @@ void kinc_vr_interface_warp_swap() {
 #endif
 }
 
-void kinc_vr_interface_update_tracking_origin(kinc_tracking_origin_t origin) {}
+void kore_vr_interface_update_tracking_origin(kore_tracking_origin_t origin) {}
 
-void kinc_vr_interface_reset_hmd_pose() {}
+void kore_vr_interface_reset_hmd_pose() {}
 
-void kinc_vr_interface_ovr_shutdown() {
+void kore_vr_interface_ovr_shutdown() {
 	vr::VR_Shutdown();
 }
 

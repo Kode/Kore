@@ -85,7 +85,7 @@ KORE_FUNC void kore_window_move(int window, int x, int y);
 KORE_FUNC void kore_window_change_mode(int window, kore_window_mode mode);
 
 /// <summary>
-/// Applies an or-ed combination of KINC_WINDOW_FEATURE values.
+/// Applies an or-ed combination of KORE_WINDOW_FEATURE values.
 /// </summary>
 KORE_FUNC void kore_window_change_features(int window, int features);
 

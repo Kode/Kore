@@ -27,15 +27,15 @@
 #include <shellapi.h>
 #include <shlobj.h>
 
-#if defined(KINC_VTUNE)
+#if defined(KORE_VTUNE)
 #include <ittnotify.h>
 
-__itt_domain *kinc_itt_domain;
+__itt_domain *kore_itt_domain;
 #endif
 
-#ifdef KINC_G4ONG5
+#ifdef KORE_G4ONG5
 #define Graphics Graphics5
-#elif KINC_G4
+#elif KORE_G4
 #define Graphics Graphics4
 #else
 #define Graphics Graphics3
@@ -43,7 +43,7 @@ __itt_domain *kinc_itt_domain;
 
 __declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
 __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
-void kinc_internal_resize(int window, int width, int height);
+void kore_internal_resize(int window, int width, int height);
 
 typedef BOOL(WINAPI *GetPointerInfoType)(UINT32 pointerId, POINTER_INFO *pointerInfo);
 static GetPointerInfoType MyGetPointerInfo = NULL;
@@ -54,7 +54,7 @@ static EnableNonClientDpiScalingType MyEnableNonClientDpiScaling = NULL;
 
 #define MAX_TOUCH_POINTS 10
 
-#define KINC_DINPUT_MAX_COUNT 8
+#define KORE_DINPUT_MAX_COUNT 8
 
 struct touchpoint {
 	int sysID;
@@ -290,7 +290,7 @@ static wchar_t toUnicode(WPARAM wParam, LPARAM lParam) {
 	return buffer[0];
 }
 
-#if !defined(KINC_DIRECT3D9) && !defined(KINC_DIRECT3D11) && !defined(KINC_DIRECT3D12)
+#if !defined(KORE_DIRECT3D9) && !defined(KORE_DIRECT3D11) && !defined(KORE_DIRECT3D12)
 #define HANDLE_ALT_ENTER
 #endif
 
@@ -299,7 +299,7 @@ static int cursor = 0;
 #define NUM_CURSORS 14
 static HCURSOR cursors[NUM_CURSORS];
 
-void kinc_mouse_set_cursor(int set_cursor) {
+void kore_mouse_set_cursor(int set_cursor) {
 	cursor = set_cursor >= NUM_CURSORS ? 0 : set_cursor;
 	if (cursors_initialized) {
 		SetCursor(cursors[cursor]);
@@ -343,7 +343,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		if (window >= 0) {
 			int width = LOWORD(lParam);
 			int height = HIWORD(lParam);
-			// kinc_internal_resize(window, width, height); // TODO
+			// kore_internal_resize(window, width, height); // TODO
 			kore_internal_call_resize_callback(window, width, height);
 		}
 		break;
@@ -729,10 +729,10 @@ void loadXInput() {
 }
 
 static IDirectInput8W *di_instance = NULL;
-static IDirectInputDevice8W *di_pads[KINC_DINPUT_MAX_COUNT];
-static DIJOYSTATE2 di_padState[KINC_DINPUT_MAX_COUNT];
-static DIJOYSTATE2 di_lastPadState[KINC_DINPUT_MAX_COUNT];
-static DIDEVCAPS di_deviceCaps[KINC_DINPUT_MAX_COUNT];
+static IDirectInputDevice8W *di_pads[KORE_DINPUT_MAX_COUNT];
+static DIJOYSTATE2 di_padState[KORE_DINPUT_MAX_COUNT];
+static DIJOYSTATE2 di_lastPadState[KORE_DINPUT_MAX_COUNT];
+static DIDEVCAPS di_deviceCaps[KORE_DINPUT_MAX_COUNT];
 static int padCount = 0;
 
 static void cleanupPad(int padIndex) {
@@ -823,7 +823,7 @@ static BOOL IsXInputDevice(const GUID *pGuidProductFromDirectInput) {
 					// If it does, then get the VID/PID from var.bstrVal
 					DWORD dwPid = 0, dwVid = 0;
 					WCHAR *strVid = wcsstr(var.bstrVal, L"VID_");
-#ifndef KINC_NO_CLIB
+#ifndef KORE_NO_CLIB
 					if (strVid && swscanf(strVid, L"VID_%4X", &dwVid) != 1) {
 						dwVid = 0;
 					}
@@ -866,7 +866,7 @@ LCleanup:
 
 // TODO (DK) this should probably be called from somewhere?
 static void cleanupDirectInput() {
-	for (int padIndex = 0; padIndex < KINC_DINPUT_MAX_COUNT; ++padIndex) {
+	for (int padIndex = 0; padIndex < KORE_DINPUT_MAX_COUNT; ++padIndex) {
 		cleanupPad(padIndex);
 	}
 
@@ -959,7 +959,7 @@ static BOOL CALLBACK enumerateJoysticksCallback(LPCDIDEVICEINSTANCEW ddi, LPVOID
 
 		++padCount;
 
-		if (padCount >= KINC_DINPUT_MAX_COUNT) {
+		if (padCount >= KORE_DINPUT_MAX_COUNT) {
 			return DIENUM_STOP;
 		}
 	}
@@ -970,10 +970,10 @@ static BOOL CALLBACK enumerateJoysticksCallback(LPCDIDEVICEINSTANCEW ddi, LPVOID
 static void initializeDirectInput() {
 	HINSTANCE hinstance = GetModuleHandleW(NULL);
 
-	memset(&di_pads, 0, sizeof(IDirectInputDevice8) * KINC_DINPUT_MAX_COUNT);
-	memset(&di_padState, 0, sizeof(DIJOYSTATE2) * KINC_DINPUT_MAX_COUNT);
-	memset(&di_lastPadState, 0, sizeof(DIJOYSTATE2) * KINC_DINPUT_MAX_COUNT);
-	memset(&di_deviceCaps, 0, sizeof(DIDEVCAPS) * KINC_DINPUT_MAX_COUNT);
+	memset(&di_pads, 0, sizeof(IDirectInputDevice8) * KORE_DINPUT_MAX_COUNT);
+	memset(&di_padState, 0, sizeof(DIJOYSTATE2) * KORE_DINPUT_MAX_COUNT);
+	memset(&di_lastPadState, 0, sizeof(DIJOYSTATE2) * KORE_DINPUT_MAX_COUNT);
+	memset(&di_deviceCaps, 0, sizeof(DIDEVCAPS) * KORE_DINPUT_MAX_COUNT);
 
 	HRESULT hr = DirectInput8Create(hinstance, DIRECTINPUT_VERSION, &IID_IDirectInput8W, (void **)&di_instance, NULL);
 
@@ -1122,7 +1122,7 @@ bool kore_internal_handle_messages() {
 
 	if (InputGetState != NULL && (detectGamepad || gamepadFound)) {
 		detectGamepad = false;
-		for (DWORD i = 0; i < KINC_DINPUT_MAX_COUNT; ++i) {
+		for (DWORD i = 0; i < KORE_DINPUT_MAX_COUNT; ++i) {
 			XINPUT_STATE state;
 			memset(&state, 0, sizeof(XINPUT_STATE));
 			DWORD dwResult = InputGetState(i, &state);
@@ -1185,19 +1185,19 @@ bool kore_internal_handle_messages() {
 static bool keyboardshown = false;
 static char language[3] = {0};
 
-void kinc_keyboard_show() {
+void kore_keyboard_show() {
 	keyboardshown = true;
 }
 
-void kinc_keyboard_hide() {
+void kore_keyboard_hide() {
 	keyboardshown = false;
 }
 
-bool kinc_keyboard_active() {
+bool kore_keyboard_active() {
 	return keyboardshown;
 }
 
-void kinc_load_url(const char *url) {
+void kore_load_url(const char *url) {
 #define WURL_SIZE 1024
 #define HTTP "http://"
 #define HTTPS "https://"
@@ -1215,10 +1215,10 @@ void kinc_load_url(const char *url) {
 #undef WURL_SIZE
 }
 
-void kinc_set_keep_screen_on(bool on) {}
-void kinc_vibrate(int ms) {}
+void kore_set_keep_screen_on(bool on) {}
+void kore_vibrate(int ms) {}
 
-const char *kinc_language() {
+const char *kore_language() {
 	wchar_t wlanguage[3] = {0};
 
 	if (GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SISO639LANGNAME, wlanguage, 3)) {
@@ -1228,7 +1228,7 @@ const char *kinc_language() {
 	return "en";
 }
 
-const char *kinc_system_id() {
+const char *kore_system_id() {
 	return "Windows";
 }
 
@@ -1320,7 +1320,7 @@ double kore_time(void) {
 	return (double)(stamp.QuadPart - startCount.QuadPart) / (double)frequency.QuadPart;
 }
 
-#if !defined(KINC_NO_MAIN) && !defined(KINC_NO_CLIB)
+#if !defined(KORE_NO_MAIN) && !defined(KORE_NO_CLIB)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	int ret = kickstart(__argc, __argv);
 	if (ret != 0) {
@@ -1369,8 +1369,8 @@ void kong_init(void);
 int kore_init(const char *name, int width, int height, kore_window_parameters *win, kore_framebuffer_parameters *frame) {
 	init_crash_handler();
 
-#if defined(KINC_VTUNE)
-	kinc_itt_domain = __itt_domain_create(name);
+#if defined(KORE_VTUNE)
+	kore_itt_domain = __itt_domain_create(name);
 #endif
 
 	// Pen functions are only in Windows 8 and later, so load them dynamically

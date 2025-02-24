@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#if defined(KINC_VIDEO_GSTREAMER)
+#if defined(KORE_VIDEO_GSTREAMER)
 #include <kinc/backend/video_gstreamer.h>
 #else
 typedef struct {

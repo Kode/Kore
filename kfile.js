@@ -4,7 +4,6 @@ const path = require('path');
 const project = new Project('Kore');
 
 function addKincDefine(name) {
-	project.addDefine('KINC_' + name);
 	project.addDefine('KORE_' + name);
 }
 
@@ -102,7 +101,7 @@ if (platform === Platform.Windows) {
 		project.addLib('winmm');
 	}
 	else {
-		project.addDefine('KINC_NO_DIRECTSHOW');
+		project.addDefine('KORE_NO_DIRECTSHOW');
 	}
 
 	project.addLib('wbemuuid');
@@ -299,7 +298,7 @@ else if (platform === Platform.Android) {
 		addKincDefine('OPENGL');
 		addKincDefine('OPENGL_ES');
 		addKincDefine('ANDROID_API=19');
-		project.addDefine('KINC_EGL');
+		project.addDefine('KORE_EGL');
 	}
 	else {
 		throw new Error('Graphics API ' + graphics + ' is not available for Android.');
@@ -459,16 +458,16 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 			project.addFile(path.resolve(waylandDir, '**'));
 		}
 		catch (err) {
-			log.error('Failed to include wayland-support, setting KINC_NO_WAYLAND.');
+			log.error('Failed to include wayland-support, setting KORE_NO_WAYLAND.');
 			log.error('Wayland error was: ' + err);
-			project.addDefine('KINC_NO_WAYLAND');
+			project.addDefine('KORE_NO_WAYLAND');
 		}
 	}
 	else if (platform === Platform.FreeBSD) {
 		addBackend('system/linux');
 		addBackend('system/posix');
 		addBackend('system/freebsd');
-		project.addDefine('KINC_NO_WAYLAND');
+		project.addDefine('KORE_NO_WAYLAND');
 	}
 
 	if (graphics === GraphicsApi.Vulkan || (platform === Platform.Linux && graphics === GraphicsApi.Default)) {
@@ -485,7 +484,7 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 		project.addLib('GL');
 		addKincDefine('OPENGL');
 		project.addLib('EGL');
-		project.addDefine('KINC_EGL');
+		project.addDefine('KORE_EGL');
 	}
 	else {
 		throw new Error('Graphics API ' + graphics + ' is not available for Linux.');

@@ -17,7 +17,7 @@
 #define Button6 6
 #define Button7 7
 
-struct kinc_x11_procs xlib = {0};
+struct kore_x11_procs xlib = {0};
 struct x11_context x11_ctx = {0};
 
 static size_t clipboardStringSize = 1024;
@@ -25,14 +25,14 @@ static char *clipboardString = NULL;
 
 char buffer[1024];
 
-int kinc_x11_error_handler(Display *display, XErrorEvent *error_event) {
+int kore_x11_error_handler(Display *display, XErrorEvent *error_event) {
 	xlib.XGetErrorText(display, error_event->error_code, buffer, 1024);
 	kore_log(KORE_LOG_LEVEL_ERROR, "X Error: %s", buffer);
 	kore_debug_break();
 	return 0;
 }
 
-struct kinc_x11_window *window_from_window(Window window) {
+struct kore_x11_window *window_from_window(Window window) {
 	for (int i = 0; i < MAXIMUM_WINDOWS; i++) {
 		if (x11_ctx.windows[i].window == window) {
 			return &x11_ctx.windows[i];
@@ -47,7 +47,7 @@ static void init_pen_device(XDeviceInfo *info, struct x11_pen_device *pen, bool 
 
 static void load_lib(void **lib, const char *name);
 
-bool kinc_x11_init() {
+bool kore_x11_init() {
 
 #undef LOAD_LIB
 #undef LOAD_FUN
@@ -146,7 +146,7 @@ bool kinc_x11_init() {
 		return false;
 	}
 
-	xlib.XSetErrorHandler(kinc_x11_error_handler);
+	xlib.XSetErrorHandler(kore_x11_error_handler);
 
 	// this should be kept in sync with the x11_atoms struct
 	static char *atom_names[] = {
@@ -190,7 +190,7 @@ bool kinc_x11_init() {
 	    XI_JOYSTICK,
 	};
 
-	assert((sizeof atom_names / sizeof atom_names[0]) == (sizeof(struct kinc_x11_atoms) / sizeof(Atom)));
+	assert((sizeof atom_names / sizeof atom_names[0]) == (sizeof(struct kore_x11_atoms) / sizeof(Atom)));
 	xlib.XInternAtoms(x11_ctx.display, atom_names, sizeof atom_names / sizeof atom_names[0], False, (Atom *)&x11_ctx.atoms);
 	clipboardString = (char *)malloc(clipboardStringSize);
 
@@ -221,7 +221,7 @@ bool kinc_x11_init() {
 	return true;
 }
 
-void kinc_x11_shutdown() {
+void kore_x11_shutdown() {
 	free(clipboardString);
 	xlib.XCloseDisplay(x11_ctx.display);
 }
@@ -254,7 +254,7 @@ static void init_pen_device(XDeviceInfo *info, struct x11_pen_device *pen, bool 
 	xlib.XCloseDevice(x11_ctx.display, device);
 }
 
-static void check_pen_device(struct kinc_x11_window *window, XEvent *event, struct x11_pen_device *pen) {
+static void check_pen_device(struct kore_x11_window *window, XEvent *event, struct x11_pen_device *pen) {
 	if (event->type == pen->motionEvent) {
 		XDeviceMotionEvent *motion = (XDeviceMotionEvent *)(event);
 		if (motion->deviceid == pen->id) {
@@ -273,7 +273,7 @@ static void check_pen_device(struct kinc_x11_window *window, XEvent *event, stru
 	}
 }
 
-bool kinc_x11_handle_messages() {
+bool kore_x11_handle_messages() {
 	static bool controlDown = false;
 	static int ignoreKeycode = 0;
 	static bool preventNextKeyDownEvent = false;
@@ -282,7 +282,7 @@ bool kinc_x11_handle_messages() {
 		XEvent event;
 		xlib.XNextEvent(x11_ctx.display, &event);
 		Window window = event.xclient.window;
-		struct kinc_x11_window *k_window = window_from_window(window);
+		struct kore_x11_window *k_window = window_from_window(window);
 		if (k_window == NULL) {
 			continue;
 		}
@@ -332,13 +332,13 @@ bool kinc_x11_handle_messages() {
 				xlib.XSetSelectionOwner(x11_ctx.display, x11_ctx.atoms.CLIPBOARD, window, CurrentTime);
 				char *text = kore_internal_copy_callback();
 				if (text != NULL)
-					kinc_x11_copy_to_clipboard(text);
+					kore_x11_copy_to_clipboard(text);
 			}
 			else if (controlDown && (ksKey == XK_x || ksKey == XK_X)) {
 				xlib.XSetSelectionOwner(x11_ctx.display, x11_ctx.atoms.CLIPBOARD, window, CurrentTime);
 				char *text = kore_internal_cut_callback();
 				if (text != NULL)
-					kinc_x11_copy_to_clipboard(text);
+					kore_x11_copy_to_clipboard(text);
 			}
 
 			if (event.xkey.keycode == ignoreKeycode) {
@@ -850,7 +850,7 @@ bool kinc_x11_handle_messages() {
 	return true;
 }
 
-void kinc_x11_copy_to_clipboard(const char *text) {
+void kore_x11_copy_to_clipboard(const char *text) {
 	size_t textLength = strlen(text);
 	if (textLength >= clipboardStringSize) {
 		free(clipboardString);
@@ -860,20 +860,20 @@ void kinc_x11_copy_to_clipboard(const char *text) {
 	strcpy(clipboardString, text);
 }
 
-#ifdef KINC_EGL
-EGLDisplay kinc_x11_egl_get_display() {
+#ifdef KORE_EGL
+EGLDisplay kore_x11_egl_get_display() {
 	return eglGetDisplay(x11_ctx.display);
 }
 
-EGLNativeWindowType kinc_x11_egl_get_native_window(EGLDisplay display, EGLConfig config, int window_index) {
+EGLNativeWindowType kore_x11_egl_get_native_window(EGLDisplay display, EGLConfig config, int window_index) {
 	return (EGLNativeWindowType)x11_ctx.windows[window_index].window;
 }
 #endif
 
-#ifdef KINC_VULKAN
+#ifdef KORE_VULKAN
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_xlib.h>
-VkResult kinc_x11_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
+VkResult kore_x11_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
 	VkXlibSurfaceCreateInfoKHR info = {0};
 	info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	info.pNext = NULL;
@@ -885,18 +885,18 @@ VkResult kinc_x11_vulkan_create_surface(VkInstance instance, int window_index, V
 
 #include <assert.h>
 
-void kinc_x11_vulkan_get_instance_extensions(const char **names, int *index, int max) {
+void kore_x11_vulkan_get_instance_extensions(const char **names, int *index, int max) {
 	assert(*index + 1 < max);
 	names[(*index)++] = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
 }
 
-VkBool32 kinc_x11_vulkan_get_physical_device_presentation_support(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
+VkBool32 kore_x11_vulkan_get_physical_device_presentation_support(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
 	return vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice, queueFamilyIndex, x11_ctx.display,
 	                                                     DefaultVisual(x11_ctx.display, DefaultScreen(x11_ctx.display))->visualid);
 }
 #endif
 
-void kinc_x11_mouse_lock(int window) {
+void kore_x11_mouse_lock(int window) {
 	kore_mouse_hide();
 	int width = kore_window_width(window);
 	int height = kore_window_height(window);
@@ -930,26 +930,26 @@ void kinc_x11_mouse_lock(int window) {
 	kore_mouse_set_position(window, newX, newY);
 }
 
-void kinc_x11_mouse_unlock(void) {
+void kore_x11_mouse_unlock(void) {
 	kore_mouse_show();
 }
 
-bool kinc_x11_mouse_can_lock(void) {
+bool kore_x11_mouse_can_lock(void) {
 	return true;
 }
 
 static bool mouseHidden = false;
 
-void kinc_x11_mouse_show() {
-	struct kinc_x11_window *window = &x11_ctx.windows[x11_ctx.mouse.current_window];
+void kore_x11_mouse_show() {
+	struct kore_x11_window *window = &x11_ctx.windows[x11_ctx.mouse.current_window];
 	if (mouseHidden) {
 		xlib.XUndefineCursor(x11_ctx.display, window->window);
 		mouseHidden = false;
 	}
 }
 
-void kinc_x11_mouse_hide() {
-	struct kinc_x11_window *window = &x11_ctx.windows[x11_ctx.mouse.current_window];
+void kore_x11_mouse_hide() {
+	struct kore_x11_window *window = &x11_ctx.windows[x11_ctx.mouse.current_window];
 	if (!mouseHidden) {
 		XColor col;
 		col.pixel = 0;
@@ -967,8 +967,8 @@ void kinc_x11_mouse_hide() {
 	}
 }
 
-void kinc_x11_mouse_set_cursor(int cursorIndex) {
-	struct kinc_x11_window *window = &x11_ctx.windows[x11_ctx.mouse.current_window];
+void kore_x11_mouse_set_cursor(int cursorIndex) {
+	struct kore_x11_window *window = &x11_ctx.windows[x11_ctx.mouse.current_window];
 	if (!mouseHidden) {
 		Cursor cursor;
 		switch (cursorIndex) {
@@ -1037,15 +1037,15 @@ void kinc_x11_mouse_set_cursor(int cursorIndex) {
 	}
 }
 
-void kinc_x11_mouse_set_position(int window_index, int x, int y) {
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+void kore_x11_mouse_set_position(int window_index, int x, int y) {
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 
 	xlib.XWarpPointer(x11_ctx.display, None, window->window, 0, 0, 0, 0, x, y);
 	xlib.XFlush(x11_ctx.display); // Flushes the output buffer, therefore updates the cursor's position.
 }
 
-void kinc_x11_mouse_get_position(int window_index, int *x, int *y) {
-	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
+void kore_x11_mouse_get_position(int window_index, int *x, int *y) {
+	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	Window inwin;
 	Window inchildwin;
 	int rootx, rooty;

@@ -32,7 +32,7 @@ void kore_window_resize(int window_index, int width, int height) {}
 void kore_window_move(int window_index, int x, int y) {}
 
 void kore_window_change_framebuffer(int window_index, kore_framebuffer_parameters *frame) {
-	//**kinc_g4_changeFramebuffer(0, frame);
+	//**kore_g4_changeFramebuffer(0, frame);
 }
 
 void kore_window_change_features(int window_index, int features) {}

@@ -587,7 +587,7 @@ typedef unsigned char validate_uint32[sizeof(stbi__uint32)==4 ? 1 : -1];
 #endif
 
 #ifdef _MSC_VER
-#ifndef KINC_NO_CLIB
+#ifndef KORE_NO_CLIB
 #define STBI_HAS_LROTL
 #endif
 #endif

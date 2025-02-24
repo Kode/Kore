@@ -1,4 +1,4 @@
-#ifdef KINC_NO_CLIB
+#ifdef KORE_NO_CLIB
 
 #ifndef NDEBUG
 void _wassert(wchar_t const *message, wchar_t const *filename, unsigned line) {

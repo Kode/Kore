@@ -42,7 +42,7 @@ typedef struct kore_vr_pose_state {
 	kore_float3 angularAcceleration; // Angular acceleration in radians per second per second
 	kore_float3 linearAcceleration;  // Acceleration in meters per second per second
 
-	kinc_tracked_device_t trackedDevice;
+	kore_tracked_device_t trackedDevice;
 
 	// Sensor status
 	bool isVisible;

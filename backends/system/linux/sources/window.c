@@ -6,24 +6,24 @@
 
 #include <string.h>
 
-#ifdef KINC_EGL
-EGLDisplay kinc_egl_get_display() {
+#ifdef KORE_EGL
+EGLDisplay kore_egl_get_display() {
 	return procs.egl_get_display();
 }
-EGLNativeWindowType kinc_egl_get_native_window(EGLDisplay display, EGLConfig config, int window_index) {
+EGLNativeWindowType kore_egl_get_native_window(EGLDisplay display, EGLConfig config, int window_index) {
 	return procs.egl_get_native_window(display, config, window_index);
 }
 #endif
 
-#ifdef KINC_VULKAN
-void kinc_vulkan_get_instance_extensions(const char **extensions, int *count, int max) {
+#ifdef KORE_VULKAN
+void kore_vulkan_get_instance_extensions(const char **extensions, int *count, int max) {
 	procs.vulkan_get_instance_extensions(extensions, count, max);
 }
 
-VkBool32 kinc_vulkan_get_physical_device_presentation_support(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
+VkBool32 kore_vulkan_get_physical_device_presentation_support(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
 	return procs.vulkan_get_physical_device_presentation_support(physicalDevice, queueFamilyIndex);
 }
-VkResult kinc_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
+VkResult kore_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
 	return procs.vulkan_create_surface(instance, window_index, surface);
 }
 #endif
@@ -69,7 +69,7 @@ int kore_window_display(int window_index) {
 }
 
 void kore_window_destroy(int window_index) {
-	//kinc_g4_internal_destroy_window(window_index);
+	//kore_g4_internal_destroy_window(window_index);
 	procs.window_destroy(window_index);
 }
 
@@ -87,7 +87,7 @@ void kore_window_set_title(int window_index, const char *title) {
 
 int kore_window_create(kore_window_parameters *win, kore_framebuffer_parameters *frame) {
 	int index = procs.window_create(win, frame);
-	//kinc_g4_internal_init_window(index, frame->depth_bits, frame->stencil_bits, frame->vertical_sync);
+	//kore_g4_internal_init_window(index, frame->depth_bits, frame->stencil_bits, frame->vertical_sync);
 	return index;
 }
 
@@ -98,38 +98,38 @@ static struct {
 	void *ppi_data;
 	bool (*close_callback)(void *data);
 	void *close_data;
-} kinc_internal_window_callbacks[16];
+} kore_internal_window_callbacks[16];
 
 void kore_window_set_resize_callback(int window_index, void (*callback)(int width, int height, void *data), void *data) {
-	kinc_internal_window_callbacks[window_index].resize_callback = callback;
-	kinc_internal_window_callbacks[window_index].resize_data = data;
+	kore_internal_window_callbacks[window_index].resize_callback = callback;
+	kore_internal_window_callbacks[window_index].resize_data = data;
 }
 
 void kore_internal_call_resize_callback(int window_index, int width, int height) {
-	if (kinc_internal_window_callbacks[window_index].resize_callback != NULL) {
-		kinc_internal_window_callbacks[window_index].resize_callback(width, height, kinc_internal_window_callbacks[window_index].resize_data);
+	if (kore_internal_window_callbacks[window_index].resize_callback != NULL) {
+		kore_internal_window_callbacks[window_index].resize_callback(width, height, kore_internal_window_callbacks[window_index].resize_data);
 	}
 }
 
 void kore_window_set_ppi_changed_callback(int window_index, void (*callback)(int ppi, void *data), void *data) {
-	kinc_internal_window_callbacks[window_index].ppi_callback = callback;
-	kinc_internal_window_callbacks[window_index].ppi_data = data;
+	kore_internal_window_callbacks[window_index].ppi_callback = callback;
+	kore_internal_window_callbacks[window_index].ppi_data = data;
 }
 
 void kore_internal_call_ppi_changed_callback(int window_index, int ppi) {
-	if (kinc_internal_window_callbacks[window_index].ppi_callback != NULL) {
-		kinc_internal_window_callbacks[window_index].ppi_callback(ppi, kinc_internal_window_callbacks[window_index].resize_data);
+	if (kore_internal_window_callbacks[window_index].ppi_callback != NULL) {
+		kore_internal_window_callbacks[window_index].ppi_callback(ppi, kore_internal_window_callbacks[window_index].resize_data);
 	}
 }
 
 void kore_window_set_close_callback(int window_index, bool (*callback)(void *data), void *data) {
-	kinc_internal_window_callbacks[window_index].close_callback = callback;
-	kinc_internal_window_callbacks[window_index].close_data = data;
+	kore_internal_window_callbacks[window_index].close_callback = callback;
+	kore_internal_window_callbacks[window_index].close_data = data;
 }
 
 bool kore_internal_call_close_callback(int window_index) {
-	if (kinc_internal_window_callbacks[window_index].close_callback != NULL) {
-		return kinc_internal_window_callbacks[window_index].close_callback(kinc_internal_window_callbacks[window_index].close_data);
+	if (kore_internal_window_callbacks[window_index].close_callback != NULL) {
+		return kore_internal_window_callbacks[window_index].close_callback(kore_internal_window_callbacks[window_index].close_data);
 	}
 	else {
 		return true;

@@ -1,6 +1,6 @@
 #include <kore3/network/http.h>
 
-#if !defined KINC_MACOS && !defined KINC_IOS && !defined KINC_WINDOWS
+#if !defined KORE_MACOS && !defined KORE_IOS && !defined KORE_WINDOWS
 
 #include <assert.h>
 
