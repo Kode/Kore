@@ -1,8 +1,10 @@
-#include "x11.h"
+#include <kore3/backend/x11.h>
+
+#include <kore3/input/keyboard.h>
+#include <kore3/input/mouse.h>
+#include <kore3/input/pen.h>
 
 #include <X11/Xlib.h>
-#include <kinc/input/keyboard.h>
-#include <kinc/input/mouse.h>
 
 #include <assert.h>
 #include <ctype.h>
@@ -25,8 +27,8 @@ char buffer[1024];
 
 int kinc_x11_error_handler(Display *display, XErrorEvent *error_event) {
 	xlib.XGetErrorText(display, error_event->error_code, buffer, 1024);
-	kinc_log(KINC_LOG_LEVEL_ERROR, "X Error: %s", buffer);
-	kinc_debug_break();
+	kore_log(KORE_LOG_LEVEL_ERROR, "X Error: %s", buffer);
+	kore_debug_break();
 	return 0;
 }
 
@@ -40,7 +42,7 @@ struct kinc_x11_window *window_from_window(Window window) {
 	return NULL;
 }
 
-void kinc_internal_resize(int window_index, int width, int height);
+void kore_internal_resize(int window_index, int width, int height);
 static void init_pen_device(XDeviceInfo *info, struct x11_pen_device *pen, bool eraser);
 
 static void load_lib(void **lib, const char *name);
@@ -54,7 +56,7 @@ bool kinc_x11_init() {
 		load_lib(&x11_ctx.libs.name, #name);                                                                                                                   \
                                                                                                                                                                \
 		if (x11_ctx.libs.name == NULL) {                                                                                                                       \
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Failed to load lib%s.so", #name);                                                                                  \
+			kore_log(KORE_LOG_LEVEL_ERROR, "Failed to load lib%s.so", #name);                                                                                  \
 			return false;                                                                                                                                      \
 		}                                                                                                                                                      \
 	}                                                                                                                                                          \
@@ -73,7 +75,7 @@ bool kinc_x11_init() {
 #define LOAD_FUN(lib, symbol)                                                                                                                                  \
 	xlib.symbol = dlsym(x11_ctx.libs.lib, #symbol);                                                                                                            \
 	if (xlib.symbol == NULL) {                                                                                                                                 \
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Did not find symbol %s in library %s.", #symbol, #lib);                                                                \
+		kore_log(KORE_LOG_LEVEL_ERROR, "Did not find symbol %s in library %s.", #symbol, #lib);                                                                \
 	}
 	LOAD_FUN(X11, XOpenDisplay)
 	LOAD_FUN(X11, XCloseDisplay)
@@ -224,8 +226,6 @@ void kinc_x11_shutdown() {
 	xlib.XCloseDisplay(x11_ctx.display);
 }
 
-#include <kinc/input/pen.h>
-
 static void init_pen_device(XDeviceInfo *info, struct x11_pen_device *pen, bool eraser) {
 	XDevice *device = xlib.XOpenDevice(x11_ctx.display, info->id);
 	XAnyClassPtr c = info->inputclassinfo;
@@ -238,14 +238,14 @@ static void init_pen_device(XDeviceInfo *info, struct x11_pen_device *pen, bool 
 			pen->id = info->id;
 			DeviceMotionNotify(device, pen->motionEvent, pen->motionClass);
 			if (eraser) {
-				pen->press = kinc_internal_eraser_trigger_press;
-				pen->move = kinc_internal_eraser_trigger_move;
-				pen->release = kinc_internal_eraser_trigger_release;
+				pen->press = kore_internal_eraser_trigger_press;
+				pen->move = kore_internal_eraser_trigger_move;
+				pen->release = kore_internal_eraser_trigger_release;
 			}
 			else {
-				pen->press = kinc_internal_pen_trigger_press;
-				pen->move = kinc_internal_pen_trigger_move;
-				pen->release = kinc_internal_pen_trigger_release;
+				pen->press = kore_internal_pen_trigger_press;
+				pen->move = kore_internal_pen_trigger_move;
+				pen->release = kore_internal_pen_trigger_release;
 			}
 			return;
 		}
@@ -305,7 +305,7 @@ bool kinc_x11_handle_messages() {
 			if (!controlDown && !xlib.XFilterEvent(&event, window) && !isIgnoredKeySym) {
 
 				if (wcConverted) {
-					kinc_internal_keyboard_trigger_key_press(wchar);
+					kore_internal_keyboard_trigger_key_press(wchar);
 				}
 			}
 
@@ -317,7 +317,7 @@ bool kinc_x11_handle_messages() {
 
 #define KEY(xkey, korekey)                                                                                                                                     \
 	case xkey:                                                                                                                                                 \
-		kinc_internal_keyboard_trigger_key_down(korekey);                                                                                                      \
+		kore_internal_keyboard_trigger_key_down(korekey);                                                                                                      \
 		break;
 
 			KeySym ksKey = xlib.XkbKeycodeToKeysym(x11_ctx.display, event.xkey.keycode, 0, 0);
@@ -330,13 +330,13 @@ bool kinc_x11_handle_messages() {
 			}
 			else if (controlDown && (ksKey == XK_c || ksKey == XK_C)) {
 				xlib.XSetSelectionOwner(x11_ctx.display, x11_ctx.atoms.CLIPBOARD, window, CurrentTime);
-				char *text = kinc_internal_copy_callback();
+				char *text = kore_internal_copy_callback();
 				if (text != NULL)
 					kinc_x11_copy_to_clipboard(text);
 			}
 			else if (controlDown && (ksKey == XK_x || ksKey == XK_X)) {
 				xlib.XSetSelectionOwner(x11_ctx.display, x11_ctx.atoms.CLIPBOARD, window, CurrentTime);
-				char *text = kinc_internal_cut_callback();
+				char *text = kore_internal_cut_callback();
 				if (text != NULL)
 					kinc_x11_copy_to_clipboard(text);
 			}
@@ -353,136 +353,136 @@ bool kinc_x11_handle_messages() {
 			}
 
 			switch (ksKey) {
-				KEY(XK_Right, KINC_KEY_RIGHT)
-				KEY(XK_Left, KINC_KEY_LEFT)
-				KEY(XK_Up, KINC_KEY_UP)
-				KEY(XK_Down, KINC_KEY_DOWN)
-				KEY(XK_space, KINC_KEY_SPACE)
-				KEY(XK_BackSpace, KINC_KEY_BACKSPACE)
-				KEY(XK_Tab, KINC_KEY_TAB)
-				KEY(XK_Return, KINC_KEY_RETURN)
-				KEY(XK_Shift_L, KINC_KEY_SHIFT)
-				KEY(XK_Shift_R, KINC_KEY_SHIFT)
-				KEY(XK_Control_L, KINC_KEY_CONTROL)
-				KEY(XK_Control_R, KINC_KEY_CONTROL)
-				KEY(XK_Alt_L, KINC_KEY_ALT)
-				KEY(XK_Alt_R, KINC_KEY_ALT)
-				KEY(XK_Delete, KINC_KEY_DELETE)
-				KEY(XK_comma, KINC_KEY_COMMA)
-				KEY(XK_period, KINC_KEY_PERIOD)
-				KEY(XK_bracketleft, KINC_KEY_OPEN_BRACKET)
-				KEY(XK_bracketright, KINC_KEY_CLOSE_BRACKET)
-				KEY(XK_braceleft, KINC_KEY_OPEN_CURLY_BRACKET)
-				KEY(XK_braceright, KINC_KEY_CLOSE_CURLY_BRACKET)
-				KEY(XK_parenleft, KINC_KEY_OPEN_PAREN)
-				KEY(XK_parenright, KINC_KEY_CLOSE_PAREN)
-				KEY(XK_backslash, KINC_KEY_BACK_SLASH)
-				KEY(XK_apostrophe, KINC_KEY_QUOTE)
-				KEY(XK_colon, KINC_KEY_COLON)
-				KEY(XK_semicolon, KINC_KEY_SEMICOLON)
-				KEY(XK_minus, KINC_KEY_HYPHEN_MINUS)
-				KEY(XK_underscore, KINC_KEY_UNDERSCORE)
-				KEY(XK_slash, KINC_KEY_SLASH)
-				KEY(XK_bar, KINC_KEY_PIPE)
-				KEY(XK_question, KINC_KEY_QUESTIONMARK)
-				KEY(XK_less, KINC_KEY_LESS_THAN)
-				KEY(XK_greater, KINC_KEY_GREATER_THAN)
-				KEY(XK_asterisk, KINC_KEY_ASTERISK)
-				KEY(XK_ampersand, KINC_KEY_AMPERSAND)
-				KEY(XK_asciicircum, KINC_KEY_CIRCUMFLEX)
-				KEY(XK_percent, KINC_KEY_PERCENT)
-				KEY(XK_dollar, KINC_KEY_DOLLAR)
-				KEY(XK_numbersign, KINC_KEY_HASH)
-				KEY(XK_at, KINC_KEY_AT)
-				KEY(XK_exclam, KINC_KEY_EXCLAMATION)
-				KEY(XK_equal, KINC_KEY_EQUALS)
-				KEY(XK_plus, KINC_KEY_ADD)
-				KEY(XK_quoteleft, KINC_KEY_BACK_QUOTE)
-				KEY(XK_quotedbl, KINC_KEY_DOUBLE_QUOTE)
-				KEY(XK_asciitilde, KINC_KEY_TILDE)
-				KEY(XK_Pause, KINC_KEY_PAUSE)
-				KEY(XK_Scroll_Lock, KINC_KEY_SCROLL_LOCK)
-				KEY(XK_Home, KINC_KEY_HOME)
-				KEY(XK_Page_Up, KINC_KEY_PAGE_UP)
-				KEY(XK_Page_Down, KINC_KEY_PAGE_DOWN)
-				KEY(XK_End, KINC_KEY_END)
-				KEY(XK_Insert, KINC_KEY_INSERT)
-				KEY(XK_KP_Enter, KINC_KEY_RETURN)
-				KEY(XK_KP_Multiply, KINC_KEY_MULTIPLY)
-				KEY(XK_KP_Add, KINC_KEY_ADD)
-				KEY(XK_KP_Subtract, KINC_KEY_SUBTRACT)
-				KEY(XK_KP_Decimal, KINC_KEY_DECIMAL)
-				KEY(XK_KP_Divide, KINC_KEY_DIVIDE)
-				KEY(XK_KP_0, KINC_KEY_NUMPAD_0)
-				KEY(XK_KP_1, KINC_KEY_NUMPAD_1)
-				KEY(XK_KP_2, KINC_KEY_NUMPAD_2)
-				KEY(XK_KP_3, KINC_KEY_NUMPAD_3)
-				KEY(XK_KP_4, KINC_KEY_NUMPAD_4)
-				KEY(XK_KP_5, KINC_KEY_NUMPAD_5)
-				KEY(XK_KP_6, KINC_KEY_NUMPAD_6)
-				KEY(XK_KP_7, KINC_KEY_NUMPAD_7)
-				KEY(XK_KP_8, KINC_KEY_NUMPAD_8)
-				KEY(XK_KP_9, KINC_KEY_NUMPAD_9)
-				KEY(XK_KP_Insert, KINC_KEY_INSERT)
-				KEY(XK_KP_Delete, KINC_KEY_DELETE)
-				KEY(XK_KP_End, KINC_KEY_END)
-				KEY(XK_KP_Home, KINC_KEY_HOME)
-				KEY(XK_KP_Left, KINC_KEY_LEFT)
-				KEY(XK_KP_Up, KINC_KEY_UP)
-				KEY(XK_KP_Right, KINC_KEY_RIGHT)
-				KEY(XK_KP_Down, KINC_KEY_DOWN)
-				KEY(XK_KP_Page_Up, KINC_KEY_PAGE_UP)
-				KEY(XK_KP_Page_Down, KINC_KEY_PAGE_DOWN)
-				KEY(XK_Menu, KINC_KEY_CONTEXT_MENU)
-				KEY(XK_a, KINC_KEY_A)
-				KEY(XK_b, KINC_KEY_B)
-				KEY(XK_c, KINC_KEY_C)
-				KEY(XK_d, KINC_KEY_D)
-				KEY(XK_e, KINC_KEY_E)
-				KEY(XK_f, KINC_KEY_F)
-				KEY(XK_g, KINC_KEY_G)
-				KEY(XK_h, KINC_KEY_H)
-				KEY(XK_i, KINC_KEY_I)
-				KEY(XK_j, KINC_KEY_J)
-				KEY(XK_k, KINC_KEY_K)
-				KEY(XK_l, KINC_KEY_L)
-				KEY(XK_m, KINC_KEY_M)
-				KEY(XK_n, KINC_KEY_N)
-				KEY(XK_o, KINC_KEY_O)
-				KEY(XK_p, KINC_KEY_P)
-				KEY(XK_q, KINC_KEY_Q)
-				KEY(XK_r, KINC_KEY_R)
-				KEY(XK_s, KINC_KEY_S)
-				KEY(XK_t, KINC_KEY_T)
-				KEY(XK_u, KINC_KEY_U)
-				KEY(XK_v, KINC_KEY_V)
-				KEY(XK_w, KINC_KEY_W)
-				KEY(XK_x, KINC_KEY_X)
-				KEY(XK_y, KINC_KEY_Y)
-				KEY(XK_z, KINC_KEY_Z)
-				KEY(XK_1, KINC_KEY_1)
-				KEY(XK_2, KINC_KEY_2)
-				KEY(XK_3, KINC_KEY_3)
-				KEY(XK_4, KINC_KEY_4)
-				KEY(XK_5, KINC_KEY_5)
-				KEY(XK_6, KINC_KEY_6)
-				KEY(XK_7, KINC_KEY_7)
-				KEY(XK_8, KINC_KEY_8)
-				KEY(XK_9, KINC_KEY_9)
-				KEY(XK_0, KINC_KEY_0)
-				KEY(XK_Escape, KINC_KEY_ESCAPE)
-				KEY(XK_F1, KINC_KEY_F1)
-				KEY(XK_F2, KINC_KEY_F2)
-				KEY(XK_F3, KINC_KEY_F3)
-				KEY(XK_F4, KINC_KEY_F4)
-				KEY(XK_F5, KINC_KEY_F5)
-				KEY(XK_F6, KINC_KEY_F6)
-				KEY(XK_F7, KINC_KEY_F7)
-				KEY(XK_F8, KINC_KEY_F8)
-				KEY(XK_F9, KINC_KEY_F9)
-				KEY(XK_F10, KINC_KEY_F10)
-				KEY(XK_F11, KINC_KEY_F11)
-				KEY(XK_F12, KINC_KEY_F12)
+				KEY(XK_Right, KORE_KEY_RIGHT)
+				KEY(XK_Left, KORE_KEY_LEFT)
+				KEY(XK_Up, KORE_KEY_UP)
+				KEY(XK_Down, KORE_KEY_DOWN)
+				KEY(XK_space, KORE_KEY_SPACE)
+				KEY(XK_BackSpace, KORE_KEY_BACKSPACE)
+				KEY(XK_Tab, KORE_KEY_TAB)
+				KEY(XK_Return, KORE_KEY_RETURN)
+				KEY(XK_Shift_L, KORE_KEY_SHIFT)
+				KEY(XK_Shift_R, KORE_KEY_SHIFT)
+				KEY(XK_Control_L, KORE_KEY_CONTROL)
+				KEY(XK_Control_R, KORE_KEY_CONTROL)
+				KEY(XK_Alt_L, KORE_KEY_ALT)
+				KEY(XK_Alt_R, KORE_KEY_ALT)
+				KEY(XK_Delete, KORE_KEY_DELETE)
+				KEY(XK_comma, KORE_KEY_COMMA)
+				KEY(XK_period, KORE_KEY_PERIOD)
+				KEY(XK_bracketleft, KORE_KEY_OPEN_BRACKET)
+				KEY(XK_bracketright, KORE_KEY_CLOSE_BRACKET)
+				KEY(XK_braceleft, KORE_KEY_OPEN_CURLY_BRACKET)
+				KEY(XK_braceright, KORE_KEY_CLOSE_CURLY_BRACKET)
+				KEY(XK_parenleft, KORE_KEY_OPEN_PAREN)
+				KEY(XK_parenright, KORE_KEY_CLOSE_PAREN)
+				KEY(XK_backslash, KORE_KEY_BACK_SLASH)
+				KEY(XK_apostrophe, KORE_KEY_QUOTE)
+				KEY(XK_colon, KORE_KEY_COLON)
+				KEY(XK_semicolon, KORE_KEY_SEMICOLON)
+				KEY(XK_minus, KORE_KEY_HYPHEN_MINUS)
+				KEY(XK_underscore, KORE_KEY_UNDERSCORE)
+				KEY(XK_slash, KORE_KEY_SLASH)
+				KEY(XK_bar, KORE_KEY_PIPE)
+				KEY(XK_question, KORE_KEY_QUESTIONMARK)
+				KEY(XK_less, KORE_KEY_LESS_THAN)
+				KEY(XK_greater, KORE_KEY_GREATER_THAN)
+				KEY(XK_asterisk, KORE_KEY_ASTERISK)
+				KEY(XK_ampersand, KORE_KEY_AMPERSAND)
+				KEY(XK_asciicircum, KORE_KEY_CIRCUMFLEX)
+				KEY(XK_percent, KORE_KEY_PERCENT)
+				KEY(XK_dollar, KORE_KEY_DOLLAR)
+				KEY(XK_numbersign, KORE_KEY_HASH)
+				KEY(XK_at, KORE_KEY_AT)
+				KEY(XK_exclam, KORE_KEY_EXCLAMATION)
+				KEY(XK_equal, KORE_KEY_EQUALS)
+				KEY(XK_plus, KORE_KEY_ADD)
+				KEY(XK_quoteleft, KORE_KEY_BACK_QUOTE)
+				KEY(XK_quotedbl, KORE_KEY_DOUBLE_QUOTE)
+				KEY(XK_asciitilde, KORE_KEY_TILDE)
+				KEY(XK_Pause, KORE_KEY_PAUSE)
+				KEY(XK_Scroll_Lock, KORE_KEY_SCROLL_LOCK)
+				KEY(XK_Home, KORE_KEY_HOME)
+				KEY(XK_Page_Up, KORE_KEY_PAGE_UP)
+				KEY(XK_Page_Down, KORE_KEY_PAGE_DOWN)
+				KEY(XK_End, KORE_KEY_END)
+				KEY(XK_Insert, KORE_KEY_INSERT)
+				KEY(XK_KP_Enter, KORE_KEY_RETURN)
+				KEY(XK_KP_Multiply, KORE_KEY_MULTIPLY)
+				KEY(XK_KP_Add, KORE_KEY_ADD)
+				KEY(XK_KP_Subtract, KORE_KEY_SUBTRACT)
+				KEY(XK_KP_Decimal, KORE_KEY_DECIMAL)
+				KEY(XK_KP_Divide, KORE_KEY_DIVIDE)
+				KEY(XK_KP_0, KORE_KEY_NUMPAD_0)
+				KEY(XK_KP_1, KORE_KEY_NUMPAD_1)
+				KEY(XK_KP_2, KORE_KEY_NUMPAD_2)
+				KEY(XK_KP_3, KORE_KEY_NUMPAD_3)
+				KEY(XK_KP_4, KORE_KEY_NUMPAD_4)
+				KEY(XK_KP_5, KORE_KEY_NUMPAD_5)
+				KEY(XK_KP_6, KORE_KEY_NUMPAD_6)
+				KEY(XK_KP_7, KORE_KEY_NUMPAD_7)
+				KEY(XK_KP_8, KORE_KEY_NUMPAD_8)
+				KEY(XK_KP_9, KORE_KEY_NUMPAD_9)
+				KEY(XK_KP_Insert, KORE_KEY_INSERT)
+				KEY(XK_KP_Delete, KORE_KEY_DELETE)
+				KEY(XK_KP_End, KORE_KEY_END)
+				KEY(XK_KP_Home, KORE_KEY_HOME)
+				KEY(XK_KP_Left, KORE_KEY_LEFT)
+				KEY(XK_KP_Up, KORE_KEY_UP)
+				KEY(XK_KP_Right, KORE_KEY_RIGHT)
+				KEY(XK_KP_Down, KORE_KEY_DOWN)
+				KEY(XK_KP_Page_Up, KORE_KEY_PAGE_UP)
+				KEY(XK_KP_Page_Down, KORE_KEY_PAGE_DOWN)
+				KEY(XK_Menu, KORE_KEY_CONTEXT_MENU)
+				KEY(XK_a, KORE_KEY_A)
+				KEY(XK_b, KORE_KEY_B)
+				KEY(XK_c, KORE_KEY_C)
+				KEY(XK_d, KORE_KEY_D)
+				KEY(XK_e, KORE_KEY_E)
+				KEY(XK_f, KORE_KEY_F)
+				KEY(XK_g, KORE_KEY_G)
+				KEY(XK_h, KORE_KEY_H)
+				KEY(XK_i, KORE_KEY_I)
+				KEY(XK_j, KORE_KEY_J)
+				KEY(XK_k, KORE_KEY_K)
+				KEY(XK_l, KORE_KEY_L)
+				KEY(XK_m, KORE_KEY_M)
+				KEY(XK_n, KORE_KEY_N)
+				KEY(XK_o, KORE_KEY_O)
+				KEY(XK_p, KORE_KEY_P)
+				KEY(XK_q, KORE_KEY_Q)
+				KEY(XK_r, KORE_KEY_R)
+				KEY(XK_s, KORE_KEY_S)
+				KEY(XK_t, KORE_KEY_T)
+				KEY(XK_u, KORE_KEY_U)
+				KEY(XK_v, KORE_KEY_V)
+				KEY(XK_w, KORE_KEY_W)
+				KEY(XK_x, KORE_KEY_X)
+				KEY(XK_y, KORE_KEY_Y)
+				KEY(XK_z, KORE_KEY_Z)
+				KEY(XK_1, KORE_KEY_1)
+				KEY(XK_2, KORE_KEY_2)
+				KEY(XK_3, KORE_KEY_3)
+				KEY(XK_4, KORE_KEY_4)
+				KEY(XK_5, KORE_KEY_5)
+				KEY(XK_6, KORE_KEY_6)
+				KEY(XK_7, KORE_KEY_7)
+				KEY(XK_8, KORE_KEY_8)
+				KEY(XK_9, KORE_KEY_9)
+				KEY(XK_0, KORE_KEY_0)
+				KEY(XK_Escape, KORE_KEY_ESCAPE)
+				KEY(XK_F1, KORE_KEY_F1)
+				KEY(XK_F2, KORE_KEY_F2)
+				KEY(XK_F3, KORE_KEY_F3)
+				KEY(XK_F4, KORE_KEY_F4)
+				KEY(XK_F5, KORE_KEY_F5)
+				KEY(XK_F6, KORE_KEY_F6)
+				KEY(XK_F7, KORE_KEY_F7)
+				KEY(XK_F8, KORE_KEY_F8)
+				KEY(XK_F9, KORE_KEY_F9)
+				KEY(XK_F10, KORE_KEY_F10)
+				KEY(XK_F11, KORE_KEY_F11)
+				KEY(XK_F12, KORE_KEY_F12)
 			}
 			break;
 #undef KEY
@@ -508,7 +508,7 @@ bool kinc_x11_handle_messages() {
 
 #define KEY(xkey, korekey)                                                                                                                                     \
 	case xkey:                                                                                                                                                 \
-		kinc_internal_keyboard_trigger_key_up(korekey);                                                                                                        \
+		kore_internal_keyboard_trigger_key_up(korekey);                                                                                                        \
 		break;
 
 			KeySym ksKey = xlib.XkbKeycodeToKeysym(x11_ctx.display, event.xkey.keycode, 0, 0);
@@ -526,136 +526,136 @@ bool kinc_x11_handle_messages() {
 			}
 
 			switch (ksKey) {
-				KEY(XK_Right, KINC_KEY_RIGHT)
-				KEY(XK_Left, KINC_KEY_LEFT)
-				KEY(XK_Up, KINC_KEY_UP)
-				KEY(XK_Down, KINC_KEY_DOWN)
-				KEY(XK_space, KINC_KEY_SPACE)
-				KEY(XK_BackSpace, KINC_KEY_BACKSPACE)
-				KEY(XK_Tab, KINC_KEY_TAB)
-				KEY(XK_Return, KINC_KEY_RETURN)
-				KEY(XK_Shift_L, KINC_KEY_SHIFT)
-				KEY(XK_Shift_R, KINC_KEY_SHIFT)
-				KEY(XK_Control_L, KINC_KEY_CONTROL)
-				KEY(XK_Control_R, KINC_KEY_CONTROL)
-				KEY(XK_Alt_L, KINC_KEY_ALT)
-				KEY(XK_Alt_R, KINC_KEY_ALT)
-				KEY(XK_Delete, KINC_KEY_DELETE)
-				KEY(XK_comma, KINC_KEY_COMMA)
-				KEY(XK_period, KINC_KEY_PERIOD)
-				KEY(XK_bracketleft, KINC_KEY_OPEN_BRACKET)
-				KEY(XK_bracketright, KINC_KEY_CLOSE_BRACKET)
-				KEY(XK_braceleft, KINC_KEY_OPEN_CURLY_BRACKET)
-				KEY(XK_braceright, KINC_KEY_CLOSE_CURLY_BRACKET)
-				KEY(XK_parenleft, KINC_KEY_OPEN_PAREN)
-				KEY(XK_parenright, KINC_KEY_CLOSE_PAREN)
-				KEY(XK_backslash, KINC_KEY_BACK_SLASH)
-				KEY(XK_apostrophe, KINC_KEY_QUOTE)
-				KEY(XK_colon, KINC_KEY_COLON)
-				KEY(XK_semicolon, KINC_KEY_SEMICOLON)
-				KEY(XK_minus, KINC_KEY_HYPHEN_MINUS)
-				KEY(XK_underscore, KINC_KEY_UNDERSCORE)
-				KEY(XK_slash, KINC_KEY_SLASH)
-				KEY(XK_bar, KINC_KEY_PIPE)
-				KEY(XK_question, KINC_KEY_QUESTIONMARK)
-				KEY(XK_less, KINC_KEY_LESS_THAN)
-				KEY(XK_greater, KINC_KEY_GREATER_THAN)
-				KEY(XK_asterisk, KINC_KEY_ASTERISK)
-				KEY(XK_ampersand, KINC_KEY_AMPERSAND)
-				KEY(XK_asciicircum, KINC_KEY_CIRCUMFLEX)
-				KEY(XK_percent, KINC_KEY_PERCENT)
-				KEY(XK_dollar, KINC_KEY_DOLLAR)
-				KEY(XK_numbersign, KINC_KEY_HASH)
-				KEY(XK_at, KINC_KEY_AT)
-				KEY(XK_exclam, KINC_KEY_EXCLAMATION)
-				KEY(XK_equal, KINC_KEY_EQUALS)
-				KEY(XK_plus, KINC_KEY_ADD)
-				KEY(XK_quoteleft, KINC_KEY_BACK_QUOTE)
-				KEY(XK_quotedbl, KINC_KEY_DOUBLE_QUOTE)
-				KEY(XK_asciitilde, KINC_KEY_TILDE)
-				KEY(XK_Pause, KINC_KEY_PAUSE)
-				KEY(XK_Scroll_Lock, KINC_KEY_SCROLL_LOCK)
-				KEY(XK_Home, KINC_KEY_HOME)
-				KEY(XK_Page_Up, KINC_KEY_PAGE_UP)
-				KEY(XK_Page_Down, KINC_KEY_PAGE_DOWN)
-				KEY(XK_End, KINC_KEY_END)
-				KEY(XK_Insert, KINC_KEY_INSERT)
-				KEY(XK_KP_Enter, KINC_KEY_RETURN)
-				KEY(XK_KP_Multiply, KINC_KEY_MULTIPLY)
-				KEY(XK_KP_Add, KINC_KEY_ADD)
-				KEY(XK_KP_Subtract, KINC_KEY_SUBTRACT)
-				KEY(XK_KP_Decimal, KINC_KEY_DECIMAL)
-				KEY(XK_KP_Divide, KINC_KEY_DIVIDE)
-				KEY(XK_KP_0, KINC_KEY_NUMPAD_0)
-				KEY(XK_KP_1, KINC_KEY_NUMPAD_1)
-				KEY(XK_KP_2, KINC_KEY_NUMPAD_2)
-				KEY(XK_KP_3, KINC_KEY_NUMPAD_3)
-				KEY(XK_KP_4, KINC_KEY_NUMPAD_4)
-				KEY(XK_KP_5, KINC_KEY_NUMPAD_5)
-				KEY(XK_KP_6, KINC_KEY_NUMPAD_6)
-				KEY(XK_KP_7, KINC_KEY_NUMPAD_7)
-				KEY(XK_KP_8, KINC_KEY_NUMPAD_8)
-				KEY(XK_KP_9, KINC_KEY_NUMPAD_9)
-				KEY(XK_KP_Insert, KINC_KEY_INSERT)
-				KEY(XK_KP_Delete, KINC_KEY_DELETE)
-				KEY(XK_KP_End, KINC_KEY_END)
-				KEY(XK_KP_Home, KINC_KEY_HOME)
-				KEY(XK_KP_Left, KINC_KEY_LEFT)
-				KEY(XK_KP_Up, KINC_KEY_UP)
-				KEY(XK_KP_Right, KINC_KEY_RIGHT)
-				KEY(XK_KP_Down, KINC_KEY_DOWN)
-				KEY(XK_KP_Page_Up, KINC_KEY_PAGE_UP)
-				KEY(XK_KP_Page_Down, KINC_KEY_PAGE_DOWN)
-				KEY(XK_Menu, KINC_KEY_CONTEXT_MENU)
-				KEY(XK_a, KINC_KEY_A)
-				KEY(XK_b, KINC_KEY_B)
-				KEY(XK_c, KINC_KEY_C)
-				KEY(XK_d, KINC_KEY_D)
-				KEY(XK_e, KINC_KEY_E)
-				KEY(XK_f, KINC_KEY_F)
-				KEY(XK_g, KINC_KEY_G)
-				KEY(XK_h, KINC_KEY_H)
-				KEY(XK_i, KINC_KEY_I)
-				KEY(XK_j, KINC_KEY_J)
-				KEY(XK_k, KINC_KEY_K)
-				KEY(XK_l, KINC_KEY_L)
-				KEY(XK_m, KINC_KEY_M)
-				KEY(XK_n, KINC_KEY_N)
-				KEY(XK_o, KINC_KEY_O)
-				KEY(XK_p, KINC_KEY_P)
-				KEY(XK_q, KINC_KEY_Q)
-				KEY(XK_r, KINC_KEY_R)
-				KEY(XK_s, KINC_KEY_S)
-				KEY(XK_t, KINC_KEY_T)
-				KEY(XK_u, KINC_KEY_U)
-				KEY(XK_v, KINC_KEY_V)
-				KEY(XK_w, KINC_KEY_W)
-				KEY(XK_x, KINC_KEY_X)
-				KEY(XK_y, KINC_KEY_Y)
-				KEY(XK_z, KINC_KEY_Z)
-				KEY(XK_1, KINC_KEY_1)
-				KEY(XK_2, KINC_KEY_2)
-				KEY(XK_3, KINC_KEY_3)
-				KEY(XK_4, KINC_KEY_4)
-				KEY(XK_5, KINC_KEY_5)
-				KEY(XK_6, KINC_KEY_6)
-				KEY(XK_7, KINC_KEY_7)
-				KEY(XK_8, KINC_KEY_8)
-				KEY(XK_9, KINC_KEY_9)
-				KEY(XK_0, KINC_KEY_0)
-				KEY(XK_Escape, KINC_KEY_ESCAPE)
-				KEY(XK_F1, KINC_KEY_F1)
-				KEY(XK_F2, KINC_KEY_F2)
-				KEY(XK_F3, KINC_KEY_F3)
-				KEY(XK_F4, KINC_KEY_F4)
-				KEY(XK_F5, KINC_KEY_F5)
-				KEY(XK_F6, KINC_KEY_F6)
-				KEY(XK_F7, KINC_KEY_F7)
-				KEY(XK_F8, KINC_KEY_F8)
-				KEY(XK_F9, KINC_KEY_F9)
-				KEY(XK_F10, KINC_KEY_F10)
-				KEY(XK_F11, KINC_KEY_F11)
-				KEY(XK_F12, KINC_KEY_F12)
+				KEY(XK_Right, KORE_KEY_RIGHT)
+				KEY(XK_Left, KORE_KEY_LEFT)
+				KEY(XK_Up, KORE_KEY_UP)
+				KEY(XK_Down, KORE_KEY_DOWN)
+				KEY(XK_space, KORE_KEY_SPACE)
+				KEY(XK_BackSpace, KORE_KEY_BACKSPACE)
+				KEY(XK_Tab, KORE_KEY_TAB)
+				KEY(XK_Return, KORE_KEY_RETURN)
+				KEY(XK_Shift_L, KORE_KEY_SHIFT)
+				KEY(XK_Shift_R, KORE_KEY_SHIFT)
+				KEY(XK_Control_L, KORE_KEY_CONTROL)
+				KEY(XK_Control_R, KORE_KEY_CONTROL)
+				KEY(XK_Alt_L, KORE_KEY_ALT)
+				KEY(XK_Alt_R, KORE_KEY_ALT)
+				KEY(XK_Delete, KORE_KEY_DELETE)
+				KEY(XK_comma, KORE_KEY_COMMA)
+				KEY(XK_period, KORE_KEY_PERIOD)
+				KEY(XK_bracketleft, KORE_KEY_OPEN_BRACKET)
+				KEY(XK_bracketright, KORE_KEY_CLOSE_BRACKET)
+				KEY(XK_braceleft, KORE_KEY_OPEN_CURLY_BRACKET)
+				KEY(XK_braceright, KORE_KEY_CLOSE_CURLY_BRACKET)
+				KEY(XK_parenleft, KORE_KEY_OPEN_PAREN)
+				KEY(XK_parenright, KORE_KEY_CLOSE_PAREN)
+				KEY(XK_backslash, KORE_KEY_BACK_SLASH)
+				KEY(XK_apostrophe, KORE_KEY_QUOTE)
+				KEY(XK_colon, KORE_KEY_COLON)
+				KEY(XK_semicolon, KORE_KEY_SEMICOLON)
+				KEY(XK_minus, KORE_KEY_HYPHEN_MINUS)
+				KEY(XK_underscore, KORE_KEY_UNDERSCORE)
+				KEY(XK_slash, KORE_KEY_SLASH)
+				KEY(XK_bar, KORE_KEY_PIPE)
+				KEY(XK_question, KORE_KEY_QUESTIONMARK)
+				KEY(XK_less, KORE_KEY_LESS_THAN)
+				KEY(XK_greater, KORE_KEY_GREATER_THAN)
+				KEY(XK_asterisk, KORE_KEY_ASTERISK)
+				KEY(XK_ampersand, KORE_KEY_AMPERSAND)
+				KEY(XK_asciicircum, KORE_KEY_CIRCUMFLEX)
+				KEY(XK_percent, KORE_KEY_PERCENT)
+				KEY(XK_dollar, KORE_KEY_DOLLAR)
+				KEY(XK_numbersign, KORE_KEY_HASH)
+				KEY(XK_at, KORE_KEY_AT)
+				KEY(XK_exclam, KORE_KEY_EXCLAMATION)
+				KEY(XK_equal, KORE_KEY_EQUALS)
+				KEY(XK_plus, KORE_KEY_ADD)
+				KEY(XK_quoteleft, KORE_KEY_BACK_QUOTE)
+				KEY(XK_quotedbl, KORE_KEY_DOUBLE_QUOTE)
+				KEY(XK_asciitilde, KORE_KEY_TILDE)
+				KEY(XK_Pause, KORE_KEY_PAUSE)
+				KEY(XK_Scroll_Lock, KORE_KEY_SCROLL_LOCK)
+				KEY(XK_Home, KORE_KEY_HOME)
+				KEY(XK_Page_Up, KORE_KEY_PAGE_UP)
+				KEY(XK_Page_Down, KORE_KEY_PAGE_DOWN)
+				KEY(XK_End, KORE_KEY_END)
+				KEY(XK_Insert, KORE_KEY_INSERT)
+				KEY(XK_KP_Enter, KORE_KEY_RETURN)
+				KEY(XK_KP_Multiply, KORE_KEY_MULTIPLY)
+				KEY(XK_KP_Add, KORE_KEY_ADD)
+				KEY(XK_KP_Subtract, KORE_KEY_SUBTRACT)
+				KEY(XK_KP_Decimal, KORE_KEY_DECIMAL)
+				KEY(XK_KP_Divide, KORE_KEY_DIVIDE)
+				KEY(XK_KP_0, KORE_KEY_NUMPAD_0)
+				KEY(XK_KP_1, KORE_KEY_NUMPAD_1)
+				KEY(XK_KP_2, KORE_KEY_NUMPAD_2)
+				KEY(XK_KP_3, KORE_KEY_NUMPAD_3)
+				KEY(XK_KP_4, KORE_KEY_NUMPAD_4)
+				KEY(XK_KP_5, KORE_KEY_NUMPAD_5)
+				KEY(XK_KP_6, KORE_KEY_NUMPAD_6)
+				KEY(XK_KP_7, KORE_KEY_NUMPAD_7)
+				KEY(XK_KP_8, KORE_KEY_NUMPAD_8)
+				KEY(XK_KP_9, KORE_KEY_NUMPAD_9)
+				KEY(XK_KP_Insert, KORE_KEY_INSERT)
+				KEY(XK_KP_Delete, KORE_KEY_DELETE)
+				KEY(XK_KP_End, KORE_KEY_END)
+				KEY(XK_KP_Home, KORE_KEY_HOME)
+				KEY(XK_KP_Left, KORE_KEY_LEFT)
+				KEY(XK_KP_Up, KORE_KEY_UP)
+				KEY(XK_KP_Right, KORE_KEY_RIGHT)
+				KEY(XK_KP_Down, KORE_KEY_DOWN)
+				KEY(XK_KP_Page_Up, KORE_KEY_PAGE_UP)
+				KEY(XK_KP_Page_Down, KORE_KEY_PAGE_DOWN)
+				KEY(XK_Menu, KORE_KEY_CONTEXT_MENU)
+				KEY(XK_a, KORE_KEY_A)
+				KEY(XK_b, KORE_KEY_B)
+				KEY(XK_c, KORE_KEY_C)
+				KEY(XK_d, KORE_KEY_D)
+				KEY(XK_e, KORE_KEY_E)
+				KEY(XK_f, KORE_KEY_F)
+				KEY(XK_g, KORE_KEY_G)
+				KEY(XK_h, KORE_KEY_H)
+				KEY(XK_i, KORE_KEY_I)
+				KEY(XK_j, KORE_KEY_J)
+				KEY(XK_k, KORE_KEY_K)
+				KEY(XK_l, KORE_KEY_L)
+				KEY(XK_m, KORE_KEY_M)
+				KEY(XK_n, KORE_KEY_N)
+				KEY(XK_o, KORE_KEY_O)
+				KEY(XK_p, KORE_KEY_P)
+				KEY(XK_q, KORE_KEY_Q)
+				KEY(XK_r, KORE_KEY_R)
+				KEY(XK_s, KORE_KEY_S)
+				KEY(XK_t, KORE_KEY_T)
+				KEY(XK_u, KORE_KEY_U)
+				KEY(XK_v, KORE_KEY_V)
+				KEY(XK_w, KORE_KEY_W)
+				KEY(XK_x, KORE_KEY_X)
+				KEY(XK_y, KORE_KEY_Y)
+				KEY(XK_z, KORE_KEY_Z)
+				KEY(XK_1, KORE_KEY_1)
+				KEY(XK_2, KORE_KEY_2)
+				KEY(XK_3, KORE_KEY_3)
+				KEY(XK_4, KORE_KEY_4)
+				KEY(XK_5, KORE_KEY_5)
+				KEY(XK_6, KORE_KEY_6)
+				KEY(XK_7, KORE_KEY_7)
+				KEY(XK_8, KORE_KEY_8)
+				KEY(XK_9, KORE_KEY_9)
+				KEY(XK_0, KORE_KEY_0)
+				KEY(XK_Escape, KORE_KEY_ESCAPE)
+				KEY(XK_F1, KORE_KEY_F1)
+				KEY(XK_F2, KORE_KEY_F2)
+				KEY(XK_F3, KORE_KEY_F3)
+				KEY(XK_F4, KORE_KEY_F4)
+				KEY(XK_F5, KORE_KEY_F5)
+				KEY(XK_F6, KORE_KEY_F6)
+				KEY(XK_F7, KORE_KEY_F7)
+				KEY(XK_F8, KORE_KEY_F8)
+				KEY(XK_F9, KORE_KEY_F9)
+				KEY(XK_F10, KORE_KEY_F10)
+				KEY(XK_F11, KORE_KEY_F11)
+				KEY(XK_F12, KORE_KEY_F12)
 			}
 			break;
 #undef KEY
@@ -666,13 +666,13 @@ bool kinc_x11_handle_messages() {
 
 			switch (button->button) {
 			case Button1:
-				kinc_internal_mouse_trigger_press(window_index, 0, button->x, button->y);
+				kore_internal_mouse_trigger_press(window_index, 0, button->x, button->y);
 				break;
 			case Button2:
-				kinc_internal_mouse_trigger_press(window_index, 2, button->x, button->y);
+				kore_internal_mouse_trigger_press(window_index, 2, button->x, button->y);
 				break;
 			case Button3:
-				kinc_internal_mouse_trigger_press(window_index, 1, button->x, button->y);
+				kore_internal_mouse_trigger_press(window_index, 1, button->x, button->y);
 				break;
 			// buttons 4-7 are for mouse wheel events because why not
 			case Button4:
@@ -681,7 +681,7 @@ bool kinc_x11_handle_messages() {
 			case Button7:
 				break;
 			default:
-				kinc_internal_mouse_trigger_press(window_index, button->button - Button1 - 4, button->x, button->y);
+				kore_internal_mouse_trigger_press(window_index, button->button - Button1 - 4, button->x, button->y);
 				break;
 			}
 			break;
@@ -692,42 +692,42 @@ bool kinc_x11_handle_messages() {
 
 			switch (button->button) {
 			case Button1:
-				kinc_internal_mouse_trigger_release(window_index, 0, button->x, button->y);
+				kore_internal_mouse_trigger_release(window_index, 0, button->x, button->y);
 				break;
 			case Button2:
-				kinc_internal_mouse_trigger_release(window_index, 2, button->x, button->y);
+				kore_internal_mouse_trigger_release(window_index, 2, button->x, button->y);
 				break;
 			case Button3:
-				kinc_internal_mouse_trigger_release(window_index, 1, button->x, button->y);
+				kore_internal_mouse_trigger_release(window_index, 1, button->x, button->y);
 				break;
 			// Button4 and Button5 provide mouse wheel events because why not
 			case Button4:
-				kinc_internal_mouse_trigger_scroll(window_index, -1);
+				kore_internal_mouse_trigger_scroll(window_index, -1);
 				break;
 			case Button5:
-				kinc_internal_mouse_trigger_scroll(window_index, 1);
+				kore_internal_mouse_trigger_scroll(window_index, 1);
 				break;
 			// button 6 and 7 seem to be horizontal scrolling, which is not exposed in Kinc's api at the moment
 			case Button6:
 			case Button7:
 				break;
 			default:
-				kinc_internal_mouse_trigger_release(window_index, button->button - Button1 - 4, button->x, button->y);
+				kore_internal_mouse_trigger_release(window_index, button->button - Button1 - 4, button->x, button->y);
 				break;
 			}
 			break;
 		}
 		case MotionNotify: {
 			XMotionEvent *motion = (XMotionEvent *)&event;
-			kinc_internal_mouse_trigger_move(k_window->window_index, motion->x, motion->y);
+			kore_internal_mouse_trigger_move(k_window->window_index, motion->x, motion->y);
 			break;
 		}
 		case ConfigureNotify: {
 			if (event.xconfigure.width != k_window->width || event.xconfigure.height != k_window->height) {
 				k_window->width = event.xconfigure.width;
 				k_window->height = event.xconfigure.height;
-				kinc_internal_resize(k_window->window_index, event.xconfigure.width, event.xconfigure.height);
-				kinc_internal_call_resize_callback(k_window->window_index, event.xconfigure.width, event.xconfigure.height);
+				// kore_internal_resize(k_window->window_index, event.xconfigure.width, event.xconfigure.height); // TODO
+				kore_internal_call_resize_callback(k_window->window_index, event.xconfigure.width, event.xconfigure.height);
 			}
 			break;
 		}
@@ -753,11 +753,11 @@ bool kinc_x11_handle_messages() {
 				                       event.xclient.data.l[2]);
 			}
 			else if (event.xclient.data.l[0] == x11_ctx.atoms.WM_DELETE_WINDOW) {
-				if (kinc_internal_call_close_callback(k_window->window_index)) {
-					kinc_window_destroy(k_window->window_index);
+				if (kore_internal_call_close_callback(k_window->window_index)) {
+					kore_window_destroy(k_window->window_index);
 					if (x11_ctx.num_windows <= 0) {
 						// no windows left, stop
-						kinc_stop();
+						kore_stop();
 					}
 				}
 			}
@@ -769,7 +769,7 @@ bool kinc_x11_handle_messages() {
 				int resbits;
 				xlib.XGetWindowProperty(x11_ctx.display, window, x11_ctx.atoms.XSEL_DATA, 0, LONG_MAX / 4, False, AnyPropertyType, &x11_ctx.atoms.UTF8_STRING,
 				                        &resbits, &ressize, &restail, (unsigned char **)&result);
-				kinc_internal_paste_callback(result);
+				kore_internal_paste_callback(result);
 				xlib.XFree(result);
 			}
 			else if (event.xselection.property == x11_ctx.atoms.XdndSelection) {
@@ -787,7 +787,7 @@ bool kinc_x11_handle_messages() {
 						wchar_t filePath[len + 1];
 						mbstowcs(filePath, buffer, len);
 						filePath[len] = 0;
-						kinc_internal_drop_files_callback(filePath + 7); // Strip file://
+						kore_internal_drop_files_callback(filePath + 7); // Strip file://
 						pos += 2;                                        // Avoid \n
 						len = 0;
 					}
@@ -828,21 +828,21 @@ bool kinc_x11_handle_messages() {
 		case Expose:
 			break;
 		case FocusIn: {
-			kinc_internal_foreground_callback();
+			kore_internal_foreground_callback();
 			break;
 		}
 		case FocusOut: {
 			controlDown = false;
 			ignoreKeycode = 0;
-			kinc_internal_background_callback();
+			kore_internal_background_callback();
 			break;
 		}
 		case LeaveNotify:
-			kinc_internal_mouse_trigger_leave_window(k_window->window_index);
+			kore_internal_mouse_trigger_leave_window(k_window->window_index);
 			break;
 		case EnterNotify:
 			x11_ctx.mouse.current_window = k_window->window_index;
-			kinc_internal_mouse_trigger_enter_window(k_window->window_index);
+			kore_internal_mouse_trigger_enter_window(k_window->window_index);
 			break;
 		}
 	}
@@ -897,12 +897,12 @@ VkBool32 kinc_x11_vulkan_get_physical_device_presentation_support(VkPhysicalDevi
 #endif
 
 void kinc_x11_mouse_lock(int window) {
-	kinc_mouse_hide();
-	int width = kinc_window_width(window);
-	int height = kinc_window_height(window);
+	kore_mouse_hide();
+	int width = kore_window_width(window);
+	int height = kore_window_height(window);
 
 	int x, y;
-	kinc_mouse_get_position(window, &x, &y);
+	kore_mouse_get_position(window, &x, &y);
 
 	// Guess the new position of X and Y
 	int newX = x;
@@ -927,11 +927,11 @@ void kinc_x11_mouse_lock(int window) {
 	}
 
 	// Force the mouse to stay inside the window
-	kinc_mouse_set_position(window, newX, newY);
+	kore_mouse_set_position(window, newX, newY);
 }
 
 void kinc_x11_mouse_unlock(void) {
-	kinc_mouse_show();
+	kore_mouse_show();
 }
 
 bool kinc_x11_mouse_can_lock(void) {

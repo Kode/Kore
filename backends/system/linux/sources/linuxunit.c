@@ -2,7 +2,8 @@
 #define _GNU_SOURCE // memfd_create and mkostemp
 #endif
 
-#include "funcs.h"
+#include <kore3/backend/funcs.h>
+
 #include <dlfcn.h>
 #include <stdio.h>
 
@@ -94,7 +95,7 @@ void kinc_linux_init_procs() {
 	else
 #endif
 #ifndef KINC_NO_X11
-	    if (kinc_x11_init()) {
+	if (kinc_x11_init()) {
 		procs.handle_messages = kinc_x11_handle_messages;
 		procs.shutdown = kinc_x11_shutdown;
 
@@ -146,7 +147,7 @@ void kinc_linux_init_procs() {
 	else
 #endif
 	{
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Neither wayland nor X11 found.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Neither wayland nor X11 found.");
 		exit(1);
 	}
 }

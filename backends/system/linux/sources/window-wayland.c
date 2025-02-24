@@ -1,8 +1,8 @@
-#include "wayland.h"
+#include <kore3/backend/wayland.h>
 
-#include <kinc/image.h>
-#include <kinc/window.h>
-#include <kinc/log.h>
+#include <kore3/image.h>
+#include <kore3/window.h>
+#include <kore3/log.h>
 
 // for all that shared memory stuff later on
 #include <errno.h>
@@ -23,9 +23,10 @@ static void xdg_surface_handle_configure(void *data, struct xdg_surface *surface
 	window->configured = true;
 }
 
-void kinc_internal_resize(int, int, int);
+void kore_internal_resize(int, int, int);
 void kinc_wayland_destroy_decoration(struct kinc_wl_decoration *);
 void kinc_wayland_resize_decoration(struct kinc_wl_decoration *, int x, int y, int width, int height);
+
 static void xdg_toplevel_handle_configure(void *data, struct xdg_toplevel *toplevel, int32_t width, int32_t height, struct wl_array *states) {
 	struct kinc_wl_window *window = data;
 	if(width > 0 && height > 0) {
@@ -45,7 +46,7 @@ static void xdg_toplevel_handle_configure(void *data, struct xdg_toplevel *tople
 	wl_array_for_each(state, states) {
 		switch (*state) {
 		case XDG_TOPLEVEL_STATE_ACTIVATED:
-			kinc_internal_foreground_callback();
+			kore_internal_foreground_callback();
 			break;
 		case XDG_TOPLEVEL_STATE_RESIZING:
 			break;
@@ -73,8 +74,8 @@ static void xdg_toplevel_handle_configure(void *data, struct xdg_toplevel *tople
 			wl_surface_set_buffer_scale(window->surface, window->preferred_scale / 120);
 		}
 
-		kinc_internal_resize(window->window_id, window->buffer_width, window->buffer_height);
-		kinc_internal_call_resize_callback(window->window_id, window->buffer_width, window->buffer_height);
+		// kore_internal_resize(window->window_id, window->buffer_width, window->buffer_height); // TODO
+		kore_internal_call_resize_callback(window->window_id, window->buffer_width, window->buffer_height);
 #ifdef KINC_EGL
 		wl_egl_window_resize(window->egl_window, window->buffer_width, window->buffer_height, 0, 0);
 #endif
@@ -96,11 +97,11 @@ void kinc_wayland_window_destroy(int window_index);
 
 static void xdg_toplevel_handle_close(void *data, struct xdg_toplevel *xdg_toplevel) {
 	struct kinc_wl_window *window = data;
-	if (kinc_internal_call_close_callback(window->window_id)) {
-		kinc_window_destroy(window->window_id);
+	if (kore_internal_call_close_callback(window->window_id)) {
+		kore_window_destroy(window->window_id);
 		if (wl_ctx.num_windows <= 0) {
 			// no windows left, stop
-			kinc_stop();
+			kore_stop();
 		}
 	}
 }
@@ -164,19 +165,19 @@ static int create_shm_fd(off_t size) {
 	return fd;
 }
 
-struct wl_buffer *kinc_wayland_create_shm_buffer(const kinc_image_t *image) {
+struct wl_buffer *kinc_wayland_create_shm_buffer(const kore_image *image) {
 	int stride = image->width * 4;
 	int length = image->width * image->height * 4;
 
 	const int fd = create_shm_fd(length);
 	if (fd < 0) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Wayland: Creating a buffer file for %d B failed: %s", length, strerror(errno));
+		kore_log(KORE_LOG_LEVEL_ERROR, "Wayland: Creating a buffer file for %d B failed: %s", length, strerror(errno));
 		return NULL;
 	}
 
 	void *data = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 	if (data == MAP_FAILED) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Wayland: mmap failed: %s", strerror(errno));
+		kore_log(KORE_LOG_LEVEL_ERROR, "Wayland: mmap failed: %s", strerror(errno));
 		close(fd);
 		return NULL;
 	}
@@ -207,11 +208,11 @@ static int close_data[] = {
 
 // image format is argb32, but kinc does not have that, so let's lie to it
 
-static kinc_image_t grey_image = {
-    1, 1, 0, KINC_IMAGE_FORMAT_RGBA32, 0, KINC_IMAGE_COMPRESSION_NONE, grey_data, sizeof(grey_data),
+static kore_image grey_image = {
+    1, 1, 0, KORE_IMAGE_FORMAT_RGBA32, 0, KORE_IMAGE_COMPRESSION_NONE, grey_data, sizeof(grey_data),
 };
-static kinc_image_t close_image = {
-    9, 9, 0, KINC_IMAGE_FORMAT_RGBA32, 0, KINC_IMAGE_COMPRESSION_NONE, close_data, sizeof(close_data),
+static kore_image close_image = {
+    9, 9, 0, KORE_IMAGE_FORMAT_RGBA32, 0, KORE_IMAGE_COMPRESSION_NONE, close_data, sizeof(close_data),
 };
 
 void kinc_wayland_create_decoration(struct kinc_wl_decoration *decoration, struct wl_surface *parent, struct wl_buffer *buffer, bool opaque, int x, int y,
@@ -290,7 +291,7 @@ void xdg_toplevel_decoration_configure(void *data, struct zxdg_toplevel_decorati
 		if (window->decorations.top.surface) {
 			kinc_wayland_destroy_decorations(window);
 		}
-		if (window->mode == KINC_WINDOW_MODE_WINDOW) {
+		if (window->mode == KORE_WINDOW_MODE_WINDOW) {
 			kinc_wayland_create_decorations(window);
 		}
 	}
@@ -355,13 +356,13 @@ static const struct wp_fractional_scale_v1_listener wp_fractional_scale_v1_liste
 };
 
 void kinc_wayland_window_set_title(int window_index, const char *title);
-void kinc_wayland_window_change_mode(int window_index, kinc_window_mode_t mode);
+void kinc_wayland_window_change_mode(int window_index, kore_window_mode mode);
 
 #ifndef KINC_WAYLAND_APP_ID
 #define KINC_WAYLAND_APP_ID "_KincApplication"
 #endif
 
-int kinc_wayland_window_create(kinc_window_options_t *win, kinc_framebuffer_options_t *frame) {
+int kinc_wayland_window_create(kore_window_parameters *win, kore_framebuffer_parameters *frame) {
 	int window_index = -1;
 	for (int i = 0; i < MAXIMUM_WINDOWS; i++) {
 		if (wl_ctx.windows[i].surface == NULL) {
@@ -370,7 +371,7 @@ int kinc_wayland_window_create(kinc_window_options_t *win, kinc_framebuffer_opti
 		}
 	}
 	if (window_index == -1) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Too many windows (maximum is %i)", MAXIMUM_WINDOWS);
+		kore_log(KORE_LOG_LEVEL_ERROR, "Too many windows (maximum is %i)", MAXIMUM_WINDOWS);
 		exit(1);
 	}
 	struct kinc_wl_window *window = &wl_ctx.windows[window_index];
@@ -387,7 +388,7 @@ int kinc_wayland_window_create(kinc_window_options_t *win, kinc_framebuffer_opti
 
 	if (wl_ctx.fractional_scale_manager) {
 		if (!window->viewport) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "missing wp_viewport wayland extension");
+			kore_log(KORE_LOG_LEVEL_ERROR, "missing wp_viewport wayland extension");
 			exit(1);
 		}
 		window->fractional_scale = wp_fractional_scale_manager_v1_get_fractional_scale(wl_ctx.fractional_scale_manager, window->surface);
@@ -466,17 +467,17 @@ void kinc_wayland_window_set_title(int window_index, const char *title) {
 }
 
 int kinc_wayland_window_x(int window_index) {
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Wayland does not support getting the window position.");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Wayland does not support getting the window position.");
 	return 0;
 }
 
 int kinc_wayland_window_y(int window_index) {
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Wayland does not support getting the window position.");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Wayland does not support getting the window position.");
 	return 0;
 }
 
 void kinc_wayland_window_move(int window_index, int x, int y) {
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Wayland does not support setting the window position.");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Wayland does not support setting the window position.");
 }
 
 int kinc_wayland_window_width(int window_index) {
@@ -488,36 +489,36 @@ int kinc_wayland_window_height(int window_index) {
 }
 
 void kinc_wayland_window_resize(int window_index, int width, int height) {
-	kinc_log(KINC_LOG_LEVEL_WARNING, "TODO: resizing windows");
+	kore_log(KORE_LOG_LEVEL_WARNING, "TODO: resizing windows");
 }
 
 void kinc_wayland_window_show(int window_index) {
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Wayland does not support unhiding windows.");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Wayland does not support unhiding windows.");
 }
 
 void kinc_wayland_window_hide(int window_index) {
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Wayland does not support hiding windows.");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Wayland does not support hiding windows.");
 }
 
-kinc_window_mode_t kinc_wayland_window_get_mode(int window_index) {
+kore_window_mode kinc_wayland_window_get_mode(int window_index) {
 	return wl_ctx.windows[window_index].mode;
 }
 
-void kinc_wayland_window_change_mode(int window_index, kinc_window_mode_t mode) {
+void kinc_wayland_window_change_mode(int window_index, kore_window_mode mode) {
 	struct kinc_wl_window *window = &wl_ctx.windows[window_index];
 	if (mode == window->mode) {
 		return;
 	}
 	switch (mode) {
-	case KINC_WINDOW_MODE_WINDOW:
-		if (window->mode == KINC_WINDOW_MODE_FULLSCREEN || window->mode == KINC_WINDOW_MODE_EXCLUSIVE_FULLSCREEN) {
-			window->mode = KINC_WINDOW_MODE_WINDOW;
+	case KORE_WINDOW_MODE_WINDOW:
+		if (window->mode == KORE_WINDOW_MODE_FULLSCREEN || window->mode == KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN) {
+			window->mode = KORE_WINDOW_MODE_WINDOW;
 			xdg_toplevel_unset_fullscreen(window->toplevel);
 		}
 		break;
-	case KINC_WINDOW_MODE_FULLSCREEN:
-	case KINC_WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
-		if (window->mode == KINC_WINDOW_MODE_WINDOW) {
+	case KORE_WINDOW_MODE_FULLSCREEN:
+	case KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+		if (window->mode == KORE_WINDOW_MODE_WINDOW) {
 			window->mode = mode;
 			struct kinc_wl_display *display = &wl_ctx.displays[window->display_index];
 			xdg_toplevel_set_fullscreen(window->toplevel, display->output);

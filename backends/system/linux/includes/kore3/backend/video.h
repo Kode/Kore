@@ -9,21 +9,21 @@ extern "C" {
 #else
 typedef struct {
 	int nothing;
-} kinc_video_impl_t;
+} kore_video_impl;
 
-typedef struct kinc_internal_video_sound_stream {
+typedef struct kore_internal_video_sound_stream {
 	int nothing;
-} kinc_internal_video_sound_stream_t;
+} kore_internal_video_sound_stream;
 
-void kinc_internal_video_sound_stream_init(kinc_internal_video_sound_stream_t *stream, int channel_count, int frequency);
+void kore_internal_video_sound_stream_init(kore_internal_video_sound_stream *stream, int channel_count, int frequency);
 
-void kinc_internal_video_sound_stream_destroy(kinc_internal_video_sound_stream_t *stream);
+void kore_internal_video_sound_stream_destroy(kore_internal_video_sound_stream *stream);
 
-void kinc_internal_video_sound_stream_insert_data(kinc_internal_video_sound_stream_t *stream, float *data, int sample_count);
+void kore_internal_video_sound_stream_insert_data(kore_internal_video_sound_stream *stream, float *data, int sample_count);
 
-float *kinc_internal_video_sound_stream_next_frame(kinc_internal_video_sound_stream_t *stream);
+float *kore_internal_video_sound_stream_next_frame(kore_internal_video_sound_stream *stream);
 
-bool kinc_internal_video_sound_stream_ended(kinc_internal_video_sound_stream_t *stream);
+bool kore_internal_video_sound_stream_ended(kore_internal_video_sound_stream *stream);
 #endif
 
 #ifdef __cplusplus

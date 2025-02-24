@@ -1,5 +1,5 @@
+#include <kore3/backend/x11.h>
 
-#include "x11.h"
 #include <string.h>
 
 // TODO: deal with monitor hotplugging and such
@@ -21,7 +21,7 @@ void kinc_x11_display_init(void) {
 
 	for (int i = 0; i < screen_resources->noutput; i++) {
 		if (i >= MAXIMUM_DISPLAYS) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Too many screens (maximum %i)", MAXIMUM_DISPLAYS);
+			kore_log(KORE_LOG_LEVEL_ERROR, "Too many screens (maximum %i)", MAXIMUM_DISPLAYS);
 			break;
 		}
 
@@ -83,11 +83,11 @@ const char *kinc_x11_display_name(int display_index) {
 	return x11_ctx.displays[display_index].name;
 }
 
-kinc_display_mode_t kinc_x11_display_current_mode(int display_index) {
+kore_display_mode kinc_x11_display_current_mode(int display_index) {
 	if (display_index >= MAXIMUM_DISPLAYS)
 		display_index = 0;
 	struct kinc_x11_display *display = &x11_ctx.displays[display_index];
-	kinc_display_mode_t mode;
+	kore_display_mode mode;
 	mode.x = 0;
 	mode.y = 0;
 	mode.width = display->width;
@@ -101,7 +101,7 @@ kinc_display_mode_t kinc_x11_display_current_mode(int display_index) {
 
 	XRROutputInfo *output_info = xlib.XRRGetOutputInfo(x11_ctx.display, screen_resources, screen_resources->outputs[display->index]);
 	if (output_info->connection != RR_Connected || output_info->crtc == None) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Display %i not connected.", display_index);
+		kore_log(KORE_LOG_LEVEL_ERROR, "Display %i not connected.", display_index);
 		xlib.XRRFreeOutputInfo(output_info);
 		xlib.XRRFreeScreenResources(screen_resources);
 		return mode;
@@ -150,7 +150,7 @@ int kinc_x11_display_count_available_modes(int display_index) {
 
 	XRROutputInfo *output_info = xlib.XRRGetOutputInfo(x11_ctx.display, screen_resources, screen_resources->outputs[display->index]);
 	if (output_info->connection != RR_Connected || output_info->crtc == None) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Display %i not connected.", display_index);
+		kore_log(KORE_LOG_LEVEL_ERROR, "Display %i not connected.", display_index);
 		xlib.XRRFreeOutputInfo(output_info);
 		xlib.XRRFreeScreenResources(screen_resources);
 		return 0;
@@ -162,11 +162,11 @@ int kinc_x11_display_count_available_modes(int display_index) {
 	return num_modes;
 }
 
-kinc_display_mode_t kinc_x11_display_available_mode(int display_index, int mode_index) {
+kore_display_mode kinc_x11_display_available_mode(int display_index, int mode_index) {
 	if (display_index >= MAXIMUM_DISPLAYS)
 		display_index = 0;
 	struct kinc_x11_display *display = &x11_ctx.displays[display_index];
-	kinc_display_mode_t mode;
+	kore_display_mode mode;
 	mode.x = 0;
 	mode.y = 0;
 	mode.width = display->width;
@@ -180,14 +180,14 @@ kinc_display_mode_t kinc_x11_display_available_mode(int display_index, int mode_
 
 	XRROutputInfo *output_info = xlib.XRRGetOutputInfo(x11_ctx.display, screen_resources, screen_resources->outputs[display->index]);
 	if (output_info->connection != RR_Connected || output_info->crtc == None) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Display %i not connected.", display_index);
+		kore_log(KORE_LOG_LEVEL_ERROR, "Display %i not connected.", display_index);
 		xlib.XRRFreeOutputInfo(output_info);
 		xlib.XRRFreeScreenResources(screen_resources);
 		return mode;
 	}
 
 	if (mode_index >= output_info->nmode) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Invalid mode index %i.", mode_index);
+		kore_log(KORE_LOG_LEVEL_ERROR, "Invalid mode index %i.", mode_index);
 	}
 
 	RRMode rr_mode = output_info->modes[mode_index];

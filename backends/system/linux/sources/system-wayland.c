@@ -1,16 +1,17 @@
-#include "kinc/math/core.h"
-#include "wayland-generated/wayland-fractional-scale.h"
-#include "wayland.h"
+#include <kore3/math/core.h>
+#include <kore3/input/keyboard.h>
+#include <kore3/input/mouse.h>
+#include <kore3/input/pen.h>
+#include <kore3/log.h>
 
-#include <kinc/input/pen.h>
-#include <kinc/log.h>
+#include "wayland-generated/wayland-fractional-scale.h"
+#include <kore3/backend/wayland.h>
+
 #include <wayland-generated/wayland-pointer-constraint.h>
 #include <wayland-generated/wayland-relative-pointer.h>
 #include <wayland-generated/wayland-tablet.h>
 #include <wayland-generated/xdg-shell.h>
 
-#include <kinc/input/keyboard.h>
-#include <kinc/input/mouse.h>
 #include <wayland-client-protocol.h>
 #include <wayland-util.h>
 
@@ -41,16 +42,16 @@ bool kinc_wayland_load_procs() {
 	wl.symbol = dlsym(lib, name);                                                                                                                              \
 	if (wl.symbol == NULL) {                                                                                                                                   \
 		has_missing_symbol = true;                                                                                                                             \
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Did not find symbol %s.", name);                                                                                       \
+		kore_log(KORE_LOG_LEVEL_ERROR, "Did not find symbol %s.", name);                                                                                       \
 	}
 #define KINC_WL_FUN(ret, name, args) LOAD_FUN(wayland_client, _##name, #name)
-#include "wayland-funs.h"
+#include <kore3/backend/wayland-funs.h>
 #undef KINC_WL_FN
 
 	void *wayland_cursor = NULL;
 	load_lib(&wayland_cursor, "wayland-cursor");
 	if (wayland_cursor == NULL) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Failed to find libwayland-cursor.so");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Failed to find libwayland-cursor.so");
 		return false;
 	}
 	LOAD_FUN(wayland_cursor, _wl_cursor_theme_load, "wl_cursor_theme_load")
@@ -79,13 +80,13 @@ bool kinc_wayland_load_procs() {
 	wl_xkb.symbol = dlsym(xkb, #symbol);                                                                                                                       \
 	if (wl_xkb.symbol == NULL) {                                                                                                                               \
 		has_missing_symbol = true;                                                                                                                             \
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Did not find symbol %s.", #symbol);                                                                                    \
+		kore_log(KORE_LOG_LEVEL_ERROR, "Did not find symbol %s.", #symbol);                                                                                    \
 	}
 	void *xkb = NULL;
 	load_lib(&xkb, "xkbcommon");
 
 	if (xkb == NULL) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Failed to find libxkb_common.so");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Failed to find libxkb_common.so");
 		return false;
 	}
 	LOAD_FUN(xkb_context_new)
@@ -133,7 +134,7 @@ static void wl_output_handle_mode(void *data, struct wl_output *wl_output, uint3
 	struct kinc_wl_display *display = data;
 	if (display->num_modes < MAXIMUM_DISPLAY_MODES) {
 		int mode_index = display->num_modes++;
-		kinc_display_mode_t *mode = &display->modes[mode_index];
+		kore_display_mode *mode = &display->modes[mode_index];
 		mode->x = 0;
 		mode->y = 0;
 		mode->width = width;
@@ -203,7 +204,7 @@ void wl_pointer_handle_enter(void *data, struct wl_pointer *wl_pointer, uint32_t
 	window->decorations.focus = focus;
 	if (window != NULL) {
 		mouse->current_window = window->window_id;
-		kinc_internal_mouse_trigger_enter_window(window->window_id);
+		kore_internal_mouse_trigger_enter_window(window->window_id);
 	}
 }
 
@@ -212,7 +213,7 @@ void wl_pointer_handle_leave(void *data, struct wl_pointer *wl_pointer, uint32_t
 	struct kinc_wl_window *window = kinc_wayland_window_from_surface(surface, &focus);
 
 	if (window != NULL) {
-		kinc_internal_mouse_trigger_leave_window(window->window_id);
+		kore_internal_mouse_trigger_leave_window(window->window_id);
 	}
 }
 
@@ -223,7 +224,7 @@ void kinc_wayland_set_cursor(struct kinc_wl_mouse *mouse, const char *name) {
 		return;
 	struct wl_cursor *cursor = wl_cursor_theme_get_cursor(wl_ctx.cursor_theme, name);
 	if (!cursor) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Wayland: No cursor found '%'.", name);
+		kore_log(KORE_LOG_LEVEL_ERROR, "Wayland: No cursor found '%'.", name);
 		return;
 	}
 	struct wl_cursor_image *image = cursor->images[0];
@@ -255,7 +256,7 @@ void wl_pointer_handle_motion(void *data, struct wl_pointer *wl_pointer, uint32_
 
 		switch (window->decorations.focus) {
 		case KINC_WL_DECORATION_FOCUS_MAIN:
-			kinc_internal_mouse_trigger_move(mouse->current_window, x, y);
+			kore_internal_mouse_trigger_move(mouse->current_window, x, y);
 			break;
 		case KINC_WL_DECORATION_FOCUS_TOP:
 			if (y < KINC_WL_DECORATION_TOP_HEIGHT / 2)
@@ -298,7 +299,7 @@ void wl_pointer_handle_motion(void *data, struct wl_pointer *wl_pointer, uint32_
 		}
 	}
 	else {
-		kinc_internal_mouse_trigger_move(mouse->current_window, x, y);
+		kore_internal_mouse_trigger_move(mouse->current_window, x, y);
 	}
 }
 
@@ -342,11 +343,11 @@ void wl_pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uint32_
 				break;
 			case KINC_WL_DECORATION_FOCUS_CLOSE_BUTTON:
 				if (kinc_button == 0) {
-					if (kinc_internal_call_close_callback(window->window_id)) {
-						kinc_window_destroy(window->window_id);
+					if (kore_internal_call_close_callback(window->window_id)) {
+						kore_window_destroy(window->window_id);
 						if (wl_ctx.num_windows <= 0) {
 							// no windows left, stop
-							kinc_stop();
+							kore_stop();
 						}
 					}
 				}
@@ -367,10 +368,10 @@ void wl_pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uint32_
 
 	if (window->decorations.focus == KINC_WL_DECORATION_FOCUS_MAIN) {
 		if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
-			kinc_internal_mouse_trigger_press(mouse->current_window, kinc_button, mouse->x, mouse->y);
+			kore_internal_mouse_trigger_press(mouse->current_window, kinc_button, mouse->x, mouse->y);
 		}
 		if (state == WL_POINTER_BUTTON_STATE_RELEASED) {
-			kinc_internal_mouse_trigger_release(mouse->current_window, kinc_button, mouse->x, mouse->y);
+			kore_internal_mouse_trigger_release(mouse->current_window, kinc_button, mouse->x, mouse->y);
 		}
 	}
 }
@@ -379,7 +380,7 @@ void wl_pointer_handle_axis(void *data, struct wl_pointer *wl_pointer, uint32_t 
 	struct kinc_wl_mouse *mouse = data;
 	// FIXME: figure out what the other backends give as deltas
 	int delta = wl_fixed_to_int(value);
-	kinc_internal_mouse_trigger_scroll(mouse->current_window, delta);
+	kore_internal_mouse_trigger_scroll(mouse->current_window, delta);
 }
 
 void wl_pointer_handle_frame(void *data, struct wl_pointer *wl_pointer) {}
@@ -417,7 +418,7 @@ void zwp_relative_pointer_v1_handle_relative_motion(void *data, struct zwp_relat
 	if (mouse->locked) {
 		mouse->x += wl_fixed_to_int(dx);
 		mouse->y += wl_fixed_to_int(dy);
-		kinc_internal_mouse_trigger_move(mouse->current_window, mouse->x, mouse->y);
+		kore_internal_mouse_trigger_move(mouse->current_window, mouse->x, mouse->y);
 	}
 }
 
@@ -436,7 +437,7 @@ void wl_keyboard_handle_keymap(void *data, struct wl_keyboard *wl_keyboard, uint
 		if (mapStr == MAP_FAILED) {
 			mapStr = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
 			if (mapStr == MAP_FAILED) {
-				kinc_log(KINC_LOG_LEVEL_ERROR, "Failed to map wayland keymap.");
+				kore_log(KORE_LOG_LEVEL_ERROR, "Failed to map wayland keymap.");
 				close(fd);
 				return;
 			}
@@ -450,7 +451,7 @@ void wl_keyboard_handle_keymap(void *data, struct wl_keyboard *wl_keyboard, uint
 	}
 	default:
 		close(fd);
-		kinc_log(KINC_LOG_LEVEL_WARNING, "Unsupported wayland keymap format %i", format);
+		kore_log(KORE_LOG_LEVEL_WARNING, "Unsupported wayland keymap format %i", format);
 	}
 }
 
@@ -467,7 +468,7 @@ void wl_keyboard_handle_leave(void *data, struct wl_keyboard *wl_keyboard, uint3
 int xkb_to_kinc(xkb_keysym_t symbol);
 
 void handle_paste(void *data, size_t data_size, void *user_data) {
-	kinc_internal_paste_callback(data);
+	kore_internal_paste_callback(data);
 }
 
 #include <sys/timerfd.h>
@@ -480,13 +481,13 @@ void wl_keyboard_handle_key(void *data, struct wl_keyboard *wl_keyboard, uint32_
 		int kinc_key = xkb_to_kinc(symbol);
 		if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
 			if (keyboard->ctrlDown && (symbol == XKB_KEY_c || symbol == XKB_KEY_C)) {
-				char *text = kinc_internal_copy_callback();
+				char *text = kore_internal_copy_callback();
 				if (text != NULL) {
 					kinc_wayland_set_selection(keyboard->seat, text, serial);
 				}
 			}
 			else if (keyboard->ctrlDown && (symbol == XKB_KEY_x || symbol == XKB_KEY_X)) {
-				char *text = kinc_internal_copy_callback();
+				char *text = kore_internal_copy_callback();
 				if (text != NULL) {
 					kinc_wayland_set_selection(keyboard->seat, text, serial);
 				}
@@ -496,9 +497,9 @@ void wl_keyboard_handle_key(void *data, struct wl_keyboard *wl_keyboard, uint32_
 					kinc_wl_data_offer_accept(keyboard->seat->current_selection_offer, handle_paste, NULL);
 				}
 			}
-			kinc_internal_keyboard_trigger_key_down(kinc_key);
+			kore_internal_keyboard_trigger_key_down(kinc_key);
 			if (character != 0) {
-				kinc_internal_keyboard_trigger_key_press(character);
+				kore_internal_keyboard_trigger_key_press(character);
 				if (wl_xkb.xkb_keymap_key_repeats(keyboard->keymap, key + 8) && keyboard->repeat_rate > 0) {
 					struct itimerspec timer = {};
 					keyboard->last_character = character;
@@ -522,7 +523,7 @@ void wl_keyboard_handle_key(void *data, struct wl_keyboard *wl_keyboard, uint32_
 				keyboard->last_key_code = keyboard->last_character = -1;
 			}
 
-			kinc_internal_keyboard_trigger_key_up(kinc_key);
+			kore_internal_keyboard_trigger_key_up(kinc_key);
 		}
 	}
 }
@@ -542,7 +543,7 @@ void wl_keyboard_handle_repeat_info(void *data, struct wl_keyboard *wl_keyboard,
 	struct kinc_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
 	keyboard->repeat_rate = rate;
 	keyboard->repeat_delay = delay;
-	kinc_log(KINC_LOG_LEVEL_INFO, "Keyboard repeat rate: %i, delay: %i", rate, delay);
+	kore_log(KORE_LOG_LEVEL_INFO, "Keyboard repeat rate: %i, delay: %i", rate, delay);
 }
 
 static const struct wl_keyboard_listener wl_keyboard_listener = {
@@ -594,7 +595,7 @@ void wl_data_source_handle_target(void *data, struct wl_data_source *wl_data_sou
 void wl_data_source_handle_send(void *data, struct wl_data_source *wl_data_source, const char *mime_type, int32_t fd) {
 	struct kinc_wl_data_source *data_source = wl_data_source_get_user_data(wl_data_source);
 	if (write(fd, data_source->data, data_source->data_size) < data_source->data_size) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Failed to write all data for data source");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Failed to write all data for data source");
 	}
 	close(fd);
 }
@@ -675,7 +676,7 @@ void kinc_wl_data_offer_accept(struct kinc_wl_data_offer *offer, void (*callback
 
 	int fds[2];
 	if (pipe(fds) != 0) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Failed to create pipe to accept wayland data offer (errno=%i)", errno);
+		kore_log(KORE_LOG_LEVEL_ERROR, "Failed to create pipe to accept wayland data offer (errno=%i)", errno);
 		return;
 	}
 	wl_data_offer_receive(offer->id, "text/plain", fds[1]);
@@ -734,7 +735,7 @@ static void dnd_callback(void *data, size_t data_size, void *user_data) {
 	size_t wide_size = mbstowcs(NULL, str, 0) + 1;
 	wchar_t *dest = malloc(wide_size * sizeof(wchar_t));
 	mbstowcs(dest, str, wide_size);
-	kinc_internal_drop_files_callback(dest);
+	kore_internal_drop_files_callback(dest);
 	free(dest);
 }
 
@@ -798,14 +799,14 @@ void zwp_tablet_tool_v2_handle_done(void *data, struct zwp_tablet_tool_v2 *zwp_t
 	struct kinc_wl_tablet_tool *tool = data;
 	switch (tool->type) {
 	case ZWP_TABLET_TOOL_V2_TYPE_PEN:
-		tool->press = kinc_internal_pen_trigger_press;
-		tool->move = kinc_internal_pen_trigger_move;
-		tool->release = kinc_internal_pen_trigger_release;
+		tool->press = kore_internal_pen_trigger_press;
+		tool->move = kore_internal_pen_trigger_move;
+		tool->release = kore_internal_pen_trigger_release;
 		break;
 	case ZWP_TABLET_TOOL_V2_TYPE_ERASER:
-		tool->press = kinc_internal_eraser_trigger_press;
-		tool->move = kinc_internal_eraser_trigger_move;
-		tool->release = kinc_internal_eraser_trigger_release;
+		tool->press = kore_internal_eraser_trigger_press;
+		tool->move = kore_internal_eraser_trigger_move;
+		tool->release = kore_internal_eraser_trigger_release;
 		break;
 	default:
 		break;
@@ -944,7 +945,7 @@ static const struct zwp_tablet_seat_v2_listener zwp_tablet_seat_v2_listener = {
 
 static void wl_registry_handle_global(void *data, struct wl_registry *registry, uint32_t name, const char *interface, uint32_t version) {
 	if (strcmp(interface, wl_compositor_interface.name) == 0) {
-		wl_ctx.compositor = wl_registry_bind(wl_ctx.registry, name, &wl_compositor_interface, kinc_mini(version, 6));
+		wl_ctx.compositor = wl_registry_bind(wl_ctx.registry, name, &wl_compositor_interface, kore_mini(version, 6));
 	}
 	else if (strcmp(interface, wl_shm_interface.name) == 0) {
 		wl_ctx.shm = wl_registry_bind(registry, name, &wl_shm_interface, 1);
@@ -961,7 +962,7 @@ static void wl_registry_handle_global(void *data, struct wl_registry *registry, 
 	}
 	else if (strcmp(interface, wl_seat_interface.name) == 0) {
 		if (wl_ctx.seat.seat) {
-			kinc_log(KINC_LOG_LEVEL_WARNING, "Multi-seat configurations not supported");
+			kore_log(KORE_LOG_LEVEL_WARNING, "Multi-seat configurations not supported");
 			return;
 		}
 		wl_ctx.seat.seat = wl_registry_bind(registry, name, &wl_seat_interface, version);
@@ -981,7 +982,7 @@ static void wl_registry_handle_global(void *data, struct wl_registry *registry, 
 			}
 		}
 		if (display_index == -1) {
-			kinc_log(KINC_LOG_LEVEL_ERROR, "Too much displays (maximum is %i)", MAXIMUM_DISPLAYS);
+			kore_log(KORE_LOG_LEVEL_ERROR, "Too much displays (maximum is %i)", MAXIMUM_DISPLAYS);
 		}
 		else {
 			struct kinc_wl_display *display = &wl_ctx.displays[display_index];
@@ -1105,7 +1106,7 @@ bool kinc_wayland_handle_messages() {
 		wl_display_cancel_read(wl_ctx.display);
 
 		for (int i = 0; i < wl_ctx.num_windows; i++) {
-			kinc_window_destroy(i);
+			kore_window_destroy(i);
 		}
 
 		return true;
@@ -1135,7 +1136,7 @@ bool kinc_wayland_handle_messages() {
 		if (read(wl_ctx.seat.keyboard.timerfd, &repeats, sizeof(repeats)) == 8) {
 			if (wl_ctx.seat.keyboard.last_key_code != -1) {
 				for (uint64_t i = 0; i < repeats; i++) {
-					kinc_internal_keyboard_trigger_key_press(wl_ctx.seat.keyboard.last_character);
+					kore_internal_keyboard_trigger_key_press(wl_ctx.seat.keyboard.last_character);
 				}
 			}
 		}
@@ -1322,7 +1323,7 @@ void kinc_wl_mouse_set_cursor(int cursorIndex) {
 }
 
 void kinc_wl_mouse_set_position(int window_index, int x, int y) {
-	kinc_log(KINC_LOG_LEVEL_ERROR, "Wayland: cannot set the mouse position.");
+	kore_log(KORE_LOG_LEVEL_ERROR, "Wayland: cannot set the mouse position.");
 }
 
 void kinc_wl_mouse_get_position(int window_index, int *x, int *y) {

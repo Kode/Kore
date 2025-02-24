@@ -1,9 +1,9 @@
 #pragma once
 
-#include <kinc/display.h>
-#include <kinc/log.h>
-#include <kinc/system.h>
-#include <kinc/window.h>
+#include <kore3/display.h>
+#include <kore3/log.h>
+#include <kore3/system.h>
+#include <kore3/window.h>
 
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
@@ -25,7 +25,7 @@ struct kinc_x11_window {
 	int window_index;
 	int width;
 	int height;
-	kinc_window_mode_t mode;
+	kore_window_mode mode;
 	Window window;
 	XIM xInputMethod;
 	XIC xInputContext;

@@ -1,4 +1,4 @@
-#include "x11.h"
+#include <kore3/backend/x11.h>
 
 #include <stdlib.h>
 
@@ -13,9 +13,9 @@ struct MwmHints {
 #define MWM_HINTS_DECORATIONS (1L << 1)
 
 void kinc_x11_window_set_title(int window_index, const char *title);
-void kinc_x11_window_change_mode(int window_index, kinc_window_mode_t mode);
+void kinc_x11_window_change_mode(int window_index, kore_window_mode mode);
 
-int kinc_x11_window_create(kinc_window_options_t *win, kinc_framebuffer_options_t *frame) {
+int kinc_x11_window_create(kore_window_parameters *win, kore_framebuffer_parameters *frame) {
 	int window_index = -1;
 	for (int i = 0; i < MAXIMUM_WINDOWS; i++) {
 		if (x11_ctx.windows[i].window == None) {
@@ -25,7 +25,7 @@ int kinc_x11_window_create(kinc_window_options_t *win, kinc_framebuffer_options_
 	}
 
 	if (window_index == -1) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Too much windows (maximum is %i)", MAXIMUM_WINDOWS);
+		kore_log(KORE_LOG_LEVEL_ERROR, "Too much windows (maximum is %i)", MAXIMUM_WINDOWS);
 		exit(1);
 	}
 
@@ -49,10 +49,10 @@ int kinc_x11_window_create(kinc_window_options_t *win, kinc_framebuffer_options_
 
 	static char nameClass[256];
 	static const char *nameClassAddendum = "_KincApplication";
-	strncpy(nameClass, kinc_application_name(), sizeof(nameClass) - strlen(nameClassAddendum) - 1);
+	strncpy(nameClass, kore_application_name(), sizeof(nameClass) - strlen(nameClassAddendum) - 1);
 	strcat(nameClass, nameClassAddendum);
 	char resNameBuffer[256];
-	strncpy(resNameBuffer, kinc_application_name(), 256);
+	strncpy(resNameBuffer, kore_application_name(), 256);
 	XClassHint classHint = {.res_name = resNameBuffer, .res_class = nameClass};
 	xlib.XSetClassHint(x11_ctx.display, window->window, &classHint);
 
@@ -61,7 +61,7 @@ int kinc_x11_window_create(kinc_window_options_t *win, kinc_framebuffer_options_
 	window->xInputContext = xlib.XCreateIC(window->xInputMethod, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, XNClientWindow, window->window, NULL);
 	xlib.XSetICFocus(window->xInputContext);
 
-	window->mode = KINC_WINDOW_MODE_WINDOW;
+	window->mode = KORE_WINDOW_MODE_WINDOW;
 	kinc_x11_window_change_mode(window_index, win->mode);
 
 	xlib.XMapWindow(x11_ctx.display, window->window);
@@ -108,12 +108,12 @@ void kinc_x11_window_set_title(int window_index, const char *_title) {
 }
 
 int kinc_x11_window_x(int window_index) {
-	kinc_log(KINC_LOG_LEVEL_ERROR, "x11 does not support getting the window position.");
+	kore_log(KORE_LOG_LEVEL_ERROR, "x11 does not support getting the window position.");
 	return 0;
 }
 
 int kinc_x11_window_y(int window_index) {
-	kinc_log(KINC_LOG_LEVEL_ERROR, "x11 does not support getting the window position.");
+	kore_log(KORE_LOG_LEVEL_ERROR, "x11 does not support getting the window position.");
 	return 0;
 }
 
@@ -145,11 +145,11 @@ void kinc_x11_window_hide(int window_index) {
 	xlib.XUnmapWindow(x11_ctx.display, window->window);
 }
 
-kinc_window_mode_t kinc_x11_window_get_mode(int window_index) {
+kore_window_mode kinc_x11_window_get_mode(int window_index) {
 	return x11_ctx.windows[window_index].mode;
 }
 
-void kinc_x11_window_change_mode(int window_index, kinc_window_mode_t mode) {
+void kinc_x11_window_change_mode(int window_index, kore_window_mode mode) {
 	struct kinc_x11_window *window = &x11_ctx.windows[window_index];
 	if (mode == window->mode) {
 		return;
@@ -158,19 +158,19 @@ void kinc_x11_window_change_mode(int window_index, kinc_window_mode_t mode) {
 	bool fullscreen = false;
 
 	switch (mode) {
-	case KINC_WINDOW_MODE_WINDOW:
-		if (window->mode == KINC_WINDOW_MODE_FULLSCREEN) {
-			window->mode = KINC_WINDOW_MODE_WINDOW;
+	case KORE_WINDOW_MODE_WINDOW:
+		if (window->mode == KORE_WINDOW_MODE_FULLSCREEN) {
+			window->mode = KORE_WINDOW_MODE_WINDOW;
 			fullscreen = false;
 		}
 		else {
 			return;
 		}
 		break;
-	case KINC_WINDOW_MODE_FULLSCREEN:
-	case KINC_WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
-		if (window->mode == KINC_WINDOW_MODE_WINDOW) {
-			window->mode = KINC_WINDOW_MODE_FULLSCREEN;
+	case KORE_WINDOW_MODE_FULLSCREEN:
+	case KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+		if (window->mode == KORE_WINDOW_MODE_WINDOW) {
+			window->mode = KORE_WINDOW_MODE_FULLSCREEN;
 			fullscreen = true;
 		}
 		else {

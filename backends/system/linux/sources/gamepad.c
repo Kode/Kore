@@ -1,6 +1,6 @@
-#include "gamepad.h"
+#include <kore3/backend/gamepad.h>
 
-#include <kinc/input/gamepad.h>
+#include <kore3/input/gamepad.h>
 
 #include <fcntl.h>
 #include <libudev.h>
@@ -32,7 +32,7 @@ static void HIDGamepad_open(struct HIDGamepad *pad) {
 			strncpy(buf, "Unknown", sizeof(buf));
 		}
 		snprintf(pad->name, sizeof(pad->name), "%s(%s)", buf, pad->gamepad_dev_name);
-		kinc_internal_gamepad_trigger_connect(pad->idx);
+		kore_internal_gamepad_trigger_connect(pad->idx);
 	}
 }
 
@@ -49,7 +49,7 @@ static void HIDGamepad_init(struct HIDGamepad *pad, int index) {
 
 static void HIDGamepad_close(struct HIDGamepad *pad) {
 	if (pad->connected) {
-		kinc_internal_gamepad_trigger_disconnect(pad->idx);
+		kore_internal_gamepad_trigger_disconnect(pad->idx);
 		close(pad->file_descriptor);
 		pad->file_descriptor = -1;
 		pad->connected = false;
@@ -59,11 +59,11 @@ static void HIDGamepad_close(struct HIDGamepad *pad) {
 void HIDGamepad_processEvent(struct HIDGamepad *pad, struct js_event e) {
 	switch (e.type) {
 	case JS_EVENT_BUTTON:
-		kinc_internal_gamepad_trigger_button(pad->idx, e.number, e.value);
+		kore_internal_gamepad_trigger_button(pad->idx, e.number, e.value);
 		break;
 	case JS_EVENT_AXIS: {
 		float value = e.number % 2 == 0 ? e.value : -e.value;
-		kinc_internal_gamepad_trigger_axis(pad->idx, e.number, value / 32767.0f);
+		kore_internal_gamepad_trigger_axis(pad->idx, e.number, value / 32767.0f);
 		break;
 	}
 	default:
@@ -87,7 +87,7 @@ struct HIDGamepadUdevHelper {
 
 static struct HIDGamepadUdevHelper udev_helper;
 
-static struct HIDGamepad gamepads[KINC_GAMEPAD_MAX_COUNT];
+static struct HIDGamepad gamepads[KORE_GAMEPAD_MAX_COUNT];
 
 static void HIDGamepadUdevHelper_openOrCloseGamepad(struct HIDGamepadUdevHelper *helper, struct udev_device *dev) {
 	const char *action = udev_device_get_action(dev);
@@ -166,7 +166,7 @@ static void HIDGamepadUdevHelper_close(struct HIDGamepadUdevHelper *helper) {
 }
 
 void kinc_linux_initHIDGamepads() {
-	for (int i = 0; i < KINC_GAMEPAD_MAX_COUNT; ++i) {
+	for (int i = 0; i < KORE_GAMEPAD_MAX_COUNT; ++i) {
 		HIDGamepad_init(&gamepads[i], i);
 	}
 	HIDGamepadUdevHelper_init(&udev_helper);
@@ -174,7 +174,7 @@ void kinc_linux_initHIDGamepads() {
 
 void kinc_linux_updateHIDGamepads() {
 	HIDGamepadUdevHelper_update(&udev_helper);
-	for (int i = 0; i < KINC_GAMEPAD_MAX_COUNT; ++i) {
+	for (int i = 0; i < KORE_GAMEPAD_MAX_COUNT; ++i) {
 		HIDGamepad_update(&gamepads[i]);
 	}
 }
@@ -183,18 +183,18 @@ void kinc_linux_closeHIDGamepads() {
 	HIDGamepadUdevHelper_close(&udev_helper);
 }
 
-void kinc_gamepad_set_count(int count) {}
+void kore_gamepad_set_count(int count) {}
 
-const char *kinc_gamepad_vendor(int gamepad) {
+const char *kore_gamepad_vendor(int gamepad) {
 	return "Linux gamepad";
 }
 
-const char *kinc_gamepad_product_name(int gamepad) {
-	return gamepad >= 0 && gamepad < KINC_GAMEPAD_MAX_COUNT ? gamepads[gamepad].name : "";
+const char *kore_gamepad_product_name(int gamepad) {
+	return gamepad >= 0 && gamepad < KORE_GAMEPAD_MAX_COUNT ? gamepads[gamepad].name : "";
 }
 
-bool kinc_gamepad_connected(int gamepad) {
-	return gamepad >= 0 && gamepad < KINC_GAMEPAD_MAX_COUNT && gamepads[gamepad].connected;
+bool kore_gamepad_connected(int gamepad) {
+	return gamepad >= 0 && gamepad < KORE_GAMEPAD_MAX_COUNT && gamepads[gamepad].connected;
 }
 
-void kinc_gamepad_rumble(int gamepad, float left, float right) {}
+void kore_gamepad_rumble(int gamepad, float left, float right) {}

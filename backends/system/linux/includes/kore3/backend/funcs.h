@@ -1,8 +1,8 @@
 #pragma once
 
-#include <kinc/display.h>
-#include <kinc/global.h>
-#include <kinc/window.h>
+#include <kore3/display.h>
+#include <kore3/global.h>
+#include <kore3/window.h>
 #ifdef KINC_EGL
 #define EGL_NO_PLATFORM_SPECIFIC_TYPES
 #include <EGL/egl.h>
@@ -16,22 +16,22 @@ struct linux_procs {
 	void (*shutdown)(void);
 
 	void (*display_init)(void);
-	kinc_display_mode_t (*display_available_mode)(int display, int mode);
+	kore_display_mode (*display_available_mode)(int display, int mode);
 	int (*display_count_available_modes)(int display);
 	bool (*display_available)(int display_index);
 	const char *(*display_name)(int display_index);
-	kinc_display_mode_t (*display_current_mode)(int display_index);
+	kore_display_mode (*display_current_mode)(int display_index);
 	int (*display_primary)(void);
 	int (*count_displays)(void);
 
-	int (*window_create)(kinc_window_options_t *window_options, kinc_framebuffer_options_t *framebuffer_options);
+	int (*window_create)(kore_window_parameters *window_options, kore_framebuffer_parameters *framebuffer_options);
 	void (*window_destroy)(int window_index);
 	int (*window_display)(int window_index);
 	void (*window_show)(int window_index);
 	void (*window_hide)(int window_index);
 	void (*window_set_title)(int window_index, const char *title);
-	void (*window_change_mode)(int window_index, kinc_window_mode_t mode);
-	kinc_window_mode_t (*window_get_mode)(int window_index);
+	void (*window_change_mode)(int window_index, kore_window_mode mode);
+	kore_window_mode (*window_get_mode)(int window_index);
 	void (*window_move)(int window_index, int x, int y);
 	void (*window_resize)(int window_index, int width, int height);
 	int (*window_x)(int window_index);

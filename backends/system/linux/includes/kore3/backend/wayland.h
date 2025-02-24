@@ -1,10 +1,13 @@
 #pragma once
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE // put this here too, to make clangd happy
 #endif
-#include <kinc/display.h>
-#include <kinc/log.h>
-#include <kinc/system.h>
+
+#include <kore3/display.h>
+#include <kore3/log.h>
+#include <kore3/system.h>
+#include <kore3/window.h>
 
 #include <wayland-client-core.h>
 #include <wayland-cursor.h>
@@ -121,11 +124,6 @@ struct kinc_xkb_procs {
 
 extern struct kinc_xkb_procs wl_xkb;
 
-#include <kinc/display.h>
-#include <kinc/global.h>
-#include <kinc/system.h>
-#include <kinc/window.h>
-
 #define MAXIMUM_WINDOWS 16
 #define MAXIMUM_DISPLAYS 16
 #define MAXIMUM_DISPLAY_MODES 16
@@ -183,7 +181,7 @@ struct kinc_wl_window {
 	int buffer_width;
 	int buffer_height;
 
-	kinc_window_mode_t mode;
+	kore_window_mode mode;
 	struct wl_surface *surface;
 	struct xdg_surface *xdg_surface;
 	struct xdg_toplevel *toplevel;
@@ -230,7 +228,7 @@ struct kinc_wl_display {
 	int subpixel;
 	enum wl_output_transform transform;
 	enum wl_output_subpixel scale;
-	kinc_display_mode_t modes[MAXIMUM_DISPLAY_MODES];
+	kore_display_mode modes[MAXIMUM_DISPLAY_MODES];
 };
 
 struct kinc_wl_mouse {

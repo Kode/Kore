@@ -3,6 +3,7 @@
 #include <kore3/gpu/device.h>
 
 #include <assert.h>
+#include <string.h>
 
 static VkFormat convert_format(kore_gpu_texture_format format) {
 	switch (format) {

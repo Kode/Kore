@@ -1,4 +1,4 @@
-#include <kinc/audio2/audio.h>
+#include <kore3/audio/audio.h>
 
 #include <alsa/asoundlib.h>
 #include <errno.h>
@@ -9,7 +9,7 @@
 
 // apt-get install libasound2-dev
 
-kinc_a2_buffer_t a2_buffer;
+kore_audio_buffer audio_buffer;
 
 pthread_t threadid;
 bool audioRunning = false;
@@ -18,16 +18,16 @@ short buf[4096 * 4];
 
 static unsigned int samples_per_second = 44100;
 
-uint32_t kinc_a2_samples_per_second(void) {
+uint32_t kore_audio_samples_per_second(void) {
 	return samples_per_second;
 }
 
 void copySample(void *buffer) {
-	float left_value = *(float *)&a2_buffer.channels[0][a2_buffer.read_location];
-	float right_value = *(float *)&a2_buffer.channels[1][a2_buffer.read_location];
-	a2_buffer.read_location += 1;
-	if (a2_buffer.read_location >= a2_buffer.data_size) {
-		a2_buffer.read_location = 0;
+	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
+	audio_buffer.read_location += 1;
+	if (audio_buffer.read_location >= audio_buffer.data_size) {
+		audio_buffer.read_location = 0;
 	}
 	((int16_t *)buffer)[0] = (int16_t)(left_value * 32767);
 	((int16_t *)buffer)[1] = (int16_t)(right_value * 32767);
@@ -35,7 +35,7 @@ void copySample(void *buffer) {
 
 int playback_callback(snd_pcm_sframes_t nframes) {
 	int err = 0;
-	if (kinc_a2_internal_callback(&a2_buffer, nframes)) {
+	if (kore_audio_internal_callback(&audio_buffer, nframes)) {
 		int ni = 0;
 		while (ni < nframes) {
 			int i = 0;
@@ -207,27 +207,27 @@ void *doAudio(void *arg) {
 
 static bool initialized = false;
 
-void kinc_a2_init() {
+void kore_audio_init() {
 	if (initialized) {
 		return;
 	}
 
-	kinc_a2_internal_init();
+	kore_audio_internal_init();
 	initialized = true;
 
-	a2_buffer.read_location = 0;
-	a2_buffer.write_location = 0;
-	a2_buffer.data_size = 128 * 1024;
-	a2_buffer.channel_count = 2;
-	a2_buffer.channels[0] = (float *)malloc(a2_buffer.data_size * sizeof(float));
-	a2_buffer.channels[1] = (float *)malloc(a2_buffer.data_size * sizeof(float));
+	audio_buffer.read_location = 0;
+	audio_buffer.write_location = 0;
+	audio_buffer.data_size = 128 * 1024;
+	audio_buffer.channel_count = 2;
+	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	audioRunning = true;
 	pthread_create(&threadid, NULL, &doAudio, NULL);
 }
 
-void kinc_a2_update() {}
+void kore_audio_update() {}
 
-void kinc_a2_shutdown() {
+void kore_audio_shutdown() {
 	audioRunning = false;
 }
