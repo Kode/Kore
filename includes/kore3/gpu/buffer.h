@@ -17,6 +17,10 @@
 #include <kore3/vulkan/buffer_structs.h>
 #endif
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/buffer_structs.h>
+#endif
+
 #include <stdint.h>
 
 #ifdef __cplusplus

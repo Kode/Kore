@@ -12,6 +12,10 @@
 #include <kore3/vulkan/device_functions.h>
 #endif
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/device_functions.h>
+#endif
+
 #include <assert.h>
 
 void kore_gpu_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {

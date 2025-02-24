@@ -9,7 +9,7 @@ extern "C" {
 #define KORE_GPU_VALIDATION
 #endif
 
-typedef enum kore_gpu_api { KORE_GPU_API_DIRECT3D12, KORE_GPU_API_VULKAN, KORE_GPU_API_METAL } kore_gpu_api;
+typedef enum kore_gpu_api { KORE_GPU_API_DIRECT3D12, KORE_GPU_API_VULKAN, KORE_GPU_API_METAL, KORE_GPU_API_WEBGPU } kore_gpu_api;
 
 #if defined(KORE_DIRECT3D12)
 
@@ -102,6 +102,18 @@ typedef enum kore_gpu_api { KORE_GPU_API_DIRECT3D12, KORE_GPU_API_VULKAN, KORE_G
 #define KORE_GPU_CALL5(name, arg0, arg1, arg2, arg3, arg4) kore_vulkan_##name(arg0, arg1, arg2, arg3, arg4)
 #define KORE_GPU_CALL6(name, arg0, arg1, arg2, arg3, arg4, arg5) kore_vulkan_##name(arg0, arg1, arg2, arg3, arg4, arg5)
 #define KORE_GPU_CALL7(name, arg0, arg1, arg2, arg3, arg4, arg5, arg6) kore_vulkan_##name(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+
+#elif defined(KORE_WEBGPU)
+
+#define KORE_GPU_IMPL(name) kore_webgpu_##name webgpu
+#define KORE_GPU_CALL(name) kore_webgpu_##name()
+#define KORE_GPU_CALL1(name, arg0) kore_webgpu_##name(arg0)
+#define KORE_GPU_CALL2(name, arg0, arg1) kore_webgpu_##name(arg0, arg1)
+#define KORE_GPU_CALL3(name, arg0, arg1, arg2) kore_webgpu_##name(arg0, arg1, arg2)
+#define KORE_GPU_CALL4(name, arg0, arg1, arg2, arg3) kore_webgpu_##name(arg0, arg1, arg2, arg3)
+#define KORE_GPU_CALL5(name, arg0, arg1, arg2, arg3, arg4) kore_webgpu_##name(arg0, arg1, arg2, arg3, arg4)
+#define KORE_GPU_CALL6(name, arg0, arg1, arg2, arg3, arg4, arg5) kore_webgpu_##name(arg0, arg1, arg2, arg3, arg4, arg5)
+#define KORE_GPU_CALL7(name, arg0, arg1, arg2, arg3, arg4, arg5, arg6) kore_webgpu_##name(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
 
 #endif
 

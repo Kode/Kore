@@ -12,6 +12,10 @@
 #include <kore3/vulkan/sampler_functions.h>
 #endif
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/sampler_functions.h>
+#endif
+
 void kore_gpu_sampler_set_name(kore_gpu_sampler *sampler, const char *name) {
 	KORE_GPU_CALL2(sampler_set_name, sampler, name);
 }

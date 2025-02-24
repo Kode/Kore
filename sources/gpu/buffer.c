@@ -12,6 +12,10 @@
 #include <kore3/vulkan/buffer_functions.h>
 #endif
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/buffer_functions.h>
+#endif
+
 void kore_gpu_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {
 	KORE_GPU_CALL2(buffer_set_name, buffer, name);
 }

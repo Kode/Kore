@@ -1,12 +1,14 @@
+#include <kore3/audio/audio.h>
+
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <assert.h>
 #include <emscripten.h>
-#include <kinc/audio2/audio.h>
+
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-static kinc_a2_buffer_t a2_buffer;
+static kore_audio_buffer audio_buffer;
 
 static ALCdevice *device = NULL;
 static ALCcontext *context = NULL;
@@ -23,18 +25,18 @@ static short buf[BUFSIZE];
 static uint32_t samples_per_second = 44100;
 
 static void copySample(void *buffer) {
-	float left_value = *(float *)&a2_buffer.channels[0][a2_buffer.read_location];
-	float right_value = *(float *)&a2_buffer.channels[1][a2_buffer.read_location];
-	a2_buffer.read_location += 1;
-	if (a2_buffer.read_location >= a2_buffer.data_size) {
-		a2_buffer.read_location = 0;
+	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
+	audio_buffer.read_location += 1;
+	if (audio_buffer.read_location >= audio_buffer.data_size) {
+		audio_buffer.read_location = 0;
 	}
 	((int16_t *)buffer)[0] = (int16_t)(left_value * 32767);
 	((int16_t *)buffer)[1] = (int16_t)(right_value * 32767);
 }
 
 static void streamBuffer(ALuint buffer) {
-	if (kinc_a2_internal_callback(&a2_buffer, BUFSIZE / 2)) {
+	if (kore_audio_internal_callback(&audio_buffer, BUFSIZE / 2)) {
 		for (int i = 0; i < BUFSIZE; i += 2) {
 			copySample(&buf[i]);
 		}
@@ -70,20 +72,20 @@ static void iter() {
 
 static bool a2_initialized = false;
 
-void kinc_a2_init() {
+void kore_audio_init() {
 	if (a2_initialized) {
 		return;
 	}
 
-	kinc_a2_internal_init();
+	kore_audio_internal_init();
 	a2_initialized = true;
 
-	a2_buffer.read_location = 0;
-	a2_buffer.write_location = 0;
-	a2_buffer.data_size = 128 * 1024;
-	a2_buffer.channel_count = 2;
-	a2_buffer.channels[0] = (float *)malloc(a2_buffer.data_size * sizeof(float));
-	a2_buffer.channels[1] = (float *)malloc(a2_buffer.data_size * sizeof(float));
+	audio_buffer.read_location = 0;
+	audio_buffer.write_location = 0;
+	audio_buffer.data_size = 128 * 1024;
+	audio_buffer.channel_count = 2;
+	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	audioRunning = true;
 
@@ -105,14 +107,14 @@ void kinc_a2_init() {
 	alSourcePlay(source);
 }
 
-void kinc_a2_update() {
+void kore_audio_update() {
 	iter();
 }
 
-void kinc_a2_shutdown() {
+void kore_audio_shutdown() {
 	audioRunning = false;
 }
 
-uint32_t kinc_a2_samples_per_second(void) {
+uint32_t kore_audio_samples_per_second(void) {
 	return samples_per_second;
 }

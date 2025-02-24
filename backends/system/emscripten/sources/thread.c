@@ -1,15 +1,15 @@
-#include <kinc/threads/thread.h>
+#include <kore3/threads/thread.h>
 
-void kinc_thread_init(kinc_thread_t *t, void (*thread)(void *param), void *param) {}
+void kore_thread_init(kore_thread *t, void (*thread)(void *param), void *param) {}
 
-void kinc_thread_wait_and_destroy(kinc_thread_t *thread) {}
+void kore_thread_wait_and_destroy(kore_thread *thread) {}
 
-bool kinc_thread_try_to_destroy(kinc_thread_t *thread) {
+bool kore_thread_try_to_destroy(kore_thread *thread) {
 	return false;
 }
 
-void kinc_threads_init() {}
+void kore_threads_init() {}
 
-void kinc_threads_quit() {}
+void kore_threads_quit() {}
 
-void kinc_thread_sleep(int milliseconds) {}
+void kore_thread_sleep(int milliseconds) {}

@@ -1,4 +1,4 @@
-#include "sampler_functions.h"
+#include <kore3/webgpu/sampler_functions.h>
 
 #include "webgpuunit.h"
 

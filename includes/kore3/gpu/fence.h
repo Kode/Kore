@@ -17,6 +17,10 @@
 #include <kore3/vulkan/fence_structs.h>
 #endif
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/fence_structs.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -1,10 +1,10 @@
 #ifndef KORE_WEBGPU_PIPELINE_STRUCTS_HEADER
 #define KORE_WEBGPU_PIPELINE_STRUCTS_HEADER
 
-#include <kore3/graphics5/buffer.h>
-#include <kore3/graphics5/commandlist.h>
-#include <kore3/graphics5/device.h>
-#include <kore3/graphics5/texture.h>
+#include <kore3/gpu/buffer.h>
+#include <kore3/gpu/commandlist.h>
+#include <kore3/gpu/device.h>
+#include <kore3/gpu/texture.h>
 
 #ifdef __cplusplus
 extern "C" {

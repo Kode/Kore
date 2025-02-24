@@ -1,6 +1,6 @@
 #include "webgpuunit.h"
 
-#include <kore3/graphics5/device.h>
+#include <kore3/gpu/device.h>
 
 #include <assert.h>
 

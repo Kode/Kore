@@ -18,6 +18,10 @@
 #include <kore3/vulkan/texture_structs.h>
 #endif
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/texture_structs.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

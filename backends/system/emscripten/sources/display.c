@@ -1,25 +1,25 @@
-#include <kinc/display.h>
+#include <kore3/display.h>
 
-void kinc_display_init(void) {}
+void kore_display_init(void) {}
 
-int kinc_primary_display(void) {
+int kore_primary_display(void) {
 	return 0;
 }
 
-int kinc_count_displays(void) {
+int kore_count_displays(void) {
 	return 1;
 }
 
-bool kinc_display_available(int display_index) {
+bool kore_display_available(int display_index) {
 	return false;
 }
 
-const char *kinc_display_name(int display_index) {
+const char *kore_display_name(int display_index) {
 	return "Browser";
 }
 
-kinc_display_mode_t kinc_display_current_mode(int display_index) {
-	kinc_display_mode_t mode;
+kore_display_mode kore_display_current_mode(int display_index) {
+	kore_display_mode mode;
 	mode.x = 0;
 	mode.y = 0;
 	mode.width = 800;
@@ -30,12 +30,12 @@ kinc_display_mode_t kinc_display_current_mode(int display_index) {
 	return mode;
 }
 
-int kinc_display_count_available_modes(int display_index) {
+int kore_display_count_available_modes(int display_index) {
 	return 1;
 }
 
-kinc_display_mode_t kinc_display_available_mode(int display_index, int mode_index) {
-	kinc_display_mode_t mode;
+kore_display_mode kore_display_available_mode(int display_index, int mode_index) {
+	kore_display_mode mode;
 	mode.x = 0;
 	mode.y = 0;
 	mode.width = 800;

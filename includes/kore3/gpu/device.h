@@ -24,6 +24,10 @@
 #include <kore3/vulkan/device_structs.h>
 #endif
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/device_structs.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

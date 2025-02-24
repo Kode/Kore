@@ -12,6 +12,10 @@
 #include <kore3/vulkan/texture_functions.h>
 #endif
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/texture_functions.h>
+#endif
+
 void kore_gpu_texture_set_name(kore_gpu_texture *texture, const char *name) {
 	KORE_GPU_CALL2(texture_set_name, texture, name);
 }

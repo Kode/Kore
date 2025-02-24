@@ -1,4 +1,4 @@
-#include "buffer_functions.h"
+#include <kore3/webgpu/buffer_functions.h>
 
 #include <kore3/gpu/buffer.h>
 

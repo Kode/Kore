@@ -12,6 +12,10 @@
 #include <kore3/vulkan/commandlist_functions.h>
 #endif
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/commandlist_functions.h>
+#endif
+
 #include <assert.h>
 
 void kore_gpu_command_list_destroy(kore_gpu_command_list *list) {

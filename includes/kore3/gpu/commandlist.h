@@ -21,8 +21,13 @@
 #include <kore3/vulkan/commandlist_structs.h>
 #endif
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/commandlist_structs.h>
+#endif
+
 #include <kore3/math/vector.h>
 
+#include <stddef.h>
 #include <stdint.h>
 
 #ifdef __cplusplus

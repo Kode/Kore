@@ -1,17 +1,17 @@
-#include <kinc/input/gamepad.h>
+#include <kore3/input/gamepad.h>
 
-void kinc_gamepad_set_count(int count) {}
+void kore_gamepad_set_count(int count) {}
 
-const char *kinc_gamepad_vendor(int gamepad) {
+const char *kore_gamepad_vendor(int gamepad) {
 	return "None";
 }
 
-const char *kinc_gamepad_product_name(int gamepad) {
+const char *kore_gamepad_product_name(int gamepad) {
 	return "Gamepad";
 }
 
-bool kinc_gamepad_connected(int gamepad) {
+bool kore_gamepad_connected(int gamepad) {
 	return false;
 }
 
-void kinc_gamepad_rumble(int gamepad, float left, float right) {}
+void kore_gamepad_rumble(int gamepad, float left, float right) {}
