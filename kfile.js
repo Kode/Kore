@@ -337,8 +337,8 @@ else if (platform === Platform.Emscripten) {
 else if (platform === Platform.Wasm) {
 	addKincDefine('WASM');
 	addBackend('system/wasm');
-	project.addIncludeDir('miniClib');
-	project.addFile('miniClib/**');
+	project.addIncludeDir('miniclib');
+	project.addFile('miniclib/**');
 	if (graphics === GraphicsApi.WebGPU) {
 		g4 = true;
 		g5 = true;
