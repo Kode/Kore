@@ -6,7 +6,7 @@
 #include <kore3/util/indexallocator.h>
 #include <kore3/util/offalloc/offalloc.h>
 
-#include <webgpu/webgpu.h>
+#include "webgpu.h"
 
 #ifdef __cplusplus
 extern "C" {

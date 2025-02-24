@@ -8,14 +8,18 @@
 #include <kore3/log.h>
 #include <kore3/window.h>
 
+#ifdef KINC_EMSCRIPTEN
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgpu.h>
+#endif
 
 #include <assert.h>
 
 void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
+#ifdef KINC_EMSCRIPTEN
     device->webgpu.device = emscripten_webgpu_get_device();
+#endif
     device->webgpu.queue = wgpuDeviceGetQueue(device->webgpu.device);
 
     WGPUSurfaceDescriptorFromCanvasHTMLSelector canvas_selector = {
