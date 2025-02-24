@@ -8,9 +8,39 @@
 #include <kore3/log.h>
 #include <kore3/window.h>
 
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#include <emscripten/html5_webgpu.h>
+
 #include <assert.h>
 
-void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {}
+void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
+    device->webgpu.device = emscripten_webgpu_get_device();
+    device->webgpu.queue = wgpuDeviceGetQueue(device->webgpu.device);
+
+    WGPUSurfaceDescriptorFromCanvasHTMLSelector canvas_selector = {
+        .chain = {
+            .sType = WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector,
+        },
+        .selector = "canvas",
+    };
+
+	WGPUSurfaceDescriptor surface_descriptor = {
+        .nextInChain = (WGPUChainedStruct *)&canvas_selector,
+    };
+
+    WGPUInstance instance = 0;
+	WGPUSurface surface = wgpuInstanceCreateSurface(instance, &surface_descriptor);
+
+	WGPUSwapChainDescriptor swap_chain_descriptor = {
+        .usage = WGPUTextureUsage_RenderAttachment,
+        .format = WGPUTextureFormat_BGRA8Unorm,
+        .width = kore_window_width(0),
+        .height = kore_window_height(0),
+        .presentMode = WGPUPresentMode_Fifo,
+    };
+	device->webgpu.swap_chain = wgpuDeviceCreateSwapChain(device->webgpu.device, surface, &swap_chain_descriptor);
+}
 
 void kore_webgpu_device_destroy(kore_gpu_device *device) {}
 

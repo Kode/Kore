@@ -6,6 +6,8 @@
 #include <kore3/util/indexallocator.h>
 #include <kore3/util/offalloc/offalloc.h>
 
+#include <webgpu/webgpu.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -13,7 +15,9 @@ extern "C" {
 #define KORE_WEBGPU_FRAME_COUNT 2
 
 typedef struct kore_webgpu_device {
-	int nothing;
+	WGPUDevice device;
+	WGPUQueue queue;
+	WGPUSwapChain swap_chain;
 } kore_webgpu_device;
 
 typedef struct kore_webgpu_query_set {
