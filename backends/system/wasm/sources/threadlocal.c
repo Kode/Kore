@@ -1,13 +1,13 @@
-#include <kinc/threads/threadlocal.h>
+#include <kore3/threads/threadlocal.h>
 
 #include <string.h>
 
-void kinc_thread_local_init(kinc_thread_local_t *local) {}
+void kore_thread_local_init(kore_thread_local *local) {}
 
-void kinc_thread_local_destroy(kinc_thread_local_t *local) {}
+void kore_thread_local_destroy(kore_thread_local *local) {}
 
-void *kinc_thread_local_get(kinc_thread_local_t *local) {
+void *kore_thread_local_get(kore_thread_local *local) {
 	return NULL;
 }
 
-void kinc_thread_local_set(kinc_thread_local_t *local, void *data) {}
+void kore_thread_local_set(kore_thread_local *local, void *data) {}

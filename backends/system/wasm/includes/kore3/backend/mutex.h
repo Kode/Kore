@@ -6,11 +6,11 @@ extern "C" {
 
 typedef struct {
 	int nothing;
-} kinc_mutex_impl_t;
+} kore_mutex_impl;
 
 typedef struct {
 	int nothing;
-} kinc_uber_mutex_impl_t;
+} kore_uber_mutex_impl;
 
 #ifdef __cplusplus
 }

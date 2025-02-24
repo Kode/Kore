@@ -1,18 +1,19 @@
-#include <kinc/audio2/audio.h>
+#include <kore3/audio/audio.h>
+
 #include <stdlib.h>
 
-static kinc_a2_buffer_t a2_buffer;
+static kore_audio_buffer audio_buffer;
 
-void kinc_a2_init() {
-	kinc_a2_internal_init();
+void kore_audio_init() {
+	kore_audio_internal_init();
 }
 
-void kinc_a2_update() {}
+void kore_audio_update() {}
 
-void kinc_a2_shutdown() {}
+void kore_audio_shutdown() {}
 
 static uint32_t samples_per_second = 44100;
 
-uint32_t kinc_a2_samples_per_second(void) {
+uint32_t kore_audio_samples_per_second(void) {
 	return samples_per_second;
 }

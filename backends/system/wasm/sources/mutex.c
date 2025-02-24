@@ -1,23 +1,23 @@
-#include <kinc/threads/mutex.h>
+#include <kore3/threads/mutex.h>
 
-void kinc_mutex_init(kinc_mutex_t *mutex) {}
+void kore_mutex_init(kore_mutex *mutex) {}
 
-void kinc_mutex_destroy(kinc_mutex_t *mutex) {}
+void kore_mutex_destroy(kore_mutex *mutex) {}
 
-bool kinc_mutex_try_to_lock(kinc_mutex_t *mutex) {
+bool kore_mutex_try_to_lock(kore_mutex *mutex) {
 	return false;
 }
 
-void kinc_mutex_lock(kinc_mutex_t *mutex) {}
+void kore_mutex_lock(kore_mutex *mutex) {}
 
-void kinc_mutex_unlock(kinc_mutex_t *mutex) {}
+void kore_mutex_unlock(kore_mutex *mutex) {}
 
-bool kinc_uber_mutex_init(kinc_uber_mutex_t *mutex, const char *name) {
+bool kore_uber_mutex_init(kore_uber_mutex *mutex, const char *name) {
 	return false;
 }
 
-void kinc_uber_mutex_destroy(kinc_uber_mutex_t *mutex) {}
+void kore_uber_mutex_destroy(kore_uber_mutex *mutex) {}
 
-void kinc_uber_mutex_lock(kinc_uber_mutex_t *mutex) {}
+void kore_uber_mutex_lock(kore_uber_mutex *mutex) {}
 
-void kinc_uber_mutex_unlock(kinc_uber_mutex_t *mutex) {}
+void kore_uber_mutex_unlock(kore_uber_mutex *mutex) {}

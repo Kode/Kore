@@ -1,13 +1,31 @@
 #pragma once
 
-#define KINC_ATOMIC_COMPARE_EXCHANGE(pointer, oldValue, newValue)
+#include <kore3/global.h>
 
-#define KINC_ATOMIC_COMPARE_EXCHANGE_POINTER(pointer, oldValue, newValue)
+static inline bool kore_atomic_compare_exchange(volatile int32_t *pointer, int32_t old_value, int32_t new_value) {
+	return false;
+}
 
-#define KINC_ATOMIC_INCREMENT(pointer)
+static inline bool kore_atomic_compare_exchange_pointer(void *volatile *pointer, void *old_value, void *new_value) {
+	return false;
+}
 
-#define KINC_ATOMIC_DECREMENT(pointer)
+static inline int32_t kore_atomic_increment(volatile int32_t *pointer) {
+	return 0;
+}
 
-#define KINC_ATOMIC_EXCHANGE_32(pointer, value)
+static inline int32_t kore_atomic_decrement(volatile int32_t *pointer) {
+	return 0;
+}
 
-#define KINC_ATOMIC_EXCHANGE_FLOAT(pointer, value)
+static inline void kore_atomic_exchange(volatile int32_t *pointer, int32_t value) {
+	
+}
+
+static inline void kore_atomic_exchange_float(volatile float *pointer, float value) {
+	
+}
+
+static inline void kore_atomic_exchange_double(volatile double *pointer, double value) {
+	
+}

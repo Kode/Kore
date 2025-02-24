@@ -6,7 +6,7 @@ extern "C" {
 
 typedef struct {
 	int nothing;
-} kinc_thread_impl_t;
+} kore_thread_impl;
 
 #ifdef __cplusplus
 }
