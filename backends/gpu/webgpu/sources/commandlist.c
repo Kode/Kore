@@ -16,18 +16,24 @@
 void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
+    WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
+	list->webgpu.command_encoder = wgpuDeviceCreateCommandEncoder(list->webgpu.device, &command_encoder_descriptor);
+
     WGPUTextureViewDescriptor texture_view_descriptor = {
         .format = WGPUTextureFormat_BGRA8Unorm,
         .dimension = WGPUTextureViewDimension_2D,
         .arrayLayerCount = 1,
     };
-    WGPUTextureView texture_view = wgpuTextureCreateView(parameters->color_attachments[0].texture.texture->webgpu.texture, &texture_view_descriptor);
+    //WGPUTextureView texture_view = wgpuTextureCreateView(parameters->color_attachments[0].texture.texture->webgpu.texture, &texture_view_descriptor);
+
+    WGPUTextureView texture_view = wgpuSwapChainGetCurrentTextureView(list->webgpu.swap_chain);
 
     WGPURenderPassColorAttachment color_attachment = {
         .view = texture_view,
         .loadOp = WGPULoadOp_Clear,
         .storeOp = WGPUStoreOp_Store,
         .clearValue = {0.5, 0, 0, 1},
+        .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
     };
 
 	WGPURenderPassDescriptor render_pass_descriptor = {
@@ -40,6 +46,7 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
 
 void kore_webgpu_command_list_end_render_pass(kore_gpu_command_list *list) {
     wgpuRenderPassEncoderEnd(list->webgpu.render_pass_encoder);
+    wgpuRenderPassEncoderRelease(list->webgpu.render_pass_encoder);
 }
 
 void kore_webgpu_command_list_present(kore_gpu_command_list *list) {}

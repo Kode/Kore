@@ -22,6 +22,8 @@ typedef struct kore_webgpu_buffer_access {
 typedef struct kore_webgpu_command_list {
 	WGPUCommandEncoder command_encoder;
 	WGPURenderPassEncoder render_pass_encoder;
+	WGPUDevice device;
+	WGPUSwapChain swap_chain;
 } kore_webgpu_command_list;
 
 #ifdef __cplusplus
