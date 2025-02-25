@@ -120,13 +120,43 @@ static WGPUBufferUsage convert_buffer_usage(kore_gpu_buffer_usage usage) {
 }
 
 void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
+    kore_gpu_buffer_usage usage = parameters->usage_flags;
+
+    buffer->webgpu.has_copy_buffer = false;
+    buffer->webgpu.copy_scheduled = false;
+
+    if ((usage & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
+        kore_gpu_buffer_usage usage_without_write = usage ^ KORE_GPU_BUFFER_USAGE_CPU_WRITE;
+        buffer->webgpu.has_copy_buffer = usage_without_write != KORE_GPU_BUFFER_USAGE_COPY_SRC && usage_without_write != 0;
+    }
+
+    if (buffer->webgpu.has_copy_buffer) {
+        WGPUBufferUsage copy_usage = WGPUBufferUsage_MapWrite;
+        if ((usage & KORE_GPU_BUFFER_USAGE_COPY_SRC) != 0) {
+            copy_usage |= WGPUBufferUsage_CopySrc;
+        }
+        WGPUBufferDescriptor buffer_descriptor = {
+            .size = align_pow2(parameters->size, 4),
+            .usage = copy_usage,
+            .mappedAtCreation = true,
+        };
+    
+        buffer->webgpu.copy_buffer = wgpuDeviceCreateBuffer(device->webgpu.device, &buffer_descriptor);
+
+        usage ^= KORE_GPU_BUFFER_USAGE_CPU_WRITE;
+        if ((usage | KORE_GPU_BUFFER_USAGE_COPY_SRC) != 0) {
+            usage ^= KORE_GPU_BUFFER_USAGE_COPY_SRC;
+        }
+    }
+
     WGPUBufferDescriptor buffer_descriptor = {
         .size = align_pow2(parameters->size, 4),
-        .usage = convert_buffer_usage(parameters->usage_flags),
-        .mappedAtCreation = true,
+        .usage = convert_buffer_usage(usage),
+        .mappedAtCreation = ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) && !buffer->webgpu.has_copy_buffer,
     };
 
 	buffer->webgpu.buffer = wgpuDeviceCreateBuffer(device->webgpu.device, &buffer_descriptor);
+
     buffer->webgpu.size = align_pow2(parameters->size, 4);
 }
 

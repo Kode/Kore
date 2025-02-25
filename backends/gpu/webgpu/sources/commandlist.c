@@ -20,6 +20,7 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
         .format = WGPUTextureFormat_BGRA8Unorm,
         .dimension = WGPUTextureViewDimension_2D,
         .arrayLayerCount = 1,
+        .mipLevelCount = 1,
     };
     WGPUTextureView texture_view = wgpuTextureCreateView(parameters->color_attachments[0].texture.texture->webgpu.texture, &texture_view_descriptor);
 
@@ -47,11 +48,19 @@ void kore_webgpu_command_list_present(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
                                                uint64_t size) {
+    if (buffer->webgpu.copy_scheduled) {
+        wgpuCommandEncoderCopyBufferToBuffer(list->webgpu.command_encoder, buffer->webgpu.copy_buffer, 0, buffer->webgpu.buffer, 0, buffer->webgpu.size);
+        buffer->webgpu.copy_scheduled = false;
+    }
     wgpuRenderPassEncoderSetIndexBuffer(list->webgpu.render_pass_encoder, buffer->webgpu.buffer, index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? WGPUIndexFormat_Uint16 : WGPUIndexFormat_Uint32, offset, size);
 }
 
 void kore_webgpu_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_webgpu_buffer *buffer, uint64_t offset, uint64_t size,
                                                 uint64_t stride) {
+    if (buffer->copy_scheduled) {
+        wgpuCommandEncoderCopyBufferToBuffer(list->webgpu.command_encoder, buffer->copy_buffer, 0, buffer->buffer, 0, buffer->size);
+        buffer->copy_scheduled = false;
+    }
     wgpuRenderPassEncoderSetVertexBuffer(list->webgpu.render_pass_encoder, slot, buffer->buffer, offset, size); // why is stride not needed?
 }
 
