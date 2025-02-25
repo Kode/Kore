@@ -41,7 +41,6 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
 
 void kore_webgpu_command_list_end_render_pass(kore_gpu_command_list *list) {
     wgpuRenderPassEncoderEnd(list->webgpu.render_pass_encoder);
-    wgpuRenderPassEncoderRelease(list->webgpu.render_pass_encoder);
 }
 
 void kore_webgpu_command_list_present(kore_gpu_command_list *list) {}

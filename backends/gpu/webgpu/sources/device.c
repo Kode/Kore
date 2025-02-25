@@ -39,31 +39,31 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
     device->webgpu.queue = wgpuDeviceGetQueue(device->webgpu.device);
 
-    WGPUSurfaceDescriptorFromCanvasHTMLSelector canvas_descriptor = {
+    WGPUSurfaceDescriptorFromCanvasHTMLSelector canvas_selector = {
         .selector = "#canvas",
         .chain = {
             .sType = WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector,
         },
     };
 
-    WGPUSurfaceDescriptor surface_descriptor = {
-        .nextInChain = (WGPUChainedStruct *)&canvas_descriptor,
+	WGPUSurfaceDescriptor surface_descriptor = {
+        .nextInChain = (WGPUChainedStruct *)&canvas_selector,
     };
     device->webgpu.surface = wgpuInstanceCreateSurface(wgpu_instance, &surface_descriptor);
 
     WGPUSurfaceCapabilities capabilities = {0};
     wgpuSurfaceGetCapabilities(device->webgpu.surface, wgpu_adapter, &capabilities);
 
-    WGPUSurfaceConfiguration config = {
+    WGPUSurfaceConfiguration surface_configuration = {
         .device = wgpu_device,
         .format = capabilities.formats[0],
         .usage = WGPUTextureUsage_RenderAttachment,
         .alphaMode = WGPUCompositeAlphaMode_Auto,
         .width = kore_window_width(0),
         .height = kore_window_height(0),
-        .presentMode = WGPUPresentMode_Fifo
+        .presentMode = WGPUPresentMode_Fifo,
     };
-    wgpuSurfaceConfigure(device->webgpu.surface, &config);
+    wgpuSurfaceConfigure(device->webgpu.surface, &surface_configuration);
 
     WGPUShaderModuleWGSLDescriptor shader_module_wgsl_descriptor = {
 	    .code = wgsl,
@@ -157,9 +157,9 @@ void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 static kore_gpu_texture framebuffer;
 
 kore_gpu_texture *kore_webgpu_device_get_framebuffer(kore_gpu_device *device) {
-    WGPUSurfaceTexture surfaceTexture;
-    wgpuSurfaceGetCurrentTexture(device->webgpu.surface, &surfaceTexture);
-    framebuffer.webgpu.texture = surfaceTexture.texture;
+    WGPUSurfaceTexture surface_texture;
+    wgpuSurfaceGetCurrentTexture(device->webgpu.surface, &surface_texture);
+    framebuffer.webgpu.texture = surface_texture.texture;
 	return &framebuffer;
 }
 
@@ -171,9 +171,8 @@ void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
     WGPUCommandBufferDescriptor command_buffer_descriptor = {0};
 
 	WGPUCommandBuffer command_buffer = wgpuCommandEncoderFinish(list->webgpu.command_encoder, &command_buffer_descriptor);
-    
 	wgpuQueueSubmit(device->webgpu.queue, 1, &command_buffer);
-    
+
     WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
 	list->webgpu.command_encoder = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
 }
