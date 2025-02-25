@@ -19,6 +19,7 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
     WGPUTextureViewDescriptor texture_view_descriptor = {
         .format = WGPUTextureFormat_BGRA8Unorm,
         .dimension = WGPUTextureViewDimension_2D,
+        .arrayLayerCount = 1,
     };
     WGPUTextureView texture_view = wgpuTextureCreateView(parameters->color_attachments[0].texture.texture->webgpu.texture, &texture_view_descriptor);
 
@@ -26,7 +27,7 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
         .view = texture_view,
         .loadOp = WGPULoadOp_Clear,
         .storeOp = WGPUStoreOp_Store,
-        .clearValue = {0, 0, 0, 1},
+        .clearValue = {0.5, 0, 0, 1},
     };
 
 	WGPURenderPassDescriptor render_pass_descriptor = {

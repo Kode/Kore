@@ -8,65 +8,65 @@ static WGPUVertexFormat convert_vertex_format(kore_webgpu_vertex_format format) 
     case KORE_WEBGPU_VERTEX_FORMAT_UINT8X2:
         return WGPUVertexFormat_Uint8x2;
     case KORE_WEBGPU_VERTEX_FORMAT_UINT8X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Uint8x4;
     case KORE_WEBGPU_VERTEX_FORMAT_SINT8X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Sint8x2;
     case KORE_WEBGPU_VERTEX_FORMAT_SINT8X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Sint8x4;
     case KORE_WEBGPU_VERTEX_FORMAT_UNORM8X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Unorm8x2;
     case KORE_WEBGPU_VERTEX_FORMAT_UNORM8X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Unorm8x4;
     case KORE_WEBGPU_VERTEX_FORMAT_SNORM8X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Snorm8x2;
     case KORE_WEBGPU_VERTEX_FORMAT_SNORM8X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Snorm8x4;
     case KORE_WEBGPU_VERTEX_FORMAT_UINT16X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Uint16x2;
     case KORE_WEBGPU_VERTEX_FORMAT_UINT16X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Uint16x4;
     case KORE_WEBGPU_VERTEX_FORMAT_SINT16X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Sint16x2;
     case KORE_WEBGPU_VERTEX_FORMAT_SINT16X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Sint16x4;
     case KORE_WEBGPU_VERTEX_FORMAT_UNORM16X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Unorm16x2;
     case KORE_WEBGPU_VERTEX_FORMAT_UNORM16X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Unorm16x4;
     case KORE_WEBGPU_VERTEX_FORMAT_SNORM16X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Snorm16x2;
     case KORE_WEBGPU_VERTEX_FORMAT_SNORM16X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Snorm16x4;
     case KORE_WEBGPU_VERTEX_FORMAT_FLOAT16X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Float16x2;
     case KORE_WEBGPU_VERTEX_FORMAT_FLOAT16X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Float16x4;
     case KORE_WEBGPU_VERTEX_FORMAT_FLOAT32:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Float32;
     case KORE_WEBGPU_VERTEX_FORMAT_FLOAT32X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Float32x2;
     case KORE_WEBGPU_VERTEX_FORMAT_FLOAT32X3:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Float32x3;
     case KORE_WEBGPU_VERTEX_FORMAT_FLOAT32X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Float32x4;
     case KORE_WEBGPU_VERTEX_FORMAT_UINT32:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Uint32;
     case KORE_WEBGPU_VERTEX_FORMAT_UINT32X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Uint32x2;
     case KORE_WEBGPU_VERTEX_FORMAT_UINT32X3:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Uint32x3;
     case KORE_WEBGPU_VERTEX_FORMAT_UINT32X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Uint32x4;
     case KORE_WEBGPU_VERTEX_FORMAT_SIN32:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Sint32;
     case KORE_WEBGPU_VERTEX_FORMAT_SINT32X2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Sint32x2;
     case KORE_WEBGPU_VERTEX_FORMAT_SINT32X3:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Sint32x3;
     case KORE_WEBGPU_VERTEX_FORMAT_SINT32X4:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Sint32x4;
     case KORE_WEBGPU_VERTEX_FORMAT_UNORM10_10_10_2:
-        return WGPUVertexFormat_Uint8x2;
+        return WGPUVertexFormat_Unorm10_10_10_2;
     }
 }
 
@@ -129,7 +129,7 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 
 	WGPUPrimitiveState primitive_state = {
         .topology = WGPUPrimitiveTopology_TriangleList,
-        .stripIndexFormat = WGPUIndexFormat_Uint32,
+        //.stripIndexFormat = WGPUIndexFormat_Uint32,
         .frontFace = WGPUFrontFace_CW,
         .cullMode = WGPUCullMode_None,
     };
@@ -143,7 +143,7 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 	WGPURenderPipelineDescriptor render_pipeline_descriptor = {
         .layout = wgpuDeviceCreatePipelineLayout(device->device, &pipeline_layout_descriptor),
         .fragment = &fragment_state,
-        .vertex = (WGPUChainedStruct *)&vertex_state,
+        .vertex = vertex_state,
         .multisample = multisample_state,
         .primitive = primitive_state,
     };

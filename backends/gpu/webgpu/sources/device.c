@@ -22,6 +22,8 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 #ifdef KORE_EMSCRIPTEN
     device->webgpu.device = emscripten_webgpu_get_device();
 #endif
+    wgpuDevicePushErrorScope(device->webgpu.device, WGPUErrorFilter_Validation);
+
     device->webgpu.queue = wgpuDeviceGetQueue(device->webgpu.device);
 
     WGPUSurfaceDescriptorFromCanvasHTMLSelector canvas_selector = {
@@ -102,7 +104,7 @@ static WGPUBufferUsage convert_buffer_usage(kore_gpu_buffer_usage usage) {
 
 void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
     WGPUBufferDescriptor buffer_descriptor = {
-        .size = parameters->size,
+        .size = align_pow2(parameters->size, 4),
         .usage = convert_buffer_usage(parameters->usage_flags),
         .mappedAtCreation = true,
     };
