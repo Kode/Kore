@@ -16,17 +16,12 @@
 void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
-    WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
-	list->webgpu.command_encoder = wgpuDeviceCreateCommandEncoder(list->webgpu.device, &command_encoder_descriptor);
-
     WGPUTextureViewDescriptor texture_view_descriptor = {
         .format = WGPUTextureFormat_BGRA8Unorm,
         .dimension = WGPUTextureViewDimension_2D,
         .arrayLayerCount = 1,
     };
-    //WGPUTextureView texture_view = wgpuTextureCreateView(parameters->color_attachments[0].texture.texture->webgpu.texture, &texture_view_descriptor);
-
-    WGPUTextureView texture_view = wgpuSwapChainGetCurrentTextureView(list->webgpu.swap_chain);
+    WGPUTextureView texture_view = wgpuTextureCreateView(parameters->color_attachments[0].texture.texture->webgpu.texture, &texture_view_descriptor);
 
     WGPURenderPassColorAttachment color_attachment = {
         .view = texture_view,

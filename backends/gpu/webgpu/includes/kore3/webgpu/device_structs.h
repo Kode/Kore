@@ -17,7 +17,7 @@ extern "C" {
 typedef struct kore_webgpu_device {
 	WGPUDevice device;
 	WGPUQueue queue;
-	WGPUSwapChain swap_chain;
+	WGPUSurface surface;
 	WGPUShaderModule shader_module;
 } kore_webgpu_device;
 

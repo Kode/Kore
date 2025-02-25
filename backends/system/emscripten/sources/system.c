@@ -17,11 +17,8 @@
 
 static int html5_argc;
 static char **html5_argv;
-static bool initialized = false;
 
 static void drawfunc() {
-	if (!initialized)
-		return;
 	kore_internal_update_callback();
 	kore_audio_update();
 #ifdef KORE_OPENGL
@@ -316,39 +313,9 @@ int kore_hardware_threads(void) {
 	return 4;
 }
 
-extern int kickstart(int argc, char **argv);
-
-#ifdef KORE_WEBGPU
-EMSCRIPTEN_KEEPALIVE void kore_internal_webgpu_initialized() {
-	kickstart(html5_argc, html5_argv);
-	initialized = true;
-}
-#endif
-
-int main_(int argc, char **argv) {
-	html5_argc = argc;
-	html5_argv = argv;
-#ifdef KORE_WEBGPU
-	char *code = "(async () => {\
-		const adapter = await navigator.gpu.requestAdapter();\
-		const device = await adapter.requestDevice();\
-		Module.preinitializedWebGPUDevice = device;\
-		_kore_internal_webgpu_initialized();\
-	})();";
-	emscripten_run_script(code);
-#else
-	kickstart(argc, argv);
-	initialized = true;
-#endif
-	emscripten_set_main_loop(drawfunc, 0, 1);
-
-	return 0;
-}
 
 #include <webgpu/webgpu.h>
 #include <emscripten/html5_webgpu.h>
-
-static WGPUInstance instance;
 
 static const char shaderCode[] = "\
     @vertex\n\
@@ -364,8 +331,9 @@ static const char shaderCode[] = "\
     }\n\
 ";
 
-static WGPUAdapter adapter;
-static WGPUDevice wgpu_device;
+WGPUInstance wgpu_instance;
+WGPUAdapter wgpu_adapter;
+WGPUDevice wgpu_device;
 static WGPUQueue queue;
 static WGPURenderPipeline pipeline;
 static int testsCompleted = 0;
@@ -373,7 +341,9 @@ static int testsCompleted = 0;
 void run();
 
 void main3(void) {
-    run();
+    //run();
+	kickstart(html5_argc, html5_argv);
+	emscripten_set_main_loop(drawfunc, 0, false);
 }
 
 void device_callback(WGPURequestDeviceStatus status, WGPUDevice device, char const * message, void * userdata) {
@@ -388,12 +358,12 @@ void device_callback(WGPURequestDeviceStatus status, WGPUDevice device, char con
 }
 
 void GetDevice() {
-    wgpuAdapterRequestDevice(adapter, NULL, device_callback, NULL);
+    wgpuAdapterRequestDevice(wgpu_adapter, NULL, device_callback, NULL);
 }
 
 void main2(void) {
     WGPUAdapterInfo info;
-    wgpuAdapterGetInfo(adapter, &info);
+    wgpuAdapterGetInfo(wgpu_adapter, &info);
     printf("adapter vendor: %s\n", info.vendor);
     printf("adapter architecture: %s\n", info.architecture);
     printf("adapter device: %s\n", info.device);
@@ -402,20 +372,20 @@ void main2(void) {
     GetDevice();
 }
 
-void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter _adapter, char const * message, void * userdata) {
+void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, char const * message, void * userdata) {
     if (message) {
         printf("RequestAdapter: %s\n", message);
     }
     assert(status == WGPURequestAdapterStatus_Success);
 
-    adapter = _adapter;
+    wgpu_adapter = adapter;
 
     main2();
 }
 
 void GetAdapter() {
-	instance = wgpuCreateInstance(NULL);
-    wgpuInstanceRequestAdapter(instance, NULL, adapter_callback, NULL);
+	wgpu_instance = wgpuCreateInstance(NULL);
+    wgpuInstanceRequestAdapter(wgpu_instance, NULL, adapter_callback, NULL);
 }
 
 void error_callback(WGPUErrorType errorType, const char* message, void* userdata) {
@@ -529,10 +499,10 @@ void run() {
 
         WGPUSurfaceDescriptor surfDesc = {0};
         surfDesc.nextInChain = (WGPUChainedStruct *)&canvasDesc;
-        surface = wgpuInstanceCreateSurface(instance, &surfDesc);
+        surface = wgpuInstanceCreateSurface(wgpu_instance, &surfDesc);
 
         WGPUSurfaceCapabilities capabilities;
-        wgpuSurfaceGetCapabilities(surface, adapter, &capabilities);
+        wgpuSurfaceGetCapabilities(surface, wgpu_adapter, &capabilities);
 
         WGPUSurfaceConfiguration config = {
             .device = wgpu_device,
@@ -547,7 +517,18 @@ void run() {
     emscripten_set_main_loop(frame, 0, false);
 }
 
-int main() {
-    GetAdapter();
-    return 0;
+extern int kickstart(int argc, char **argv);
+
+int main(int argc, char **argv) {
+	html5_argc = argc;
+	html5_argv = argv;
+
+#ifdef KORE_WEBGPU
+	GetAdapter();
+#else
+	kickstart(argc, argv);
+	emscripten_set_main_loop(drawfunc, 0, 1);
+#endif
+
+	return 0;
 }
