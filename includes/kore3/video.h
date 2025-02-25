@@ -63,7 +63,7 @@ KORE_FUNC int kore_video_width(kore_video *video);
 KORE_FUNC int kore_video_height(kore_video *video);
 
 /// <summary>
-/// Gets the current image of a playing video which can be rendered using any of Kinc's graphics APIs.
+/// Gets the current image of a playing video which can be rendered using Kore's GPU API.
 /// </summary>
 /// <returns>The current image of a playing video</returns>
 KORE_FUNC kore_gpu_texture *kore_video_current_image(kore_video *video);

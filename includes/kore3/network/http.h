@@ -23,7 +23,7 @@ typedef void (*kore_http_callback)(int error, int response, const char *body, vo
 /// <summary>
 /// Fires off an http request.
 /// </summary>
-KINC_FUNC void kore_http_request(const char *url, const char *path, const char *data, int port, bool secure, int method, const char *header,
+KORE_FUNC void kore_http_request(const char *url, const char *path, const char *data, int port, bool secure, int method, const char *header,
                                  kore_http_callback callback, void *callbackdata);
 
 #ifdef __cplusplus

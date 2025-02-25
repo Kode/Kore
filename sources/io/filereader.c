@@ -2,13 +2,13 @@
 
 #include <kore3/system.h>
 
-#ifdef KINC_ANDROID
+#ifdef KORE_ANDROID
 #include <kore3/backend/android.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef KINC_MICROSOFT
+#ifdef KORE_MICROSOFT
 #include <malloc.h>
 #include <memory.h>
 #endif
@@ -44,25 +44,25 @@ bool kore_file_reader_from_memory(kore_file_reader *reader, void *data, size_t s
 	return true;
 }
 
-#ifdef KINC_IOS
+#ifdef KORE_IOS
 const char *iphonegetresourcepath(void);
 #endif
 
-#ifdef KINC_MACOS
+#ifdef KORE_MACOS
 const char *macgetresourcepath(void);
 #endif
 
-#if defined(KINC_MICROSOFT)
+#if defined(KORE_MICROSOFT)
 #include <kore3/backend/windowsmini.h>
 #endif
 
-#ifdef KINC_RASPBERRY_PI
-#define KINC_LINUX
+#ifdef KORE_RASPBERRY_PI
+#define KORE_LINUX
 #endif
 
 static char *fileslocation = NULL;
 static bool (*file_reader_callback)(kore_file_reader *reader, const char *filename, int type) = NULL;
-#ifdef KINC_MICROSOFT
+#ifdef KORE_MICROSOFT
 static wchar_t wfilepath[1001];
 #endif
 
@@ -78,11 +78,11 @@ bool kore_internal_file_reader_callback(kore_file_reader *reader, const char *fi
 	return file_reader_callback ? file_reader_callback(reader, filename, type) : false;
 }
 
-#ifdef KINC_WINDOWSAPP
+#ifdef KORE_WINDOWSAPP
 void kore_internal_uwp_installed_location_path(char *path);
 #endif
 
-#if defined(KINC_MICROSOFT)
+#if defined(KORE_MICROSOFT)
 static size_t kore_libc_file_reader_read(kore_file_reader *reader, void *data, size_t size) {
 	DWORD readBytes = 0;
 	if (ReadFile(reader->data, data, (DWORD)size, &readBytes, NULL)) {
@@ -133,26 +133,26 @@ static size_t kore_libc_file_reader_pos(kore_file_reader *reader) {
 
 bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filename, int type) {
 	char filepath[1001];
-#ifdef KINC_IOS
+#ifdef KORE_IOS
 	strcpy(filepath, type == KORE_FILE_TYPE_SAVE ? kore_internal_save_path() : iphonegetresourcepath());
 	if (type != KORE_FILE_TYPE_SAVE) {
 		strcat(filepath, "/");
-		strcat(filepath, KINC_DEBUGDIR);
+		strcat(filepath, KORE_DEBUGDIR);
 		strcat(filepath, "/");
 	}
 
 	strcat(filepath, filename);
 #endif
-#ifdef KINC_MACOS
+#ifdef KORE_MACOS
 	strcpy(filepath, type == KORE_FILE_TYPE_SAVE ? kore_internal_save_path() : macgetresourcepath());
 	if (type != KORE_FILE_TYPE_SAVE) {
 		strcat(filepath, "/");
-		strcat(filepath, KINC_DEBUGDIR);
+		strcat(filepath, KORE_DEBUGDIR);
 		strcat(filepath, "/");
 	}
 	strcat(filepath, filename);
 #endif
-#ifdef KINC_MICROSOFT
+#ifdef KORE_MICROSOFT
 	if (type == KORE_FILE_TYPE_SAVE) {
 		strcpy(filepath, kore_internal_save_path());
 		strcat(filepath, filename);
@@ -165,12 +165,12 @@ bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filena
 		if (filepath[i] == '/')
 			filepath[i] = '\\';
 #endif
-#ifdef KINC_WINDOWSAPP
-	kinc_internal_uwp_installed_location_path(filepath);
+#ifdef KORE_WINDOWSAPP
+	kore_internal_uwp_installed_location_path(filepath);
 	strcat(filepath, "\\");
 	strcat(filepath, filename);
 #endif
-#if defined(KINC_LINUX) || defined(KINC_ANDROID)
+#if defined(KORE_LINUX) || defined(KORE_ANDROID)
 	if (type == KORE_FILE_TYPE_SAVE) {
 		strcpy(filepath, kore_internal_save_path());
 		strcat(filepath, filename);
@@ -179,16 +179,16 @@ bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filena
 		strcpy(filepath, filename);
 	}
 #endif
-#ifdef KINC_WASM
+#ifdef KORE_WASM
 	strcpy(filepath, filename);
 #endif
-#ifdef KINC_EMSCRIPTEN
-	strcpy(filepath, KINC_DEBUGDIR);
+#ifdef KORE_EMSCRIPTEN
+	strcpy(filepath, KORE_DEBUGDIR);
 	strcat(filepath, "/");
 	strcat(filepath, filename);
 #endif
 
-#ifdef KINC_MICROSOFT
+#ifdef KORE_MICROSOFT
 	// Drive letter or network
 	bool isAbsolute = (filename[1] == ':' && filename[2] == '\\') || (filename[0] == '\\' && filename[1] == '\\');
 #else
@@ -204,7 +204,7 @@ bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filena
 		strcat(filepath, filename);
 	}
 
-#ifdef KINC_MICROSOFT
+#ifdef KORE_MICROSOFT
 	MultiByteToWideChar(CP_UTF8, 0, filepath, -1, wfilepath, 1000);
 	reader->data = CreateFileW(wfilepath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (reader->data == INVALID_HANDLE_VALUE) {
@@ -217,7 +217,7 @@ bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filena
 	}
 #endif
 
-#ifdef KINC_MICROSOFT
+#ifdef KORE_MICROSOFT
 	// TODO: make this 64-bit compliant
 	reader->size = (size_t)GetFileSize(reader->data, NULL);
 #else
@@ -234,7 +234,7 @@ bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filena
 	return true;
 }
 
-#if !defined(KINC_ANDROID) && !defined(KINC_CONSOLE)
+#if !defined(KORE_ANDROID) && !defined(KORE_CONSOLE)
 bool kore_file_reader_open(kore_file_reader *reader, const char *filename, int type) {
 	memset(reader, 0, sizeof(*reader));
 	return kore_internal_file_reader_callback(reader, filename, type) || kore_internal_file_reader_open(reader, filename, type);
@@ -266,7 +266,7 @@ size_t kore_file_reader_size(kore_file_reader *reader) {
 }
 
 float kore_read_f32le(uint8_t *data) {
-#ifdef KINC_LITTLE_ENDIAN // speed optimization
+#ifdef KORE_LITTLE_ENDIAN // speed optimization
 	return *(float *)data;
 #else // works on all architectures
 	int i = (data[0] << 0) | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
@@ -275,7 +275,7 @@ float kore_read_f32le(uint8_t *data) {
 }
 
 float kore_read_f32be(uint8_t *data) {
-#ifdef KINC_BIG_ENDIAN // speed optimization
+#ifdef KORE_BIG_ENDIAN // speed optimization
 	return *(float *)data;
 #else // works on all architectures
 	int i = (data[3] << 0) | (data[2] << 8) | (data[1] << 16) | (data[0] << 24);
@@ -284,7 +284,7 @@ float kore_read_f32be(uint8_t *data) {
 }
 
 uint64_t kore_read_u64le(uint8_t *data) {
-#ifdef KINC_LITTLE_ENDIAN
+#ifdef KORE_LITTLE_ENDIAN
 	return *(uint64_t *)data;
 #else
 	return ((uint64_t)data[0] << 0) | ((uint64_t)data[1] << 8) | ((uint64_t)data[2] << 16) | ((uint64_t)data[3] << 24) | ((uint64_t)data[4] << 32) |
@@ -293,7 +293,7 @@ uint64_t kore_read_u64le(uint8_t *data) {
 }
 
 uint64_t kore_read_u64be(uint8_t *data) {
-#ifdef KINC_BIG_ENDIAN
+#ifdef KORE_BIG_ENDIAN
 	return *(uint64_t *)data;
 #else
 	return ((uint64_t)data[7] << 0) | ((uint64_t)data[6] << 8) | ((uint64_t)data[5] << 16) | ((uint64_t)data[4] << 24) | ((uint64_t)data[3] << 32) |
@@ -302,7 +302,7 @@ uint64_t kore_read_u64be(uint8_t *data) {
 }
 
 int64_t kore_read_s64le(uint8_t *data) {
-#ifdef KINC_LITTLE_ENDIAN
+#ifdef KORE_LITTLE_ENDIAN
 	return *(int64_t *)data;
 #else
 	return ((int64_t)data[0] << 0) | ((int64_t)data[1] << 8) | ((int64_t)data[2] << 16) | ((int64_t)data[3] << 24) | ((int64_t)data[4] << 32) |
@@ -311,7 +311,7 @@ int64_t kore_read_s64le(uint8_t *data) {
 }
 
 int64_t kore_read_s64be(uint8_t *data) {
-#ifdef KINC_BIG_ENDIAN
+#ifdef KORE_BIG_ENDIAN
 	return *(int64_t *)data;
 #else
 	return ((int64_t)data[7] << 0) | ((int64_t)data[6] << 8) | ((int64_t)data[5] << 16) | ((int64_t)data[4] << 24) | ((int64_t)data[3] << 32) |
@@ -320,7 +320,7 @@ int64_t kore_read_s64be(uint8_t *data) {
 }
 
 uint32_t kore_read_u32le(uint8_t *data) {
-#ifdef KINC_LITTLE_ENDIAN
+#ifdef KORE_LITTLE_ENDIAN
 	return *(uint32_t *)data;
 #else
 	return (data[0] << 0) | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
@@ -328,7 +328,7 @@ uint32_t kore_read_u32le(uint8_t *data) {
 }
 
 uint32_t kore_read_u32be(uint8_t *data) {
-#ifdef KINC_BIG_ENDIAN
+#ifdef KORE_BIG_ENDIAN
 	return *(uint32_t *)data;
 #else
 	return (data[3] << 0) | (data[2] << 8) | (data[1] << 16) | (data[0] << 24);
@@ -336,7 +336,7 @@ uint32_t kore_read_u32be(uint8_t *data) {
 }
 
 int32_t kore_read_s32le(uint8_t *data) {
-#ifdef KINC_LITTLE_ENDIAN
+#ifdef KORE_LITTLE_ENDIAN
 	return *(int32_t *)data;
 #else
 	return (data[0] << 0) | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
@@ -344,7 +344,7 @@ int32_t kore_read_s32le(uint8_t *data) {
 }
 
 int32_t kore_read_s32be(uint8_t *data) {
-#ifdef KINC_BIG_ENDIAN
+#ifdef KORE_BIG_ENDIAN
 	return *(int32_t *)data;
 #else
 	return (data[3] << 0) | (data[2] << 8) | (data[1] << 16) | (data[0] << 24);
@@ -352,7 +352,7 @@ int32_t kore_read_s32be(uint8_t *data) {
 }
 
 uint16_t kore_read_u16le(uint8_t *data) {
-#ifdef KINC_LITTLE_ENDIAN
+#ifdef KORE_LITTLE_ENDIAN
 	return *(uint16_t *)data;
 #else
 	return (data[0] << 0) | (data[1] << 8);
@@ -360,7 +360,7 @@ uint16_t kore_read_u16le(uint8_t *data) {
 }
 
 uint16_t kore_read_u16be(uint8_t *data) {
-#ifdef KINC_BIG_ENDIAN
+#ifdef KORE_BIG_ENDIAN
 	return *(uint16_t *)data;
 #else
 	return (data[1] << 0) | (data[0] << 8);
@@ -368,7 +368,7 @@ uint16_t kore_read_u16be(uint8_t *data) {
 }
 
 int16_t kore_read_s16le(uint8_t *data) {
-#ifdef KINC_LITTLE_ENDIAN
+#ifdef KORE_LITTLE_ENDIAN
 	return *(int16_t *)data;
 #else
 	return (data[0] << 0) | (data[1] << 8);
@@ -376,7 +376,7 @@ int16_t kore_read_s16le(uint8_t *data) {
 }
 
 int16_t kore_read_s16be(uint8_t *data) {
-#ifdef KINC_BIG_ENDIAN
+#ifdef KORE_BIG_ENDIAN
 	return *(int16_t *)data;
 #else
 	return (data[1] << 0) | (data[0] << 8);

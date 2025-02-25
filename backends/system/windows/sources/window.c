@@ -4,7 +4,7 @@
 
 #include <kore3/backend/windows.h>
 
-#ifdef KINC_VR
+#ifdef KORE_VR
 #include <kore/vr/vr.h>
 #endif
 
@@ -34,17 +34,17 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 static WindowData windows[MAXIMUM_WINDOWS] = {0};
 static int window_counter = 0;
 
-#ifdef KINC_OCULUS
+#ifdef KORE_OCULUS
 const wchar_t *windowClassName = L"ORT";
 #else
 const wchar_t *windowClassName = L"KoreWindow";
 #endif
 
-#ifdef KINC_VULKAN
+#ifdef KORE_VULKAN
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_win32.h>
 
-VkResult kinc_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
+VkResult kore_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
 	VkWin32SurfaceCreateInfoKHR createInfo = {0};
 	createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	createInfo.pNext = NULL;
@@ -56,12 +56,12 @@ VkResult kinc_vulkan_create_surface(VkInstance instance, int window_index, VkSur
 
 #include <assert.h>
 
-void kinc_vulkan_get_instance_extensions(const char **names, int *index, int max) {
+void kore_vulkan_get_instance_extensions(const char **names, int *index, int max) {
 	assert(*index + 1 < max);
 	names[(*index)++] = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
 }
 
-VkBool32 kinc_vulkan_get_physical_device_presentation_support(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
+VkBool32 kore_vulkan_get_physical_device_presentation_support(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
 	return vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice, queueFamilyIndex);
 }
 #endif
@@ -193,7 +193,7 @@ static int createWindow(const wchar_t *title, int x, int y, int width, int heigh
 
 	int display_index = target_display_index == -1 ? kore_primary_display() : target_display_index;
 
-#ifdef KINC_VR
+#ifdef KORE_VR
 	int dstx = 0;
 	int dsty = 0;
 
@@ -202,7 +202,7 @@ static int createWindow(const wchar_t *title, int x, int y, int width, int heigh
 	WideCharToMultiByte(CP_UTF8, 0, title, -1, titleutf8, 1024 - 1, NULL, NULL);
 	WideCharToMultiByte(CP_UTF8, 0, windowClassName, -1, classNameutf8, 1024 - 1, NULL, NULL);
 
-	HWND hwnd = (HWND)kinc_vr_interface_init(inst, titleutf8, classNameutf8);
+	HWND hwnd = (HWND)kore_vr_interface_init(inst, titleutf8, classNameutf8);
 #else
 	RECT WindowRect;
 	WindowRect.left = 0;
@@ -305,10 +305,10 @@ void kore_window_move(int window_index, int x, int y) {
 	SetWindowPos(win->handle, NULL, x, y, rect.right - rect.left, rect.bottom - rect.top, 0);
 }
 
-void kore_internal_change_framebuffer(int window, struct kinc_framebuffer_options *frame);
+void kore_internal_change_framebuffer(int window, struct kore_framebuffer_options *frame);
 
 void kore_window_change_framebuffer(int window, kore_framebuffer_parameters *frame) {
-	// kinc_internal_change_framebuffer(window, frame); // TODO
+	// kore_internal_change_framebuffer(window, frame); // TODO
 }
 
 void kore_window_change_features(int window_index, int features) {
@@ -359,7 +359,7 @@ kore_window_mode kore_window_get_mode(int window_index) {
 void kore_window_destroy(int window_index) {
 	WindowData *win = &windows[window_index];
 	if (win->handle != NULL) {
-		// kinc_g4_internal_destroy_window(window_index); // TODO
+		// kore_g4_internal_destroy_window(window_index); // TODO
 		DestroyWindow(win->handle);
 		win->handle = NULL;
 		--window_counter;
@@ -422,13 +422,13 @@ int kore_window_create(kore_window_parameters *win, kore_framebuffer_parameters 
 	int windowId = createWindow(wbuffer, win->x, win->y, win->width, win->height, frame->color_bits, frame->frequency, win->window_features, win->mode,
 	                            win->display_index);
 
-	// kinc_g4_set_antialiasing_samples(frame->samples_per_pixel); // TODO
+	// kore_g4_set_antialiasing_samples(frame->samples_per_pixel); // TODO
 	bool vsync = frame->vertical_sync;
-#ifdef KINC_OCULUS
+#ifdef KORE_OCULUS
 	vsync = false;
 #endif
 
-	// kinc_g4_internal_init_window(windowId, frame->depth_bits, frame->stencil_bits, vsync); // TODO
+	// kore_g4_internal_init_window(windowId, frame->depth_bits, frame->stencil_bits, vsync); // TODO
 
 	if (win->visible) {
 		kore_window_show(windowId);

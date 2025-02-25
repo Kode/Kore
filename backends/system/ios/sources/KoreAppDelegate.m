@@ -42,7 +42,7 @@ void loadURL(const char *url) {
 	// glView = [[GLView alloc] initWithFrame:CGRectMake(0, 0, Kore::max(screenBounds.size.width, screenBounds.size.height), Kore::max(screenBounds.size.width,
 	// screenBounds.size.height))];
 	glViewController = [[GLViewController alloc] init];
-#ifndef KINC_TVOS
+#ifndef KORE_TVOS
 	glViewController.view.multipleTouchEnabled = YES;
 #endif
 	// glViewController.view = glView;

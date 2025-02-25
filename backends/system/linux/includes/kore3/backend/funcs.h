@@ -3,11 +3,11 @@
 #include <kore3/display.h>
 #include <kore3/global.h>
 #include <kore3/window.h>
-#ifdef KINC_EGL
+#ifdef KORE_EGL
 #define EGL_NO_PLATFORM_SPECIFIC_TYPES
 #include <EGL/egl.h>
 #endif
-#ifdef KINC_VULKAN
+#ifdef KORE_VULKAN
 #include <vulkan/vulkan.h>
 #endif
 
@@ -51,11 +51,11 @@ struct linux_procs {
 	void (*mouse_set_cursor)(int cursor);
 
 	void (*copy_to_clipboard)(const char *text);
-#ifdef KINC_EGL
+#ifdef KORE_EGL
 	EGLDisplay (*egl_get_display)(void);
 	EGLNativeWindowType (*egl_get_native_window)(EGLDisplay display, EGLConfig config, int window_index);
 #endif
-#ifdef KINC_VULKAN
+#ifdef KORE_VULKAN
 	void (*vulkan_get_instance_extensions)(const char **extensions, int *count, int max);
 	VkResult (*vulkan_create_surface)(VkInstance instance, int window_index, VkSurfaceKHR *surface);
 	VkBool32 (*vulkan_get_physical_device_presentation_support)(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex);
@@ -64,4 +64,4 @@ struct linux_procs {
 
 extern struct linux_procs procs;
 
-void kinc_linux_init_procs();
+void kore_linux_init_procs();

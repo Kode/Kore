@@ -4,7 +4,7 @@
 
 // TODO: deal with monitor hotplugging and such
 
-void kinc_x11_display_init(void) {
+void kore_x11_display_init(void) {
 	int eventBase;
 	int errorBase;
 
@@ -33,7 +33,7 @@ void kinc_x11_display_init(void) {
 
 		XRRCrtcInfo *crtc_info = xlib.XRRGetCrtcInfo(x11_ctx.display, screen_resources, output_info->crtc);
 
-		struct kinc_x11_display *display = &x11_ctx.displays[x11_ctx.num_displays++];
+		struct kore_x11_display *display = &x11_ctx.displays[x11_ctx.num_displays++];
 		display->index = i;
 		strncpy(display->name, output_info->name, sizeof(display->name));
 		display->x = crtc_info->x;
@@ -54,7 +54,7 @@ void kinc_x11_display_init(void) {
 	}
 }
 
-int kinc_x11_display_primary(void) {
+int kore_x11_display_primary(void) {
 	for (int i = 0; i < x11_ctx.num_displays; i++) {
 		if (x11_ctx.displays[i].primary) {
 			return i;
@@ -63,11 +63,11 @@ int kinc_x11_display_primary(void) {
 	return 0;
 }
 
-int kinc_x11_count_displays(void) {
+int kore_x11_count_displays(void) {
 	return x11_ctx.num_displays;
 }
 
-bool kinc_x11_display_available(int display_index) {
+bool kore_x11_display_available(int display_index) {
 	if (display_index >= MAXIMUM_DISPLAYS) {
 		return false;
 	}
@@ -75,7 +75,7 @@ bool kinc_x11_display_available(int display_index) {
 	return x11_ctx.displays[display_index].output != None;
 }
 
-const char *kinc_x11_display_name(int display_index) {
+const char *kore_x11_display_name(int display_index) {
 	if (display_index >= MAXIMUM_DISPLAYS) {
 		return "";
 	}
@@ -83,10 +83,10 @@ const char *kinc_x11_display_name(int display_index) {
 	return x11_ctx.displays[display_index].name;
 }
 
-kore_display_mode kinc_x11_display_current_mode(int display_index) {
+kore_display_mode kore_x11_display_current_mode(int display_index) {
 	if (display_index >= MAXIMUM_DISPLAYS)
 		display_index = 0;
-	struct kinc_x11_display *display = &x11_ctx.displays[display_index];
+	struct kore_x11_display *display = &x11_ctx.displays[display_index];
 	kore_display_mode mode;
 	mode.x = 0;
 	mode.y = 0;
@@ -140,10 +140,10 @@ kore_display_mode kinc_x11_display_current_mode(int display_index) {
 	return mode;
 }
 
-int kinc_x11_display_count_available_modes(int display_index) {
+int kore_x11_display_count_available_modes(int display_index) {
 	if (display_index >= MAXIMUM_DISPLAYS)
 		display_index = 0;
-	struct kinc_x11_display *display = &x11_ctx.displays[display_index];
+	struct kore_x11_display *display = &x11_ctx.displays[display_index];
 
 	Window root_window = RootWindow(x11_ctx.display, DefaultScreen(x11_ctx.display));
 	XRRScreenResources *screen_resources = xlib.XRRGetScreenResourcesCurrent(x11_ctx.display, root_window);
@@ -162,10 +162,10 @@ int kinc_x11_display_count_available_modes(int display_index) {
 	return num_modes;
 }
 
-kore_display_mode kinc_x11_display_available_mode(int display_index, int mode_index) {
+kore_display_mode kore_x11_display_available_mode(int display_index, int mode_index) {
 	if (display_index >= MAXIMUM_DISPLAYS)
 		display_index = 0;
-	struct kinc_x11_display *display = &x11_ctx.displays[display_index];
+	struct kore_x11_display *display = &x11_ctx.displays[display_index];
 	kore_display_mode mode;
 	mode.x = 0;
 	mode.y = 0;

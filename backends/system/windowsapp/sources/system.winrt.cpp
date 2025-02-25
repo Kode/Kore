@@ -1,4 +1,4 @@
-//#include <kinc/graphics4/graphics.h>
+//#include <kore3/graphics4/graphics.h>
 #include <kore3/input/gamepad.h>
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
@@ -11,11 +11,11 @@
 #define NOMINMAX
 #include <windows.h>
 #ifndef XINPUT
-#ifdef KINC_WINDOWS
+#ifdef KORE_WINDOWS
 #define XINPUT 1
 #endif
 
-#ifdef KINC_WINDOWSAPP
+#ifdef KORE_WINDOWSAPP
 #define XINPUT !(WINAPI_PARTITION_PHONE_APP)
 #endif
 #endif
@@ -28,21 +28,21 @@
 #include <dxgi1_5.h>
 #include <wrl.h>
 
-#ifdef KINC_WINDOWSAPP
+#ifdef KORE_WINDOWSAPP
 using namespace ::Microsoft::WRL;
 using namespace Windows::UI::Core;
 using namespace Windows::Foundation;
-#ifdef KINC_HOLOLENS
+#ifdef KORE_HOLOLENS
 using namespace Windows::Graphics::Holographic;
 using namespace Windows::Graphics::DirectX::Direct3D11;
 #endif
 #endif
 
-extern "C" IUnknown *kinc_winapp_internal_get_window(void) {
+extern "C" IUnknown *kore_winapp_internal_get_window(void) {
 	return reinterpret_cast<IUnknown *>(CoreWindow::GetForCurrentThread());
 }
 
-extern "C" void kinc_internal_uwp_installed_location_path(char *path) {
+extern "C" void kore_internal_uwp_installed_location_path(char *path) {
 	Platform::String ^ locationString = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
 	WideCharToMultiByte(CP_UTF8, 0, locationString->Begin(), -1, path, 1000, nullptr, nullptr);
 }
@@ -122,7 +122,7 @@ bool kore_internal_handle_messages(void) {
 			newaxes[5] = state.Gamepad.bRightTrigger / 255.0f;
 			for (int i2 = 0; i2 < 6; ++i2) {
 				if (axes[i * 6 + i2] != newaxes[i2]) {
-					kinc_internal_gamepad_trigger_axis(i, i2, newaxes[i2]);
+					kore_internal_gamepad_trigger_axis(i, i2, newaxes[i2]);
 					axes[i * 6 + i2] = newaxes[i2];
 				}
 			}
@@ -145,7 +145,7 @@ bool kore_internal_handle_messages(void) {
 			newbuttons[15] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) ? 1.0f : 0.0f;
 			for (int i2 = 0; i2 < 16; ++i2) {
 				if (buttons[i * 16 + i2] != newbuttons[i2]) {
-					kinc_internal_gamepad_trigger_button(i, i2, newbuttons[i2]);
+					kore_internal_gamepad_trigger_button(i, i2, newbuttons[i2]);
 					buttons[i * 16 + i2] = newbuttons[i2];
 				}
 			}
@@ -177,8 +177,8 @@ int kore_init(const char *name, int width, int height, struct kore_window_parame
 		frame = &defaultFrame;
 	}
 
-	// kinc_g4_internal_init();
-	// kinc_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
+	// kore_g4_internal_init();
+	// kore_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
 
 	return 0;
 }
@@ -237,7 +237,7 @@ void Win8Application::SetWindow(CoreWindow ^ window) {
 	    ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(this, &Win8Application::OnKeyUp);
 	// m_renderer->Initialize(CoreWindow::GetForCurrentThread());
 
-#ifdef KINC_HOLOLENS
+#ifdef KORE_HOLOLENS
 	// Create holographics space - needs to be created before window is activated
 	holographicFrameController = std::make_unique<HolographicFrameController>(window);
 
@@ -262,15 +262,15 @@ void Win8Application::Run() {
 
 void Win8Application::Uninitialize() {}
 
-int kinc_uwp_window_width;
-int kinc_uwp_window_height;
+int kore_uwp_window_width;
+int kore_uwp_window_height;
 
 extern "C" void kore_internal_resize(int window, int width, int height);
 
 void Win8Application::OnWindowSizeChanged(CoreWindow ^ sender, WindowSizeChangedEventArgs ^ args) {
-	kinc_uwp_window_width = (int)args->Size.Width;
-	kinc_uwp_window_height = (int)args->Size.Height;
-	kinc_internal_resize(0, (int)args->Size.Width, (int)args->Size.Height);
+	kore_uwp_window_width = (int)args->Size.Width;
+	kore_uwp_window_height = (int)args->Size.Height;
+	kore_internal_resize(0, (int)args->Size.Width, (int)args->Size.Height);
 }
 
 void Win8Application::OnWindowClosed(CoreWindow ^ sender, CoreWindowEventArgs ^ args) {
@@ -377,11 +377,11 @@ const char **kore_video_formats() {
 }
 
 int kore_window_width(int window_index) {
-	return kinc_uwp_window_width;
+	return kore_uwp_window_width;
 }
 
 int kore_window_height(int window_index) {
-	return kinc_uwp_window_height;
+	return kore_uwp_window_height;
 }
 
 double kore_frequency() {

@@ -23,7 +23,7 @@ extern "C" {
 
 /// <summary>
 /// Sets the mouse-press-callback which is called when a mouse-button is pressed.
-/// The button callback argument will usually contain one of the KINC_MOUSE_* values,
+/// The button callback argument will usually contain one of the KORE_MOUSE_* values,
 /// but can contain higher values on certain platforms when mice with a lot of buttons are used.
 /// </summary>
 /// <param name="value">The callback</param>
@@ -31,7 +31,7 @@ KORE_FUNC void kore_mouse_set_press_callback(void (*value)(int /*window*/, int /
 
 /// <summary>
 /// Sets the mouse-release-callback which is called when a mouse-button is released.
-/// The button callback argument will usually contain one of the KINC_MOUSE_* values,
+/// The button callback argument will usually contain one of the KORE_MOUSE_* values,
 /// but can contain higher values on certain platforms when mice with a lot of buttons are used.
 /// </summary>
 /// <param name="value">The callback</param>

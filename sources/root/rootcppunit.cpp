@@ -9,7 +9,7 @@ static lpp::LppDefaultAgent lppAgent;
 
 void kore_LivePP_start(void) {
 	// create a default agent, loading the Live++ agent from the given path, e.g. "ThirdParty/LivePP"
-	lppAgent = lpp::LppCreateDefaultAgent(KINC_LIVEPP_PATH);
+	lppAgent = lpp::LppCreateDefaultAgent(KORE_LIVEPP_PATH);
 
 	// enable Live++ for all loaded modules
 	lppAgent.EnableModule(lpp::LppGetCurrentModulePath(), lpp::LPP_MODULES_OPTION_ALL_IMPORT_MODULES);

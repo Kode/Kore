@@ -39,10 +39,10 @@ typedef enum { KORE_LOG_LEVEL_INFO, KORE_LOG_LEVEL_WARNING, KORE_LOG_LEVEL_ERROR
 /// </param>
 /// <param name="format">The parameter is equivalent to the first printf parameter.</param>
 /// <param name="...">The parameter is equivalent to the second printf parameter.</param>
-KINC_FUNC void kore_log(kore_log_level log_level, const char *format, ...);
+KORE_FUNC void kore_log(kore_log_level log_level, const char *format, ...);
 
 /// <summary>
-/// Equivalent to kinc_log but uses a va_list parameter
+/// Equivalent to kore_log but uses a va_list parameter
 /// </summary>
 /// <remarks>
 /// You will need this if you want to log parameters using va_start/va_end.
@@ -53,7 +53,7 @@ KINC_FUNC void kore_log(kore_log_level log_level, const char *format, ...);
 /// </param>
 /// <param name="format">The parameter is equivalent to the first vprintf parameter.</param>
 /// <param name="args">The parameter is equivalent to the second vprintf parameter.</param>
-KINC_FUNC void kore_log_args(kore_log_level log_level, const char *format, va_list args);
+KORE_FUNC void kore_log_args(kore_log_level log_level, const char *format, va_list args);
 
 #ifdef __cplusplus
 }

@@ -111,7 +111,7 @@ void deviceConnected(void *inContext, IOReturn inResult, void *inSender, IOHIDDe
 	// Find an empty slot in the devices list and add the new device there
 	// TODO: does this need to be made thread safe?
 	struct HIDManagerDeviceRecord *device = &manager->devices[0];
-	for (int i = 0; i < KINC_MAX_HID_DEVICES; ++i, ++device) {
+	for (int i = 0; i < KORE_MAX_HID_DEVICES; ++i, ++device) {
 		if (!device->connected) {
 			device->connected = true;
 			device->device = inIOHIDDeviceRef;
@@ -128,7 +128,7 @@ void deviceRemoved(void *inContext, IOReturn inResult, void *inSender, IOHIDDevi
 
 	// TODO: does this need to be made thread safe?
 	struct HIDManagerDeviceRecord *device = &manager->devices[0];
-	for (int i = 0; i < KINC_MAX_HID_DEVICES; ++i, ++device) {
+	for (int i = 0; i < KORE_MAX_HID_DEVICES; ++i, ++device) {
 		// TODO: is comparing IOHIDDeviceRef to match devices safe? Is there a better way?
 		if (device->connected && device->device == inIOHIDDeviceRef) {
 			device->connected = false;

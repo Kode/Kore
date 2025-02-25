@@ -1,5 +1,5 @@
 #include <kore3/display.h>
-// #include <kinc/graphics4/graphics.h>
+// #include <kore3/graphics4/graphics.h>
 #include <kore3/window.h>
 
 static void (*resizeCallback)(int x, int y, void *data) = NULL;
@@ -20,13 +20,13 @@ int kore_window_y(int window_index) {
 int kore_android_width();
 
 int kore_window_width(int window_index) {
-	return kinc_android_width();
+	return kore_android_width();
 }
 
-int kinc_android_height();
+int kore_android_height();
 
 int kore_window_height(int window_index) {
-	return kinc_android_height();
+	return kore_android_height();
 }
 
 void kore_window_resize(int window_index, int width, int height) {}
@@ -39,7 +39,7 @@ void kore_window_change_framebuffer(int window_index, kore_framebuffer_parameter
 	kore_internal_change_framebuffer(0, frame);
 }
 
-#ifdef KINC_VULKAN
+#ifdef KORE_VULKAN
 void kore_internal_change_framebuffer(int window, struct kore_framebuffer_parameters *frame) {}
 #endif
 

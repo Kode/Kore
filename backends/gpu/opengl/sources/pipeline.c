@@ -1,7 +1,7 @@
 #include "pipeline_functions.h"
 #include "pipeline_structs.h"
 
-#include <kinc/log.h>
+#include <kore3/log.h>
 
 void kore_opengl_render_pipeline_init(kore_opengl_device *device, kore_opengl_render_pipeline *pipe, const kore_opengl_render_pipeline_parameters *parameters) {
 

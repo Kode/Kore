@@ -21,8 +21,8 @@ struct kore_window_parameters;
 struct kore_framebuffer_parameters;
 
 /// <summary>
-/// Initializes a Kinc application and creates an initial window for systems which support windows (systems which do not support windows are treated as if the
-/// would provide a single window which cannot change). This has to be called before any other Kinc-function with the exception of the Display-API which can
+/// Initializes a Kore application and creates an initial window for systems which support windows (systems which do not support windows are treated as if the
+/// would provide a single window which cannot change). This has to be called before any other Kore-function with the exception of the Display-API which can
 /// optionally be initialized beforehand using kore_display_init.
 /// </summary>
 /// <returns>The id of the initial window</returns>
@@ -127,12 +127,12 @@ KORE_FUNC int kore_hardware_threads(void);
 KORE_FUNC double kore_time(void);
 
 /// <summary>
-/// Starts Kinc's main-loop. kore_set_update_callback should be called before kore_start so the main-loop actually has something to do.
+/// Starts Kore's main-loop. kore_set_update_callback should be called before kore_start so the main-loop actually has something to do.
 /// </summary>
 KORE_FUNC void kore_start(void);
 
 /// <summary>
-/// Stops Kinc's main loop and thereby returns to the function which called kore_start.
+/// Stops Kore's main loop and thereby returns to the function which called kore_start.
 /// </summary>
 KORE_FUNC void kore_stop(void);
 
@@ -172,7 +172,7 @@ KORE_FUNC void kore_set_keep_screen_on(bool on);
 /// <summary>
 /// Tries to halt program-execution in an attached debugger when compiled in debug-mode (aka when NDEBUG is not defined).
 /// </summary>
-KINC_INLINE void kore_debug_break(void) {
+KORE_INLINE void kore_debug_break(void) {
 #ifndef NDEBUG
 #if defined(_MSC_VER)
 	__debugbreak();
@@ -184,7 +184,7 @@ KINC_INLINE void kore_debug_break(void) {
 #elif defined(__x86_64__)
 	__asm__ volatile("int $0x03");
 #else
-	kore_log(KINC_LOG_LEVEL_WARNING, "Oh no, kore_debug_break is not implemented for the current compiler and CPU.");
+	kore_log(KORE_LOG_LEVEL_WARNING, "Oh no, kore_debug_break is not implemented for the current compiler and CPU.");
 #endif
 #endif
 #endif
@@ -253,7 +253,7 @@ KORE_FUNC void kore_set_drop_files_callback(void (*callback)(wchar_t *, void *),
 
 /// <summary>
 /// Sets a callback which is called when the application is instructed to cut, typically via ctrl+x or cmd+x.
-/// Kinc does not take ownership of the provided string.
+/// Kore does not take ownership of the provided string.
 /// </summary>
 /// <param name="callback">The cut-callback</param>
 /// <param name="data">Arbitrary data-pointer that's passed to the callback</param>
@@ -261,7 +261,7 @@ KORE_FUNC void kore_set_cut_callback(char *(*callback)(void *), void *data);
 
 /// <summary>
 /// Sets a callback which is called when the application is instructed to copy, typically via ctrl+c or cmd+c.
-/// Kinc does not take ownership of the provided string.
+/// Kore does not take ownership of the provided string.
 /// </summary>
 /// <param name="callback">The copy-callback</param>
 /// <param name="data">Arbitrary data-pointer that's passed to the callback</param>
@@ -289,13 +289,13 @@ KORE_FUNC void kore_set_login_callback(void (*callback)(void *), void *data);
 /// <param name="data">Arbitrary data-pointer that's passed to the callback</param>
 KORE_FUNC void kore_set_logout_callback(void (*callback)(void *), void *data);
 
-#ifdef KINC_VTUNE
+#ifdef KORE_VTUNE
 #include <ittnotify.h>
 
 extern __itt_domain *kore_itt_domain;
 #endif
 
-#ifdef KINC_SUPERLUMINAL
+#ifdef KORE_SUPERLUMINAL
 #include <Superluminal/PerformanceAPI_capi.h>
 #endif
 
@@ -305,11 +305,11 @@ extern __itt_domain *kore_itt_domain;
 /// <param name="name">A unique name that will be shown in the profiler</param>
 /// <param name="color">A nice color in RGBX that will show up in the profiler</param>
 static inline void kore_marker_start(const char *name, uint32_t color) {
-#ifdef KINC_VTUNE
+#ifdef KORE_VTUNE
 	__itt_task_begin(kore_itt_domain, __itt_null, __itt_null, __itt_string_handle_create(name));
 #endif
 
-#ifdef KINC_SUPERLUMINAL
+#ifdef KORE_SUPERLUMINAL
 	PerformanceAPI_BeginEvent(name, NULL, color);
 #endif
 }
@@ -318,11 +318,11 @@ static inline void kore_marker_start(const char *name, uint32_t color) {
 /// Ends the previously started marker of the same function.
 /// </summary>
 static inline void kore_marker_end(const char *name) {
-#ifdef KINC_VTUNE
+#ifdef KORE_VTUNE
 	__itt_task_end(kore_itt_domain);
 #endif
 
-#ifdef KINC_SUPERLUMINAL
+#ifdef KORE_SUPERLUMINAL
 	PerformanceAPI_EndEvent();
 #endif
 }
@@ -333,7 +333,7 @@ static inline void kore_marker_end(const char *name) {
 /// After calling this you can hit Ctrl+Alt+F11 to hot-reload.
 /// Call Project.addLivePP(path) in your kfile to make this do something.
 /// The path-parameter for addLivePP is the path to the unpacked Live++-archive that has to contain a LivePP-subdirectory.
-/// This will set the appropricate compiler- and linker-options and set the KINC_LIVEPP-define
+/// This will set the appropricate compiler- and linker-options and set the KORE_LIVEPP-define
 /// for the Debug- and Develop-configs (it does not touch the Release-config).
 /// </summary>
 /// <returns></returns>

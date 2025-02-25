@@ -7,11 +7,11 @@ extern "C" {
 #endif
 
 // name in usual Java syntax (points, no slashes)
-jclass kinc_android_find_class(JNIEnv *env, const char *name);
+jclass kore_android_find_class(JNIEnv *env, const char *name);
 
-ANativeActivity *kinc_android_get_activity(void);
+ANativeActivity *kore_android_get_activity(void);
 
-AAssetManager *kinc_android_get_asset_manager(void);
+AAssetManager *kore_android_get_asset_manager(void);
 
 #ifdef __cplusplus
 }

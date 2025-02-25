@@ -4,7 +4,7 @@ int kore_hardware_threads(void) {
 	return (int)[[NSProcessInfo processInfo] processorCount];
 }
 
-#ifdef KINC_APPLE_SOC
+#ifdef KORE_APPLE_SOC
 
 int kore_cpu_cores(void) {
 	return kore_hardware_threads();

@@ -10,7 +10,7 @@ static void winerror(HRESULT result) {
 
 	__debugbreak();
 
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	if (dw != 0) {
 		FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, dw,
 		               MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buffer, 0, NULL);
@@ -20,7 +20,7 @@ static void winerror(HRESULT result) {
 	else {
 #endif
 		kore_error_message("Unknown Windows error, return value was 0x%x.", result);
-#if defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)
+#if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	}
 #endif
 }

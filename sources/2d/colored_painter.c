@@ -1,28 +1,28 @@
-#include <kinc/graphics4/graphics.h>
-#include <kinc/graphics4/indexbuffer.h>
-#include <kinc/graphics4/vertexbuffer.h>
-#include <kinc/math/matrix.h>
+#include <kore3/graphics4/graphics.h>
+#include <kore3/graphics4/indexbuffer.h>
+#include <kore3/graphics4/vertexbuffer.h>
+#include <kore3/math/matrix.h>
 
 #include <kong.h>
 
-static kinc_matrix4x4_t colored_projection_matrix;
+static kore_matrix4x4_t colored_projection_matrix;
 
 // static var standardColorPipeline : PipelineCache = null;
 // static VertexStructure structure;
 
 static int colored_rect_buffer_size = 1000;
 static int colored_rect_buffer_index;
-static kinc_g4_vertex_buffer_t colored_rect_vertex_buffer;
-static kinc_g2_colored_vertex_in *colored_rect_vertices;
-static kinc_g4_index_buffer_t colored_rect_index_buffer;
+static kore_g4_vertex_buffer_t colored_rect_vertex_buffer;
+static kore_g2_colored_vertex_in *colored_rect_vertices;
+static kore_g4_index_buffer_t colored_rect_index_buffer;
 
 static int colored_triangle_buffer_size = 1000;
 static int colored_triangle_buffer_index;
-static kinc_g4_vertex_buffer_t colored_triangle_vertex_buffer;
-static kinc_g2_colored_vertex_in *colored_triangle_vertices;
-static kinc_g4_index_buffer_t colored_triangle_index_buffer;
+static kore_g4_vertex_buffer_t colored_triangle_vertex_buffer;
+static kore_g2_colored_vertex_in *colored_triangle_vertices;
+static kore_g4_index_buffer_t colored_triangle_index_buffer;
 
-static kinc_g2_constants_type_buffer colored_constants;
+static kore_g2_constants_type_buffer colored_constants;
 
 // var myPipeline : PipelineCache = null;
 
@@ -48,7 +48,7 @@ static void colored_init(void) {
 //	return myPipeline;
 // }
 
-static void colored_set_projection(kinc_matrix4x4_t matrix) {
+static void colored_set_projection(kore_matrix4x4_t matrix) {
 	colored_projection_matrix = matrix;
 }
 
@@ -66,11 +66,11 @@ static bool colored_buffers_initialized = false;
 
 static void colored_init_buffers(void) {
 	if (!colored_buffers_initialized) {
-		kinc_g4_vertex_buffer_init(&colored_rect_vertex_buffer, colored_rect_buffer_size * 4, &kinc_g2_colored_vertex_in_structure, KINC_G4_USAGE_DYNAMIC, 0);
-		colored_rect_vertices = (kinc_g2_colored_vertex_in *)kinc_g4_vertex_buffer_lock_all(&colored_rect_vertex_buffer);
+		kore_g4_vertex_buffer_init(&colored_rect_vertex_buffer, colored_rect_buffer_size * 4, &kore_g2_colored_vertex_in_structure, KORE_G4_USAGE_DYNAMIC, 0);
+		colored_rect_vertices = (kore_g2_colored_vertex_in *)kore_g4_vertex_buffer_lock_all(&colored_rect_vertex_buffer);
 
-		kinc_g4_index_buffer_init(&colored_rect_index_buffer, colored_rect_buffer_size * 3 * 2, KINC_G4_INDEX_BUFFER_FORMAT_32BIT, KINC_G4_USAGE_STATIC);
-		int *indices = (int *)kinc_g4_index_buffer_lock_all(&colored_rect_index_buffer);
+		kore_g4_index_buffer_init(&colored_rect_index_buffer, colored_rect_buffer_size * 3 * 2, KORE_G4_INDEX_BUFFER_FORMAT_32BIT, KORE_G4_USAGE_STATIC);
+		int *indices = (int *)kore_g4_index_buffer_lock_all(&colored_rect_index_buffer);
 		for (int i = 0; i < colored_rect_buffer_size; ++i) {
 			indices[i * 3 * 2 + 0] = i * 4 + 0;
 			indices[i * 3 * 2 + 1] = i * 4 + 1;
@@ -79,22 +79,22 @@ static void colored_init_buffers(void) {
 			indices[i * 3 * 2 + 4] = i * 4 + 2;
 			indices[i * 3 * 2 + 5] = i * 4 + 3;
 		}
-		kinc_g4_index_buffer_unlock_all(&colored_rect_index_buffer);
+		kore_g4_index_buffer_unlock_all(&colored_rect_index_buffer);
 
-		kinc_g4_vertex_buffer_init(&colored_triangle_vertex_buffer, colored_triangle_buffer_size * 3, &kinc_g2_colored_vertex_in_structure,
-		                           KINC_G4_USAGE_DYNAMIC, 0);
-		colored_triangle_vertices = (kinc_g2_colored_vertex_in *)kinc_g4_vertex_buffer_lock_all(&colored_triangle_vertex_buffer);
+		kore_g4_vertex_buffer_init(&colored_triangle_vertex_buffer, colored_triangle_buffer_size * 3, &kore_g2_colored_vertex_in_structure,
+		                           KORE_G4_USAGE_DYNAMIC, 0);
+		colored_triangle_vertices = (kore_g2_colored_vertex_in *)kore_g4_vertex_buffer_lock_all(&colored_triangle_vertex_buffer);
 
-		kinc_g4_index_buffer_init(&colored_triangle_index_buffer, colored_triangle_buffer_size * 3, KINC_G4_INDEX_BUFFER_FORMAT_32BIT, KINC_G4_USAGE_STATIC);
-		int *tri_indices = (int *)kinc_g4_index_buffer_lock_all(&colored_rect_index_buffer);
+		kore_g4_index_buffer_init(&colored_triangle_index_buffer, colored_triangle_buffer_size * 3, KORE_G4_INDEX_BUFFER_FORMAT_32BIT, KORE_G4_USAGE_STATIC);
+		int *tri_indices = (int *)kore_g4_index_buffer_lock_all(&colored_rect_index_buffer);
 		for (int i = 0; i < colored_triangle_buffer_size; ++i) {
 			tri_indices[i * 3 + 0] = i * 3 + 0;
 			tri_indices[i * 3 + 1] = i * 3 + 1;
 			tri_indices[i * 3 + 2] = i * 3 + 2;
 		}
-		kinc_g4_index_buffer_unlock_all(&colored_triangle_index_buffer);
+		kore_g4_index_buffer_unlock_all(&colored_triangle_index_buffer);
 
-		kinc_g2_constants_type_buffer_init(&colored_constants);
+		kore_g2_constants_type_buffer_init(&colored_constants);
 
 		colored_buffers_initialized = true;
 	}
@@ -184,21 +184,21 @@ static void colored_draw_rect_buffer(bool trisDone) {
 		colored_end_tris(true);
 	}
 
-	kinc_g2_constants_type *constants_data = kinc_g2_constants_type_buffer_lock(&colored_constants);
+	kore_g2_constants_type *constants_data = kore_g2_constants_type_buffer_lock(&colored_constants);
 	constants_data->projection = colored_projection_matrix;
-	kinc_g2_constants_type_buffer_unlock(&colored_constants);
+	kore_g2_constants_type_buffer_unlock(&colored_constants);
 
-	kinc_g4_vertex_buffer_unlock(&colored_rect_vertex_buffer, colored_rect_buffer_index * 4);
+	kore_g4_vertex_buffer_unlock(&colored_rect_vertex_buffer, colored_rect_buffer_index * 4);
 	// PipelineState pipeline = myPipeline.get(null, Depth24Stencil8);
-	kinc_g4_set_pipeline(&kinc_g2_colored_pipeline);
-	kinc_g4_set_vertex_buffer(&colored_rect_vertex_buffer);
-	kinc_g4_set_index_buffer(&colored_rect_index_buffer);
-	kinc_g2_constants_type_buffer_set(&colored_constants);
+	kore_g4_set_pipeline(&kore_g2_colored_pipeline);
+	kore_g4_set_vertex_buffer(&colored_rect_vertex_buffer);
+	kore_g4_set_index_buffer(&colored_rect_index_buffer);
+	kore_g2_constants_type_buffer_set(&colored_constants);
 
-	kinc_g4_draw_indexed_vertices_from_to(0, colored_rect_buffer_index * 2 * 3);
+	kore_g4_draw_indexed_vertices_from_to(0, colored_rect_buffer_index * 2 * 3);
 
 	colored_rect_buffer_index = 0;
-	colored_rect_vertices = (kinc_g2_colored_vertex_in *)kinc_g4_vertex_buffer_lock_all(&colored_rect_vertex_buffer);
+	colored_rect_vertices = (kore_g2_colored_vertex_in *)kore_g4_vertex_buffer_lock_all(&colored_rect_vertex_buffer);
 }
 
 static void colored_draw_tri_buffer(bool rectsDone) {
@@ -206,21 +206,21 @@ static void colored_draw_tri_buffer(bool rectsDone) {
 		colored_end_rects(true);
 	}
 
-	kinc_g2_constants_type *constants_data = kinc_g2_constants_type_buffer_lock(&colored_constants);
+	kore_g2_constants_type *constants_data = kore_g2_constants_type_buffer_lock(&colored_constants);
 	constants_data->projection = colored_projection_matrix;
-	kinc_g2_constants_type_buffer_unlock(&colored_constants);
+	kore_g2_constants_type_buffer_unlock(&colored_constants);
 
-	kinc_g4_vertex_buffer_unlock(&colored_triangle_vertex_buffer, colored_triangle_buffer_index * 3);
+	kore_g4_vertex_buffer_unlock(&colored_triangle_vertex_buffer, colored_triangle_buffer_index * 3);
 	// PipelineState pipeline = myPipeline.get(null, Depth24Stencil8);
-	kinc_g4_set_pipeline(&kinc_g2_colored_pipeline);
-	kinc_g4_set_vertex_buffer(&colored_triangle_vertex_buffer);
-	kinc_g4_set_index_buffer(&colored_triangle_index_buffer);
-	kinc_g2_constants_type_buffer_set(&colored_constants);
+	kore_g4_set_pipeline(&kore_g2_colored_pipeline);
+	kore_g4_set_vertex_buffer(&colored_triangle_vertex_buffer);
+	kore_g4_set_index_buffer(&colored_triangle_index_buffer);
+	kore_g2_constants_type_buffer_set(&colored_constants);
 
-	kinc_g4_draw_indexed_vertices_from_to(0, colored_triangle_buffer_index * 3);
+	kore_g4_draw_indexed_vertices_from_to(0, colored_triangle_buffer_index * 3);
 
 	colored_triangle_buffer_index = 0;
-	colored_triangle_vertices = (kinc_g2_colored_vertex_in *)kinc_g4_vertex_buffer_lock_all(&colored_triangle_vertex_buffer);
+	colored_triangle_vertices = (kore_g2_colored_vertex_in *)kore_g4_vertex_buffer_lock_all(&colored_triangle_vertex_buffer);
 }
 
 static void colored_fill_rect(float opacity, uint32_t color, float bottomleftx, float bottomlefty, float topleftx, float toplefty, float toprightx,

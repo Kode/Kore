@@ -12,7 +12,7 @@
 #include <X11/extensions/Xinerama.h>
 #include <X11/extensions/Xrandr.h>
 
-#ifdef KINC_EGL
+#ifdef KORE_EGL
 #define EGL_NO_PLATFORM_SPECIFIC_TYPES
 #include <EGL/egl.h>
 #endif
@@ -20,7 +20,7 @@
 #define MAXIMUM_WINDOWS 16
 #define MAXIMUM_DISPLAYS 16
 
-struct kinc_x11_window {
+struct kore_x11_window {
 	int display_index;
 	int window_index;
 	int width;
@@ -31,7 +31,7 @@ struct kinc_x11_window {
 	XIC xInputContext;
 };
 
-struct kinc_x11_display {
+struct kore_x11_display {
 	int index;
 	int current_mode;
 	int num_modes;
@@ -46,13 +46,13 @@ struct kinc_x11_display {
 	RRCrtc crtc;
 };
 
-struct kinc_x11_mouse {
+struct kore_x11_mouse {
 	int current_window;
 	int x;
 	int y;
 };
 
-struct kinc_x11_atoms {
+struct kore_x11_atoms {
 	Atom XdndAware;
 	Atom XdndDrop;
 	Atom XdndEnter;
@@ -94,7 +94,7 @@ struct kinc_x11_atoms {
 	Atom JOYSTICK;
 };
 
-struct kinc_x11_libs {
+struct kore_x11_libs {
 	void *X11;
 	void *Xcursor;
 	void *Xi;
@@ -102,7 +102,7 @@ struct kinc_x11_libs {
 	void *Xrandr;
 };
 
-struct kinc_x11_procs {
+struct kore_x11_procs {
 	Display *(*XOpenDisplay)(const char *name);
 	Status (*XInternAtoms)(Display *display, char **names, int count, Bool only_if_exists, Atom *atoms_return);
 	int (*XCloseDisplay)(Display *display);
@@ -181,20 +181,20 @@ struct x11_pen_device {
 
 struct x11_context {
 	Display *display;
-	struct kinc_x11_libs libs;
-	struct kinc_x11_atoms atoms;
-	struct kinc_x11_mouse mouse;
+	struct kore_x11_libs libs;
+	struct kore_x11_atoms atoms;
+	struct kore_x11_mouse mouse;
 
 	struct x11_pen_device pen;
 	struct x11_pen_device eraser;
 
 	int num_windows;
-	struct kinc_x11_window windows[MAXIMUM_WINDOWS];
+	struct kore_x11_window windows[MAXIMUM_WINDOWS];
 	int num_displays;
-	struct kinc_x11_display displays[MAXIMUM_DISPLAYS];
+	struct kore_x11_display displays[MAXIMUM_DISPLAYS];
 };
 
-struct kinc_x11_procs xlib;
+struct kore_x11_procs xlib;
 struct x11_context x11_ctx;
 
-void kinc_x11_copy_to_clipboard(const char *text);
+void kore_x11_copy_to_clipboard(const char *text);

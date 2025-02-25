@@ -24,7 +24,7 @@ void kore_metal_device_set_name(kore_gpu_device *device, const char *name) {}
 void kore_metal_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
 	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
 	MTLResourceOptions options = MTLResourceCPUCacheModeWriteCombined;
-#ifdef KINC_APPLE_SOC
+#ifdef KORE_APPLE_SOC
 	options |= MTLResourceStorageModeShared;
 #else
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {

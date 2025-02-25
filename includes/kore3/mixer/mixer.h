@@ -87,8 +87,8 @@ KORE_FUNC void kore_mixer_channel_set_volume(kore_mixer_channel *channel, float 
 /// <param name="samples">The number of samples to be filled in</param>
 KORE_FUNC void kore_mixer_mix(kore_audio_buffer *buffer, uint32_t samples);
 
-void kinc_internal_play_video_sound_stream(struct kore_internal_video_sound_stream *stream);
-void kinc_internal_stop_video_sound_stream(struct kore_internal_video_sound_stream *stream);
+void kore_internal_play_video_sound_stream(struct kore_internal_video_sound_stream *stream);
+void kore_internal_stop_video_sound_stream(struct kore_internal_video_sound_stream *stream);
 
 #ifdef __cplusplus
 }

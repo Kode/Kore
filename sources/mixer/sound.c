@@ -103,7 +103,7 @@ static kore_mixer_sound *find_sound(void) {
 	return NULL;
 }
 
-kore_mixer_sound *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const uint32_t size, kore_mixer_audioformat format) {
+kore_mixer_sound *kore_a1_sound_create_from_buffer(uint8_t *audio_data, const uint32_t size, kore_mixer_audioformat format) {
 	kore_mixer_sound *sound = find_sound();
 	assert(sound != NULL);
 	sound->in_use = true;
@@ -187,7 +187,7 @@ kore_mixer_sound *kinc_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 	return sound;
 }
 
-kore_mixer_sound *kinc_a1_sound_create(const char *filename) {
+kore_mixer_sound *kore_a1_sound_create(const char *filename) {
 	size_t filenameLength = strlen(filename);
 
 	kore_mixer_audioformat fileformat;
@@ -211,14 +211,14 @@ kore_mixer_sound *kinc_a1_sound_create(const char *filename) {
 	kore_file_reader_close(&file);
 	size_t filesize = kore_file_reader_size(&file);
 
-	kore_mixer_sound *sound = kinc_a1_sound_create_from_buffer(filedata, (uint32_t)filesize, fileformat);
+	kore_mixer_sound *sound = kore_a1_sound_create_from_buffer(filedata, (uint32_t)filesize, fileformat);
 
 	free(filedata);
 
 	return sound;
 }
 
-void kinc_a1_sound_destroy(kore_mixer_sound *sound) {
+void kore_a1_sound_destroy(kore_mixer_sound *sound) {
 	free(sound->left);
 	free(sound->right);
 	sound->left = NULL;
@@ -226,10 +226,10 @@ void kinc_a1_sound_destroy(kore_mixer_sound *sound) {
 	sound->in_use = false;
 }
 
-float kinc_a1_sound_volume(kore_mixer_sound *sound) {
+float kore_a1_sound_volume(kore_mixer_sound *sound) {
 	return sound->volume;
 }
 
-void kinc_a1_sound_set_volume(kore_mixer_sound *sound, float value) {
+void kore_a1_sound_set_volume(kore_mixer_sound *sound, float value) {
 	sound->volume = value;
 }

@@ -3,11 +3,11 @@
 #include <kore3/error.h>
 // #include <GLContext.h>
 #include <kore3/backend/android.h>
-//#include <kinc/graphics4/graphics.h>
+//#include <kore3/graphics4/graphics.h>
 #include <kore3/input/gamepad.h>
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
-// #include <kinc/input/sensor.h>
+// #include <kore3/input/sensor.h>
 #include <kore3/backend/android_native_app_glue.h>
 #include <android/sensor.h>
 #include <android/window.h>
@@ -41,31 +41,31 @@ static bool activityJustResized = false;
 
 #include <assert.h>
 
-#ifdef KINC_EGL
+#ifdef KORE_EGL
 
-EGLDisplay kinc_egl_get_display() {
+EGLDisplay kore_egl_get_display() {
 	return eglGetDisplay(EGL_DEFAULT_DISPLAY);
 }
 
-EGLNativeWindowType kinc_egl_get_native_window(EGLDisplay display, EGLConfig config, int window) {
-	kinc_affirm(window == 0);
+EGLNativeWindowType kore_egl_get_native_window(EGLDisplay display, EGLConfig config, int window) {
+	kore_affirm(window == 0);
 	EGLint format;
 	eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
 	int e = ANativeWindow_setBuffersGeometry(app->window, 0, 0, format);
 	if (e < 0) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Failed to set ANativeWindow buffer geometry.");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Failed to set ANativeWindow buffer geometry.");
 	}
 	return app->window;
 }
 
 #endif
 
-#ifdef KINC_VULKAN
+#ifdef KORE_VULKAN
 
 #include <vulkan/vulkan_android.h>
 #include <vulkan/vulkan_core.h>
 
-VkResult kinc_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
+VkResult kore_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
 	assert(app->window != NULL);
 	VkAndroidSurfaceCreateInfoKHR createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
@@ -75,12 +75,12 @@ VkResult kinc_vulkan_create_surface(VkInstance instance, int window_index, VkSur
 	return vkCreateAndroidSurfaceKHR(instance, &createInfo, NULL, surface);
 }
 
-void kinc_vulkan_get_instance_extensions(const char **names, int *index, int max) {
+void kore_vulkan_get_instance_extensions(const char **names, int *index, int max) {
 	assert(*index + 1 < max);
 	names[(*index)++] = VK_KHR_ANDROID_SURFACE_EXTENSION_NAME;
 }
 
-VkBool32 kinc_vulkan_get_physical_device_presentation_support(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
+VkBool32 kore_vulkan_get_physical_device_presentation_support(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
 	// https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VK_KHR_android_surface.html#_issues
 	//
 	// 1) Does Android need a way to query for compatibility between a particular physical device (and queue family?)
@@ -91,26 +91,26 @@ VkBool32 kinc_vulkan_get_physical_device_presentation_support(VkPhysicalDevice p
 }
 #endif
 
-#ifndef KINC_VULKAN
-void kinc_egl_init_window(int window);
-void kinc_egl_destroy_window(int window);
+#ifndef KORE_VULKAN
+void kore_egl_init_window(int window);
+void kore_egl_destroy_window(int window);
 #endif
-#ifdef KINC_VULKAN
-void kinc_vulkan_init_window(int window);
+#ifdef KORE_VULKAN
+void kore_vulkan_init_window(int window);
 #endif
 
 static void initDisplay() {
-#ifndef KINC_VULKAN
-	kinc_egl_init_window(0);
+#ifndef KORE_VULKAN
+	kore_egl_init_window(0);
 #endif
-#ifdef KINC_VULKAN
-	// kinc_vulkan_init_window(0); // TODO
+#ifdef KORE_VULKAN
+	// kore_vulkan_init_window(0); // TODO
 #endif
 }
 
 static void termDisplay() {
-#ifndef KINC_VULKAN
-	kinc_egl_destroy_window(0);
+#ifndef KORE_VULKAN
+	kore_egl_destroy_window(0);
 #endif
 }
 
@@ -791,7 +791,7 @@ static void cmd(struct android_app *app, int32_t cmd) {
 			}
 			else {
 				initDisplay();
-				//kinc_g4_swap_buffers(); // TODO
+				//kore_g4_swap_buffers(); // TODO
 			}
 
 			updateAppForegroundStatus(true, appIsForeground);
@@ -849,15 +849,15 @@ static void resize(ANativeActivity *activity, ANativeWindow *window) {
 	activityJustResized = true;
 }
 
-ANativeActivity *kinc_android_get_activity(void) {
+ANativeActivity *kore_android_get_activity(void) {
 	return activity;
 }
 
-AAssetManager *kinc_android_get_asset_manager(void) {
+AAssetManager *kore_android_get_asset_manager(void) {
 	return activity->assetManager;
 }
 
-jclass kinc_android_find_class(JNIEnv *env, const char *name) {
+jclass kore_android_find_class(JNIEnv *env, const char *name) {
 	jobject nativeActivity = activity->clazz;
 	jclass acl = (*env)->GetObjectClass(env, nativeActivity);
 	jmethodID getClassLoader = (*env)->GetMethodID(env, acl, "getClassLoader", "()Ljava/lang/ClassLoader;");
@@ -888,11 +888,11 @@ JNIEXPORT void JNICALL Java_tech_kore_KoreActivity_nativeKoreKeyPress(JNIEnv *en
 	(*env)->ReleaseStringChars(env, chars, text);
 }
 
-void KincAndroidKeyboardInit() {
+void KoreAndroidKeyboardInit() {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
 
-	jclass clazz = kinc_android_find_class(env, "tech.kore.KoreActivity");
+	jclass clazz = kore_android_find_class(env, "tech.kore.KoreActivity");
 
 	// String chars
 	JNINativeMethod methodTable[] = {{"nativeKoreKeyPress", "(Ljava/lang/String;)V", (void *)Java_tech_kore_KoreActivity_nativeKoreKeyPress}};
@@ -913,7 +913,7 @@ void kore_keyboard_show() {
 	keyboard_active = true;
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "showKeyboard", "()V"));
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -922,7 +922,7 @@ void kore_keyboard_hide() {
 	keyboard_active = false;
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "hideKeyboard", "()V"));
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -934,7 +934,7 @@ bool kore_keyboard_active() {
 void kore_load_url(const char *url) {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jstring jurl = (*env)->NewStringUTF(env, url);
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "loadURL", "(Ljava/lang/String;)V"), jurl);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
@@ -943,7 +943,7 @@ void kore_load_url(const char *url) {
 void kore_vibrate(int ms) {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "vibrate", "(I)V"), ms);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -951,7 +951,7 @@ void kore_vibrate(int ms) {
 const char *kore_language() {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jstring s = (jstring)(*env)->CallStaticObjectMethod(env, koreActivityClass,
 	                                                    (*env)->GetStaticMethodID(env, koreActivityClass, "getLanguage", "()Ljava/lang/String;"));
 	const char *str = (*env)->GetStringUTFChars(env, s, 0);
@@ -959,22 +959,22 @@ const char *kore_language() {
 	return str;
 }
 
-#ifdef KINC_VULKAN
-bool kinc_vulkan_internal_get_size(int *width, int *height);
+#ifdef KORE_VULKAN
+bool kore_vulkan_internal_get_size(int *width, int *height);
 #endif
 
-#ifdef KINC_EGL
-extern int kinc_egl_width(int window);
-extern int kinc_egl_height(int window);
+#ifdef KORE_EGL
+extern int kore_egl_width(int window);
+extern int kore_egl_height(int window);
 #endif
 
-int kinc_android_width() {
-#if defined(KINC_EGL)
-	return kinc_egl_width(0);
-#elif defined(KINC_VULKAN)
+int kore_android_width() {
+#if defined(KORE_EGL)
+	return kore_egl_width(0);
+#elif defined(KORE_VULKAN)
 	// TODO
 	//int width, height;
-	//if (kinc_vulkan_internal_get_size(&width, &height)) {
+	//if (kore_vulkan_internal_get_size(&width, &height)) {
 	//	return width;
 	//}
 	//else
@@ -982,13 +982,13 @@ int kinc_android_width() {
 	{ return ANativeWindow_getWidth(app->window); }
 }
 
-int kinc_android_height() {
-#if defined(KINC_EGL)
-	return kinc_egl_height(0);
-#elif defined(KINC_VULKAN)
+int kore_android_height() {
+#if defined(KORE_EGL)
+	return kore_egl_height(0);
+#elif defined(KORE_VULKAN)
 	// TODO
 	//int width, height;
-	//if (kinc_vulkan_internal_get_size(&width, &height)) {
+	//if (kore_vulkan_internal_get_size(&width, &height)) {
 	//	return height;
 	//}
 	//else
@@ -997,7 +997,7 @@ int kinc_android_height() {
 }
 
 const char *kore_internal_save_path() {
-	return kinc_android_get_activity()->internalDataPath;
+	return kore_android_get_activity()->internalDataPath;
 }
 
 const char *kore_system_id() {
@@ -1085,9 +1085,9 @@ bool kore_internal_handle_messages(void) {
 
 	if (activityJustResized && app->window != NULL) {
 		activityJustResized = false;
-		int32_t width = kinc_android_width();
-		int32_t height = kinc_android_height();
-#ifdef KINC_VULKAN
+		int32_t width = kore_android_width();
+		int32_t height = kore_android_height();
+#ifdef KORE_VULKAN
 		//kore_internal_resize(0, width, height); // TODO
 #endif
 		kore_internal_call_resize_callback(0, width, height);
@@ -1153,11 +1153,11 @@ void android_main(struct android_app *application) {
 	activity = application->activity;
 	initAndroidFileReader();
 	KoreAndroidVideoInit();
-	KincAndroidKeyboardInit();
+	KoreAndroidKeyboardInit();
 	application->onAppCmd = cmd;
 	application->onInputEvent = input;
 	activity->callbacks->onNativeWindowResized = resize;
-	// #ifndef KINC_VULKAN
+	// #ifndef KORE_VULKAN
 	// 	glContext = ndk_helper::GLContext::GetInstance();
 	// #endif
 	sensorManager = ASensorManager_getInstance();
@@ -1166,20 +1166,20 @@ void android_main(struct android_app *application) {
 	sensorEventQueue = ASensorManager_createEventQueue(sensorManager, application->looper, LOOPER_ID_USER, NULL, NULL);
 
 	JNIEnv *env = NULL;
-	(*kinc_android_get_activity()->vm)->AttachCurrentThread(kinc_android_get_activity()->vm, &env, NULL);
+	(*kore_android_get_activity()->vm)->AttachCurrentThread(kore_android_get_activity()->vm, &env, NULL);
 
-	jclass koreMoviePlayerClass = kinc_android_find_class(env, "tech.kinc.KincMoviePlayer");
+	jclass koreMoviePlayerClass = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
 	jmethodID updateAll = (*env)->GetStaticMethodID(env, koreMoviePlayerClass, "updateAll", "()V");
 
 	while (!started) {
 		kore_internal_handle_messages();
 		(*env)->CallStaticVoidMethod(env, koreMoviePlayerClass, updateAll);
 	}
-	(*kinc_android_get_activity()->vm)->DetachCurrentThread(kinc_android_get_activity()->vm);
+	(*kore_android_get_activity()->vm)->DetachCurrentThread(kore_android_get_activity()->vm);
 	kickstart(0, NULL);
 
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jmethodID FinishHim = (*env)->GetStaticMethodID(env, koreActivityClass, "stop", "()V");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, FinishHim);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
@@ -1202,8 +1202,8 @@ int kore_init(const char *name, int width, int height, struct kore_window_parame
 		frame = &default_frame;
 	}
 
-	// kinc_g4_internal_init();
-	// kinc_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
+	// kore_g4_internal_init();
+	// kore_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
 
 	kore_internal_gamepad_trigger_connect(0);
 
@@ -1214,11 +1214,11 @@ void kore_internal_shutdown(void) {
 	kore_internal_gamepad_trigger_disconnect(0);
 }
 
-const char *kinc_gamepad_vendor(int gamepad) {
+const char *kore_gamepad_vendor(int gamepad) {
 	return "Google";
 }
 
-const char *kinc_gamepad_product_name(int gamepad) {
+const char *kore_gamepad_product_name(int gamepad) {
 	return "gamepad";
 }
 
@@ -1253,42 +1253,42 @@ void initAndroidFileReader(void) {
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
 
-static bool kinc_aasset_reader_close(kore_file_reader *reader) {
+static bool kore_aasset_reader_close(kore_file_reader *reader) {
 	AAsset_close((struct AAsset *)reader->data);
 	return true;
 }
 
-static size_t kinc_aasset_reader_read(kore_file_reader *reader, void *data, size_t size) {
+static size_t kore_aasset_reader_read(kore_file_reader *reader, void *data, size_t size) {
 	return AAsset_read((struct AAsset *)reader->data, data, size);
 }
 
-static size_t kinc_aasset_reader_pos(kore_file_reader *reader) {
+static size_t kore_aasset_reader_pos(kore_file_reader *reader) {
 	return (size_t)AAsset_seek((struct AAsset *)reader->data, 0, SEEK_CUR);
 }
 
-static bool kinc_aasset_reader_seek(kore_file_reader *reader, size_t pos) {
+static bool kore_aasset_reader_seek(kore_file_reader *reader, size_t pos) {
 	AAsset_seek((struct AAsset *)reader->data, pos, SEEK_SET);
 	return true;
 }
 
-static bool kinc_aasset_reader_open(kore_file_reader *reader, const char *filename, int type) {
+static bool kore_aasset_reader_open(kore_file_reader *reader, const char *filename, int type) {
 	if (type != KORE_FILE_TYPE_ASSET)
 		return false;
-	reader->data = AAssetManager_open(kinc_android_get_asset_manager(), filename, AASSET_MODE_RANDOM);
+	reader->data = AAssetManager_open(kore_android_get_asset_manager(), filename, AASSET_MODE_RANDOM);
 	if (reader->data == NULL)
 		return false;
 	reader->size = AAsset_getLength((struct AAsset *)reader->data);
-	reader->close = kinc_aasset_reader_close;
-	reader->read = kinc_aasset_reader_read;
-	reader->pos = kinc_aasset_reader_pos;
-	reader->seek = kinc_aasset_reader_seek;
+	reader->close = kore_aasset_reader_close;
+	reader->read = kore_aasset_reader_read;
+	reader->pos = kore_aasset_reader_pos;
+	reader->seek = kore_aasset_reader_seek;
 	return true;
 }
 
 bool kore_file_reader_open(kore_file_reader *reader, const char *filename, int type) {
 	memset(reader, 0, sizeof(*reader));
 	return kore_internal_file_reader_callback(reader, filename, type) || kore_internal_file_reader_open(reader, filename, type) ||
-	       kinc_aasset_reader_open(reader, filename, type);
+	       kore_aasset_reader_open(reader, filename, type);
 }
 
 int kore_cpu_cores(void) {

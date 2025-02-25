@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !defined(KINC_WASM) && !defined(KINC_EMSCRIPTEN) && !defined(KINC_ANDROID) && !defined(KINC_WINDOWS) && !defined(KINC_CONSOLE)
+#if !defined(KORE_WASM) && !defined(KORE_EMSCRIPTEN) && !defined(KORE_ANDROID) && !defined(KORE_WINDOWS) && !defined(KORE_CONSOLE)
 double kore_time(void) {
 	return kore_timestamp() / kore_frequency();
 }
@@ -39,7 +39,7 @@ static void *login_callback_data = NULL;
 static void (*logout_callback)(void *) = NULL;
 static void *logout_callback_data = NULL;
 
-#if defined(KINC_IOS) || defined(KINC_MACOS)
+#if defined(KORE_IOS) || defined(KORE_MACOS)
 bool withAutoreleasepool(bool (*f)(void));
 #endif
 
@@ -179,7 +179,7 @@ void kore_internal_logout_callback(void) {
 
 static bool running = false;
 // static bool showWindowFlag = true;
-static char application_name[1024] = {"Kinc Application"};
+static char application_name[1024] = {"Kore Application"};
 
 const char *kore_application_name(void) {
 	return application_name;
@@ -208,10 +208,10 @@ bool kore_internal_frame(void) {
 void kore_start(void) {
 	running = true;
 
-#if !defined(KINC_WASM) && !defined(KINC_EMSCRIPTEN)
+#if !defined(KORE_WASM) && !defined(KORE_EMSCRIPTEN)
 	// if (Graphics::hasWindow()) Graphics::swapBuffers();
 
-#if defined(KINC_IOS) || defined(KINC_MACOS)
+#if defined(KORE_IOS) || defined(KORE_MACOS)
 	while (withAutoreleasepool(kore_internal_frame)) {
 	}
 #else
@@ -234,11 +234,11 @@ int kore_height(void) {
 void kore_memory_emergency(void) {}
 #endif
 
-#if !defined(KINC_SONY) && !defined(KINC_SWITCH)
+#if !defined(KORE_SONY) && !defined(KORE_SWITCH)
 static float safe_zone = 0.9f;
 
 float kore_safe_zone(void) {
-#ifdef KINC_ANDROID
+#ifdef KORE_ANDROID
 	return 1.0f;
 #else
 	return safe_zone;
@@ -246,7 +246,7 @@ float kore_safe_zone(void) {
 }
 
 bool kore_automatic_safe_zone(void) {
-#ifdef KINC_ANDROID
+#ifdef KORE_ANDROID
 	return true;
 #else
 	return false;
@@ -258,7 +258,7 @@ void kore_set_safe_zone(float value) {
 }
 #endif
 
-#if !defined(KINC_SONY)
+#if !defined(KORE_SONY)
 bool is_save_load_initialized(void) {
 	return true;
 }
@@ -272,7 +272,7 @@ bool is_save_load_broken(void) {
 }
 #endif
 
-#if !defined(KINC_CONSOLE)
+#if !defined(KORE_CONSOLE)
 
 #define SAVE_RESULT_NONE 0
 #define SAVE_RESULT_SUCCESS 1
@@ -328,7 +328,7 @@ bool kore_waiting_for_login(void) {
 	return false;
 }
 
-#if !defined(KINC_WINDOWS) && !defined(KINC_LINUX) && !defined(KINC_MACOS)
+#if !defined(KORE_WINDOWS) && !defined(KORE_LINUX) && !defined(KORE_MACOS)
 void kore_copy_to_clipboard(const char *text) {
 	kore_log(KORE_LOG_LEVEL_WARNING, "Oh no, kore_copy_to_clipboard is not implemented for this system.");
 }

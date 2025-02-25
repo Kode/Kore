@@ -7,7 +7,7 @@ const excludes = [
 	'backends/gpu/direct3d12/sources/d3dx12.h',
 	'backends/gpu/direct3d12/pix',
 	'backends/system/android/sources/Android',
-	'backends/system/linux/sources/kinc/backend/wayland',
+	'backends/system/linux/sources/kore/backend/wayland',
 	'includes/kore3/util/offalloc',
 	'sources/util/offalloc',
 	'tests/shader/sources/stb_image_write.h'

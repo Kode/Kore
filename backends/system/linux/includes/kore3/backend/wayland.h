@@ -12,16 +12,16 @@
 #include <wayland-client-core.h>
 #include <wayland-cursor.h>
 
-#define KINC_WL_CHECK_VERSION(x, y, z)                                                                                                                         \
+#define KORE_WL_CHECK_VERSION(x, y, z)                                                                                                                         \
 	(WAYLAND_VERSION_MAJOR > x || (WAYLAND_VERSION_MAJOR == x && WAYLAND_VERSION_MINOR > y) ||                                                                 \
 	 (WAYLAND_VERSION_MAJOR == x && WAYLAND_VERSION_MINOR == y && WAYLAND_VERSION_MICRO >= z))
 
 struct wl_surface;
 
-struct kinc_wl_procs {
-#define KINC_WL_FUN(ret, name, args) ret(*_##name) args;
+struct kore_wl_procs {
+#define KORE_WL_FUN(ret, name, args) ret(*_##name) args;
 #include "wayland-funs.h"
-#undef KINC_WL_FUN
+#undef KORE_WL_FUN
 
 	struct wl_cursor_theme *(*_wl_cursor_theme_load)(const char *name, int size, struct wl_shm *shm);
 	void (*_wl_cursor_theme_destroy)(struct wl_cursor_theme *theme);
@@ -30,7 +30,7 @@ struct kinc_wl_procs {
 	int (*_wl_cursor_frame)(struct wl_cursor *cursor, uint32_t time);
 	int (*_wl_cursor_frame_and_duration)(struct wl_cursor *cursor, uint32_t time, uint32_t *duration);
 
-#ifdef KINC_EGL
+#ifdef KORE_EGL
 	struct wl_egl_window *(*_wl_egl_window_create)(struct wl_surface *surface, int width, int height);
 	void (*_wl_egl_window_destroy)(struct wl_egl_window *egl_window);
 	void (*_wl_egl_window_resize)(struct wl_egl_window *egl_window, int width, int height, int dx, int dy);
@@ -93,7 +93,7 @@ struct kinc_wl_procs {
 #define wl_egl_window_destroy wl._wl_egl_window_destroy
 #define wl_egl_window_resize wl._wl_egl_window_resize
 
-extern struct kinc_wl_procs wl;
+extern struct kore_wl_procs wl;
 
 #include <wayland-client-protocol.h>
 #include <wayland-generated/wayland-fractional-scale.h>
@@ -106,7 +106,7 @@ extern struct kinc_wl_procs wl;
 
 #include <xkbcommon/xkbcommon.h>
 
-struct kinc_xkb_procs {
+struct kore_xkb_procs {
 	struct xkb_context *(*xkb_context_new)(enum xkb_context_flags flags);
 	void (*xkb_context_unref)(struct xkb_context *context);
 	struct xkb_keymap *(*xkb_keymap_new_from_string)(struct xkb_context *context, const char *string, enum xkb_keymap_format format,
@@ -122,57 +122,57 @@ struct kinc_xkb_procs {
 	int (*xkb_keymap_key_repeats)(struct xkb_keymap *keymap, xkb_keycode_t key);
 };
 
-extern struct kinc_xkb_procs wl_xkb;
+extern struct kore_xkb_procs wl_xkb;
 
 #define MAXIMUM_WINDOWS 16
 #define MAXIMUM_DISPLAYS 16
 #define MAXIMUM_DISPLAY_MODES 16
 
-struct kinc_wl_decoration {
+struct kore_wl_decoration {
 	struct wl_surface *surface;
 	struct wl_subsurface *subsurface;
 	struct wp_viewport *viewport;
 };
 
-enum kinc_wl_decoration_focus {
-	KINC_WL_DECORATION_FOCUS_MAIN,
-	KINC_WL_DECORATION_FOCUS_TOP,
-	KINC_WL_DECORATION_FOCUS_LEFT,
-	KINC_WL_DECORATION_FOCUS_RIGHT,
-	KINC_WL_DECORATION_FOCUS_BOTTOM,
-	KINC_WL_DECORATION_FOCUS_CLOSE_BUTTON,
-	KINC_WL_DECORATION_FOCUS_MAX_BUTTON,
-	KINC_WL_DECORATION_FOCUS_MIN_BUTTON
+enum kore_wl_decoration_focus {
+	KORE_WL_DECORATION_FOCUS_MAIN,
+	KORE_WL_DECORATION_FOCUS_TOP,
+	KORE_WL_DECORATION_FOCUS_LEFT,
+	KORE_WL_DECORATION_FOCUS_RIGHT,
+	KORE_WL_DECORATION_FOCUS_BOTTOM,
+	KORE_WL_DECORATION_FOCUS_CLOSE_BUTTON,
+	KORE_WL_DECORATION_FOCUS_MAX_BUTTON,
+	KORE_WL_DECORATION_FOCUS_MIN_BUTTON
 };
 
-#define KINC_WL_DECORATION_WIDTH 10
+#define KORE_WL_DECORATION_WIDTH 10
 
-#define KINC_WL_DECORATION_TOP_X 0
-#define KINC_WL_DECORATION_TOP_Y -(KINC_WL_DECORATION_TOP_HEIGHT)
-#define KINC_WL_DECORATION_TOP_WIDTH window->surface_width
-#define KINC_WL_DECORATION_TOP_HEIGHT KINC_WL_DECORATION_WIDTH * 3
+#define KORE_WL_DECORATION_TOP_X 0
+#define KORE_WL_DECORATION_TOP_Y -(KORE_WL_DECORATION_TOP_HEIGHT)
+#define KORE_WL_DECORATION_TOP_WIDTH window->surface_width
+#define KORE_WL_DECORATION_TOP_HEIGHT KORE_WL_DECORATION_WIDTH * 3
 
-#define KINC_WL_DECORATION_LEFT_X -10
-#define KINC_WL_DECORATION_LEFT_Y -(KINC_WL_DECORATION_TOP_HEIGHT)
-#define KINC_WL_DECORATION_LEFT_WIDTH KINC_WL_DECORATION_WIDTH
-#define KINC_WL_DECORATION_LEFT_HEIGHT window->surface_height + KINC_WL_DECORATION_TOP_HEIGHT + KINC_WL_DECORATION_BOTTOM_HEIGHT
+#define KORE_WL_DECORATION_LEFT_X -10
+#define KORE_WL_DECORATION_LEFT_Y -(KORE_WL_DECORATION_TOP_HEIGHT)
+#define KORE_WL_DECORATION_LEFT_WIDTH KORE_WL_DECORATION_WIDTH
+#define KORE_WL_DECORATION_LEFT_HEIGHT window->surface_height + KORE_WL_DECORATION_TOP_HEIGHT + KORE_WL_DECORATION_BOTTOM_HEIGHT
 
-#define KINC_WL_DECORATION_RIGHT_X window->surface_width
-#define KINC_WL_DECORATION_RIGHT_Y -(KINC_WL_DECORATION_TOP_HEIGHT)
-#define KINC_WL_DECORATION_RIGHT_WIDTH 10
-#define KINC_WL_DECORATION_RIGHT_HEIGHT window->surface_height + KINC_WL_DECORATION_TOP_HEIGHT + KINC_WL_DECORATION_BOTTOM_HEIGHT
+#define KORE_WL_DECORATION_RIGHT_X window->surface_width
+#define KORE_WL_DECORATION_RIGHT_Y -(KORE_WL_DECORATION_TOP_HEIGHT)
+#define KORE_WL_DECORATION_RIGHT_WIDTH 10
+#define KORE_WL_DECORATION_RIGHT_HEIGHT window->surface_height + KORE_WL_DECORATION_TOP_HEIGHT + KORE_WL_DECORATION_BOTTOM_HEIGHT
 
-#define KINC_WL_DECORATION_BOTTOM_X 0
-#define KINC_WL_DECORATION_BOTTOM_Y window->surface_height
-#define KINC_WL_DECORATION_BOTTOM_WIDTH window->surface_width
-#define KINC_WL_DECORATION_BOTTOM_HEIGHT KINC_WL_DECORATION_WIDTH
+#define KORE_WL_DECORATION_BOTTOM_X 0
+#define KORE_WL_DECORATION_BOTTOM_Y window->surface_height
+#define KORE_WL_DECORATION_BOTTOM_WIDTH window->surface_width
+#define KORE_WL_DECORATION_BOTTOM_HEIGHT KORE_WL_DECORATION_WIDTH
 
-#define KINC_WL_DECORATION_CLOSE_X window->surface_width - 10
-#define KINC_WL_DECORATION_CLOSE_Y -20
-#define KINC_WL_DECORATION_CLOSE_WIDTH 9
-#define KINC_WL_DECORATION_CLOSE_HEIGHT 9
+#define KORE_WL_DECORATION_CLOSE_X window->surface_width - 10
+#define KORE_WL_DECORATION_CLOSE_Y -20
+#define KORE_WL_DECORATION_CLOSE_WIDTH 9
+#define KORE_WL_DECORATION_CLOSE_HEIGHT 9
 
-struct kinc_wl_window {
+struct kore_wl_window {
 	int display_index;
 	int window_id;
 	int surface_width;
@@ -195,27 +195,27 @@ struct kinc_wl_window {
 
 	struct {
 		bool server_side;
-		enum kinc_wl_decoration_focus focus;
-		struct kinc_wl_decoration top;
-		struct kinc_wl_decoration left;
-		struct kinc_wl_decoration right;
-		struct kinc_wl_decoration bottom;
+		enum kore_wl_decoration_focus focus;
+		struct kore_wl_decoration top;
+		struct kore_wl_decoration left;
+		struct kore_wl_decoration right;
+		struct kore_wl_decoration bottom;
 
-		struct kinc_wl_decoration close;
-		struct kinc_wl_decoration max;
-		struct kinc_wl_decoration min;
+		struct kore_wl_decoration close;
+		struct kore_wl_decoration max;
+		struct kore_wl_decoration min;
 
 		struct wl_buffer *dec_buffer;
 		struct wl_buffer *close_buffer;
 		struct wl_buffer *max_buffer;
 		struct wl_buffer *min_buffer;
 	} decorations;
-#ifdef KINC_EGL
+#ifdef KORE_EGL
 	struct wl_egl_window *egl_window;
 #endif
 };
 
-struct kinc_wl_display {
+struct kore_wl_display {
 	struct wl_output *output;
 	int index;
 	int current_mode;
@@ -231,8 +231,8 @@ struct kinc_wl_display {
 	kore_display_mode modes[MAXIMUM_DISPLAY_MODES];
 };
 
-struct kinc_wl_mouse {
-	struct kinc_wl_seat *seat;
+struct kore_wl_mouse {
+	struct kore_wl_seat *seat;
 	int current_window;
 	int x;
 	int y;
@@ -247,8 +247,8 @@ struct kinc_wl_mouse {
 	int serial;
 };
 
-struct kinc_wl_keyboard {
-	struct kinc_wl_seat *seat;
+struct kore_wl_keyboard {
+	struct kore_wl_seat *seat;
 	struct wl_keyboard *keyboard;
 	struct xkb_keymap *keymap;
 	struct xkb_state *state;
@@ -263,7 +263,7 @@ struct kinc_wl_keyboard {
 	int last_character;
 };
 
-struct kinc_wl_data_offer {
+struct kore_wl_data_offer {
 	struct wl_data_offer *id;
 
 	int mime_type_count;
@@ -280,10 +280,10 @@ struct kinc_wl_data_offer {
 	size_t buf_size;
 	size_t buf_pos;
 
-	struct kinc_wl_data_offer *next;
+	struct kore_wl_data_offer *next;
 };
 
-struct kinc_wl_data_source {
+struct kore_wl_data_source {
 	struct wl_data_source *source;
 	const char **mime_types;
 	int num_mime_types;
@@ -291,7 +291,7 @@ struct kinc_wl_data_source {
 	size_t data_size;
 };
 
-struct kinc_wl_tablet_tool {
+struct kore_wl_tablet_tool {
 	struct zwp_tablet_tool_v2 *id;
 	enum zwp_tablet_tool_v2_type type;
 	uint32_t capabilities;
@@ -308,31 +308,31 @@ struct kinc_wl_tablet_tool {
 	void (*move)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/);
 	void (*release)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/);
 
-	struct kinc_wl_tablet_seat *seat;
-	struct kinc_wl_tablet_tool *next;
+	struct kore_wl_tablet_seat *seat;
+	struct kore_wl_tablet_tool *next;
 };
 
-struct kinc_wl_tablet {
+struct kore_wl_tablet {
 	struct zwp_tablet_v2 *id;
-	struct kinc_wl_tablet_seat *seat;
-	struct kinc_wl_tablet *next;
+	struct kore_wl_tablet_seat *seat;
+	struct kore_wl_tablet *next;
 };
 
-struct kinc_wl_tablet_seat {
+struct kore_wl_tablet_seat {
 	struct zwp_tablet_seat_v2 *seat;
-	struct kinc_wl_tablet *tablets;
-	struct kinc_wl_tablet_tool *tablet_tools;
+	struct kore_wl_tablet *tablets;
+	struct kore_wl_tablet_tool *tablet_tools;
 };
 
-struct kinc_wl_seat {
+struct kore_wl_seat {
 	struct wl_seat *seat;
-	struct kinc_wl_keyboard keyboard;
-	struct kinc_wl_mouse mouse;
+	struct kore_wl_keyboard keyboard;
+	struct kore_wl_mouse mouse;
 	struct wl_touch *touch;
-	struct kinc_wl_tablet_seat tablet_seat;
+	struct kore_wl_tablet_seat tablet_seat;
 	struct wl_data_device *data_device;
-	struct kinc_wl_data_offer *current_selection_offer;
-	struct kinc_wl_data_offer *current_dnd_offer;
+	struct kore_wl_data_offer *current_selection_offer;
+	struct kore_wl_data_offer *current_dnd_offer;
 	int current_serial;
 	uint32_t capabilities;
 	char name[64];
@@ -347,7 +347,7 @@ struct wayland_context {
 	struct wl_compositor *compositor;
 	struct wl_subcompositor *subcompositor;
 	struct wp_viewporter *viewporter;
-	struct kinc_wl_seat seat;
+	struct kore_wl_seat seat;
 	struct xdg_wm_base *xdg_wm_base;
 	struct zxdg_decoration_manager_v1 *decoration_manager;
 	struct wl_data_device_manager *data_device_manager;
@@ -358,18 +358,18 @@ struct wayland_context {
 	struct wl_cursor_theme *cursor_theme;
 	int cursor_size;
 	int num_windows;
-	struct kinc_wl_window windows[MAXIMUM_WINDOWS];
+	struct kore_wl_window windows[MAXIMUM_WINDOWS];
 	int num_displays;
-	struct kinc_wl_display displays[MAXIMUM_DISPLAYS];
+	struct kore_wl_display displays[MAXIMUM_DISPLAYS];
 
-	struct kinc_wl_data_offer *data_offer_queue;
+	struct kore_wl_data_offer *data_offer_queue;
 };
 
 extern struct wayland_context wl_ctx;
 
-struct kinc_wl_data_source *kinc_wl_create_data_source(struct kinc_wl_seat *seat, const char *mime_types[], int num_mime_types, void *data, size_t data_size);
-void kinc_wl_data_source_destroy(struct kinc_wl_data_source *data_source);
-void kinc_wl_data_offer_accept(struct kinc_wl_data_offer *offer, void (*callback)(void *data, size_t data_size, void *user_data), void *user_data);
-void kinc_wl_destroy_data_offer(struct kinc_wl_data_offer *offer);
-void kinc_wayland_set_selection(struct kinc_wl_seat *seat, const char *text, int serial);
-void kinc_wayland_window_destroy(int window_index);
+struct kore_wl_data_source *kore_wl_create_data_source(struct kore_wl_seat *seat, const char *mime_types[], int num_mime_types, void *data, size_t data_size);
+void kore_wl_data_source_destroy(struct kore_wl_data_source *data_source);
+void kore_wl_data_offer_accept(struct kore_wl_data_offer *offer, void (*callback)(void *data, size_t data_size, void *user_data), void *user_data);
+void kore_wl_destroy_data_offer(struct kore_wl_data_offer *offer);
+void kore_wayland_set_selection(struct kore_wl_seat *seat, const char *text, int serial);
+void kore_wayland_window_destroy(int window_index);

@@ -1,6 +1,6 @@
 #include <kore3/image.h>
 
-#ifdef KINC_LZ4X
+#ifdef KORE_LZ4X
 #include <kore3/libs/lz4x.h>
 #else
 #include <kore3/io/lz4/lz4.h>
@@ -58,7 +58,7 @@ static void *buffer_realloc(void *p, size_t size) {
 
 static void buffer_free(void *p) {}
 
-#ifndef KINC_NO_STBI_BUFFER
+#ifndef KORE_NO_STBI_BUFFER
 #define STBI_MALLOC(sz) buffer_malloc(sz)
 #define STBI_REALLOC(p, newsz) buffer_realloc(p, newsz)
 #define STBI_FREE(p) buffer_free(p)
@@ -413,7 +413,7 @@ int kore_image_format_sizeof(kore_image_format format) {
 }
 
 // static bool formatIsFloatingPoint(kore_image_format_t format) {
-//	return format == KINC_IMAGE_FORMAT_RGBA128 || format == KINC_IMAGE_FORMAT_RGBA64 || format == KINC_IMAGE_FORMAT_A32 || format == KINC_IMAGE_FORMAT_A16;
+//	return format == KORE_IMAGE_FORMAT_RGBA128 || format == KORE_IMAGE_FORMAT_RGBA64 || format == KORE_IMAGE_FORMAT_A32 || format == KORE_IMAGE_FORMAT_A16;
 //}
 
 size_t kore_image_init(kore_image *image, void *memory, int width, int height, kore_image_format format) {

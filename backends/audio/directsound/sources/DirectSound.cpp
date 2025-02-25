@@ -1,9 +1,9 @@
 #include <kore3/audio/audio.h>
 
-#include <kinc/system.h>
+#include <kore3/system.h>
 
-#include <kinc/backend/SystemMicrosoft.h>
-#include <kinc/backend/Windows.h>
+#include <kore3/backend/SystemMicrosoft.h>
+#include <kore3/backend/Windows.h>
 
 #include <dsound.h>
 
@@ -42,9 +42,9 @@ void kore_audio_init() {
 	audio_buffer.channels[0] = new float[audio_buffer.data_size];
 	audio_buffer.channels[1] = new float[audio_buffer.data_size];
 
-	kinc_microsoft_affirm(DirectSoundCreate8(nullptr, &dsound, nullptr));
+	kore_microsoft_affirm(DirectSoundCreate8(nullptr, &dsound, nullptr));
 	// TODO (DK) only for the main window?
-	kinc_microsoft_affirm(dsound->SetCooperativeLevel(kinc_windows_window_handle(0), DSSCL_PRIORITY));
+	kore_microsoft_affirm(dsound->SetCooperativeLevel(kore_windows_window_handle(0), DSSCL_PRIORITY));
 
 	WAVEFORMATEX waveFormat;
 	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
@@ -63,18 +63,18 @@ void kore_audio_init() {
 	bufferDesc.lpwfxFormat = &waveFormat;
 	bufferDesc.guid3DAlgorithm = GUID_NULL;
 
-	kinc_microsoft_affirm(dsound->CreateSoundBuffer(&bufferDesc, &dbuffer, nullptr));
+	kore_microsoft_affirm(dsound->CreateSoundBuffer(&bufferDesc, &dbuffer, nullptr));
 
 	DWORD size1;
 	uint8_t *buffer1 = NULL;
-	kinc_microsoft_affirm(dbuffer->Lock(writePos, gap, (void **)&buffer1, &size1, nullptr, nullptr, 0));
+	kore_microsoft_affirm(dbuffer->Lock(writePos, gap, (void **)&buffer1, &size1, nullptr, nullptr, 0));
 	assert(buffer1 != NULL);
 	for (DWORD i = 0; i < size1; ++i) {
 		buffer1[i] = 0;
 	}
-	kinc_microsoft_affirm(dbuffer->Unlock(buffer1, size1, nullptr, 0));
+	kore_microsoft_affirm(dbuffer->Unlock(buffer1, size1, nullptr, 0));
 
-	kinc_microsoft_affirm(dbuffer->Play(0, 0, DSBPLAY_LOOPING));
+	kore_microsoft_affirm(dbuffer->Play(0, 0, DSBPLAY_LOOPING));
 }
 
 uint32_t kore_audio_samples_per_second(void) {
@@ -98,7 +98,7 @@ namespace {
 void kore_audio_update() {
 	DWORD playPosition;
 	DWORD writePosition;
-	kinc_microsoft_affirm(dbuffer->GetCurrentPosition(&playPosition, &writePosition));
+	kore_microsoft_affirm(dbuffer->GetCurrentPosition(&playPosition, &writePosition));
 
 	int dif;
 	if (writePos >= writePosition) {
@@ -132,14 +132,14 @@ void kore_audio_update() {
 
 	DWORD size1;
 	uint8_t *buffer1;
-	kinc_microsoft_affirm(dbuffer->Lock(writePos, gap, (void **)&buffer1, &size1, NULL, NULL, 0));
+	kore_microsoft_affirm(dbuffer->Lock(writePos, gap, (void **)&buffer1, &size1, NULL, NULL, 0));
 
 	for (DWORD i = 0; i < size1 - (bitsPerSample / 8 - 1);) {
 		copySample(buffer1, i, ((writePos + i) / 2) % 2 == 0);
 	}
 	writePos += size1;
 
-	kinc_microsoft_affirm(dbuffer->Unlock(buffer1, size1, NULL, 0));
+	kore_microsoft_affirm(dbuffer->Unlock(buffer1, size1, NULL, 0));
 
 	if (writePos >= dsize) {
 		writePos -= dsize;

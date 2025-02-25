@@ -1,4 +1,4 @@
-//#include "kinc/graphics4/graphics.h"
+//#include "kore3/graphics4/graphics.h"
 #include <kore3/display.h>
 #include <kore3/input/gamepad.h>
 #include <kore3/input/keyboard.h>
@@ -31,7 +31,7 @@ bool kore_internal_handle_messages() {
 		return false;
 	}
 #ifndef __FreeBSD__
-	kinc_linux_updateHIDGamepads();
+	kore_linux_updateHIDGamepads();
 #endif // TODO: add #else with proper call to FreeBSD backend impl
 	return true;
 }
@@ -150,20 +150,20 @@ void kore_login() {}
 
 void kore_unlock_achievement(int id) {}
 
-void kinc_linux_init_procs();
+void kore_linux_init_procs();
 
 int kore_init(const char *name, int width, int height, kore_window_parameters *win, kore_framebuffer_parameters *frame) {
 #ifndef __FreeBSD__
-	kinc_linux_initHIDGamepads();
+	kore_linux_initHIDGamepads();
 #endif // TODO: add #else with proper call to FreeBSD backend impl
 
 	gettimeofday(&start, NULL);
-	kinc_linux_init_procs();
+	kore_linux_init_procs();
 	kore_display_init();
 
 	kore_set_application_name(name);
 
-	//kinc_g4_internal_init();
+	//kore_g4_internal_init();
 
 	kore_window_parameters defaultWin;
 	if (win == NULL) {
@@ -187,15 +187,15 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 }
 
 void kore_internal_shutdown() {
-	//kinc_g4_internal_destroy();
+	//kore_g4_internal_destroy();
 #ifndef __FreeBSD__
-	kinc_linux_closeHIDGamepads();
+	kore_linux_closeHIDGamepads();
 #endif // TODO: add #else with proper call to FreeBSD backend impl
 	procs.shutdown();
 	kore_internal_shutdown_callback();
 }
 
-#ifndef KINC_NO_MAIN
+#ifndef KORE_NO_MAIN
 int main(int argc, char **argv) {
 	return kickstart(argc, argv);
 }
@@ -279,16 +279,16 @@ int kore_hardware_threads(void) {
 #ifndef __FreeBSD__
 	return sysconf(_SC_NPROCESSORS_ONLN);
 #else
-	return kinc_cpu_cores();
+	return kore_cpu_cores();
 #endif
 }
 
 #include <xkbcommon/xkbcommon.h>
 
-int xkb_to_kinc(xkb_keysym_t symbol) {
-#define KEY(xkb, kinc)                                                                                                                                         \
+int xkb_to_kore(xkb_keysym_t symbol) {
+#define KEY(xkb, kore)                                                                                                                                         \
 	case xkb:                                                                                                                                                  \
-		return kinc;
+		return kore;
 	switch (symbol) {
 		KEY(XKB_KEY_Right, KORE_KEY_RIGHT)
 		KEY(XKB_KEY_Left, KORE_KEY_LEFT)

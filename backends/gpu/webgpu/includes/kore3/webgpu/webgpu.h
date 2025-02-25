@@ -1,7 +1,7 @@
 #ifndef KORE_WEBGPU_HEADER
 #define KORE_WEBGPU_HEADER
 
-#ifdef KINC_EMSCRIPTEN
+#ifdef KORE_EMSCRIPTEN
 
 #include <webgpu/webgpu.h>
 

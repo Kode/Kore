@@ -1,15 +1,15 @@
-struct kinc_g1_vertex_in {
+struct kore_g1_vertex_in {
 	pos: float3;
 	tex: float2;
 }
 
-struct kinc_g1_vertex_out {
+struct kore_g1_vertex_out {
 	pos: float4;
 	tex: float2;
 }
 
-fun kinc_g1_vertex(input: kinc_g1_vertex_in): kinc_g1_vertex_out {
-	var output: kinc_g1_vertex_out;
+fun kore_g1_vertex(input: kore_g1_vertex_in): kore_g1_vertex_out {
+	var output: kore_g1_vertex_out;
 
 	output.pos.xy = input.pos.xy;
 	output.pos.z = 0.5;
@@ -20,15 +20,15 @@ fun kinc_g1_vertex(input: kinc_g1_vertex_in): kinc_g1_vertex_out {
 	return output;
 }
 
-const kinc_g1_texture: tex2d;
-const kinc_g1_sampler: sampler;
+const kore_g1_texture: tex2d;
+const kore_g1_sampler: sampler;
 
-fun kinc_g1_fragment(input: kinc_g1_vertex_out): float4 {
-	return sample(kinc_g1_texture, kinc_g1_sampler, input.tex);
+fun kore_g1_fragment(input: kore_g1_vertex_out): float4 {
+	return sample(kore_g1_texture, kore_g1_sampler, input.tex);
 }
 
 #[pipe]
-struct kinc_g1_pipeline {
-	vertex = kinc_g1_vertex;
-	fragment = kinc_g1_fragment;
+struct kore_g1_pipeline {
+	vertex = kore_g1_vertex;
+	fragment = kore_g1_fragment;
 }

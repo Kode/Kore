@@ -8,7 +8,7 @@ void kore_display_init() {
 		return;
 	}
 
-	kinc_linux_init_procs();
+	kore_linux_init_procs();
 	procs.display_init();
 	display_initialized = true;
 }

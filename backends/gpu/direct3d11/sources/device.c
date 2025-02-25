@@ -5,8 +5,8 @@
 #include <kore3/gpu/device.h>
 #include <kore3/util/align.h>
 
-#include <kinc/log.h>
-#include <kinc/window.h>
+#include <kore3/log.h>
+#include <kore3/window.h>
 
 #include <assert.h>
 
@@ -38,7 +38,7 @@ void kore_d3d11_device_create_sampler(kore_gpu_device *device, const kore_gpu_sa
 void kore_d3d11_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
                                                  uint32_t index_count, kore_gpu_raytracing_volume *volume) {}
 
-void kore_d3d11_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kinc_matrix4x4_t *volume_transforms,
+void kore_d3d11_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kore_matrix4x4_t *volume_transforms,
                                                     uint32_t volumes_count, kore_gpu_raytracing_hierarchy *hierarchy) {}
 
 void kore_d3d11_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set) {}

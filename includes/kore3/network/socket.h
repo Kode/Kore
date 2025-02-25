@@ -15,7 +15,7 @@ typedef enum kore_socket_protocol { KORE_SOCKET_PROTOCOL_UDP, KORE_SOCKET_PROTOC
 
 typedef enum kore_socket_family { KORE_SOCKET_FAMILY_IP4, KORE_SOCKET_FAMILY_IP6 } kore_socket_family;
 
-#ifdef KINC_MICROSOFT
+#ifdef KORE_MICROSOFT
 #if defined(_WIN64)
 typedef unsigned __int64 UINT_PTR, *PUINT_PTR;
 #else
@@ -28,7 +28,7 @@ typedef UINT_PTR SOCKET;
 #endif
 
 typedef struct kore_socket {
-#ifdef KINC_MICROSOFT
+#ifdef KORE_MICROSOFT
 	SOCKET handle;
 #else
 	int handle;
@@ -53,7 +53,7 @@ typedef struct kore_socket_parameters {
 KORE_FUNC void kore_socket_parameters_set_defaults(kore_socket_parameters *parameters);
 
 /// <summary>
-/// Initializes a socket-object. To set the host and port use kinc_socket_set.
+/// Initializes a socket-object. To set the host and port use kore_socket_set.
 /// Host will be localhost
 /// Port will be 8080
 /// Family will be IPv4

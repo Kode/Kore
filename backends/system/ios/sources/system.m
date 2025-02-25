@@ -29,7 +29,7 @@ bool kore_internal_handle_messages(void) {
 	return true;
 }
 
-void kinc_set_keep_screen_on(bool on) {}
+void kore_set_keep_screen_on(bool on) {}
 
 void showKeyboard(void);
 void hideKeyboard(void);
@@ -94,8 +94,8 @@ int kore_init(const char *name, int width, int height, struct kore_window_parame
 		kore_framebuffer_options_set_defaults(&defaultFrame);
 		frame = &defaultFrame;
 	}
-	// kinc_g4_internal_init();
-	// kinc_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
+	// kore_g4_internal_init();
+	// kore_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
 
 	return 0;
 }

@@ -15,11 +15,11 @@
 extern "C" {
 #endif
 
-#ifndef KINC_DEBUGDIR
-#define KINC_DEBUGDIR "deployment"
+#ifndef KORE_DEBUGDIR
+#define KORE_DEBUGDIR "deployment"
 #endif
 
-#ifdef KINC_ANDROID
+#ifdef KORE_ANDROID
 struct AAsset;
 struct __sFILE;
 typedef struct __sFILE FILE;
@@ -44,7 +44,7 @@ typedef struct kore_file_reader {
 /// </summary>
 /// <param name="reader">The reader to initialize for reading</param>
 /// <param name="filepath">A filepath to identify a file</param>
-/// <param name="type">Looks for a regular file (KINC_FILE_TYPE_ASSET) or a save-file (KINC_FILE_TYPE_SAVE)</param>
+/// <param name="type">Looks for a regular file (KORE_FILE_TYPE_ASSET) or a save-file (KORE_FILE_TYPE_SAVE)</param>
 /// <returns>Whether the file could be opened</returns>
 KORE_FUNC bool kore_file_reader_open(kore_file_reader *reader, const char *filepath, int type);
 

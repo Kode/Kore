@@ -15,7 +15,7 @@
 #include <wayland-client-protocol.h>
 #include <wayland-util.h>
 
-#ifdef KINC_EGL
+#ifdef KORE_EGL
 #define EGL_NO_PLATFORM_SPECIFIC_TYPES
 #include <EGL/egl.h>
 #endif
@@ -27,10 +27,10 @@
 
 static void load_lib(void **lib, const char *name);
 
-struct kinc_wl_procs wl = {0};
-struct kinc_xkb_procs wl_xkb = {0};
+struct kore_wl_procs wl = {0};
+struct kore_xkb_procs wl_xkb = {0};
 
-bool kinc_wayland_load_procs() {
+bool kore_wayland_load_procs() {
 	void *wayland_client = NULL;
 	load_lib(&wayland_client, "wayland-client");
 	if (wayland_client == NULL) {
@@ -44,9 +44,9 @@ bool kinc_wayland_load_procs() {
 		has_missing_symbol = true;                                                                                                                             \
 		kore_log(KORE_LOG_LEVEL_ERROR, "Did not find symbol %s.", name);                                                                                       \
 	}
-#define KINC_WL_FUN(ret, name, args) LOAD_FUN(wayland_client, _##name, #name)
+#define KORE_WL_FUN(ret, name, args) LOAD_FUN(wayland_client, _##name, #name)
 #include <kore3/backend/wayland-funs.h>
-#undef KINC_WL_FN
+#undef KORE_WL_FN
 
 	void *wayland_cursor = NULL;
 	load_lib(&wayland_cursor, "wayland-cursor");
@@ -61,12 +61,12 @@ bool kinc_wayland_load_procs() {
 	LOAD_FUN(wayland_cursor, _wl_cursor_frame, "wl_cursor_frame")
 	LOAD_FUN(wayland_cursor, _wl_cursor_frame_and_duration, "wl_cursor_frame_and_duration")
 
-#ifdef KINC_EGL
+#ifdef KORE_EGL
 	void *wayland_egl = NULL;
 	load_lib(&wayland_egl, "wayland-egl");
 
 	if (wayland_egl == NULL) {
-		kinc_log(KINC_LOG_LEVEL_ERROR, "Failed to find libwayland-egl.so");
+		kore_log(KORE_LOG_LEVEL_ERROR, "Failed to find libwayland-egl.so");
 		return false;
 	}
 	LOAD_FUN(wayland_egl, _wl_egl_window_create, "wl_egl_window_create")
@@ -120,7 +120,7 @@ static const struct xdg_wm_base_listener xdg_wm_base_listener = {
 
 static void wl_output_handle_geometry(void *data, struct wl_output *wl_output, int x, int y, int physical_width, int physical_height, int subpixel,
                                       const char *make, const char *model, int transform) {
-	struct kinc_wl_display *display = data;
+	struct kore_wl_display *display = data;
 	snprintf(display->name, sizeof(display->name), "%s %s", make, model);
 	display->x = x;
 	display->y = y;
@@ -131,7 +131,7 @@ static void wl_output_handle_geometry(void *data, struct wl_output *wl_output, i
 }
 
 static void wl_output_handle_mode(void *data, struct wl_output *wl_output, uint32_t flags, int32_t width, int32_t height, int32_t refresh) {
-	struct kinc_wl_display *display = data;
+	struct kore_wl_display *display = data;
 	if (display->num_modes < MAXIMUM_DISPLAY_MODES) {
 		int mode_index = display->num_modes++;
 		kore_display_mode *mode = &display->modes[mode_index];
@@ -147,10 +147,10 @@ static void wl_output_handle_mode(void *data, struct wl_output *wl_output, uint3
 	}
 }
 static void wl_output_handle_done(void *data, struct wl_output *wl_output) {
-	// struct kinc_wl_display *display = data;
+	// struct kore_wl_display *display = data;
 }
 static void wl_output_handle_scale(void *data, struct wl_output *wl_output, int32_t factor) {
-	struct kinc_wl_display *display = data;
+	struct kore_wl_display *display = data;
 	display->scale = factor;
 }
 
@@ -161,33 +161,33 @@ static const struct wl_output_listener wl_output_listener = {
     wl_output_handle_scale,
 };
 
-struct kinc_wl_window *kinc_wayland_window_from_surface(struct wl_surface *surface, enum kinc_wl_decoration_focus *focus) {
-	struct kinc_wl_window *window = wl_surface_get_user_data(surface);
+struct kore_wl_window *kore_wayland_window_from_surface(struct wl_surface *surface, enum kore_wl_decoration_focus *focus) {
+	struct kore_wl_window *window = wl_surface_get_user_data(surface);
 	if (window == NULL) {
 		for (int i = 0; i < MAXIMUM_WINDOWS; i++) {
-			struct kinc_wl_window *_window = &wl_ctx.windows[i];
+			struct kore_wl_window *_window = &wl_ctx.windows[i];
 			if (_window->surface == surface) {
-				*focus = KINC_WL_DECORATION_FOCUS_MAIN;
+				*focus = KORE_WL_DECORATION_FOCUS_MAIN;
 				window = _window;
 			}
 			else if (surface == _window->decorations.top.surface) {
-				*focus = KINC_WL_DECORATION_FOCUS_TOP;
+				*focus = KORE_WL_DECORATION_FOCUS_TOP;
 				window = _window;
 			}
 			else if (surface == _window->decorations.left.surface) {
-				*focus = KINC_WL_DECORATION_FOCUS_LEFT;
+				*focus = KORE_WL_DECORATION_FOCUS_LEFT;
 				window = _window;
 			}
 			else if (surface == _window->decorations.right.surface) {
-				*focus = KINC_WL_DECORATION_FOCUS_RIGHT;
+				*focus = KORE_WL_DECORATION_FOCUS_RIGHT;
 				window = _window;
 			}
 			else if (surface == _window->decorations.bottom.surface) {
-				*focus = KINC_WL_DECORATION_FOCUS_BOTTOM;
+				*focus = KORE_WL_DECORATION_FOCUS_BOTTOM;
 				window = _window;
 			}
 			else if (surface == _window->decorations.close.surface) {
-				*focus = KINC_WL_DECORATION_FOCUS_CLOSE_BUTTON;
+				*focus = KORE_WL_DECORATION_FOCUS_CLOSE_BUTTON;
 				window = _window;
 			}
 		}
@@ -197,9 +197,9 @@ struct kinc_wl_window *kinc_wayland_window_from_surface(struct wl_surface *surfa
 
 void wl_pointer_handle_enter(void *data, struct wl_pointer *wl_pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t surface_x,
                              wl_fixed_t surface_y) {
-	enum kinc_wl_decoration_focus focus = KINC_WL_DECORATION_FOCUS_MAIN;
-	struct kinc_wl_window *window = kinc_wayland_window_from_surface(surface, &focus);
-	struct kinc_wl_mouse *mouse = data;
+	enum kore_wl_decoration_focus focus = KORE_WL_DECORATION_FOCUS_MAIN;
+	struct kore_wl_window *window = kore_wayland_window_from_surface(surface, &focus);
+	struct kore_wl_mouse *mouse = data;
 	mouse->enter_serial = serial;
 	window->decorations.focus = focus;
 	if (window != NULL) {
@@ -209,8 +209,8 @@ void wl_pointer_handle_enter(void *data, struct wl_pointer *wl_pointer, uint32_t
 }
 
 void wl_pointer_handle_leave(void *data, struct wl_pointer *wl_pointer, uint32_t serial, struct wl_surface *surface) {
-	enum kinc_wl_decoration_focus focus = KINC_WL_DECORATION_FOCUS_MAIN;
-	struct kinc_wl_window *window = kinc_wayland_window_from_surface(surface, &focus);
+	enum kore_wl_decoration_focus focus = KORE_WL_DECORATION_FOCUS_MAIN;
+	struct kore_wl_window *window = kore_wayland_window_from_surface(surface, &focus);
 
 	if (window != NULL) {
 		kore_internal_mouse_trigger_leave_window(window->window_id);
@@ -219,7 +219,7 @@ void wl_pointer_handle_leave(void *data, struct wl_pointer *wl_pointer, uint32_t
 
 #include <wayland-cursor.h>
 
-void kinc_wayland_set_cursor(struct kinc_wl_mouse *mouse, const char *name) {
+void kore_wayland_set_cursor(struct kore_wl_mouse *mouse, const char *name) {
 	if (!name)
 		return;
 	struct wl_cursor *cursor = wl_cursor_theme_get_cursor(wl_ctx.cursor_theme, name);
@@ -242,8 +242,8 @@ void kinc_wayland_set_cursor(struct kinc_wl_mouse *mouse, const char *name) {
 }
 
 void wl_pointer_handle_motion(void *data, struct wl_pointer *wl_pointer, uint32_t time, wl_fixed_t surface_x, wl_fixed_t surface_y) {
-	struct kinc_wl_mouse *mouse = data;
-	struct kinc_wl_window *window = &wl_ctx.windows[mouse->current_window];
+	struct kore_wl_mouse *mouse = data;
+	struct kore_wl_window *window = &wl_ctx.windows[mouse->current_window];
 
 	int x = wl_fixed_to_int(surface_x);
 	int y = wl_fixed_to_int(surface_y);
@@ -255,32 +255,32 @@ void wl_pointer_handle_motion(void *data, struct wl_pointer *wl_pointer, uint32_
 		const char *cursor_name = "default";
 
 		switch (window->decorations.focus) {
-		case KINC_WL_DECORATION_FOCUS_MAIN:
+		case KORE_WL_DECORATION_FOCUS_MAIN:
 			kore_internal_mouse_trigger_move(mouse->current_window, x, y);
 			break;
-		case KINC_WL_DECORATION_FOCUS_TOP:
-			if (y < KINC_WL_DECORATION_TOP_HEIGHT / 2)
+		case KORE_WL_DECORATION_FOCUS_TOP:
+			if (y < KORE_WL_DECORATION_TOP_HEIGHT / 2)
 				cursor_name = "n-resize";
 			else
 				cursor_name = "left_ptr";
 			break;
-		case KINC_WL_DECORATION_FOCUS_LEFT:
-			if (y < KINC_WL_DECORATION_WIDTH)
+		case KORE_WL_DECORATION_FOCUS_LEFT:
+			if (y < KORE_WL_DECORATION_WIDTH)
 				cursor_name = "nw-resize";
-			else if (mouse->y > KINC_WL_DECORATION_TOP_HEIGHT - KINC_WL_DECORATION_WIDTH)
+			else if (mouse->y > KORE_WL_DECORATION_TOP_HEIGHT - KORE_WL_DECORATION_WIDTH)
 				cursor_name = "sw-resize";
 			else
 				cursor_name = "w-resize";
 			break;
-		case KINC_WL_DECORATION_FOCUS_RIGHT:
-			if (y < KINC_WL_DECORATION_WIDTH)
+		case KORE_WL_DECORATION_FOCUS_RIGHT:
+			if (y < KORE_WL_DECORATION_WIDTH)
 				cursor_name = "ne-resize";
-			else if (mouse->y > KINC_WL_DECORATION_RIGHT_HEIGHT - KINC_WL_DECORATION_WIDTH)
+			else if (mouse->y > KORE_WL_DECORATION_RIGHT_HEIGHT - KORE_WL_DECORATION_WIDTH)
 				cursor_name = "se-resize";
 			else
 				cursor_name = "e-resize";
 			break;
-		case KINC_WL_DECORATION_FOCUS_BOTTOM:
+		case KORE_WL_DECORATION_FOCUS_BOTTOM:
 			if (x < 10)
 				cursor_name = "sw-resize";
 			else if (x > window->surface_width + 10)
@@ -288,14 +288,14 @@ void wl_pointer_handle_motion(void *data, struct wl_pointer *wl_pointer, uint32_
 			else
 				cursor_name = "s-resize";
 			break;
-		case KINC_WL_DECORATION_FOCUS_CLOSE_BUTTON:
+		case KORE_WL_DECORATION_FOCUS_CLOSE_BUTTON:
 			break;
 		default:
 			break;
 		}
 
 		if (mouse->previous_cursor_name != cursor_name) {
-			kinc_wayland_set_cursor(mouse, cursor_name);
+			kore_wayland_set_cursor(mouse, cursor_name);
 		}
 	}
 	else {
@@ -306,43 +306,43 @@ void wl_pointer_handle_motion(void *data, struct wl_pointer *wl_pointer, uint32_
 #include <linux/input-event-codes.h>
 
 void wl_pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state) {
-	struct kinc_wl_mouse *mouse = data;
-	struct kinc_wl_window *window = &wl_ctx.windows[mouse->current_window];
-	int kinc_button = button - BTN_MOUSE; // evdev codes should have the same order as Kinc buttons
+	struct kore_wl_mouse *mouse = data;
+	struct kore_wl_window *window = &wl_ctx.windows[mouse->current_window];
+	int kore_button = button - BTN_MOUSE; // evdev codes should have the same order as Kore buttons
 	if (!window->decorations.server_side) {
-		if (kinc_button == 0) {
+		if (kore_button == 0) {
 			enum xdg_toplevel_resize_edge edges = XDG_TOPLEVEL_RESIZE_EDGE_NONE;
 			switch (window->decorations.focus) {
-			case KINC_WL_DECORATION_FOCUS_MAIN:
+			case KORE_WL_DECORATION_FOCUS_MAIN:
 				break;
-			case KINC_WL_DECORATION_FOCUS_TOP:
-				if (mouse->y > KINC_WL_DECORATION_TOP_HEIGHT / 2)
+			case KORE_WL_DECORATION_FOCUS_TOP:
+				if (mouse->y > KORE_WL_DECORATION_TOP_HEIGHT / 2)
 					edges = XDG_TOPLEVEL_RESIZE_EDGE_TOP;
 				else {
 					xdg_toplevel_move(window->toplevel, wl_ctx.seat.seat, serial);
 				}
 				break;
-			case KINC_WL_DECORATION_FOCUS_LEFT:
-				if (mouse->y < KINC_WL_DECORATION_TOP_HEIGHT / 2)
+			case KORE_WL_DECORATION_FOCUS_LEFT:
+				if (mouse->y < KORE_WL_DECORATION_TOP_HEIGHT / 2)
 					edges = XDG_TOPLEVEL_RESIZE_EDGE_TOP_LEFT;
-				else if (mouse->y > KINC_WL_DECORATION_TOP_HEIGHT - (KINC_WL_DECORATION_TOP_HEIGHT / 2))
+				else if (mouse->y > KORE_WL_DECORATION_TOP_HEIGHT - (KORE_WL_DECORATION_TOP_HEIGHT / 2))
 					edges = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_LEFT;
 				else
 					edges = XDG_TOPLEVEL_RESIZE_EDGE_LEFT;
 				break;
-			case KINC_WL_DECORATION_FOCUS_RIGHT:
-				if (mouse->y < KINC_WL_DECORATION_TOP_HEIGHT / 2)
+			case KORE_WL_DECORATION_FOCUS_RIGHT:
+				if (mouse->y < KORE_WL_DECORATION_TOP_HEIGHT / 2)
 					edges = XDG_TOPLEVEL_RESIZE_EDGE_TOP_RIGHT;
-				else if (mouse->y > KINC_WL_DECORATION_RIGHT_HEIGHT - (KINC_WL_DECORATION_TOP_HEIGHT / 2))
+				else if (mouse->y > KORE_WL_DECORATION_RIGHT_HEIGHT - (KORE_WL_DECORATION_TOP_HEIGHT / 2))
 					edges = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT;
 				else
 					edges = XDG_TOPLEVEL_RESIZE_EDGE_RIGHT;
 				break;
-			case KINC_WL_DECORATION_FOCUS_BOTTOM:
+			case KORE_WL_DECORATION_FOCUS_BOTTOM:
 				edges = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM;
 				break;
-			case KINC_WL_DECORATION_FOCUS_CLOSE_BUTTON:
-				if (kinc_button == 0) {
+			case KORE_WL_DECORATION_FOCUS_CLOSE_BUTTON:
+				if (kore_button == 0) {
 					if (kore_internal_call_close_callback(window->window_id)) {
 						kore_window_destroy(window->window_id);
 						if (wl_ctx.num_windows <= 0) {
@@ -359,25 +359,25 @@ void wl_pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uint32_
 				xdg_toplevel_resize(window->toplevel, wl_ctx.seat.seat, serial, edges);
 			}
 		}
-		else if (kinc_button == 1) {
-			if (window->decorations.focus == KINC_WL_DECORATION_FOCUS_TOP) {
+		else if (kore_button == 1) {
+			if (window->decorations.focus == KORE_WL_DECORATION_FOCUS_TOP) {
 				xdg_toplevel_show_window_menu(window->toplevel, mouse->seat->seat, serial, mouse->x, mouse->y);
 			}
 		}
 	}
 
-	if (window->decorations.focus == KINC_WL_DECORATION_FOCUS_MAIN) {
+	if (window->decorations.focus == KORE_WL_DECORATION_FOCUS_MAIN) {
 		if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
-			kore_internal_mouse_trigger_press(mouse->current_window, kinc_button, mouse->x, mouse->y);
+			kore_internal_mouse_trigger_press(mouse->current_window, kore_button, mouse->x, mouse->y);
 		}
 		if (state == WL_POINTER_BUTTON_STATE_RELEASED) {
-			kore_internal_mouse_trigger_release(mouse->current_window, kinc_button, mouse->x, mouse->y);
+			kore_internal_mouse_trigger_release(mouse->current_window, kore_button, mouse->x, mouse->y);
 		}
 	}
 }
 
 void wl_pointer_handle_axis(void *data, struct wl_pointer *wl_pointer, uint32_t time, uint32_t axis, wl_fixed_t value) {
-	struct kinc_wl_mouse *mouse = data;
+	struct kore_wl_mouse *mouse = data;
 	// FIXME: figure out what the other backends give as deltas
 	int delta = wl_fixed_to_int(value);
 	kore_internal_mouse_trigger_scroll(mouse->current_window, delta);
@@ -414,7 +414,7 @@ static const struct wl_pointer_listener wl_pointer_listener = {wl_pointer_handle
 
 void zwp_relative_pointer_v1_handle_relative_motion(void *data, struct zwp_relative_pointer_v1 *zwp_relative_pointer_v1, uint32_t utime_hi, uint32_t utime_lo,
                                                     wl_fixed_t dx, wl_fixed_t dy, wl_fixed_t dx_unaccel, wl_fixed_t dy_unaccel) {
-	struct kinc_wl_mouse *mouse = data;
+	struct kore_wl_mouse *mouse = data;
 	if (mouse->locked) {
 		mouse->x += wl_fixed_to_int(dx);
 		mouse->y += wl_fixed_to_int(dy);
@@ -430,7 +430,7 @@ static const struct zwp_relative_pointer_v1_listener zwp_relative_pointer_v1_lis
 #include <unistd.h>
 
 void wl_keyboard_handle_keymap(void *data, struct wl_keyboard *wl_keyboard, uint32_t format, int32_t fd, uint32_t size) {
-	struct kinc_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
+	struct kore_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
 	switch (format) {
 	case WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1: {
 		char *mapStr = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
@@ -456,16 +456,16 @@ void wl_keyboard_handle_keymap(void *data, struct wl_keyboard *wl_keyboard, uint
 }
 
 void wl_keyboard_handle_enter(void *data, struct wl_keyboard *wl_keyboard, uint32_t serial, struct wl_surface *surface, struct wl_array *keys) {
-	// struct kinc_wl_seat *seat = data;
-	// struct kinc_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
+	// struct kore_wl_seat *seat = data;
+	// struct kore_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
 }
 
 void wl_keyboard_handle_leave(void *data, struct wl_keyboard *wl_keyboard, uint32_t serial, struct wl_surface *surface) {
-	// struct kinc_wl_seat *seat = data;
-	// struct kinc_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
+	// struct kore_wl_seat *seat = data;
+	// struct kore_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
 }
 
-int xkb_to_kinc(xkb_keysym_t symbol);
+int xkb_to_kore(xkb_keysym_t symbol);
 
 void handle_paste(void *data, size_t data_size, void *user_data) {
 	kore_internal_paste_callback(data);
@@ -474,30 +474,30 @@ void handle_paste(void *data, size_t data_size, void *user_data) {
 #include <sys/timerfd.h>
 
 void wl_keyboard_handle_key(void *data, struct wl_keyboard *wl_keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state) {
-	struct kinc_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
+	struct kore_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
 	if (keyboard->keymap && keyboard->state) {
 		xkb_keysym_t symbol = wl_xkb.xkb_state_key_get_one_sym(keyboard->state, key + 8);
 		uint32_t character = wl_xkb.xkb_state_key_get_utf32(keyboard->state, key + 8);
-		int kinc_key = xkb_to_kinc(symbol);
+		int kore_key = xkb_to_kore(symbol);
 		if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
 			if (keyboard->ctrlDown && (symbol == XKB_KEY_c || symbol == XKB_KEY_C)) {
 				char *text = kore_internal_copy_callback();
 				if (text != NULL) {
-					kinc_wayland_set_selection(keyboard->seat, text, serial);
+					kore_wayland_set_selection(keyboard->seat, text, serial);
 				}
 			}
 			else if (keyboard->ctrlDown && (symbol == XKB_KEY_x || symbol == XKB_KEY_X)) {
 				char *text = kore_internal_copy_callback();
 				if (text != NULL) {
-					kinc_wayland_set_selection(keyboard->seat, text, serial);
+					kore_wayland_set_selection(keyboard->seat, text, serial);
 				}
 			}
 			else if (keyboard->ctrlDown && (symbol == XKB_KEY_v || symbol == XKB_KEY_V)) {
 				if (keyboard->seat->current_selection_offer != NULL) {
-					kinc_wl_data_offer_accept(keyboard->seat->current_selection_offer, handle_paste, NULL);
+					kore_wl_data_offer_accept(keyboard->seat->current_selection_offer, handle_paste, NULL);
 				}
 			}
-			kore_internal_keyboard_trigger_key_down(kinc_key);
+			kore_internal_keyboard_trigger_key_down(kore_key);
 			if (character != 0) {
 				kore_internal_keyboard_trigger_key_press(character);
 				if (wl_xkb.xkb_keymap_key_repeats(keyboard->keymap, key + 8) && keyboard->repeat_rate > 0) {
@@ -523,14 +523,14 @@ void wl_keyboard_handle_key(void *data, struct wl_keyboard *wl_keyboard, uint32_
 				keyboard->last_key_code = keyboard->last_character = -1;
 			}
 
-			kore_internal_keyboard_trigger_key_up(kinc_key);
+			kore_internal_keyboard_trigger_key_up(kore_key);
 		}
 	}
 }
 
 void wl_keyboard_handle_modifiers(void *data, struct wl_keyboard *wl_keyboard, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched,
                                   uint32_t mods_locked, uint32_t group) {
-	struct kinc_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
+	struct kore_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
 	if (keyboard->keymap && keyboard->state) {
 		wl_xkb.xkb_state_update_mask(keyboard->state, mods_depressed, mods_latched, mods_locked, 0, 0, group);
 		wl_xkb.xkb_state_serialize_mods(keyboard->state,
@@ -540,7 +540,7 @@ void wl_keyboard_handle_modifiers(void *data, struct wl_keyboard *wl_keyboard, u
 }
 
 void wl_keyboard_handle_repeat_info(void *data, struct wl_keyboard *wl_keyboard, int32_t rate, int32_t delay) {
-	struct kinc_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
+	struct kore_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
 	keyboard->repeat_rate = rate;
 	keyboard->repeat_delay = delay;
 	kore_log(KORE_LOG_LEVEL_INFO, "Keyboard repeat rate: %i, delay: %i", rate, delay);
@@ -554,7 +554,7 @@ static const struct wl_keyboard_listener wl_keyboard_listener = {
 };
 
 void wl_seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capabilities) {
-	struct kinc_wl_seat *seat = data;
+	struct kore_wl_seat *seat = data;
 	seat->capabilities = capabilities;
 	if (capabilities & WL_SEAT_CAPABILITY_KEYBOARD) {
 		seat->keyboard.keyboard = wl_seat_get_keyboard(wl_seat);
@@ -581,7 +581,7 @@ void wl_seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capabili
 }
 
 void wl_seat_name(void *data, struct wl_seat *wl_seat, const char *name) {
-	struct kinc_wl_seat *seat = data;
+	struct kore_wl_seat *seat = data;
 	snprintf(seat->name, sizeof(seat->name), "%s", name);
 }
 
@@ -593,7 +593,7 @@ static const struct wl_seat_listener wl_seat_listener = {
 void wl_data_source_handle_target(void *data, struct wl_data_source *wl_data_source, const char *mime_type) {}
 
 void wl_data_source_handle_send(void *data, struct wl_data_source *wl_data_source, const char *mime_type, int32_t fd) {
-	struct kinc_wl_data_source *data_source = wl_data_source_get_user_data(wl_data_source);
+	struct kore_wl_data_source *data_source = wl_data_source_get_user_data(wl_data_source);
 	if (write(fd, data_source->data, data_source->data_size) < data_source->data_size) {
 		kore_log(KORE_LOG_LEVEL_ERROR, "Failed to write all data for data source");
 	}
@@ -613,8 +613,8 @@ static const struct wl_data_source_listener wl_data_source_listener = {
     wl_data_source_handle_dnd_finished, wl_data_source_handle_action,
 };
 
-struct kinc_wl_data_source *kinc_wl_create_data_source(struct kinc_wl_seat *seat, const char *mime_types[], int num_mime_types, void *data, size_t data_size) {
-	struct kinc_wl_data_source *data_source = malloc(sizeof *data_source);
+struct kore_wl_data_source *kore_wl_create_data_source(struct kore_wl_seat *seat, const char *mime_types[], int num_mime_types, void *data, size_t data_size) {
+	struct kore_wl_data_source *data_source = malloc(sizeof *data_source);
 	data_source->source = wl_data_device_manager_create_data_source(wl_ctx.data_device_manager);
 	data_source->data = data;
 	data_source->data_size = data_size;
@@ -630,10 +630,10 @@ struct kinc_wl_data_source *kinc_wl_create_data_source(struct kinc_wl_seat *seat
 	return data_source;
 }
 
-void kinc_wl_data_source_destroy(struct kinc_wl_data_source *data_source) {}
+void kore_wl_data_source_destroy(struct kore_wl_data_source *data_source) {}
 
 void wl_data_offer_handle_offer(void *data, struct wl_data_offer *wl_data_offer, const char *mime_type) {
-	struct kinc_wl_data_offer *offer = wl_data_offer_get_user_data(wl_data_offer);
+	struct kore_wl_data_offer *offer = wl_data_offer_get_user_data(wl_data_offer);
 	if (offer != NULL) {
 		offer->mime_type_count++;
 		offer->mime_types = realloc(offer->mime_types, offer->mime_type_count * sizeof(const char *));
@@ -644,12 +644,12 @@ void wl_data_offer_handle_offer(void *data, struct wl_data_offer *wl_data_offer,
 }
 
 void wl_data_offer_handle_source_actions(void *data, struct wl_data_offer *wl_data_offer, uint32_t source_actions) {
-	struct kinc_wl_data_offer *offer = wl_data_offer_get_user_data(wl_data_offer);
+	struct kore_wl_data_offer *offer = wl_data_offer_get_user_data(wl_data_offer);
 	offer->source_actions = source_actions;
 }
 
 void wl_data_offer_handle_action(void *data, struct wl_data_offer *wl_data_offer, uint32_t dnd_action) {
-	struct kinc_wl_data_offer *offer = wl_data_offer_get_user_data(wl_data_offer);
+	struct kore_wl_data_offer *offer = wl_data_offer_get_user_data(wl_data_offer);
 	offer->dnd_action = dnd_action;
 }
 
@@ -659,8 +659,8 @@ static const struct wl_data_offer_listener wl_data_offer_listener = {
     wl_data_offer_handle_action,
 };
 
-void kinc_wl_init_data_offer(struct wl_data_offer *id) {
-	struct kinc_wl_data_offer *offer = malloc(sizeof *offer);
+void kore_wl_init_data_offer(struct wl_data_offer *id) {
+	struct kore_wl_data_offer *offer = malloc(sizeof *offer);
 	memset(offer, 0, sizeof *offer);
 	offer->id = id;
 	offer->mime_type_count = 0;
@@ -670,7 +670,7 @@ void kinc_wl_init_data_offer(struct wl_data_offer *id) {
 	wl_data_offer_add_listener(id, &wl_data_offer_listener, offer);
 }
 
-void kinc_wl_data_offer_accept(struct kinc_wl_data_offer *offer, void (*callback)(void *data, size_t data_size, void *user_data), void *user_data) {
+void kore_wl_data_offer_accept(struct kore_wl_data_offer *offer, void (*callback)(void *data, size_t data_size, void *user_data), void *user_data) {
 	offer->callback = callback;
 	offer->user_data = user_data;
 
@@ -686,14 +686,14 @@ void kinc_wl_data_offer_accept(struct kinc_wl_data_offer *offer, void (*callback
 
 	offer->read_fd = fds[0];
 
-	struct kinc_wl_data_offer **queue = &wl_ctx.data_offer_queue;
+	struct kore_wl_data_offer **queue = &wl_ctx.data_offer_queue;
 
 	while (*queue != NULL)
 		queue = &(*queue)->next;
 	*queue = offer;
 }
 
-void kinc_wl_destroy_data_offer(struct kinc_wl_data_offer *offer) {
+void kore_wl_destroy_data_offer(struct kore_wl_data_offer *offer) {
 	wl_data_offer_destroy(offer->id);
 	if (offer->buffer != NULL) {
 		free(offer->buffer);
@@ -706,25 +706,25 @@ void kinc_wl_destroy_data_offer(struct kinc_wl_data_offer *offer) {
 }
 
 void wl_data_device_handle_data_offer(void *data, struct wl_data_device *wl_data_device, struct wl_data_offer *id) {
-	// struct kinc_wl_seat *seat = data;
-	kinc_wl_init_data_offer(id);
+	// struct kore_wl_seat *seat = data;
+	kore_wl_init_data_offer(id);
 }
 
 void wl_data_device_handle_enter(void *data, struct wl_data_device *wl_data_device, uint32_t serial, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y,
                                  struct wl_data_offer *id) {
-	struct kinc_wl_seat *seat = data;
+	struct kore_wl_seat *seat = data;
 	seat->current_dnd_offer = wl_data_offer_get_user_data(id);
 	wl_data_offer_set_actions(id, WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY | WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE, WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY);
 }
 
 void wl_data_device_handle_leave(void *data, struct wl_data_device *wl_data_device) {
-	struct kinc_wl_seat *seat = data;
-	kinc_wl_destroy_data_offer(seat->current_dnd_offer);
+	struct kore_wl_seat *seat = data;
+	kore_wl_destroy_data_offer(seat->current_dnd_offer);
 	seat->current_dnd_offer = NULL;
 }
 
 void wl_data_device_handle_motion(void *data, struct wl_data_device *wl_data_device, uint32_t time, wl_fixed_t x, wl_fixed_t y) {
-	// struct kinc_wl_seat *seat = data;
+	// struct kore_wl_seat *seat = data;
 }
 
 static void dnd_callback(void *data, size_t data_size, void *user_data) {
@@ -740,16 +740,16 @@ static void dnd_callback(void *data, size_t data_size, void *user_data) {
 }
 
 void wl_data_device_handle_drop(void *data, struct wl_data_device *wl_data_device) {
-	struct kinc_wl_seat *seat = data;
+	struct kore_wl_seat *seat = data;
 	if (seat->current_dnd_offer != NULL) {
-		kinc_wl_data_offer_accept(seat->current_dnd_offer, dnd_callback, NULL);
+		kore_wl_data_offer_accept(seat->current_dnd_offer, dnd_callback, NULL);
 	}
 }
 
 void wl_data_device_handle_selection(void *data, struct wl_data_device *wl_data_device, struct wl_data_offer *id) {
-	struct kinc_wl_seat *seat = data;
+	struct kore_wl_seat *seat = data;
 	if (seat->current_selection_offer != NULL && seat->current_selection_offer->id != id) {
-		kinc_wl_destroy_data_offer(seat->current_selection_offer);
+		kore_wl_destroy_data_offer(seat->current_selection_offer);
 		seat->current_selection_offer = NULL;
 	}
 
@@ -763,17 +763,17 @@ static const struct wl_data_device_listener wl_data_device_listener = {
     wl_data_device_handle_motion,     wl_data_device_handle_drop,  wl_data_device_handle_selection,
 };
 
-void kinc_wl_tablet_tool_destroy(struct kinc_wl_tablet_tool *tool) {
+void kore_wl_tablet_tool_destroy(struct kore_wl_tablet_tool *tool) {
 	zwp_tablet_tool_v2_destroy(tool->id);
 	free(tool);
 }
 
 void zwp_tablet_tool_v2_handle_type(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, uint32_t tool_type) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	tool->type = tool_type;
 }
 
-#ifdef KINC_LITTLE_ENDIAN
+#ifdef KORE_LITTLE_ENDIAN
 #define HI_LO_TO_64(hi, lo) (uint64_t) lo | ((uint64_t)hi << 32)
 #else
 #define HI_LO_TO_64(hi, lo) (uint64_t) hi | ((uint64_t)lo << 32)
@@ -781,22 +781,22 @@ void zwp_tablet_tool_v2_handle_type(void *data, struct zwp_tablet_tool_v2 *zwp_t
 
 void zwp_tablet_tool_v2_handle_hardware_serial(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, uint32_t hardware_serial_hi,
                                                uint32_t hardware_serial_lo) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	tool->hardware_serial = HI_LO_TO_64(hardware_serial_hi, hardware_serial_lo);
 }
 
 void zwp_tablet_tool_v2_handle_hardware_id_wacom(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, uint32_t hardware_id_hi, uint32_t hardware_id_lo) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	tool->hardware_id_wacom = HI_LO_TO_64(hardware_id_hi, hardware_id_lo);
 }
 
 void zwp_tablet_tool_v2_handle_capability(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, uint32_t capability) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	tool->capabilities |= capability;
 }
 
 void zwp_tablet_tool_v2_handle_done(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	switch (tool->type) {
 	case ZWP_TABLET_TOOL_V2_TYPE_PEN:
 		tool->press = kore_internal_pen_trigger_press;
@@ -814,12 +814,12 @@ void zwp_tablet_tool_v2_handle_done(void *data, struct zwp_tablet_tool_v2 *zwp_t
 }
 
 void zwp_tablet_tool_v2_handle_removed(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2) {
-	struct kinc_wl_tablet_tool *tool = data;
-	struct kinc_wl_tablet_seat *seat = tool->seat;
-	struct kinc_wl_tablet_tool **tools = &seat->tablet_tools;
+	struct kore_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_seat *seat = tool->seat;
+	struct kore_wl_tablet_tool **tools = &seat->tablet_tools;
 	while (*tools != NULL) {
-		struct kinc_wl_tablet_tool *current = *tools;
-		struct kinc_wl_tablet_tool **next = &current->next;
+		struct kore_wl_tablet_tool *current = *tools;
+		struct kore_wl_tablet_tool **next = &current->next;
 
 		if (current == tool) {
 			*tools = *next;
@@ -831,38 +831,38 @@ void zwp_tablet_tool_v2_handle_removed(void *data, struct zwp_tablet_tool_v2 *zw
 		}
 	}
 
-	kinc_wl_tablet_tool_destroy(tool);
+	kore_wl_tablet_tool_destroy(tool);
 }
 
 void zwp_tablet_tool_v2_handle_proximity_in(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, uint32_t serial, struct zwp_tablet_v2 *tablet,
                                             struct wl_surface *surface) {
-	struct kinc_wl_tablet_tool *tool = data;
-	enum kinc_wl_decoration_focus focus;
-	struct kinc_wl_window *window = kinc_wayland_window_from_surface(surface, &focus);
+	struct kore_wl_tablet_tool *tool = data;
+	enum kore_wl_decoration_focus focus;
+	struct kore_wl_window *window = kore_wayland_window_from_surface(surface, &focus);
 	tool->current_window = window->window_id;
 }
 
 void zwp_tablet_tool_v2_handle_proximity_out(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	tool->current_window = -1;
 }
 
 void zwp_tablet_tool_v2_handle_down(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, uint32_t serial) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	if (tool->current_window >= 0 && tool->press) {
 		tool->press(tool->current_window, tool->x, tool->y, tool->current_pressure);
 	}
 }
 
 void zwp_tablet_tool_v2_handle_up(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	if (tool->current_window >= 0 && tool->release) {
 		tool->release(tool->current_window, tool->x, tool->y, tool->current_pressure);
 	}
 }
 
 void zwp_tablet_tool_v2_handle_motion(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, wl_fixed_t x, wl_fixed_t y) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	tool->x = wl_fixed_to_int(x);
 	tool->y = wl_fixed_to_int(y);
 	if (tool->current_window >= 0 && tool->move) {
@@ -871,13 +871,13 @@ void zwp_tablet_tool_v2_handle_motion(void *data, struct zwp_tablet_tool_v2 *zwp
 }
 
 void zwp_tablet_tool_v2_handle_pressure(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, uint32_t pressure) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	// TODO: verify what the other backends give
 	tool->current_pressure = (float)pressure / 65535.f;
 }
 
 void zwp_tablet_tool_v2_handle_distance(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, uint32_t distance) {
-	struct kinc_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool *tool = data;
 	tool->current_distance = (float)distance / 65535.f;
 }
 
@@ -916,7 +916,7 @@ static const struct zwp_tablet_tool_v2_listener zwp_tablet_tool_v2_listener = {
 };
 
 void zwp_tablet_seat_v2_handle_tablet_added(void *data, struct zwp_tablet_seat_v2 *zwp_tablet_seat_v2, struct zwp_tablet_v2 *id) {
-	struct kinc_wl_tablet *tablet = malloc(sizeof *tablet);
+	struct kore_wl_tablet *tablet = malloc(sizeof *tablet);
 	tablet->id = id;
 	tablet->seat = zwp_tablet_seat_v2_get_user_data(zwp_tablet_seat_v2);
 	tablet->next = tablet->seat->tablets;
@@ -926,7 +926,7 @@ void zwp_tablet_seat_v2_handle_tablet_added(void *data, struct zwp_tablet_seat_v
 }
 
 void zwp_tablet_seat_v2_handle_tool_added(void *data, struct zwp_tablet_seat_v2 *zwp_tablet_seat_v2, struct zwp_tablet_tool_v2 *id) {
-	struct kinc_wl_tablet_tool *tool = malloc(sizeof *tool);
+	struct kore_wl_tablet_tool *tool = malloc(sizeof *tool);
 	tool->id = id;
 	tool->seat = zwp_tablet_seat_v2_get_user_data(zwp_tablet_seat_v2);
 	tool->next = tool->seat->tablet_tools;
@@ -985,7 +985,7 @@ static void wl_registry_handle_global(void *data, struct wl_registry *registry, 
 			kore_log(KORE_LOG_LEVEL_ERROR, "Too much displays (maximum is %i)", MAXIMUM_DISPLAYS);
 		}
 		else {
-			struct kinc_wl_display *display = &wl_ctx.displays[display_index];
+			struct kore_wl_display *display = &wl_ctx.displays[display_index];
 			display->output = wl_registry_bind(registry, name, &wl_output_interface, 2);
 			display->scale = 1;
 			wl_output_set_user_data(display->output, display);
@@ -1029,8 +1029,8 @@ static const struct wl_registry_listener registry_listener = {
     wl_registry_handle_global_remove,
 };
 
-bool kinc_wayland_init() {
-	if (!kinc_wayland_load_procs()) {
+bool kore_wayland_init() {
+	if (!kore_wayland_load_procs()) {
 		return false;
 	}
 
@@ -1065,20 +1065,20 @@ bool kinc_wayland_init() {
 	return true;
 }
 
-void kinc_wayland_shutdown() {
+void kore_wayland_shutdown() {
 	wl_display_disconnect(wl_ctx.display);
 	wl_xkb.xkb_context_unref(wl_ctx.xkb_context);
 }
 
-void kinc_wayland_set_selection(struct kinc_wl_seat *seat, const char *text, int serial) {
+void kore_wayland_set_selection(struct kore_wl_seat *seat, const char *text, int serial) {
 	static const char *mime_types[] = {"text/plain"};
 	char *copy = malloc(strlen(text) + 1);
 	strcpy(copy, text);
-	struct kinc_wl_data_source *data_source = kinc_wl_create_data_source(seat, mime_types, sizeof mime_types / sizeof mime_types[0], copy, strlen(text));
+	struct kore_wl_data_source *data_source = kore_wl_create_data_source(seat, mime_types, sizeof mime_types / sizeof mime_types[0], copy, strlen(text));
 	wl_data_device_set_selection(seat->data_device, data_source->source, serial);
 }
 
-void kinc_wayland_copy_to_clipboard(const char *text) {}
+void kore_wayland_copy_to_clipboard(const char *text) {}
 
 #define READ_SIZE 64
 
@@ -1098,7 +1098,7 @@ static bool flush_display(void) {
 	return true;
 }
 
-bool kinc_wayland_handle_messages() {
+bool kore_wayland_handle_messages() {
 	while (wl_display_prepare_read(wl_ctx.display) != 0)
 		wl_display_dispatch_pending(wl_ctx.display);
 	if (!flush_display()) {
@@ -1142,10 +1142,10 @@ bool kinc_wayland_handle_messages() {
 		}
 	}
 
-	struct kinc_wl_data_offer **offer = &wl_ctx.data_offer_queue;
+	struct kore_wl_data_offer **offer = &wl_ctx.data_offer_queue;
 	while (*offer != NULL) {
-		struct kinc_wl_data_offer *current = *offer;
-		struct kinc_wl_data_offer **next = &current->next;
+		struct kore_wl_data_offer *current = *offer;
+		struct kore_wl_data_offer **next = &current->next;
 		if (current->buf_pos + READ_SIZE > current->buf_size) {
 			current->buffer = realloc(current->buffer, current->buf_size + READ_SIZE);
 			current->buf_size += READ_SIZE;
@@ -1175,20 +1175,20 @@ bool kinc_wayland_handle_messages() {
 
 #undef READ_SIZE
 
-#ifdef KINC_EGL
-EGLDisplay kinc_wayland_egl_get_display() {
+#ifdef KORE_EGL
+EGLDisplay kore_wayland_egl_get_display() {
 	return eglGetDisplay((EGLNativeDisplayType)wl_ctx.display);
 }
 
-EGLNativeWindowType kinc_wayland_egl_get_native_window(EGLDisplay display, EGLConfig config, int window_index) {
+EGLNativeWindowType kore_wayland_egl_get_native_window(EGLDisplay display, EGLConfig config, int window_index) {
 	return (EGLNativeWindowType)wl_ctx.windows[window_index].egl_window;
 }
 #endif
 
-#ifdef KINC_VULKAN
+#ifdef KORE_VULKAN
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_wayland.h>
-VkResult kinc_wayland_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
+VkResult kore_wayland_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
 	VkWaylandSurfaceCreateInfoKHR info = {0};
 	info.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
 	info.pNext = NULL;
@@ -1200,23 +1200,23 @@ VkResult kinc_wayland_vulkan_create_surface(VkInstance instance, int window_inde
 
 #include <assert.h>
 
-void kinc_wayland_vulkan_get_instance_extensions(const char **names, int *index, int max) {
+void kore_wayland_vulkan_get_instance_extensions(const char **names, int *index, int max) {
 	assert(*index + 1 < max);
 	names[(*index)++] = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
 }
 
-VkBool32 kinc_wayland_vulkan_get_physical_device_presentation_support(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
+VkBool32 kore_wayland_vulkan_get_physical_device_presentation_support(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
 	return vkGetPhysicalDeviceWaylandPresentationSupportKHR(physicalDevice, queueFamilyIndex, wl_ctx.display);
 }
 #endif
 
 void zwp_locked_pointer_v1_handle_locked(void *data, struct zwp_locked_pointer_v1 *zwp_locked_pointer_v1) {
-	struct kinc_wl_mouse *mouse = data;
+	struct kore_wl_mouse *mouse = data;
 	mouse->locked = true;
 }
 
 void zwp_locked_pointer_v1_handle_unlocked(void *data, struct zwp_locked_pointer_v1 *zwp_locked_pointer_v1) {
-	struct kinc_wl_mouse *mouse = data;
+	struct kore_wl_mouse *mouse = data;
 	mouse->locked = false;
 }
 
@@ -1225,16 +1225,16 @@ static const struct zwp_locked_pointer_v1_listener zwp_locked_pointer_v1_listene
     zwp_locked_pointer_v1_handle_unlocked,
 };
 
-void kinc_wl_mouse_show() {
-	kinc_wayland_set_cursor(&wl_ctx.seat.mouse, "default"); // TODO: should use the last set cursor instead
+void kore_wl_mouse_show() {
+	kore_wayland_set_cursor(&wl_ctx.seat.mouse, "default"); // TODO: should use the last set cursor instead
 }
 
-void kinc_wl_mouse_hide() {
+void kore_wl_mouse_hide() {
 	wl_pointer_set_cursor(wl_ctx.seat.mouse.pointer, wl_ctx.seat.mouse.serial, NULL, 0, 0);
 }
 
-void kinc_wl_mouse_lock(int window) {
-	struct kinc_wl_mouse *mouse = &wl_ctx.seat.mouse;
+void kore_wl_mouse_lock(int window) {
+	struct kore_wl_mouse *mouse = &wl_ctx.seat.mouse;
 	struct wl_region *region = wl_compositor_create_region(wl_ctx.compositor);
 	wl_region_add(region, mouse->x, mouse->y, 0, 0);
 	mouse->lock = zwp_pointer_constraints_v1_lock_pointer(wl_ctx.pointer_constraints, wl_ctx.windows[window].surface, wl_ctx.seat.mouse.pointer, region,
@@ -1242,18 +1242,18 @@ void kinc_wl_mouse_lock(int window) {
 	zwp_locked_pointer_v1_add_listener(mouse->lock, &zwp_locked_pointer_v1_listener, mouse);
 }
 
-void kinc_wl_mouse_unlock(void) {
+void kore_wl_mouse_unlock(void) {
 	zwp_locked_pointer_v1_destroy(wl_ctx.seat.mouse.lock);
 	wl_ctx.seat.mouse.lock = NULL;
 	wl_ctx.seat.mouse.locked = false;
-	kinc_wl_mouse_show();
+	kore_wl_mouse_show();
 }
 
-bool kinc_wl_mouse_can_lock(void) {
+bool kore_wl_mouse_can_lock(void) {
 	return true;
 }
 
-void kinc_wl_mouse_set_cursor(int cursorIndex) {
+void kore_wl_mouse_set_cursor(int cursorIndex) {
 	const char *name;
 	switch (cursorIndex) {
 	case 0: {
@@ -1318,15 +1318,15 @@ void kinc_wl_mouse_set_cursor(int cursorIndex) {
 	}
 	}
 	if (!wl_ctx.seat.mouse.hidden) {
-		kinc_wayland_set_cursor(&wl_ctx.seat.mouse, name);
+		kore_wayland_set_cursor(&wl_ctx.seat.mouse, name);
 	}
 }
 
-void kinc_wl_mouse_set_position(int window_index, int x, int y) {
+void kore_wl_mouse_set_position(int window_index, int x, int y) {
 	kore_log(KORE_LOG_LEVEL_ERROR, "Wayland: cannot set the mouse position.");
 }
 
-void kinc_wl_mouse_get_position(int window_index, int *x, int *y) {
+void kore_wl_mouse_get_position(int window_index, int *x, int *y) {
 	*x = wl_ctx.seat.mouse.x;
 	*y = wl_ctx.seat.mouse.y;
 }

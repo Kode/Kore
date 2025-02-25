@@ -165,21 +165,21 @@ static void HIDGamepadUdevHelper_close(struct HIDGamepadUdevHelper *helper) {
 	udev_unref(helper->udevPtr);
 }
 
-void kinc_linux_initHIDGamepads() {
+void kore_linux_initHIDGamepads() {
 	for (int i = 0; i < KORE_GAMEPAD_MAX_COUNT; ++i) {
 		HIDGamepad_init(&gamepads[i], i);
 	}
 	HIDGamepadUdevHelper_init(&udev_helper);
 }
 
-void kinc_linux_updateHIDGamepads() {
+void kore_linux_updateHIDGamepads() {
 	HIDGamepadUdevHelper_update(&udev_helper);
 	for (int i = 0; i < KORE_GAMEPAD_MAX_COUNT; ++i) {
 		HIDGamepad_update(&gamepads[i]);
 	}
 }
 
-void kinc_linux_closeHIDGamepads() {
+void kore_linux_closeHIDGamepads() {
 	HIDGamepadUdevHelper_close(&udev_helper);
 }
 
