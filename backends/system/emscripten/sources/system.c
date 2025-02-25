@@ -12,11 +12,12 @@
 #include <kore3/system.h>
 #include <kore3/window.h>
 
+#ifdef KORE_WEBGPU
+#include <kore3/webgpu/webgpu.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
-
-static int html5_argc;
-static char **html5_argv;
 
 static void drawfunc() {
 	kore_internal_update_callback();
@@ -313,218 +314,22 @@ int kore_hardware_threads(void) {
 	return 4;
 }
 
+extern int kickstart(int argc, char **argv);
 
-#include <webgpu/webgpu.h>
-#include <emscripten/html5_webgpu.h>
+static int html5_argc;
+static char **html5_argv;
 
-static const char shaderCode[] = "\
-    @vertex\n\
-    fn main_v(@builtin(vertex_index) idx: u32) -> @builtin(position) vec4<f32> {\n\
-        var pos = array<vec2<f32>, 3>(\n\
-            vec2<f32>(0.0, 0.5), vec2<f32>(-0.5, -0.5), vec2<f32>(0.5, -0.5));\n\
-        return vec4<f32>(pos[idx], 0.0, 1.0);\n\
-    }\n\
-\n\
-    @fragment\n\
-    fn main_f() -> @location(0) vec4<f32> {\n\
-        return vec4<f32>(0.0, 0.502, 1.0, 1.0); // 0x80/0xff ~= 0.502\n\
-    }\n\
-";
-
-WGPUInstance wgpu_instance;
-WGPUAdapter wgpu_adapter;
-WGPUDevice wgpu_device;
-static WGPUQueue queue;
-static WGPURenderPipeline pipeline;
-static int testsCompleted = 0;
-
-void run();
-
-void main3(void) {
-    //run();
+void main_after_webgpu_init(void) {
 	kickstart(html5_argc, html5_argv);
 	emscripten_set_main_loop(drawfunc, 0, false);
 }
-
-void device_callback(WGPURequestDeviceStatus status, WGPUDevice device, char const * message, void * userdata) {
-    if (message) {
-        printf("RequestDevice: %s\n", message);
-    }
-    assert(status == WGPURequestDeviceStatus_Success);
-
-    wgpu_device = device;
-
-    main3();
-}
-
-void GetDevice() {
-    wgpuAdapterRequestDevice(wgpu_adapter, NULL, device_callback, NULL);
-}
-
-void main2(void) {
-    WGPUAdapterInfo info;
-    wgpuAdapterGetInfo(wgpu_adapter, &info);
-    printf("adapter vendor: %s\n", info.vendor);
-    printf("adapter architecture: %s\n", info.architecture);
-    printf("adapter device: %s\n", info.device);
-    printf("adapter description: %s\n", info.description);
-
-    GetDevice();
-}
-
-void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, char const * message, void * userdata) {
-    if (message) {
-        printf("RequestAdapter: %s\n", message);
-    }
-    assert(status == WGPURequestAdapterStatus_Success);
-
-    wgpu_adapter = adapter;
-
-    main2();
-}
-
-void GetAdapter() {
-	wgpu_instance = wgpuCreateInstance(NULL);
-    wgpuInstanceRequestAdapter(wgpu_instance, NULL, adapter_callback, NULL);
-}
-
-void error_callback(WGPUErrorType errorType, const char* message, void* userdata) {
-    printf("%d: %s\n", errorType, message);
-}
-
-void compilation_info_callback(WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo* info, void* userdata) {
-    assert(status == WGPUCompilationInfoRequestStatus_Success);
-    assert(info->messageCount == 0);
-    printf("Shader compile succeeded\n");
-}
-
-void init() {
-    wgpuDeviceSetUncapturedErrorCallback(wgpu_device, error_callback, NULL);
-
-    queue = wgpuDeviceGetQueue(wgpu_device);
-
-    WGPUShaderModule shaderModule;
-    {
-        WGPUShaderModuleWGSLDescriptor wgslDesc = {0};
-        wgslDesc.code = shaderCode;
-        wgslDesc.chain.sType = WGPUSType_ShaderModuleWGSLDescriptor;
-
-        WGPUShaderModuleDescriptor descriptor = {0};
-        descriptor.nextInChain = (WGPUChainedStruct *)&wgslDesc;
-        shaderModule = wgpuDeviceCreateShaderModule(wgpu_device, &descriptor);
-        wgpuShaderModuleGetCompilationInfo(shaderModule, compilation_info_callback, NULL);
-    }
-
-    {
-        WGPUPipelineLayoutDescriptor pl = {0};
-        pl.bindGroupLayoutCount = 0;
-        pl.bindGroupLayouts = NULL;
-
-        WGPUColorTargetState colorTargetState = {0};
-        colorTargetState.format = WGPUTextureFormat_BGRA8Unorm;
-        colorTargetState.writeMask = WGPUColorWriteMask_All;
-
-        WGPUFragmentState fragmentState = {0};
-        fragmentState.module = shaderModule;
-        fragmentState.targetCount = 1;
-        fragmentState.targets = &colorTargetState;
-
-        WGPUMultisampleState multisample_state = {
-            .count = 1,
-            .mask = 0xffffffff,
-            .alphaToCoverageEnabled = false,
-        };
-
-        WGPURenderPipelineDescriptor descriptor = {0};
-        descriptor.layout = wgpuDeviceCreatePipelineLayout(wgpu_device, &pl);
-        descriptor.vertex.module = shaderModule;
-        descriptor.fragment = &fragmentState;
-        descriptor.primitive.topology = WGPUPrimitiveTopology_TriangleList;
-        descriptor.multisample = multisample_state;
-        pipeline = wgpuDeviceCreateRenderPipeline(wgpu_device, &descriptor);
-    }
-}
-
-void render(WGPUTextureView view) {
-    WGPURenderPassColorAttachment attachment = {0};
-    attachment.view = view;
-    attachment.loadOp = WGPULoadOp_Clear;
-    attachment.storeOp = WGPUStoreOp_Store;
-    attachment.clearValue.r = 0.5f;
-	attachment.clearValue.g = 0.0f;
-	attachment.clearValue.b = 0.0f;
-	attachment.clearValue.a = 1.0f;
-    attachment.depthSlice = WGPU_DEPTH_SLICE_UNDEFINED;
-
-    WGPURenderPassDescriptor renderpass = {0};
-    renderpass.colorAttachmentCount = 1;
-    renderpass.colorAttachments = &attachment;
-
-    WGPUCommandBuffer commands;
-    {
-        WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(wgpu_device, NULL);
-        {
-            WGPURenderPassEncoder pass = wgpuCommandEncoderBeginRenderPass(encoder, &renderpass);
-            wgpuRenderPassEncoderSetPipeline(pass, pipeline);
-            wgpuRenderPassEncoderDraw(pass, 3, 1, 0, 0);
-            wgpuRenderPassEncoderEnd(pass);
-        }
-        commands = wgpuCommandEncoderFinish(encoder, NULL);
-    }
-
-    wgpuQueueSubmit(queue, 1, &commands);
-}
-
-
-WGPUSurface surface;
-
-const uint32_t kWidth = 300;
-const uint32_t kHeight = 150;
-
-void frame() {
-    WGPUSurfaceTexture surfaceTexture;
-    wgpuSurfaceGetCurrentTexture(surface, &surfaceTexture);
-
-    WGPUTextureView backbuffer = wgpuTextureCreateView(surfaceTexture.texture, NULL);
-    render(backbuffer);
-}
-
-void run() {
-    init();
-
-    {
-        WGPUSurfaceDescriptorFromCanvasHTMLSelector canvasDesc = {0};
-        canvasDesc.selector = "#canvas";
-        canvasDesc.chain.sType = WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector;
-
-        WGPUSurfaceDescriptor surfDesc = {0};
-        surfDesc.nextInChain = (WGPUChainedStruct *)&canvasDesc;
-        surface = wgpuInstanceCreateSurface(wgpu_instance, &surfDesc);
-
-        WGPUSurfaceCapabilities capabilities;
-        wgpuSurfaceGetCapabilities(surface, wgpu_adapter, &capabilities);
-
-        WGPUSurfaceConfiguration config = {
-            .device = wgpu_device,
-            .format = capabilities.formats[0],
-            .usage = WGPUTextureUsage_RenderAttachment,
-            .alphaMode = WGPUCompositeAlphaMode_Auto,
-            .width = kWidth,
-            .height = kHeight,
-            .presentMode = WGPUPresentMode_Fifo};
-        wgpuSurfaceConfigure(surface, &config);
-    }
-    emscripten_set_main_loop(frame, 0, false);
-}
-
-extern int kickstart(int argc, char **argv);
 
 int main(int argc, char **argv) {
 	html5_argc = argc;
 	html5_argv = argv;
 
 #ifdef KORE_WEBGPU
-	GetAdapter();
+	kore_webgpu_init(main_after_webgpu_init);
 #else
 	kickstart(argc, argv);
 	emscripten_set_main_loop(drawfunc, 0, 1);

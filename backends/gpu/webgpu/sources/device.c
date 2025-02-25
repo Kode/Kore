@@ -17,32 +17,39 @@
 #endif
 
 #include <assert.h>
-#include <stdio.h>
 
-extern WGPUDevice wgpu_device;
-extern WGPUInstance wgpu_instance;
-extern WGPUAdapter wgpu_adapter;
+static WGPUDevice wgpu_device;
+static WGPUInstance wgpu_instance;
+static WGPUAdapter wgpu_adapter;
 
 static void error_callback(WGPUErrorType errorType, const char* message, void* userdata) {
-    printf("%d: %s\n", errorType, message);
+    kore_log(KORE_LOG_LEVEL_ERROR, "%d: %s", errorType, message);
+}
+
+static void compilation_info_callback(WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo* info, void* userdata) {
+    assert(status == WGPUCompilationInfoRequestStatus_Success);
+    assert(info->messageCount == 0);
+    kore_log(KORE_LOG_LEVEL_INFO, "Shader compile succeeded");
 }
 
 void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
-#ifdef KORE_EMSCRIPTEN
     device->webgpu.device = wgpu_device;
-#endif
 
     wgpuDeviceSetUncapturedErrorCallback(wgpu_device, error_callback, NULL);
 
     device->webgpu.queue = wgpuDeviceGetQueue(device->webgpu.device);
 
-    WGPUSurfaceDescriptorFromCanvasHTMLSelector canvasDesc = {0};
-    canvasDesc.selector = "#canvas";
-    canvasDesc.chain.sType = WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector;
+    WGPUSurfaceDescriptorFromCanvasHTMLSelector canvas_descriptor = {
+        .selector = "#canvas",
+        .chain = {
+            .sType = WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector,
+        },
+    };
 
-    WGPUSurfaceDescriptor surfDesc = {0};
-    surfDesc.nextInChain = (WGPUChainedStruct *)&canvasDesc;
-    device->webgpu.surface = wgpuInstanceCreateSurface(wgpu_instance, &surfDesc);
+    WGPUSurfaceDescriptor surface_descriptor = {
+        .nextInChain = (WGPUChainedStruct *)&canvas_descriptor,
+    };
+    device->webgpu.surface = wgpuInstanceCreateSurface(wgpu_instance, &surface_descriptor);
 
     WGPUSurfaceCapabilities capabilities = {0};
     wgpuSurfaceGetCapabilities(device->webgpu.surface, wgpu_adapter, &capabilities);
@@ -54,7 +61,8 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
         .alphaMode = WGPUCompositeAlphaMode_Auto,
         .width = kore_window_width(0),
         .height = kore_window_height(0),
-        .presentMode = WGPUPresentMode_Fifo};
+        .presentMode = WGPUPresentMode_Fifo
+    };
     wgpuSurfaceConfigure(device->webgpu.surface, &config);
 
     WGPUShaderModuleWGSLDescriptor shader_module_wgsl_descriptor = {
@@ -67,6 +75,7 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
     };
 
 	device->webgpu.shader_module = wgpuDeviceCreateShaderModule(device->webgpu.device, &shader_module_descriptor);
+    wgpuShaderModuleGetCompilationInfo(device->webgpu.shader_module, compilation_info_callback, NULL);
 }
 
 void kore_webgpu_device_destroy(kore_gpu_device *device) {}
@@ -114,7 +123,7 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
     WGPUBufferDescriptor buffer_descriptor = {
         .size = align_pow2(parameters->size, 4),
         .usage = convert_buffer_usage(parameters->usage_flags),
-        //.mappedAtCreation = true,
+        .mappedAtCreation = true,
     };
 
 	buffer->webgpu.buffer = wgpuDeviceCreateBuffer(device->webgpu.device, &buffer_descriptor);
@@ -193,3 +202,41 @@ void kore_webgpu_device_create_fence(kore_gpu_device *device, kore_gpu_fence *fe
 void kore_webgpu_device_signal(kore_gpu_device *device, kore_gpu_command_list_type list_type, kore_gpu_fence *fence, uint64_t value) {}
 
 void kore_webgpu_device_wait(kore_gpu_device *device, kore_gpu_command_list_type list_type, kore_gpu_fence *fence, uint64_t value) {}
+
+static void (*kickstart_callback)();
+
+void device_callback(WGPURequestDeviceStatus status, WGPUDevice device, char const *message, void *userdata) {
+    if (message != NULL) {
+        kore_log(KORE_LOG_LEVEL_INFO, "RequestDevice: %s", message);
+    }
+    assert(status == WGPURequestDeviceStatus_Success);
+
+    wgpu_device = device;
+
+    kickstart_callback();
+}
+
+void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, char const *message, void *userdata) {
+    if (message != NULL) {
+        kore_log(KORE_LOG_LEVEL_INFO, "RequestAdapter: %s", message);
+    }
+    assert(status == WGPURequestAdapterStatus_Success);
+
+    wgpu_adapter = adapter;
+
+    WGPUAdapterInfo info;
+    wgpuAdapterGetInfo(wgpu_adapter, &info);
+    kore_log(KORE_LOG_LEVEL_INFO, "adapter vendor: %s", info.vendor);
+    kore_log(KORE_LOG_LEVEL_INFO, "adapter architecture: %s", info.architecture);
+    kore_log(KORE_LOG_LEVEL_INFO, "adapter device: %s", info.device);
+    kore_log(KORE_LOG_LEVEL_INFO, "adapter description: %s", info.description);
+
+    wgpuAdapterRequestDevice(wgpu_adapter, NULL, device_callback, NULL);
+}
+
+void kore_webgpu_init(void (*callback)()) {
+    kickstart_callback = callback;
+
+    wgpu_instance = wgpuCreateInstance(NULL);
+    wgpuInstanceRequestAdapter(wgpu_instance, NULL, adapter_callback, NULL);
+}

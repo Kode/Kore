@@ -147,4 +147,6 @@ static inline WGPURenderPassEncoder wgpuCommandEncoderBeginRenderPass(WGPUComman
 
 #endif
 
+void kore_webgpu_init(void (*callback)(void));
+
 #endif
