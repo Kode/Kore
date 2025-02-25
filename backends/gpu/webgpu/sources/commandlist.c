@@ -28,7 +28,7 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
         .view = texture_view,
         .loadOp = WGPULoadOp_Clear,
         .storeOp = WGPUStoreOp_Store,
-        .clearValue = {0.5, 0, 0, 1},
+        .clearValue = {0, 0, 0, 1},
         .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
     };
 
@@ -49,7 +49,8 @@ void kore_webgpu_command_list_present(kore_gpu_command_list *list) {}
 void kore_webgpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
                                                uint64_t size) {
     if (buffer->webgpu.copy_scheduled) {
-        wgpuCommandEncoderCopyBufferToBuffer(list->webgpu.command_encoder, buffer->webgpu.copy_buffer, 0, buffer->webgpu.buffer, 0, buffer->webgpu.size);
+        assert(scheduled_buffer_uploads_count < 256);
+        scheduled_buffer_uploads[scheduled_buffer_uploads_count++] = &buffer->webgpu;
         buffer->webgpu.copy_scheduled = false;
     }
     wgpuRenderPassEncoderSetIndexBuffer(list->webgpu.render_pass_encoder, buffer->webgpu.buffer, index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? WGPUIndexFormat_Uint16 : WGPUIndexFormat_Uint32, offset, size);
@@ -58,7 +59,8 @@ void kore_webgpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore
 void kore_webgpu_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_webgpu_buffer *buffer, uint64_t offset, uint64_t size,
                                                 uint64_t stride) {
     if (buffer->copy_scheduled) {
-        wgpuCommandEncoderCopyBufferToBuffer(list->webgpu.command_encoder, buffer->copy_buffer, 0, buffer->buffer, 0, buffer->size);
+        assert(scheduled_buffer_uploads_count < 256);
+        scheduled_buffer_uploads[scheduled_buffer_uploads_count++] = buffer;
         buffer->copy_scheduled = false;
     }
     wgpuRenderPassEncoderSetVertexBuffer(list->webgpu.render_pass_encoder, slot, buffer->buffer, offset, size); // why is stride not needed?

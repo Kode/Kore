@@ -43,5 +43,11 @@ void *kore_webgpu_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t
 }
 
 void kore_webgpu_buffer_unlock(kore_gpu_buffer *buffer) {
-	wgpuBufferUnmap(buffer->webgpu.buffer);
+	if (buffer->webgpu.has_copy_buffer) {
+		wgpuBufferUnmap(buffer->webgpu.copy_buffer);
+	}
+	else {
+		wgpuBufferUnmap(buffer->webgpu.buffer);
+	}
+	buffer->webgpu.copy_scheduled = true;
 }

@@ -131,22 +131,19 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
     }
 
     if (buffer->webgpu.has_copy_buffer) {
-        WGPUBufferUsage copy_usage = WGPUBufferUsage_MapWrite;
-        if ((usage & KORE_GPU_BUFFER_USAGE_COPY_SRC) != 0) {
-            copy_usage |= WGPUBufferUsage_CopySrc;
-        }
         WGPUBufferDescriptor buffer_descriptor = {
             .size = align_pow2(parameters->size, 4),
-            .usage = copy_usage,
+            .usage = WGPUBufferUsage_MapWrite | WGPUBufferUsage_CopySrc,
             .mappedAtCreation = true,
         };
     
         buffer->webgpu.copy_buffer = wgpuDeviceCreateBuffer(device->webgpu.device, &buffer_descriptor);
 
         usage ^= KORE_GPU_BUFFER_USAGE_CPU_WRITE;
-        if ((usage | KORE_GPU_BUFFER_USAGE_COPY_SRC) != 0) {
+        if ((usage & KORE_GPU_BUFFER_USAGE_COPY_SRC) != 0) {
             usage ^= KORE_GPU_BUFFER_USAGE_COPY_SRC;
         }
+        usage |= KORE_GPU_BUFFER_USAGE_COPY_DST;
     }
 
     WGPUBufferDescriptor buffer_descriptor = {
@@ -198,8 +195,23 @@ kore_gpu_texture_format kore_webgpu_device_framebuffer_format(kore_gpu_device *d
 }
 
 void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
-    WGPUCommandBufferDescriptor command_buffer_descriptor = {0};
+    if (scheduled_buffer_uploads_count > 0) {
+        WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
+	    WGPUCommandEncoder buffer_upload_encoder = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
 
+        for (uint32_t buffer_index = 0; buffer_index < scheduled_buffer_uploads_count; ++buffer_index) {
+            kore_webgpu_buffer *buffer = scheduled_buffer_uploads[buffer_index];
+            wgpuCommandEncoderCopyBufferToBuffer(buffer_upload_encoder, buffer->copy_buffer, 0, buffer->buffer, 0, buffer->size);
+        }
+
+        WGPUCommandBufferDescriptor command_buffer_descriptor = {0};
+	    WGPUCommandBuffer command_buffer = wgpuCommandEncoderFinish(buffer_upload_encoder, &command_buffer_descriptor);
+	    wgpuQueueSubmit(device->webgpu.queue, 1, &command_buffer);
+        
+        scheduled_buffer_uploads_count = 0;
+    }
+
+    WGPUCommandBufferDescriptor command_buffer_descriptor = {0};
 	WGPUCommandBuffer command_buffer = wgpuCommandEncoderFinish(list->webgpu.command_encoder, &command_buffer_descriptor);
 	wgpuQueueSubmit(device->webgpu.queue, 1, &command_buffer);
 
