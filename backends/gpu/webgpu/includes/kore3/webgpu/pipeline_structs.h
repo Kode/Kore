@@ -6,6 +6,8 @@
 #include <kore3/gpu/device.h>
 #include <kore3/gpu/texture.h>
 
+#include "webgpu.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -196,7 +198,7 @@ typedef struct kore_webgpu_render_pipeline_parameters {
 } kore_webgpu_render_pipeline_parameters;
 
 typedef struct kore_webgpu_render_pipeline {
-	int nothing;
+	WGPURenderPipeline render_pipeline;
 } kore_webgpu_render_pipeline;
 
 typedef struct kore_webgpu_compute_pipeline_parameters {

@@ -1,6 +1,8 @@
 #ifndef KORE_WEBGPU_BUFFER_STRUCTS_HEADER
 #define KORE_WEBGPU_BUFFER_STRUCTS_HEADER
 
+#include "webgpu.h"
+
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -10,7 +12,8 @@ extern "C" {
 struct kore_gpu_device;
 
 typedef struct kore_webgpu_buffer {
-	int nothing;
+	WGPUBuffer buffer;
+	uint64_t size;
 } kore_webgpu_buffer;
 
 #ifdef __cplusplus
