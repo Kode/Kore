@@ -30,7 +30,6 @@ static inline UINT64 GetRequiredIntermediateSize(ID3D12Resource *destinationReso
 	D3D12_RESOURCE_DESC desc = destinationResource->GetDesc();
 	UINT64 requiredSize = 0;
 	device->GetCopyableFootprints(&desc, FirstSubresource, NumSubresources, 0, NULL, NULL, NULL, &requiredSize);
-	device->Release();
 	return requiredSize;
 }
 
