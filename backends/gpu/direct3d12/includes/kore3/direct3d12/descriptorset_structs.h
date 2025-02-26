@@ -5,7 +5,7 @@
 
 #include "device_structs.h"
 
-#include <kore3/util/offalloc/offalloc.h>
+#include <kore3/libs/offalloc/offalloc.h>
 
 #ifdef __cplusplus
 extern "C" {

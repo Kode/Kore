@@ -3,7 +3,7 @@
 // C99 conversion by Aarni Gratseff
 // https://github.com/aarni57/offalloc
 
-#include <kore3/util/offalloc/offalloc.h>
+#include <kore3/libs/offalloc/offalloc.h>
 
 #include <stdlib.h>
 

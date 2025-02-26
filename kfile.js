@@ -43,6 +43,8 @@ else {
 	project.addFile('sources/libs/lz4/*');
 }
 
+project.addFile('sources/libs/offalloc/*');
+
 function addBackend(name) {
 	project.addIncludeDir('backends/' + name + '/includes');
 	project.addFile('backends/' + name + '/includes/**');

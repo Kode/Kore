@@ -5,8 +5,8 @@
 
 #include <kore3/gpu/commandlist.h>
 #include <kore3/gpu/texture.h>
+#include <kore3/libs/offalloc/offalloc.h>
 #include <kore3/util/indexallocator.h>
-#include <kore3/util/offalloc/offalloc.h>
 
 #ifdef __cplusplus
 extern "C" {
