@@ -23,7 +23,7 @@ jobs:
       run: git submodule update --init --remote Kore
     - name: Checkout Kore
       working-directory: Kore-Samples/Kore
-      run: git checkout v2
+      run: git checkout main
     - name: Add Kore
       working-directory: Kore-Samples
       run: git add Kore
