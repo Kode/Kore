@@ -109,6 +109,8 @@ if (platform === Platform.Windows) {
 		addBackend('gpu/opengl');
 		addKoreDefine('OPENGL');
 		project.addDefine('GLEW_STATIC');
+		project.addLib('opengl32');
+		project.addLib('glu32');
 	}
 	else if (graphics === GraphicsApi.Direct3D11) {
 		g4 = true;
