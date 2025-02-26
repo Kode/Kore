@@ -6,7 +6,7 @@
 #include <kore3/system.h>
 
 #ifdef KORE_METAL
-//#include <kore3/graphics5/graphics.h>
+// #include <kore3/graphics5/graphics.h>
 #endif
 
 @implementation BasicOpenGLView
@@ -433,7 +433,7 @@ static CAMetalLayer *metalLayer = NULL;
 
 	metalLayer.opaque = YES;
 	metalLayer.backgroundColor = nil;
-	
+
 	return self;
 }
 #endif

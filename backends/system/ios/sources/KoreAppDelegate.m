@@ -1,6 +1,6 @@
+#import "KoreAppDelegate.h"
 #import "GLView.h"
 #import "GLViewController.h"
-#import "KoreAppDelegate.h"
 #import <AVFAudio/AVFAudio.h>
 
 #include <kore3/system.h>

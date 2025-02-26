@@ -1,8 +1,8 @@
-#include <kore3/math/core.h>
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
 #include <kore3/input/pen.h>
 #include <kore3/log.h>
+#include <kore3/math/core.h>
 
 #include "wayland-generated/wayland-fractional-scale.h"
 #include <kore3/backend/wayland.h>
@@ -1015,7 +1015,8 @@ static void wl_registry_handle_global(void *data, struct wl_registry *registry, 
 	}
 	else if (strcmp(interface, zwp_relative_pointer_manager_v1_interface.name) == 0) {
 		wl_ctx.relative_pointer_manager = wl_registry_bind(registry, name, &zwp_relative_pointer_manager_v1_interface, 1);
-	} else if(strcmp(interface, wp_fractional_scale_manager_v1_interface.name) == 0) {
+	}
+	else if (strcmp(interface, wp_fractional_scale_manager_v1_interface.name) == 0) {
 		wl_ctx.fractional_scale_manager = wl_registry_bind(registry, name, &wp_fractional_scale_manager_v1_interface, 1);
 	}
 }

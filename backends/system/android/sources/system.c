@@ -3,14 +3,14 @@
 #include <kore3/error.h>
 // #include <GLContext.h>
 #include <kore3/backend/android.h>
-//#include <kore3/graphics4/graphics.h>
+// #include <kore3/graphics4/graphics.h>
 #include <kore3/input/gamepad.h>
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
 // #include <kore3/input/sensor.h>
-#include <kore3/backend/android_native_app_glue.h>
 #include <android/sensor.h>
 #include <android/window.h>
+#include <kore3/backend/android_native_app_glue.h>
 #include <kore3/input/pen.h>
 #include <kore3/input/surface.h>
 #include <kore3/log.h>
@@ -791,7 +791,7 @@ static void cmd(struct android_app *app, int32_t cmd) {
 			}
 			else {
 				initDisplay();
-				//kore_g4_swap_buffers(); // TODO
+				// kore_g4_swap_buffers(); // TODO
 			}
 
 			updateAppForegroundStatus(true, appIsForeground);
@@ -973,11 +973,11 @@ int kore_android_width() {
 	return kore_egl_width(0);
 #elif defined(KORE_VULKAN)
 	// TODO
-	//int width, height;
-	//if (kore_vulkan_internal_get_size(&width, &height)) {
+	// int width, height;
+	// if (kore_vulkan_internal_get_size(&width, &height)) {
 	//	return width;
 	//}
-	//else
+	// else
 #endif
 	{ return ANativeWindow_getWidth(app->window); }
 }
@@ -987,11 +987,11 @@ int kore_android_height() {
 	return kore_egl_height(0);
 #elif defined(KORE_VULKAN)
 	// TODO
-	//int width, height;
-	//if (kore_vulkan_internal_get_size(&width, &height)) {
+	// int width, height;
+	// if (kore_vulkan_internal_get_size(&width, &height)) {
 	//	return height;
 	//}
-	//else
+	// else
 #endif
 	{ return ANativeWindow_getHeight(app->window); }
 }
@@ -1088,7 +1088,7 @@ bool kore_internal_handle_messages(void) {
 		int32_t width = kore_android_width();
 		int32_t height = kore_android_height();
 #ifdef KORE_VULKAN
-		//kore_internal_resize(0, width, height); // TODO
+		// kore_internal_resize(0, width, height); // TODO
 #endif
 		kore_internal_call_resize_callback(0, width, height);
 	}

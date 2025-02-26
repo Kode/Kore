@@ -2,34 +2,40 @@ const child_process = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const excludes = [
-	'backends/Graphics4/OpenGL/Sources/GL',
+const startExcludes = [
 	'backends/gpu/direct3d12/sources/d3dx12.h',
 	'backends/gpu/direct3d12/pix',
-	'backends/system/android/sources/Android',
-	'backends/system/linux/sources/kore/backend/wayland',
-	'includes/kore3/util/offalloc',
-	'sources/util/offalloc',
-	'tests/shader/sources/stb_image_write.h'
+	'backends/system/windows/libraries',
+	'sources/libs',
+	'tools'
+];
+
+const endExcludes = [
+	'.winrt.cpp',
+	'android_native_app_glue.h',
+	'android_native_app_glue.c',
+	'stb_image_write.h'
 ];
 
 function excludeMatches(filepath) {
-	for (const exclude of excludes) {
+	for (const exclude of startExcludes) {
 		if (filepath.startsWith(exclude)) {
 			return true;
 		}
 	}
+
+	for (const exclude of endExcludes) {
+		if (filepath.endsWith(exclude)) {
+			return true;
+		}
+	}
+
 	return false;
 }
 
 function isExcluded(filepath) {
 	filepath = filepath.replace(/\\/g, '/');
-	return excludeMatches(filepath)
-	|| filepath.indexOf('Libraries') >= 0
-	|| filepath.indexOf('lz4') >= 0
-	|| filepath.indexOf('Tools') >= 0
-	|| filepath.indexOf('libs') >= 0
-	|| filepath.endsWith('.winrt.cpp');
+	return excludeMatches(filepath);
 }
 
 function format(dir) {

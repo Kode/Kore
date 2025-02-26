@@ -1,9 +1,9 @@
 #include <kore3/video.h>
 
-#include <kore3/mixer/mixer.h>
 #include <kore3/gpu/texture.h>
 #include <kore3/io/filereader.h>
 #include <kore3/log.h>
+#include <kore3/mixer/mixer.h>
 #include <kore3/system.h>
 
 #include <kore3/backend/android_native_app_glue.h>

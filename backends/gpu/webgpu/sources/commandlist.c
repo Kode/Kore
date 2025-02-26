@@ -16,67 +16,67 @@
 void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
-    WGPUTextureViewDescriptor texture_view_descriptor = {
-        .format = WGPUTextureFormat_BGRA8Unorm,
-        .dimension = WGPUTextureViewDimension_2D,
-        .arrayLayerCount = 1,
-        .mipLevelCount = 1,
-    };
-    WGPUTextureView texture_view = wgpuTextureCreateView(parameters->color_attachments[0].texture.texture->webgpu.texture, &texture_view_descriptor);
+	WGPUTextureViewDescriptor texture_view_descriptor = {
+	    .format = WGPUTextureFormat_BGRA8Unorm,
+	    .dimension = WGPUTextureViewDimension_2D,
+	    .arrayLayerCount = 1,
+	    .mipLevelCount = 1,
+	};
+	WGPUTextureView texture_view = wgpuTextureCreateView(parameters->color_attachments[0].texture.texture->webgpu.texture, &texture_view_descriptor);
 
-    WGPURenderPassColorAttachment color_attachment = {
-        .view = texture_view,
-        .loadOp = WGPULoadOp_Clear,
-        .storeOp = WGPUStoreOp_Store,
-        .clearValue = {0, 0, 0, 1},
-        .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
-    };
+	WGPURenderPassColorAttachment color_attachment = {
+	    .view = texture_view,
+	    .loadOp = WGPULoadOp_Clear,
+	    .storeOp = WGPUStoreOp_Store,
+	    .clearValue = {0, 0, 0, 1},
+	    .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
+	};
 
 	WGPURenderPassDescriptor render_pass_descriptor = {
-        .colorAttachmentCount = 1,
-        .colorAttachments = &color_attachment,
-    };
+	    .colorAttachmentCount = 1,
+	    .colorAttachments = &color_attachment,
+	};
 
 	list->webgpu.render_pass_encoder = wgpuCommandEncoderBeginRenderPass(list->webgpu.command_encoder, &render_pass_descriptor);
 }
 
 void kore_webgpu_command_list_end_render_pass(kore_gpu_command_list *list) {
-    wgpuRenderPassEncoderEnd(list->webgpu.render_pass_encoder);
+	wgpuRenderPassEncoderEnd(list->webgpu.render_pass_encoder);
 }
 
 void kore_webgpu_command_list_present(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
                                                uint64_t size) {
-    if (buffer->webgpu.copy_scheduled) {
-        assert(scheduled_buffer_uploads_count < 256);
-        scheduled_buffer_uploads[scheduled_buffer_uploads_count++] = &buffer->webgpu;
-        buffer->webgpu.copy_scheduled = false;
-    }
-    wgpuRenderPassEncoderSetIndexBuffer(list->webgpu.render_pass_encoder, buffer->webgpu.buffer, index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? WGPUIndexFormat_Uint16 : WGPUIndexFormat_Uint32, offset, size);
+	if (buffer->webgpu.copy_scheduled) {
+		assert(scheduled_buffer_uploads_count < 256);
+		scheduled_buffer_uploads[scheduled_buffer_uploads_count++] = &buffer->webgpu;
+		buffer->webgpu.copy_scheduled = false;
+	}
+	wgpuRenderPassEncoderSetIndexBuffer(list->webgpu.render_pass_encoder, buffer->webgpu.buffer,
+	                                    index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? WGPUIndexFormat_Uint16 : WGPUIndexFormat_Uint32, offset, size);
 }
 
 void kore_webgpu_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_webgpu_buffer *buffer, uint64_t offset, uint64_t size,
                                                 uint64_t stride) {
-    if (buffer->copy_scheduled) {
-        assert(scheduled_buffer_uploads_count < 256);
-        scheduled_buffer_uploads[scheduled_buffer_uploads_count++] = buffer;
-        buffer->copy_scheduled = false;
-    }
-    wgpuRenderPassEncoderSetVertexBuffer(list->webgpu.render_pass_encoder, slot, buffer->buffer, offset, size); // why is stride not needed?
+	if (buffer->copy_scheduled) {
+		assert(scheduled_buffer_uploads_count < 256);
+		scheduled_buffer_uploads[scheduled_buffer_uploads_count++] = buffer;
+		buffer->copy_scheduled = false;
+	}
+	wgpuRenderPassEncoderSetVertexBuffer(list->webgpu.render_pass_encoder, slot, buffer->buffer, offset, size); // why is stride not needed?
 }
 
 void kore_webgpu_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_webgpu_render_pipeline *pipeline) {
-    wgpuRenderPassEncoderSetPipeline(list->webgpu.render_pass_encoder, pipeline->render_pipeline);
+	wgpuRenderPassEncoderSetPipeline(list->webgpu.render_pass_encoder, pipeline->render_pipeline);
 }
 
-void kore_webgpu_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {
+void kore_webgpu_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,
+                                   uint32_t first_instance) {}
 
-}
-
-void kore_webgpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index, int32_t base_vertex,
-                                           uint32_t first_instance) {
-    wgpuRenderPassEncoderDrawIndexed(list->webgpu.render_pass_encoder, index_count, instance_count, first_index, base_vertex, first_instance);
+void kore_webgpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
+                                           int32_t base_vertex, uint32_t first_instance) {
+	wgpuRenderPassEncoderDrawIndexed(list->webgpu.render_pass_encoder, index_count, instance_count, first_index, base_vertex, first_instance);
 }
 
 void kore_webgpu_command_list_set_descriptor_table(kore_gpu_command_list *list, uint32_t table_index, kore_webgpu_descriptor_set *set,

@@ -53,8 +53,8 @@ void kore_webgpu_command_list_set_render_pipeline(kore_gpu_command_list *list, k
 
 void kore_webgpu_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance);
 
-void kore_webgpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index, int32_t base_vertex,
-                                           uint32_t first_instance);
+void kore_webgpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
+                                           int32_t base_vertex, uint32_t first_instance);
 
 void kore_webgpu_command_list_set_descriptor_table(kore_gpu_command_list *list, uint32_t table_index, kore_webgpu_descriptor_set *set,
                                                    kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes);

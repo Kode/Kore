@@ -2,8 +2,8 @@
 
 #import <Foundation/Foundation.h>
 
-void kore_http_request(const char *url, const char *path, const char *data, int port, bool secure, int method, const char *header,
-                       kore_http_callback callback, void *callbackdata) {
+void kore_http_request(const char *url, const char *path, const char *data, int port, bool secure, int method, const char *header, kore_http_callback callback,
+                       void *callbackdata) {
 	NSString *urlstring = secure ? @"https://" : @"http://";
 	urlstring = [urlstring stringByAppendingString:[NSString stringWithUTF8String:url]];
 	urlstring = [urlstring stringByAppendingString:@":"];

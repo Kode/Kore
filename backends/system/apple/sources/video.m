@@ -1,9 +1,9 @@
 #include <kore3/video.h>
 
-#include <kore3/mixer/mixer.h>
 #include <kore3/gpu/texture.h>
 #include <kore3/io/filereader.h>
 #include <kore3/log.h>
+#include <kore3/mixer/mixer.h>
 #include <kore3/system.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -240,7 +240,8 @@ static void updateImage(kore_video *video) {
 			kore_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer),
 			                       (int)(CVPixelBufferGetBytesPerRow(pixelBuffer) / 4));
 #else
-			// kore_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer), (int)(CVPixelBufferGetBytesPerRow(pixelBuffer))); // TODO
+			// kore_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer), (int)(CVPixelBufferGetBytesPerRow(pixelBuffer)));
+			// // TODO
 #endif
 			CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 		}

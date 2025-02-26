@@ -5,8 +5,8 @@
 #include <kore3/gpu/commandlist.h>
 #include <kore3/gpu/device.h>
 
-#include <kore3/metal/texture_functions.h>
 #include <kore3/metal/pipeline_structs.h>
+#include <kore3/metal/texture_functions.h>
 
 #include <kore3/util/align.h>
 
@@ -71,7 +71,8 @@ void kore_metal_command_list_set_render_pipeline(kore_gpu_command_list *list, ko
 	[render_command_encoder setRenderPipelineState:metal_pipeline];
 }
 
-void kore_metal_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {}
+void kore_metal_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {
+}
 
 void kore_metal_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index, int32_t base_vertex,
                                           uint32_t first_instance) {

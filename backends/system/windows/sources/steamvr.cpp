@@ -1,12 +1,12 @@
 #ifdef KORE_STEAMVR
 
+#include <Kore/Input/Gamepad.h>
+#include <Kore/Log.h>
 #include <kore3/graphics4/graphics.h>
 #include <kore3/graphics4/rendertarget.h>
 #include <kore3/math/quaternion.h>
 #include <kore3/math/vector.h>
 #include <kore3/vr/vrinterface.h>
-#include <Kore/Input/Gamepad.h>
-#include <Kore/Log.h>
 // #include "Direct3D11.h"
 
 #include <openvr.h>

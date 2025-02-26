@@ -5,7 +5,7 @@
 #include <emscripten/emscripten.h>
 
 #include <kore3/audio/audio.h>
-//#include <kore3/graphics4/graphics.h>
+// #include <kore3/graphics4/graphics.h>
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
 #include <kore3/log.h>
@@ -274,8 +274,8 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 #endif
 	kore_internal_window_width = width;
 	kore_internal_window_height = height;
-	//kore_g4_internal_init();
-	//kore_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
+	// kore_g4_internal_init();
+	// kore_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
 
 	return 0;
 }

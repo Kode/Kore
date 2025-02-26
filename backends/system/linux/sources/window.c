@@ -1,7 +1,7 @@
 #include <kore3/backend/funcs.h>
 
 #include <kore3/display.h>
-//#include <kore3/graphics4/graphics.h>
+// #include <kore3/graphics4/graphics.h>
 #include <kore3/window.h>
 
 #include <string.h>
@@ -69,7 +69,7 @@ int kore_window_display(int window_index) {
 }
 
 void kore_window_destroy(int window_index) {
-	//kore_g4_internal_destroy_window(window_index);
+	// kore_g4_internal_destroy_window(window_index);
 	procs.window_destroy(window_index);
 }
 
@@ -87,7 +87,7 @@ void kore_window_set_title(int window_index, const char *title) {
 
 int kore_window_create(kore_window_parameters *win, kore_framebuffer_parameters *frame) {
 	int index = procs.window_create(win, frame);
-	//kore_g4_internal_init_window(index, frame->depth_bits, frame->stencil_bits, frame->vertical_sync);
+	// kore_g4_internal_init_window(index, frame->depth_bits, frame->stencil_bits, frame->vertical_sync);
 	return index;
 }
 

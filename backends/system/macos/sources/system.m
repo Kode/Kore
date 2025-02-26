@@ -204,7 +204,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 		win->title = name;
 	}
 
-	/*int windowId = */createWindow(win);
+	/*int windowId = */ createWindow(win);
 	// kore_g4_internal_init(); // TODO
 	// kore_g4_internal_init_window(windowId, frame->depth_bits, frame->stencil_bits, true); // TODO
 

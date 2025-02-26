@@ -12,8 +12,7 @@ void kore_d3d11_render_pipeline_init(kore_d3d11_device *device, kore_d3d11_rende
 
 void kore_d3d11_render_pipeline_destroy(kore_d3d11_render_pipeline *pipe);
 
-void kore_d3d11_compute_pipeline_init(kore_d3d11_device *device, kore_d3d11_compute_pipeline *pipe,
-                                       const kore_d3d11_compute_pipeline_parameters *parameters);
+void kore_d3d11_compute_pipeline_init(kore_d3d11_device *device, kore_d3d11_compute_pipeline *pipe, const kore_d3d11_compute_pipeline_parameters *parameters);
 
 void kore_d3d11_compute_pipeline_destroy(kore_d3d11_compute_pipeline *pipe);
 

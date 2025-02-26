@@ -1,4 +1,4 @@
-//#include "kore3/graphics4/graphics.h"
+// #include "kore3/graphics4/graphics.h"
 #include <kore3/display.h>
 #include <kore3/input/gamepad.h>
 #include <kore3/input/keyboard.h>
@@ -163,7 +163,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 
 	kore_set_application_name(name);
 
-	//kore_g4_internal_init();
+	// kore_g4_internal_init();
 
 	kore_window_parameters defaultWin;
 	if (win == NULL) {
@@ -187,7 +187,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 }
 
 void kore_internal_shutdown() {
-	//kore_g4_internal_destroy();
+	// kore_g4_internal_destroy();
 #ifndef __FreeBSD__
 	kore_linux_closeHIDGamepads();
 #endif // TODO: add #else with proper call to FreeBSD backend impl

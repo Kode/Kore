@@ -1,8 +1,8 @@
 #include <kore3/backend/wayland.h>
 
 #include <kore3/image.h>
-#include <kore3/window.h>
 #include <kore3/log.h>
+#include <kore3/window.h>
 
 // for all that shared memory stuff later on
 #include <errno.h>
@@ -29,7 +29,7 @@ void kore_wayland_resize_decoration(struct kore_wl_decoration *, int x, int y, i
 
 static void xdg_toplevel_handle_configure(void *data, struct xdg_toplevel *toplevel, int32_t width, int32_t height, struct wl_array *states) {
 	struct kore_wl_window *window = data;
-	if(width > 0 && height > 0) {
+	if (width > 0 && height > 0) {
 		if (window->decorations.server_side) {
 			window->surface_width = width;
 			window->surface_height = height;
@@ -81,15 +81,15 @@ static void xdg_toplevel_handle_configure(void *data, struct xdg_toplevel *tople
 #endif
 
 		kore_wayland_resize_decoration(&window->decorations.top, KORE_WL_DECORATION_TOP_X, KORE_WL_DECORATION_TOP_Y, KORE_WL_DECORATION_TOP_WIDTH,
-									KORE_WL_DECORATION_TOP_HEIGHT);
+		                               KORE_WL_DECORATION_TOP_HEIGHT);
 		kore_wayland_resize_decoration(&window->decorations.left, KORE_WL_DECORATION_LEFT_X, KORE_WL_DECORATION_LEFT_Y, KORE_WL_DECORATION_LEFT_WIDTH,
-									KORE_WL_DECORATION_LEFT_HEIGHT);
+		                               KORE_WL_DECORATION_LEFT_HEIGHT);
 		kore_wayland_resize_decoration(&window->decorations.right, KORE_WL_DECORATION_RIGHT_X, KORE_WL_DECORATION_RIGHT_Y, KORE_WL_DECORATION_RIGHT_WIDTH,
-									KORE_WL_DECORATION_RIGHT_HEIGHT);
+		                               KORE_WL_DECORATION_RIGHT_HEIGHT);
 		kore_wayland_resize_decoration(&window->decorations.bottom, KORE_WL_DECORATION_BOTTOM_X, KORE_WL_DECORATION_BOTTOM_Y, KORE_WL_DECORATION_BOTTOM_WIDTH,
-									KORE_WL_DECORATION_BOTTOM_HEIGHT);
+		                               KORE_WL_DECORATION_BOTTOM_HEIGHT);
 		kore_wayland_resize_decoration(&window->decorations.close, KORE_WL_DECORATION_CLOSE_X, KORE_WL_DECORATION_CLOSE_Y, KORE_WL_DECORATION_CLOSE_WIDTH,
-									KORE_WL_DECORATION_CLOSE_HEIGHT);
+		                               KORE_WL_DECORATION_CLOSE_HEIGHT);
 	}
 }
 
@@ -430,11 +430,12 @@ int kore_wayland_window_create(kore_window_parameters *win, kore_framebuffer_par
 	if (window->viewport) {
 		wp_viewport_set_source(window->viewport, 0, 0, wl_fixed_from_int(window->buffer_width), wl_fixed_from_int(window->buffer_height));
 		wp_viewport_set_destination(window->viewport, window->surface_width, window->surface_height);
-	} else {
+	}
+	else {
 		wl_surface_set_buffer_scale(window->surface, window->preferred_scale / 120);
 	}
 	xdg_surface_set_window_geometry(window->xdg_surface, 0, 0, window->surface_width, window->surface_height);
-	if(!window->decorations.server_side) {
+	if (!window->decorations.server_side) {
 		kore_wayland_create_decorations(window);
 	}
 

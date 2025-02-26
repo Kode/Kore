@@ -18,14 +18,8 @@ static inline int32_t kore_atomic_decrement(volatile int32_t *pointer) {
 	return 0;
 }
 
-static inline void kore_atomic_exchange(volatile int32_t *pointer, int32_t value) {
-	
-}
+static inline void kore_atomic_exchange(volatile int32_t *pointer, int32_t value) {}
 
-static inline void kore_atomic_exchange_float(volatile float *pointer, float value) {
-	
-}
+static inline void kore_atomic_exchange_float(volatile float *pointer, float value) {}
 
-static inline void kore_atomic_exchange_double(volatile double *pointer, double value) {
-	
-}
+static inline void kore_atomic_exchange_double(volatile double *pointer, double value) {}
