@@ -1,11 +1,6 @@
 #ifndef KORE_OPENGL_DEVICE_STRUCTS_HEADER
 #define KORE_OPENGL_DEVICE_STRUCTS_HEADER
 
-#include <kore3/gpu/commandlist.h>
-#include <kore3/gpu/texture.h>
-#include <kore3/util/indexallocator.h>
-#include <kore3/util/offalloc/offalloc.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

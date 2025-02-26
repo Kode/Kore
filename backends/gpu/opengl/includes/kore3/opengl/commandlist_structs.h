@@ -1,8 +1,6 @@
 #ifndef KORE_OPENGL_COMMANDLIST_STRUCTS_HEADER
 #define KORE_OPENGL_COMMANDLIST_STRUCTS_HEADER
 
-#include <kore3/util/offalloc/offalloc.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

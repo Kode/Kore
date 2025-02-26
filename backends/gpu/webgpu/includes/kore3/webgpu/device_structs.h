@@ -1,11 +1,6 @@
 #ifndef KORE_WEBGPU_DEVICE_STRUCTS_HEADER
 #define KORE_WEBGPU_DEVICE_STRUCTS_HEADER
 
-#include <kore3/gpu/commandlist.h>
-#include <kore3/gpu/texture.h>
-#include <kore3/util/indexallocator.h>
-#include <kore3/util/offalloc/offalloc.h>
-
 #include "webgpu.h"
 
 #ifdef __cplusplus

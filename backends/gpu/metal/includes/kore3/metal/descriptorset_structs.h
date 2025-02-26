@@ -3,8 +3,6 @@
 
 #include <kore3/metal/device_structs.h>
 
-#include <kore3/util/offalloc/offalloc.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

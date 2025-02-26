@@ -1,8 +1,6 @@
 #ifndef KORE_D3D11_COMMANDLIST_STRUCTS_HEADER
 #define KORE_D3D11_COMMANDLIST_STRUCTS_HEADER
 
-#include <kore3/util/offalloc/offalloc.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
