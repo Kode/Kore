@@ -13,6 +13,10 @@
 #include <kore3/metal/fence_structs.h>
 #endif
 
+#ifdef KORE_OPENGL
+#include <kore3/opengl/fence_structs.h>
+#endif
+
 #ifdef KORE_VULKAN
 #include <kore3/vulkan/fence_structs.h>
 #endif

@@ -8,6 +8,10 @@
 #include <kore3/metal/texture_functions.h>
 #endif
 
+#ifdef KORE_OPENGL
+#include <kore3/opengl/texture_functions.h>
+#endif
+
 #ifdef KORE_VULKAN
 #include <kore3/vulkan/texture_functions.h>
 #endif

@@ -1,4 +1,4 @@
-#include "sampler_functions.h"
+#include <kore3/opengl/sampler_functions.h>
 
 #include "openglunit.h"
 

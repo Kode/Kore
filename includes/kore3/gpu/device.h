@@ -20,6 +20,10 @@
 #include <kore3/metal/device_structs.h>
 #endif
 
+#ifdef KORE_OPENGL
+#include <kore3/opengl/device_structs.h>
+#endif
+
 #ifdef KORE_VULKAN
 #include <kore3/vulkan/device_structs.h>
 #endif

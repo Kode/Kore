@@ -13,6 +13,10 @@
 #include <kore3/metal/buffer_structs.h>
 #endif
 
+#ifdef KORE_OPENGL
+#include <kore3/opengl/buffer_structs.h>
+#endif
+
 #ifdef KORE_VULKAN
 #include <kore3/vulkan/buffer_structs.h>
 #endif

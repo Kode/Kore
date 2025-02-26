@@ -72,7 +72,7 @@ public:
 	// LONG m_lVidHeight;  // Video Height
 	// LONG m_lVidPitch;   // Video Pitch
 
-	kore_g4_texture_t image;
+	kore_gpu_texture image;
 	int width;
 	int height;
 	uint8_t *pixels;
@@ -114,7 +114,7 @@ HRESULT CTextureRenderer::SetMediaType(const CMediaType *pmt) {
 	VIDEOINFO *info = (VIDEOINFO *)pmt->Format();
 	width = info->bmiHeader.biWidth;
 	height = abs(info->bmiHeader.biHeight);
-	kore_g4_texture_init(&image, width, height, KORE_IMAGE_FORMAT_RGBA32);
+	// kore_gpu_texture_init(&image, width, height, KORE_IMAGE_FORMAT_RGBA32); // TODO
 	pixels = (uint8_t *)malloc(width * height * 3);
 
 	for (int y = 0; y < height; ++y) {
@@ -142,7 +142,7 @@ HRESULT CTextureRenderer::DoRenderSample(IMediaSample *sample) {
 	return S_OK;
 }
 
-void kore_video_init(kore_video_t *video, const char *filename) {
+void kore_video_init(kore_video *video, const char *filename) {
 	video->impl.duration = 1000 * 10;
 	video->impl.position = 0;
 	video->impl.finished = false;
@@ -170,66 +170,67 @@ void kore_video_init(kore_video_t *video, const char *filename) {
 	video->impl.position = 0;
 }
 
-void kore_video_destroy(kore_video_t *video) {}
+void kore_video_destroy(kore_video *video) {}
 
-kore_g4_texture_t *kore_video_current_image(kore_video_t *video) {
+kore_gpu_texture *kore_video_current_image(kore_video *video) {
 	CTextureRenderer *renderer = (CTextureRenderer *)video->impl.renderer;
-	uint8_t *pixels = kore_g4_texture_lock(&renderer->image);
+	// TODO
+	/*uint8_t *pixels = kore_g4_texture_lock(&renderer->image);
 	int stride = kore_g4_texture_stride(&renderer->image);
 	for (int y = 0; y < renderer->height; ++y) {
-		for (int x = 0; x < renderer->width; ++x) {
-			pixels[y * stride + x * 4 + 0] = renderer->pixels[y * renderer->width * 3 + x * 3 + 0];
-			pixels[y * stride + x * 4 + 1] = renderer->pixels[y * renderer->width * 3 + x * 3 + 1];
-			pixels[y * stride + x * 4 + 2] = renderer->pixels[y * renderer->width * 3 + x * 3 + 2];
-			pixels[y * stride + x * 4 + 3] = 255;
-		}
+	    for (int x = 0; x < renderer->width; ++x) {
+	        pixels[y * stride + x * 4 + 0] = renderer->pixels[y * renderer->width * 3 + x * 3 + 0];
+	        pixels[y * stride + x * 4 + 1] = renderer->pixels[y * renderer->width * 3 + x * 3 + 1];
+	        pixels[y * stride + x * 4 + 2] = renderer->pixels[y * renderer->width * 3 + x * 3 + 2];
+	        pixels[y * stride + x * 4 + 3] = 255;
+	    }
 	}
-	kore_g4_texture_unlock(&renderer->image);
+	kore_g4_texture_unlock(&renderer->image);*/
 
 	mediaPosition->get_CurrentPosition(&video->impl.position);
 
 	return &renderer->image;
 }
 
-int kore_video_width(kore_video_t *video) {
+int kore_video_width(kore_video *video) {
 	CTextureRenderer *renderer = (CTextureRenderer *)video->impl.renderer;
 	return renderer->width;
 }
 
-int kore_video_height(kore_video_t *video) {
+int kore_video_height(kore_video *video) {
 	CTextureRenderer *renderer = (CTextureRenderer *)video->impl.renderer;
 	return renderer->height;
 }
 
-void kore_video_play(kore_video_t *video, bool loop) {
+void kore_video_play(kore_video *video, bool loop) {
 	mediaControl->Run();
 }
 
-void kore_video_pause(kore_video_t *video) {
+void kore_video_pause(kore_video *video) {
 	mediaControl->Pause();
 }
 
-void kore_video_stop(kore_video_t *video) {
+void kore_video_stop(kore_video *video) {
 	mediaControl->Stop();
 }
 
-void kore_video_update(kore_video_t *video, double time) {
+void kore_video_update(kore_video *video, double time) {
 	mediaPosition->put_CurrentPosition(time);
 }
 
-double kore_video_duration(kore_video_t *video) {
+double kore_video_duration(kore_video *video) {
 	return video->impl.duration;
 }
 
-double kore_video_position(kore_video_t *video) {
+double kore_video_position(kore_video *video) {
 	return video->impl.position;
 }
 
-bool kore_video_finished(kore_video_t *video) {
+bool kore_video_finished(kore_video *video) {
 	return video->impl.finished;
 }
 
-bool kore_video_paused(kore_video_t *video) {
+bool kore_video_paused(kore_video *video) {
 	return video->impl.paused;
 }
 

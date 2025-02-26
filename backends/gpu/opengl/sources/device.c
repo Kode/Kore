@@ -1,4 +1,4 @@
-#include "device_functions.h"
+#include <kore3/opengl/device_functions.h>
 
 #include "openglunit.h"
 
@@ -26,6 +26,10 @@ kore_gpu_texture *kore_opengl_device_get_framebuffer(kore_gpu_device *device) {
 	return NULL;
 }
 
+kore_gpu_texture_format kore_opengl_device_framebuffer_format(kore_gpu_device *device) {
+	return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
+}
+
 void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {}
 
 void kore_opengl_device_wait_until_idle(kore_gpu_device *device) {}
@@ -38,7 +42,7 @@ void kore_opengl_device_create_sampler(kore_gpu_device *device, const kore_gpu_s
 void kore_opengl_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
                                                  uint32_t index_count, kore_gpu_raytracing_volume *volume) {}
 
-void kore_opengl_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kore_matrix4x4_t *volume_transforms,
+void kore_opengl_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kore_matrix4x4 *volume_transforms,
                                                     uint32_t volumes_count, kore_gpu_raytracing_hierarchy *hierarchy) {}
 
 void kore_opengl_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set) {}

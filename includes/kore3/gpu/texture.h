@@ -14,6 +14,10 @@
 #include <kore3/metal/texture_structs.h>
 #endif
 
+#ifdef KORE_OPENGL
+#include <kore3/opengl/texture_structs.h>
+#endif
+
 #ifdef KORE_VULKAN
 #include <kore3/vulkan/texture_structs.h>
 #endif

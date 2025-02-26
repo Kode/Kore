@@ -13,6 +13,10 @@
 #include <kore3/metal/sampler_structs.h>
 #endif
 
+#ifdef KORE_OPENGL
+#include <kore3/opengl/sampler_structs.h>
+#endif
+
 #ifdef KORE_VULKAN
 #include <kore3/vulkan/sampler_structs.h>
 #endif

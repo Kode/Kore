@@ -49,7 +49,7 @@ typedef enum kore_opengl_vertex_format {
 typedef struct kore_opengl_vertex_attribute {
 	kore_opengl_vertex_format format;
 	uint64_t offset;
-	uint32_t shader_location;
+	const char *name;
 } kore_opengl_vertex_attribute;
 
 #define KORE_OPENGL_MAX_VERTEX_ATTRIBUTES 32
@@ -62,7 +62,7 @@ typedef struct kore_opengl_vertex_buffer_layout {
 } kore_opengl_vertex_buffer_layout;
 
 typedef struct kore_opengl_shader {
-	uint8_t *data;
+	const char *data;
 	size_t size;
 } kore_opengl_shader;
 

@@ -8,6 +8,10 @@
 #include <kore3/metal/commandlist_functions.h>
 #endif
 
+#ifdef KORE_OPENGL
+#include <kore3/opengl/commandlist_functions.h>
+#endif
+
 #ifdef KORE_VULKAN
 #include <kore3/vulkan/commandlist_functions.h>
 #endif
