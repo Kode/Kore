@@ -1,4 +1,4 @@
-name: macOS (Metal)
+name: Windows (Direct3D 11)
 
 on:
   push:
@@ -11,11 +11,11 @@ on:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
     - name: Get Submodules
-      run: ./get_dlc
+      run: .\get_dlc.bat
     - name: Compile
-      run: ./make -g metal --kore . --from tests/empty --compile
+      run: .\make.bat -v vs2022 -g direct3d11 --kore . --from tests/empty --compile

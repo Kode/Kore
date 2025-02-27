@@ -1,4 +1,4 @@
-name: macOS (Metal)
+name: iOS (OpenGL)
 
 on:
   push:
@@ -11,11 +11,11 @@ on:
 jobs:
   build:
 
-    runs-on: macos-latest
-
+    runs-on: macOS-latest
+    
     steps:
     - uses: actions/checkout@v4
     - name: Get Submodules
       run: ./get_dlc
     - name: Compile
-      run: ./make -g metal --kore . --from tests/empty --compile
+      run: ./make ios -g opengl --kore . --from tests/empty --nosigning --compile
