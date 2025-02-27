@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_POSIX_SEMAPHORE_HEADER
+#define KORE_POSIX_SEMAPHORE_HEADER
 
 #ifdef __APPLE__
 #include <dispatch/dispatch.h>
@@ -20,4 +21,6 @@ typedef struct {
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

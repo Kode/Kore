@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MINICLIB_MEMORY_HEADER
+#define KORE_MINICLIB_MEMORY_HEADER
 
 #ifdef __cplusplus
 extern "C" {
@@ -8,4 +9,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

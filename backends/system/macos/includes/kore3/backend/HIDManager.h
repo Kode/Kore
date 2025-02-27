@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MACOS_HIDMANAGER_HEADER
+#define KORE_MACOS_HIDMANAGER_HEADER
 
 #include <kore3/global.h>
 
@@ -26,3 +27,5 @@ struct HIDManager {
 
 void HIDManager_init(struct HIDManager *manager);
 void HIDManager_destroy(struct HIDManager *manager);
+
+#endif

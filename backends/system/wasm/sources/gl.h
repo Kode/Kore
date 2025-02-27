@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_WASM_GL_HEADER
+#define KORE_WASM_GL_HEADER
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -244,3 +245,5 @@ __attribute__((import_module("imports"), import_name("glDrawBuffers"))) void glD
 __attribute__((import_module("imports"), import_name("glDrawElementsInstanced"))) void glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type,
                                                                                                                const void *indices, GLsizei instancecount);
 __attribute__((import_module("imports"), import_name("glVertexAttribDivisor"))) void glVertexAttribDivisor(GLuint index, GLuint divisor);
+
+#endif

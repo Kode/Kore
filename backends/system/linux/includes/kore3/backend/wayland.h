@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_LINUX_WAYLAND_HEADER
+#define KORE_LINUX_WAYLAND_HEADER
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE // put this here too, to make clangd happy
@@ -373,3 +374,5 @@ void kore_wl_data_offer_accept(struct kore_wl_data_offer *offer, void (*callback
 void kore_wl_destroy_data_offer(struct kore_wl_data_offer *offer);
 void kore_wayland_set_selection(struct kore_wl_seat *seat, const char *text, int serial);
 void kore_wayland_window_destroy(int window_index);
+
+#endif

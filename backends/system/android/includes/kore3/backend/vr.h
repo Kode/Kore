@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_ANDROID_VR_HEADER
+#define KORE_ANDROID_VR_HEADER
 
 #ifdef ANDROID
 #include <jni.h>
@@ -53,3 +54,5 @@ namespace Kore {
 #endif
 	}
 }
+
+#endif

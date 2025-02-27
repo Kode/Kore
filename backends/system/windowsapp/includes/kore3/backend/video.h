@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_WINDOWS_UWP_VIDEO_HEADER
+#define KORE_WINDOWS_UWP_VIDEO_HEADER
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,4 +25,6 @@ bool kore_internal_video_sound_stream_ended(kore_internal_video_sound_stream *st
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

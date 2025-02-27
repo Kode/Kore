@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_LINUX_X11_BACKEND
+#define KORE_LINUX_X11_BACKEND
 
 #include <kore3/display.h>
 #include <kore3/log.h>
@@ -198,3 +199,5 @@ struct kore_x11_procs xlib;
 struct x11_context x11_ctx;
 
 void kore_x11_copy_to_clipboard(const char *text);
+
+#endif

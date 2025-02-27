@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_POSIX_MUTEX_HEADER
+#define KORE_POSIX_MUTEX_HEADER
 
 #include <pthread.h>
 
@@ -16,4 +17,6 @@ typedef struct {
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MINICLIB_STDIO_HEADER
+#define KORE_MINICLIB_STDIO_HEADER
 
 #include <stdarg.h>
 #include <stddef.h>
@@ -34,4 +35,6 @@ int fputs(const char *str, FILE *stream);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

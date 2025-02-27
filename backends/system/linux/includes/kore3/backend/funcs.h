@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_LINUX_FUNCS_HEADER
+#define KORE_LINUX_FUNCS_HEADER
 
 #include <kore3/display.h>
 #include <kore3/global.h>
@@ -65,3 +66,5 @@ struct linux_procs {
 extern struct linux_procs procs;
 
 void kore_linux_init_procs();
+
+#endif

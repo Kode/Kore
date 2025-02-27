@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_ANDROID_VIDEO_HEADER
+#define KORE_ANDROID_VIDEO_HEADER
 
 #include <kore3/gpu/texture.h>
 
@@ -46,4 +47,6 @@ bool kore_internal_video_sound_stream_ended(kore_internal_video_sound_stream *st
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_EMSCRIPTEN_ATOMIC_HEADER
+#define KORE_EMSCRIPTEN_ATOMIC_HEADER
 
 #include <kore3/global.h>
 
@@ -23,3 +24,5 @@ static inline void kore_atomic_exchange(volatile int32_t *pointer, int32_t value
 static inline void kore_atomic_exchange_float(volatile float *pointer, float value) {}
 
 static inline void kore_atomic_exchange_double(volatile double *pointer, double value) {}
+
+#endif

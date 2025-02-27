@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_POSIX_THREADLOCAL_HEADER
+#define KORE_POSIX_THREADLOCAL_HEADER
 
 #include <pthread.h>
 
@@ -12,4 +13,6 @@ typedef struct {
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

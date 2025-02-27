@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_EMSCRIPTEN_THEADLOCAL_HEADER
+#define KORE_EMSCRIPTEN_THEADLOCAL_HEADER
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,4 +11,6 @@ typedef struct {
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

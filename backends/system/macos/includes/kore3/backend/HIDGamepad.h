@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MACOS_HIDGAMEPAD_HEADER
+#define KORE_MACOS_HIDGAMEPAD_HEADER
 
 #include <IOKit/IOKitLib.h>
 #include <IOKit/hid/IOHIDKeys.h>
@@ -21,3 +22,5 @@ void HIDGamepad_init(struct HIDGamepad *gamepad);
 void HIDGamepad_destroy(struct HIDGamepad *gamepad);
 void HIDGamepad_bind(struct HIDGamepad *gamepad, IOHIDDeviceRef deviceRef, int padIndex);
 void HIDGamepad_unbind(struct HIDGamepad *gamepad);
+
+#endif

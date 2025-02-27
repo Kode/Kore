@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MINICLIB_STRING_HEADER
+#define KORE_MINICLIB_STRING_HEADER
 
 #include <stddef.h>
 
@@ -43,4 +44,6 @@ int wcsncmp(const wchar_t *str1, const wchar_t *str2, size_t num);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

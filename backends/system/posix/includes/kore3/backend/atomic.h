@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_POSIX_ATOMIC_HEADER
+#define KORE_POSIX_ATOMIC_HEADER
 
 #include <kore3/global.h>
 
@@ -49,5 +50,7 @@ static inline void kore_atomic_exchange_float(volatile float *pointer, float val
 static inline void kore_atomic_exchange_double(volatile double *pointer, double value) {
 	__sync_lock_test_and_set((volatile int64_t *)pointer, *(int64_t *)&value);
 }
+
+#endif
 
 #endif

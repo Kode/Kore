@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MICROSOFT_HEADER
+#define KORE_MICROSOFT_HEADER
 
 #include <stdio.h>
 
@@ -15,4 +16,6 @@ void kore_microsoft_convert_string(wchar_t *destination, const char *source, int
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

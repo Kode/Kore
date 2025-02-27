@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MICROSOFT_ATOMIC_HEADER
+#define KORE_MICROSOFT_ATOMIC_HEADER
 
 #ifndef _WIN64
 #include <kore3/error.h>
@@ -37,3 +38,5 @@ static inline void kore_atomic_exchange_double(volatile double *pointer, double 
 	kore_error_message("kore_atomic_exchange_double is not supported for 32 bit Windows builds");
 #endif
 }
+
+#endif

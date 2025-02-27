@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_WASM_MUTEX_HEADER
+#define KORE_WASM_MUTEX_HEADER
 
 #ifdef __cplusplus
 extern "C" {
@@ -14,4 +15,6 @@ typedef struct {
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

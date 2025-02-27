@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MINICLIB_STDLIB_HEADER
+#define KORE_MINICLIB_STDLIB_HEADER
 
 #include <stddef.h>
 
@@ -29,4 +30,6 @@ void qsort(void *base, size_t num, size_t size, int (*compar)(const void *, cons
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

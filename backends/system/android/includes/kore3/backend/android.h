@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_ANDROID_HEADER
+#define KORE_ANDROID_HEADER
 
 #include "android_native_app_glue.h"
 
@@ -15,4 +16,6 @@ AAssetManager *kore_android_get_asset_manager(void);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

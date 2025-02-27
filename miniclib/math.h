@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KORE_MINICLIB_MATH_HEADER
+#define KORE_MINICLIB_MATH_HEADER
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,4 +33,6 @@ double sqrt(double x);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
