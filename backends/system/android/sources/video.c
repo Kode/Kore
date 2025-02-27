@@ -49,7 +49,7 @@ bool kore_internal_video_sound_stream_ended(kore_internal_video_sound_stream *st
 #if KORE_ANDROID_API >= 15 && !defined(KORE_VULKAN)
 
 #define videosCount 10
-static kore_video_t *videos[videosCount] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+static kore_video *videos[videosCount] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 #define NB_MAXAL_INTERFACES 3 // XAAndroidBufferQueueItf, XAStreamInformationItf and XAPlayItf
 #define NB_BUFFERS 8
@@ -501,7 +501,7 @@ void kore_video_init(kore_video *video, const char *filename) {
 
 	(*kore_android_get_activity()->vm)->DetachCurrentThread(kore_android_get_activity()->vm);
 
-	kore_g4_texture_init_from_id(&video->impl.image, texid);
+	// kore_g4_texture_init_from_id(&video->impl.image, texid); // TODO
 #endif
 }
 
