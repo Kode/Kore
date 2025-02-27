@@ -1,4 +1,4 @@
-#include "buffer_functions.h"
+#include <kore3/direct3d11/buffer_functions.h>
 
 #include <kore3/gpu/buffer.h>
 

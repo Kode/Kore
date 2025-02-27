@@ -5,24 +5,20 @@
 
 #include "api.h"
 
-#ifdef KORE_DIRECT3D12
+#if defined(KORE_DIRECT3D11)
+#include <kore3/direct3d11/fence_structs.h>
+#elif defined(KORE_DIRECT3D12)
 #include <kore3/direct3d12/fence_structs.h>
-#endif
-
-#ifdef KORE_METAL
+#elif defined(KORE_METAL)
 #include <kore3/metal/fence_structs.h>
-#endif
-
-#ifdef KORE_OPENGL
+#elif defined(KORE_OPENGL)
 #include <kore3/opengl/fence_structs.h>
-#endif
-
-#ifdef KORE_VULKAN
+#elif defined(KORE_VULKAN)
 #include <kore3/vulkan/fence_structs.h>
-#endif
-
-#ifdef KORE_WEBGPU
+#elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/fence_structs.h>
+#else
+#error("Unknown GPU backend")
 #endif
 
 #ifdef __cplusplus

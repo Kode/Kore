@@ -1,5 +1,5 @@
-#include "pipeline_functions.h"
-#include "pipeline_structs.h"
+#include <kore3/direct3d11/pipeline_functions.h>
+#include <kore3/direct3d11/pipeline_structs.h>
 
 #include <kore3/log.h>
 

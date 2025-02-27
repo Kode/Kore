@@ -1,13 +1,13 @@
-#include "commandlist_functions.h"
+#include <kore3/direct3d11/commandlist_functions.h>
 
 #include "d3d11unit.h"
 
 #include <kore3/gpu/commandlist.h>
 #include <kore3/gpu/device.h>
 
-#include <kore3/d3d11/texture_functions.h>
+#include <kore3/direct3d11/texture_functions.h>
 
-#include "pipeline_structs.h"
+#include <kore3/direct3d11/pipeline_structs.h>
 
 #include <kore3/util/align.h>
 
@@ -66,7 +66,7 @@ void kore_d3d11_command_list_prepare_raytracing_volume(kore_gpu_command_list *li
 
 void kore_d3d11_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list *list, kore_gpu_raytracing_hierarchy *hierarchy) {}
 
-void kore_d3d11_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kore_matrix4x4_t *volume_transforms, uint32_t volumes_count,
+void kore_d3d11_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kore_matrix4x4 *volume_transforms, uint32_t volumes_count,
                                                          kore_gpu_raytracing_hierarchy *hierarchy) {}
 
 void kore_d3d11_command_list_set_ray_pipeline(kore_gpu_command_list *list, kore_d3d11_ray_pipeline *pipeline) {}

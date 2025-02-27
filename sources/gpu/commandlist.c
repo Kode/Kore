@@ -1,23 +1,19 @@
 #include <kore3/gpu/commandlist.h>
 
-#ifdef KORE_DIRECT3D12
+#if defined(KORE_DIRECT3D11)
+#include <kore3/direct3d11/commandlist_functions.h>
+#elif defined(KORE_DIRECT3D12)
 #include <kore3/direct3d12/commandlist_functions.h>
-#endif
-
-#ifdef KORE_METAL
+#elif defined(KORE_METAL)
 #include <kore3/metal/commandlist_functions.h>
-#endif
-
-#ifdef KORE_OPENGL
+#elif defined(KORE_OPENGL)
 #include <kore3/opengl/commandlist_functions.h>
-#endif
-
-#ifdef KORE_VULKAN
+#elif defined(KORE_VULKAN)
 #include <kore3/vulkan/commandlist_functions.h>
-#endif
-
-#ifdef KORE_WEBGPU
+#elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/commandlist_functions.h>
+#else
+#error("Unknown GPU backend")
 #endif
 
 #include <assert.h>

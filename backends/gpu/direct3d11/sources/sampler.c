@@ -1,4 +1,4 @@
-#include "sampler_functions.h"
+#include <kore3/direct3d11/sampler_functions.h>
 
 #include "d3d11unit.h"
 

@@ -1,23 +1,19 @@
 #include <kore3/gpu/buffer.h>
 
-#ifdef KORE_DIRECT3D12
+#if defined(KORE_DIRECT3D11)
+#include <kore3/direct3d11/buffer_functions.h>
+#elif defined(KORE_DIRECT3D12)
 #include <kore3/direct3d12/buffer_functions.h>
-#endif
-
-#ifdef KORE_METAL
+#elif defined(KORE_METAL)
 #include <kore3/metal/buffer_functions.h>
-#endif
-
-#ifdef KORE_OPENGL
+#elif defined(KORE_OPENGL)
 #include <kore3/opengl/buffer_functions.h>
-#endif
-
-#ifdef KORE_VULKAN
+#elif defined(KORE_VULKAN)
 #include <kore3/vulkan/buffer_functions.h>
-#endif
-
-#ifdef KORE_WEBGPU
+#elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/buffer_functions.h>
+#else
+#error("Unknown GPU backend")
 #endif
 
 void kore_gpu_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {

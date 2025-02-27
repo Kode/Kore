@@ -69,7 +69,7 @@ void kore_d3d11_command_list_prepare_raytracing_volume(kore_gpu_command_list *li
 
 void kore_d3d11_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list *list, kore_gpu_raytracing_hierarchy *hierarchy);
 
-void kore_d3d11_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kore_matrix4x4_t *volume_transforms, uint32_t volumes_count,
+void kore_d3d11_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kore_matrix4x4 *volume_transforms, uint32_t volumes_count,
                                                          kore_gpu_raytracing_hierarchy *hierarchy);
 
 void kore_d3d11_command_list_set_ray_pipeline(kore_gpu_command_list *list, kore_d3d11_ray_pipeline *pipeline);
