@@ -124,7 +124,7 @@ extern int kore_ios_gl_framebuffer;
 
 	glGenFramebuffersOES(1, &defaultFramebuffer);
 	glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
-	kore_ios_gl_framebuffer = defaultFramebuffer;
+	// kore_ios_gl_framebuffer = defaultFramebuffer;
 
 	glGenRenderbuffersOES(1, &colorRenderbuffer);
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);

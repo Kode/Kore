@@ -54,9 +54,9 @@
 #endif
 
 #ifdef NDEBUG
-static inline void kore_opengl_check_errors() {}
+static inline void kore_opengl_check_errors(void) {}
 #else
-void kore_opengl_check_errors();
+void kore_opengl_check_errors(void);
 #endif
 
 #endif
