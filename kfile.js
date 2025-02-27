@@ -17,7 +17,6 @@ project.addIncludeDir('includes');
 function addUnit(name) {
 	project.addFile('sources/' + name + '/**', {nocompile: true});
 	project.addFile('sources/' + name + '/*unit.c*');
-	project.addFile('sources/' + name + '/*unit.m');
 }
 
 function addSimpleUnit(name) {
