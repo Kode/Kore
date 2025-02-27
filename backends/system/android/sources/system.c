@@ -101,7 +101,7 @@ void kore_vulkan_init_window(int window);
 
 static void initDisplay() {
 #ifndef KORE_VULKAN
-	kore_egl_init_window(0);
+	// kore_egl_init_window(0); // TODO
 #endif
 #ifdef KORE_VULKAN
 	// kore_vulkan_init_window(0); // TODO
@@ -110,7 +110,7 @@ static void initDisplay() {
 
 static void termDisplay() {
 #ifndef KORE_VULKAN
-	kore_egl_destroy_window(0);
+	// kore_egl_destroy_window(0); // TODO
 #endif
 }
 
@@ -970,7 +970,8 @@ extern int kore_egl_height(int window);
 
 int kore_android_width() {
 #if defined(KORE_EGL)
-	return kore_egl_width(0);
+	// TODO
+	//return kore_egl_width(0);
 #elif defined(KORE_VULKAN)
 	// TODO
 	// int width, height;
@@ -984,7 +985,8 @@ int kore_android_width() {
 
 int kore_android_height() {
 #if defined(KORE_EGL)
-	return kore_egl_height(0);
+	// TODO
+	//return kore_egl_height(0);
 #elif defined(KORE_VULKAN)
 	// TODO
 	// int width, height;

@@ -39,9 +39,7 @@ void kore_window_change_framebuffer(int window_index, kore_framebuffer_parameter
 	kore_internal_change_framebuffer(0, frame);
 }
 
-#ifdef KORE_VULKAN
 void kore_internal_change_framebuffer(int window, struct kore_framebuffer_parameters *frame) {}
-#endif
 
 void kore_window_change_features(int window_index, int features) {}
 
