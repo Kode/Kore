@@ -26,9 +26,7 @@ void kore_window_change_framebuffer(int window, struct kore_framebuffer_paramete
 	kore_internal_change_framebuffer(0, frame);
 }
 
-#ifdef KORE_METAL
 void kore_internal_change_framebuffer(int window, struct kore_framebuffer_parameters *frame) {}
-#endif
 
 void kore_window_change_features(int window, int features) {}
 
