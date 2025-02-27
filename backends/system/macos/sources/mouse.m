@@ -1,6 +1,5 @@
 #import <Cocoa/Cocoa.h>
 
-#include <kore3/backend/windowdata.h>
 #include <kore3/input/mouse.h>
 #include <kore3/window.h>
 
