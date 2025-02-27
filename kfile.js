@@ -17,7 +17,6 @@ project.addIncludeDir('includes');
 function addUnit(name) {
 	project.addFile('sources/' + name + '/**', {nocompile: true});
 	project.addFile('sources/' + name + '/*unit.c*');
-	project.addFile('sources/' + name + '/*unit.winrt.c*');
 	project.addFile('sources/' + name + '/*unit.m');
 }
 
@@ -51,6 +50,7 @@ function addBackend(name) {
 	project.addFile('backends/' + name + '/includes/**');
 	project.addFile('backends/' + name + '/sources/*', {nocompile: true});
 	project.addFile('backends/' + name + '/sources/*unit.c*');
+	project.addFile('backends/' + name + '/sources/*unit.winrt.c*');
 	project.addFile('backends/' + name + '/sources/*unit.m');
 }
 

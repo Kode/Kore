@@ -253,7 +253,7 @@ extern "C" void kore_windows_co_initialize(void);
 
 static bool initialized = false;
 
-void kore_a2_init() {
+void kore_audio_init() {
 	if (initialized) {
 		return;
 	}
@@ -286,7 +286,7 @@ void kore_a2_init() {
 #endif
 }
 
-uint32_t kore_a2_samples_per_second(void) {
+uint32_t kore_audio_samples_per_second(void) {
 	return samples_per_second;
 }
 

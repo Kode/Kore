@@ -1,4 +1,4 @@
-//#include <kore3/graphics4/graphics.h>
+// #include <kore3/graphics4/graphics.h>
 #include <kore3/input/gamepad.h>
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
@@ -265,12 +265,10 @@ void Win8Application::Uninitialize() {}
 int kore_uwp_window_width;
 int kore_uwp_window_height;
 
-extern "C" void kore_internal_resize(int window, int width, int height);
-
 void Win8Application::OnWindowSizeChanged(CoreWindow ^ sender, WindowSizeChangedEventArgs ^ args) {
 	kore_uwp_window_width = (int)args->Size.Width;
 	kore_uwp_window_height = (int)args->Size.Height;
-	kore_internal_resize(0, (int)args->Size.Width, (int)args->Size.Height);
+	// kore_internal_resize(0, (int)args->Size.Width, (int)args->Size.Height); // TODO
 }
 
 void Win8Application::OnWindowClosed(CoreWindow ^ sender, CoreWindowEventArgs ^ args) {

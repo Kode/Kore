@@ -19,10 +19,8 @@ void kore_window_change_mode(int window_index, kore_window_mode mode) {}
 
 void kore_window_change_features(int window_index, int features) {}
 
-void kore_internal_change_framebuffer(int window, kore_framebuffer_parameters *frame);
-
 void kore_window_change_framebuffer(int window_index, kore_framebuffer_parameters *frame) {
-	kore_internal_change_framebuffer(0, frame);
+	// kore_internal_change_framebuffer(0, frame); // TODO
 }
 
 int kore_window_x(int window_index) {
