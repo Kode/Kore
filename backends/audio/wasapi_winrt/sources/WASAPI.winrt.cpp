@@ -1,6 +1,6 @@
-#include <kore3/audio2/audio.h>
+#include <kore3/audio/audio.h>
 
-#include <kore3/backend/SystemMicrosoft.h>
+#include <kore3/backend/microsoft.h>
 
 #include <kore3/error.h>
 #include <kore3/log.h>
@@ -37,8 +37,8 @@ template <class T> void SafeRelease(__deref_inout_opt T **ppT) {
 
 // based on the implementation in soloud and Microsoft sample code
 namespace {
-	kore_thread_t thread;
-	kore_a2_buffer_t a2_buffer;
+	kore_thread thread;
+	kore_audio_buffer audio_buffer;
 
 	IMMDeviceEnumerator *deviceEnumerator;
 	IMMDevice *device;
@@ -132,9 +132,9 @@ namespace {
 			uint32_t old_samples_per_second = samples_per_second;
 			samples_per_second = format->nSamplesPerSec;
 			if (samples_per_second != old_samples_per_second) {
-				kore_a2_internal_sample_rate_callback();
+				kore_audio_internal_sample_rate_callback();
 			}
-			a2_buffer.channel_count = 2;
+			audio_buffer.channel_count = 2;
 
 			bufferFrames = 0;
 			kore_microsoft_affirm(audioClient->GetBufferSize(&bufferFrames));
@@ -154,22 +154,22 @@ namespace {
 	}
 
 	void copyS16Sample(int16_t *left, int16_t *right) {
-		float left_value = *(float *)&a2_buffer.channels[0][a2_buffer.read_location];
-		float right_value = *(float *)&a2_buffer.channels[1][a2_buffer.read_location];
-		a2_buffer.read_location += 1;
-		if (a2_buffer.read_location >= a2_buffer.data_size) {
-			a2_buffer.read_location = 0;
+		float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+		float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
+		audio_buffer.read_location += 1;
+		if (audio_buffer.read_location >= audio_buffer.data_size) {
+			audio_buffer.read_location = 0;
 		}
 		*left = (int16_t)(left_value * 32767);
 		*right = (int16_t)(right_value * 32767);
 	}
 
 	void copyFloatSample(float *left, float *right) {
-		float left_value = *(float *)&a2_buffer.channels[0][a2_buffer.read_location];
-		float right_value = *(float *)&a2_buffer.channels[1][a2_buffer.read_location];
-		a2_buffer.read_location += 1;
-		if (a2_buffer.read_location >= a2_buffer.data_size) {
-			a2_buffer.read_location = 0;
+		float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+		float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
+		audio_buffer.read_location += 1;
+		if (audio_buffer.read_location >= audio_buffer.data_size) {
+			audio_buffer.read_location = 0;
 		}
 		*left = left_value;
 		*right = right_value;
@@ -199,7 +199,7 @@ namespace {
 			return;
 		}
 
-		if (kore_a2_internal_callback(&a2_buffer, frames)) {
+		if (kore_audio_internal_callback(&audio_buffer, frames)) {
 			if (format->wFormatTag == WAVE_FORMAT_PCM) {
 				for (UINT32 i = 0; i < frames; ++i) {
 					copyS16Sample((int16_t *)&buffer[i * format->nBlockAlign], (int16_t *)&buffer[i * format->nBlockAlign + 2]);
@@ -258,15 +258,15 @@ void kore_a2_init() {
 		return;
 	}
 
-	kore_a2_internal_init();
+	kore_audio_internal_init();
 	initialized = true;
 
-	a2_buffer.read_location = 0;
-	a2_buffer.write_location = 0;
-	a2_buffer.data_size = 128 * 1024;
-	a2_buffer.channel_count = 2;
-	a2_buffer.channels[0] = (float *)malloc(a2_buffer.data_size * sizeof(float));
-	a2_buffer.channels[1] = (float *)malloc(a2_buffer.data_size * sizeof(float));
+	audio_buffer.read_location = 0;
+	audio_buffer.write_location = 0;
+	audio_buffer.data_size = 128 * 1024;
+	audio_buffer.channel_count = 2;
+	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 #ifdef KORE_WINDOWSAPP
 	renderer = Make<AudioRenderer>();

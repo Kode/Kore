@@ -17,6 +17,7 @@ project.addIncludeDir('includes');
 function addUnit(name) {
 	project.addFile('sources/' + name + '/**', {nocompile: true});
 	project.addFile('sources/' + name + '/*unit.c*');
+	project.addFile('sources/' + name + '/*unit.winrt.c*');
 	project.addFile('sources/' + name + '/*unit.m');
 }
 
@@ -172,6 +173,8 @@ else if (platform === Platform.WindowsApp) {
 	addBackend('gpu/direct3d11');
 	addSimpleBackend('audio/wasapi_winrt');
 	project.addDefine('_CRT_SECURE_NO_WARNINGS');
+	addKoreDefine('DIRECT3D');
+	addKoreDefine('DIRECT3D11');
 	project.vsdeploy = true;
 
 	if (vr === VrApi.HoloLens) {

@@ -18,7 +18,7 @@ int kore_video_height(kore_video *video) {
 	return 256;
 }
 
-kore_g4_texture_t *kore_video_current_image(kore_video *video) {
+kore_gpu_texture *kore_video_current_image(kore_video *video) {
 	return NULL;
 }
 

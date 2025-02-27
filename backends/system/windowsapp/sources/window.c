@@ -1,5 +1,4 @@
 #include <kore3/display.h>
-#include <kore3/graphics4/graphics.h>
 #include <kore3/window.h>
 
 int kore_window_create(kore_window_parameters *win, kore_framebuffer_parameters *frame) {

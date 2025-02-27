@@ -33,16 +33,8 @@
 
 #if defined(_WIN32)
 
-#if defined(KORE_WINDOWSAPP)
-
-#define KORE_WINDOWSAPP
-
-#else
-
-#ifndef KORE_CONSOLE
+#if !defined(KORE_CONSOLE) && !defined(KORE_WINDOWSAPP)
 #define KORE_WINDOWS
-#endif
-
 #endif
 
 #elif defined(__APPLE__)

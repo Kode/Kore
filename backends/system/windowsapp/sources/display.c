@@ -34,6 +34,6 @@ int kore_display_count_available_modes(int display_index) {
 	return 1;
 }
 
-kore_display_mode_t kore_display_available_mode(int display_index, int mode_index) {
+kore_display_mode kore_display_available_mode(int display_index, int mode_index) {
 	return kore_display_current_mode(0);
 }
