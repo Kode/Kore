@@ -4,6 +4,8 @@
 #include <kore3/input/mouse.h>
 #include <kore3/window.h>
 
+NSWindow *kore_get_mac_window_handle(int window_index);
+
 void kore_internal_mouse_lock(int window) {
 	kore_mouse_hide();
 }
