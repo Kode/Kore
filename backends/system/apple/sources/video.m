@@ -237,11 +237,12 @@ static void updateImage(kore_video *video) {
 		if (pixelBuffer != NULL) {
 			CVPixelBufferLockBaseAddress(pixelBuffer, 0);
 #ifdef KORE_OPENGL
-			kore_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer),
-			                       (int)(CVPixelBufferGetBytesPerRow(pixelBuffer) / 4));
+			// TODO
+			// kore_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer),
+			//                       (int)(CVPixelBufferGetBytesPerRow(pixelBuffer) / 4));
 #else
+			// TODO
 			// kore_g4_texture_upload(&video->impl.image, (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer), (int)(CVPixelBufferGetBytesPerRow(pixelBuffer)));
-			// // TODO
 #endif
 			CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 		}
