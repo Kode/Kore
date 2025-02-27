@@ -10,10 +10,6 @@
 #include <kore3/input/surface.h>
 #include <kore3/system.h>
 
-#ifdef KORE_OPENGL
-#include <kore3/backend/graphics4/OpenGLWindow.h>
-#endif
-
 static const int touchmaxcount = 20;
 static void *touches[touchmaxcount];
 
