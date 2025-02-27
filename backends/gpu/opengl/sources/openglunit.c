@@ -14,9 +14,11 @@
 
 #include <kore3/log.h>
 
+#ifndef NDEBUG
 void kore_opengl_check_errors(void) {
 	GLenum code = glGetError();
 	if (code != GL_NO_ERROR) {
 		kore_log(KORE_LOG_LEVEL_ERROR, "GL Error %d %s %d\n", code, __FILE__, __LINE__);
 	}
 }
+#endif
