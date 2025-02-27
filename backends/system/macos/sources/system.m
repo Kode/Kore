@@ -8,10 +8,6 @@
 #include <kore3/system.h>
 #include <kore3/window.h>
 
-#include "windowdata.h"
-
-#include <kore3/backend/windowdata.h>
-
 bool withAutoreleasepool(bool (*f)(void)) {
 	@autoreleasepool {
 		return f();
