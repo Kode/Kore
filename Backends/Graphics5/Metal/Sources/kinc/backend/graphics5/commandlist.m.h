@@ -166,8 +166,20 @@ void kinc_g5_command_list_set_blend_constant(kinc_g5_command_list_t *list, float
 	[encoder setBlendColorRed:r green:g blue:b alpha:a];
 }
 
-void kinc_g5_command_list_set_vertex_buffers(kinc_g5_command_list_t *list, struct kinc_g5_vertex_buffer **buffers, int *offsets, int count) {
-	kinc_g5_internal_vertex_buffer_set(buffers[0], offsets[0]);
+void kinc_g5_command_list_set_vertex_buffers(kinc_g5_command_list_t *list, struct kinc_g5_vertex_buffer **vertexBuffers, int *offsets_, int count) {
+	// the only thing kinc_g5_internal_vertex_buffer_set really does is
+	// storing a pointer to a single current vertex buffer, but with the
+	// proper implementation there can more than one current buffer
+	//kinc_g5_internal_vertex_buffer_set(buffers[0], offsets[0]);
+	id<MTLRenderCommandEncoder> encoder = getMetalEncoder();
+	// Array to store Metal buffers and offsets in bytes
+	id<MTLBuffer> buffers[count];
+	NSUInteger offsets[count];
+    for (int i = 0; i < count; ++i) {
+		buffers[i] = (__bridge id<MTLBuffer>)vertexBuffers[i]->impl.mtlBuffer;
+		offsets[i] = (NSUInteger)(offsets_[i] * kinc_g5_vertex_buffer_stride(vertexBuffers[i]));
+    }
+    [encoder setVertexBuffers:buffers offsets:offsets withRange:NSMakeRange(0, count)];
 }
 
 void kinc_g5_command_list_set_index_buffer(kinc_g5_command_list_t *list, struct kinc_g5_index_buffer *buffer) {
