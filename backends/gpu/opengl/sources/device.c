@@ -8,9 +8,81 @@
 #include <kore3/log.h>
 #include <kore3/window.h>
 
+#ifdef KORE_WINDOWS
+#include <kore3/backend/windows.h>
+
+#include <Windows.h>
+
+#include <GL/wglew.h>
+#endif
+
 #include <assert.h>
 
-void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {}
+#ifdef KORE_WINDOWS
+static HGLRC context;
+static HDC device_context;
+#endif
+
+static GLint framebuffer;
+
+#if defined(KORE_WINDOWS) && !defined(NDEBUG)
+static void __stdcall debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
+	kore_log(KORE_LOG_LEVEL_INFO, "OpenGL: %s", message);
+}
+#endif
+
+void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
+#ifdef KORE_WINDOWS
+	HWND window_handle = kore_windows_window_handle(0);
+
+	const uint32_t depth_buffer_bits = 16;
+	const uint32_t stencil_buffer_bits = 8;
+
+	// clang-format off
+	PIXELFORMATDESCRIPTOR pfd = { sizeof(PIXELFORMATDESCRIPTOR), 1, PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+		PFD_TYPE_RGBA, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (BYTE)depth_buffer_bits, (BYTE)stencil_buffer_bits, 0,
+		PFD_MAIN_PLANE, 0, 0, 0, 0 };
+	// clang-format on
+
+	device_context = GetDC(window_handle);
+	GLuint pixel_format = ChoosePixelFormat(device_context, &pfd);
+	SetPixelFormat(device_context, pixel_format, &pfd);
+	HGLRC temp_context = wglCreateContext(device_context);
+	wglMakeCurrent(device_context, temp_context);
+
+	glewInit();
+
+	if (wglewIsSupported("WGL_ARB_create_context") == 1) {
+		// clang-format off
+		int attributes[] = { WGL_CONTEXT_MAJOR_VERSION_ARB, 4, WGL_CONTEXT_MINOR_VERSION_ARB, 2, WGL_CONTEXT_FLAGS_ARB,
+			WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB, WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB, 0 };
+		// clang-format on
+
+		context = wglCreateContextAttribsARB(device_context, 0, attributes);
+		kore_opengl_check_errors();
+
+		wglMakeCurrent(NULL, NULL);
+		wglDeleteContext(temp_context);
+	}
+	else {
+		context = temp_context;
+	}
+
+	wglMakeCurrent(device_context, context);
+	kore_opengl_check_errors();
+
+	if (wglSwapIntervalEXT != NULL) {
+		wglSwapIntervalEXT(true);
+	}
+
+#if defined(KORE_WINDOWS) && !defined(NDEBUG)
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(debug_callback, NULL);
+#endif
+
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
+#endif
+}
 
 void kore_opengl_device_destroy(kore_gpu_device *device) {}
 
@@ -30,7 +102,9 @@ kore_gpu_texture_format kore_opengl_device_framebuffer_format(kore_gpu_device *d
 	return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
 }
 
-void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {}
+void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
+	SwapBuffers(device_context);
+}
 
 void kore_opengl_device_wait_until_idle(kore_gpu_device *device) {}
 
