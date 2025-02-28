@@ -103,7 +103,7 @@ kore_gpu_texture_format kore_opengl_device_framebuffer_format(kore_gpu_device *d
 }
 
 void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
-#ifdef KORE_OPENGL
+#ifdef KORE_WINDOWS
 	SwapBuffers(device_context);
 #endif
 }
