@@ -165,6 +165,8 @@ void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipeline) {
 	renderPipelineDesc.depthAttachmentPixelFormat = MTLPixelFormatInvalid;
 	renderPipelineDesc.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
 
+	MTLVertexDescriptor *vertexDescriptor = [[MTLVertexDescriptor alloc] init];
+
 	uint32_t bindings_count = 0;
 	for (int i = 0; i < 16; ++i) {
 		if (pipeline->inputLayout[i] == NULL) {
