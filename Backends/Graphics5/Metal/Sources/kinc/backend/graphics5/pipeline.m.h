@@ -165,147 +165,162 @@ void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipeline) {
 	renderPipelineDesc.depthAttachmentPixelFormat = MTLPixelFormatInvalid;
 	renderPipelineDesc.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
 
-	float offset = 0;
-	MTLVertexDescriptor *vertexDescriptor = [[MTLVertexDescriptor alloc] init];
-
-	for (int i = 0; i < pipeline->inputLayout[0]->size; ++i) {
-		int index = findAttributeIndex(renderPipelineDesc.vertexFunction.vertexAttributes, pipeline->inputLayout[0]->elements[i].name);
-
-		if (index < 0) {
-			kinc_log(KINC_LOG_LEVEL_WARNING, "Could not find vertex attribute %s\n", pipeline->inputLayout[0]->elements[i].name);
+	uint32_t bindings_count = 0;
+	for (int i = 0; i < 16; ++i) {
+		if (pipeline->inputLayout[i] == NULL) {
+			break;
 		}
+		bindings_count++;
+    }
 
-		if (index >= 0) {
-			vertexDescriptor.attributes[index].bufferIndex = 0;
-			vertexDescriptor.attributes[index].offset = offset;
-		}
+    for (uint32_t binding_index = 0; binding_index < bindings_count; ++binding_index) {
+		uint32_t offset = 0;
+		uint32_t stride = 0;
+		for (uint32_t attribute_index = 0; attribute_index < pipeline->inputLayout[binding_index]->size; ++attribute_index) {
+			kinc_g5_vertex_element_t element = pipeline->inputLayout[binding_index]->elements[attribute_index];
+			int index = findAttributeIndex(renderPipelineDesc.vertexFunction.vertexAttributes, element.name);
 
-		offset += kinc_g4_vertex_data_size(pipeline->inputLayout[0]->elements[i].data);
-		if (index >= 0) {
-			switch (pipeline->inputLayout[0]->elements[i].data) {
-			case KINC_G4_VERTEX_DATA_NONE:
-				assert(false);
-				break;
-			case KINC_G4_VERTEX_DATA_F32_1X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatFloat;
-				break;
-			case KINC_G4_VERTEX_DATA_F32_2X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatFloat2;
-				break;
-			case KINC_G4_VERTEX_DATA_F32_3X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatFloat3;
-				break;
-			case KINC_G4_VERTEX_DATA_F32_4X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatFloat4;
-				break;
-			case KINC_G4_VERTEX_DATA_F32_4X4:
-				assert(false);
-				break;
-			case KINC_G4_VERTEX_DATA_I8_1X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatChar;
-				break;
-			case KINC_G4_VERTEX_DATA_U8_1X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUChar;
-				break;
-			case KINC_G4_VERTEX_DATA_I8_1X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatCharNormalized;
-				break;
-			case KINC_G4_VERTEX_DATA_U8_1X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUCharNormalized;
-				break;
-			case KINC_G4_VERTEX_DATA_I8_2X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatChar2;
-				break;
-			case KINC_G4_VERTEX_DATA_U8_2X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUChar2;
-				break;
-			case KINC_G4_VERTEX_DATA_I8_2X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatChar2Normalized;
-				break;
-			case KINC_G4_VERTEX_DATA_U8_2X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUChar2Normalized;
-				break;
-			case KINC_G4_VERTEX_DATA_I8_4X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatChar4;
-				break;
-			case KINC_G4_VERTEX_DATA_U8_4X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUChar4;
-				break;
-			case KINC_G4_VERTEX_DATA_I8_4X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatChar4Normalized;
-				break;
-			case KINC_G4_VERTEX_DATA_U8_4X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUChar4Normalized;
-				break;
-			case KINC_G4_VERTEX_DATA_I16_1X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatShort;
-				break;
-			case KINC_G4_VERTEX_DATA_U16_1X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUShort;
-				break;
-			case KINC_G4_VERTEX_DATA_I16_1X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatShortNormalized;
-				break;
-			case KINC_G4_VERTEX_DATA_U16_1X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUShortNormalized;
-				break;
-			case KINC_G4_VERTEX_DATA_I16_2X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatShort2;
-				break;
-			case KINC_G4_VERTEX_DATA_U16_2X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUShort2;
-				break;
-			case KINC_G4_VERTEX_DATA_I16_2X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatShort2Normalized;
-				break;
-			case KINC_G4_VERTEX_DATA_U16_2X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUShort2Normalized;
-				break;
-			case KINC_G4_VERTEX_DATA_I16_4X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatShort4;
-				break;
-			case KINC_G4_VERTEX_DATA_U16_4X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUShort4;
-				break;
-			case KINC_G4_VERTEX_DATA_I16_4X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatShort4Normalized;
-				break;
-			case KINC_G4_VERTEX_DATA_U16_4X_NORMALIZED:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUShort4Normalized;
-				break;
-			case KINC_G4_VERTEX_DATA_I32_1X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatInt;
-				break;
-			case KINC_G4_VERTEX_DATA_U32_1X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUInt;
-				break;
-			case KINC_G4_VERTEX_DATA_I32_2X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatInt2;
-				break;
-			case KINC_G4_VERTEX_DATA_U32_2X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUInt2;
-				break;
-			case KINC_G4_VERTEX_DATA_I32_3X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatInt3;
-				break;
-			case KINC_G4_VERTEX_DATA_U32_3X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUInt3;
-				break;
-			case KINC_G4_VERTEX_DATA_I32_4X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatInt4;
-				break;
-			case KINC_G4_VERTEX_DATA_U32_4X:
-				vertexDescriptor.attributes[index].format = MTLVertexFormatUInt4;
-				break;
-			default:
-				assert(false);
-				break;
+			if (index < 0) {
+			    kinc_log(KINC_LOG_LEVEL_WARNING, "Could not find vertex attribute %s\n", element.name);
+			}
+
+			if(index >= 0) {
+				//kinc_log(KINC_LOG_LEVEL_INFO, "Adding attribute: %s", element.name);
+				//kinc_log(KINC_LOG_LEVEL_INFO, "Index: %i", index);
+				//kinc_log(KINC_LOG_LEVEL_INFO, "Instanced: %s", pipeline->inputLayout[binding_index]->instanced ? "true" : "false");
+				vertexDescriptor.attributes[index].bufferIndex = binding_index;
+				vertexDescriptor.attributes[index].offset = offset;
+				offset += kinc_g4_vertex_data_size(element.data);
+				stride += kinc_g4_vertex_data_size(element.data);
+				
+				switch (element.data) {
+				case KINC_G4_VERTEX_DATA_NONE:
+					assert(false);
+					break;
+				case KINC_G4_VERTEX_DATA_F32_1X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatFloat;
+					break;
+				case KINC_G4_VERTEX_DATA_F32_2X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatFloat2;
+					break;
+				case KINC_G4_VERTEX_DATA_F32_3X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatFloat3;
+					break;
+				case KINC_G4_VERTEX_DATA_F32_4X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatFloat4;
+					break;
+				case KINC_G4_VERTEX_DATA_F32_4X4:
+					assert(false);
+					break;
+				case KINC_G4_VERTEX_DATA_I8_1X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatChar;
+					break;
+				case KINC_G4_VERTEX_DATA_U8_1X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUChar;
+					break;
+				case KINC_G4_VERTEX_DATA_I8_1X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatCharNormalized;
+					break;
+				case KINC_G4_VERTEX_DATA_U8_1X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUCharNormalized;
+					break;
+				case KINC_G4_VERTEX_DATA_I8_2X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatChar2;
+					break;
+				case KINC_G4_VERTEX_DATA_U8_2X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUChar2;
+					break;
+				case KINC_G4_VERTEX_DATA_I8_2X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatChar2Normalized;
+					break;
+				case KINC_G4_VERTEX_DATA_U8_2X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUChar2Normalized;
+					break;
+				case KINC_G4_VERTEX_DATA_I8_4X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatChar4;
+					break;
+				case KINC_G4_VERTEX_DATA_U8_4X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUChar4;
+					break;
+				case KINC_G4_VERTEX_DATA_I8_4X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatChar4Normalized;
+					break;
+				case KINC_G4_VERTEX_DATA_U8_4X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUChar4Normalized;
+					break;
+				case KINC_G4_VERTEX_DATA_I16_1X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatShort;
+					break;
+				case KINC_G4_VERTEX_DATA_U16_1X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUShort;
+					break;
+				case KINC_G4_VERTEX_DATA_I16_1X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatShortNormalized;
+					break;
+				case KINC_G4_VERTEX_DATA_U16_1X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUShortNormalized;
+					break;
+				case KINC_G4_VERTEX_DATA_I16_2X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatShort2;
+					break;
+				case KINC_G4_VERTEX_DATA_U16_2X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUShort2;
+					break;
+				case KINC_G4_VERTEX_DATA_I16_2X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatShort2Normalized;
+					break;
+				case KINC_G4_VERTEX_DATA_U16_2X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUShort2Normalized;
+					break;
+				case KINC_G4_VERTEX_DATA_I16_4X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatShort4;
+					break;
+				case KINC_G4_VERTEX_DATA_U16_4X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUShort4;
+					break;
+				case KINC_G4_VERTEX_DATA_I16_4X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatShort4Normalized;
+					break;
+				case KINC_G4_VERTEX_DATA_U16_4X_NORMALIZED:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUShort4Normalized;
+					break;
+				case KINC_G4_VERTEX_DATA_I32_1X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatInt;
+					break;
+				case KINC_G4_VERTEX_DATA_U32_1X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUInt;
+					break;
+				case KINC_G4_VERTEX_DATA_I32_2X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatInt2;
+					break;
+				case KINC_G4_VERTEX_DATA_U32_2X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUInt2;
+					break;
+				case KINC_G4_VERTEX_DATA_I32_3X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatInt3;
+					break;
+				case KINC_G4_VERTEX_DATA_U32_3X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUInt3;
+					break;
+				case KINC_G4_VERTEX_DATA_I32_4X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatInt4;
+					break;
+				case KINC_G4_VERTEX_DATA_U32_4X:
+					vertexDescriptor.attributes[index].format = MTLVertexFormatUInt4;
+					break;
+				default:
+					assert(false);
+					break;
+				}
 			}
 		}
+		
+		vertexDescriptor.layouts[binding_index].stride = stride;
+		vertexDescriptor.layouts[binding_index].stepFunction = pipeline->inputLayout[binding_index]->instanced ? MTLVertexStepFunctionPerInstance : MTLVertexStepFunctionPerVertex;
+		// stepRate default is 1, so we probably don’t need this.
+		// I also think kinc doesn't allow a step rate to be set
+		// vertexDescriptor.layouts[binding_index].stepRate = 1;
 	}
-
-	vertexDescriptor.layouts[0].stride = offset;
-	vertexDescriptor.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
 
 	renderPipelineDesc.vertexDescriptor = vertexDescriptor;
 
