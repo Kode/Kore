@@ -151,6 +151,13 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			glBindBuffer(data->buffer->buffer_type, data->buffer->buffer);
 
+			// TODO
+			glEnableVertexAttribArray(0);
+			kore_opengl_check_errors();
+
+			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, (void *)(int64_t)0);
+			kore_opengl_check_errors();
+
 			break;
 		}
 		case COMMAND_DRAW_INDEXED: {
