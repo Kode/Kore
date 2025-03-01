@@ -88,7 +88,23 @@ void kore_opengl_device_destroy(kore_gpu_device *device) {}
 
 void kore_opengl_device_set_name(kore_gpu_device *device, const char *name) {}
 
-void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {}
+void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
+	glGenBuffers(1, &buffer->opengl.buffer);
+	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_VERTEX) != 0) {
+		buffer->opengl.buffer_type = GL_ARRAY_BUFFER;
+	}
+	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_INDEX) != 0) {
+		buffer->opengl.buffer_type = GL_ELEMENT_ARRAY_BUFFER;
+	}
+	else {
+		assert(false);
+	}
+
+	glBindBuffer(buffer->opengl.buffer_type, buffer->opengl.buffer);
+	kore_opengl_check_errors();
+	glBufferData(buffer->opengl.buffer_type, parameters->size, NULL, GL_DYNAMIC_DRAW);
+	glBindBuffer(buffer->opengl.buffer_type, 0);
+}
 
 void kore_opengl_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {}
 

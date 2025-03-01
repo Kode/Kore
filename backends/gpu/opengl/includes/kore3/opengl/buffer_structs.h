@@ -10,7 +10,8 @@ extern "C" {
 struct kore_gpu_device;
 
 typedef struct kore_opengl_buffer {
-	int nothing;
+	uint32_t buffer;
+	uint32_t buffer_type;
 } kore_opengl_buffer;
 
 #ifdef __cplusplus
