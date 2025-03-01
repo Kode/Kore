@@ -17,6 +17,7 @@ typedef enum command_type {
 	COMMAND_SET_INDEX_BUFFER,
 	COMMAND_SET_VERTEX_BUFFER,
 	COMMAND_DRAW_INDEXED,
+	COMMAND_SET_RENDER_PIPELINE,
 } command_type;
 
 typedef struct set_index_buffer_data {
@@ -41,6 +42,10 @@ typedef struct draw_indexed_data {
 	int32_t base_vertex;
 	uint32_t first_instance;
 } draw_indexed_data;
+
+typedef struct set_render_pipeline {
+	kore_opengl_render_pipeline *pipeline;
+} set_render_pipeline;
 
 typedef struct command {
 	command_type type;
@@ -91,7 +96,17 @@ void kore_opengl_command_list_set_vertex_buffer(kore_gpu_command_list *list, uin
 	list->opengl.commands_offset += c->size;
 }
 
-void kore_opengl_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_opengl_render_pipeline *pipeline) {}
+void kore_opengl_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_opengl_render_pipeline *pipeline) {
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
+
+	c->type = COMMAND_SET_RENDER_PIPELINE;
+
+	set_render_pipeline *data = (set_render_pipeline *)&c->data;
+	data->pipeline = pipeline;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->opengl.commands_offset += c->size;
+}
 
 void kore_opengl_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,
                                    uint32_t first_instance) {}

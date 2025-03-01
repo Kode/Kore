@@ -197,7 +197,9 @@ typedef struct kore_opengl_render_pipeline_parameters {
 } kore_opengl_render_pipeline_parameters;
 
 typedef struct kore_opengl_render_pipeline {
-	int nothing;
+	uint32_t program;
+	uint32_t vertex_shader;
+	uint32_t fragment_shader;
 } kore_opengl_render_pipeline;
 
 typedef struct kore_opengl_compute_pipeline_parameters {

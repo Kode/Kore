@@ -140,13 +140,17 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		switch (c->type) {
 		case COMMAND_SET_INDEX_BUFFER: {
 			set_index_buffer_data *data = (set_index_buffer_data *)&c->data;
+
 			index_format = data->index_format;
 			glBindBuffer(data->buffer->opengl.buffer_type, data->buffer->opengl.buffer);
+
 			break;
 		}
 		case COMMAND_SET_VERTEX_BUFFER: {
 			set_vertex_buffer_data *data = (set_vertex_buffer_data *)&c->data;
+
 			glBindBuffer(data->buffer->buffer_type, data->buffer->buffer);
+
 			break;
 		}
 		case COMMAND_DRAW_INDEXED: {
@@ -155,6 +159,16 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			void *start =
 			    index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? (void *)(data->first_index * sizeof(uint16_t)) : (void *)(data->first_index * sizeof(uint32_t));
 			glDrawElements(GL_TRIANGLES, data->index_count, index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, start);
+
+			break;
+		}
+		case COMMAND_SET_RENDER_PIPELINE: {
+			set_render_pipeline *data = (set_render_pipeline *)&c->data;
+
+			glUseProgram(data->pipeline->program);
+			kore_opengl_check_errors();
+
+			break;
 		}
 		}
 
@@ -162,6 +176,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 		offset += c->size;
 	}
+
+	list->opengl.commands_offset = 0;
 
 	if (list->opengl.presents) {
 #ifdef KORE_WINDOWS
