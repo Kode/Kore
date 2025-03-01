@@ -245,5 +245,9 @@ __attribute__((import_module("imports"), import_name("glDrawBuffers"))) void glD
 __attribute__((import_module("imports"), import_name("glDrawElementsInstanced"))) void glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type,
                                                                                                                const void *indices, GLsizei instancecount);
 __attribute__((import_module("imports"), import_name("glVertexAttribDivisor"))) void glVertexAttribDivisor(GLuint index, GLuint divisor);
+__attribute__((import_module("imports"), import_name("glMapBufferRange"))) void *glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
+__attribute__((import_module("imports"), import_name("glUnmapBuffer"))) GLboolean glUnmapBuffer(GLenum target);
+__attribute__((import_module("imports"), import_name("glGenVertexArrays"))) void glGenVertexArrays(GLsizei n, GLuint* arrays);
+__attribute__((import_module("imports"), import_name("glBindVertexArray"))) void glBindVertexArray(GLuint array);
 
 #endif
