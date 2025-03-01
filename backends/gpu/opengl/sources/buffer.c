@@ -5,7 +5,9 @@
 #include <string.h>
 
 void kore_opengl_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {
+#ifndef KORE_OPENGL_ES
 	glObjectLabel(GL_BUFFER, buffer->opengl.buffer, (GLsizei)strlen(name), name);
+#endif
 }
 
 void kore_opengl_buffer_destroy(kore_gpu_buffer *buffer) {

@@ -17,6 +17,7 @@
 #endif
 
 #include <assert.h>
+#include <stdlib.h>
 
 #ifdef KORE_WINDOWS
 static HGLRC context;
