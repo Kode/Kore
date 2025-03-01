@@ -71,7 +71,7 @@ if (platform === Platform.Windows) {
 	project.addLib('ws2_32');
 	project.addLib('Winhttp');
 
-	const directshow = (graphics !== GraphicsApi.Direct3D12 && graphics !== GraphicsApi.Vulkan && graphics !== GraphicsApi.Default);
+	const directshow = false;
 	if (directshow) {
 		project.addFile('backends/system/windows/libraries/directshow/**');
 		project.addIncludeDir('backends/system/windows/libraries/directshow/BaseClasses');
