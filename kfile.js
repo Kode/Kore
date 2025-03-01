@@ -73,8 +73,8 @@ if (platform === Platform.Windows) {
 
 	const directshow = false;
 	if (directshow) {
-		project.addFile('backends/system/windows/libraries/directshow/**');
-		project.addIncludeDir('backends/system/windows/libraries/directshow/BaseClasses');
+		project.addFile('backends/system/windows/libs/directshow/**');
+		project.addIncludeDir('backends/system/windows/libs/directshow/BaseClasses');
 		project.addLib('strmiids');
 		project.addLib('winmm');
 	}
@@ -90,6 +90,7 @@ if (platform === Platform.Windows) {
 		project.addDefine('GLEW_STATIC');
 		project.addLib('opengl32');
 		project.addLib('glu32');
+		project.addFile('backends/gpu/opengl/libs/glew/**');
 	}
 	else if (graphics === GraphicsApi.Direct3D11) {
 		addBackend('gpu/direct3d11');
@@ -137,20 +138,20 @@ if (platform === Platform.Windows) {
 	if (vr === VrApi.Oculus) {
 		addKoreDefine('VR');
 		addKoreDefine('OCULUS');
-		project.addLibFor('x64', 'backends/system/windows/libraries/oculus/LibOVR/Lib/Windows/x64/Release/VS2017/LibOVR');
-		project.addLibFor('Win32', 'backends/system/windows/libraries/oculus/LibOVR/Lib/Windows/Win32/Release/VS2017/LibOVR');
-		project.addFile('backends/system/windows/libraries/oculus/LibOVRKernel/Src/GL/**');
-		project.addIncludeDir('backends/system/windows/libraries/oculus/LibOVR/Include/');
-		project.addIncludeDir('backends/system/windows/libraries/oculus/LibOVRKernel/Src/');
+		project.addLibFor('x64', 'backends/system/windows/libs/oculus/LibOVR/Lib/Windows/x64/Release/VS2017/LibOVR');
+		project.addLibFor('Win32', 'backends/system/windows/libs/oculus/LibOVR/Lib/Windows/Win32/Release/VS2017/LibOVR');
+		project.addFile('backends/system/windows/libs/oculus/LibOVRKernel/Src/GL/**');
+		project.addIncludeDir('backends/system/windows/libs/oculus/LibOVR/Include/');
+		project.addIncludeDir('backends/system/windows/libs/oculus/LibOVRKernel/Src/');
 	}
 	else if (vr === VrApi.SteamVR) {
 		addKoreDefine('VR');
 		addKoreDefine('STEAMVR');
 		project.addDefine('VR_API_PUBLIC');
-		project.addFile('backends/system/windows/libraries/steamvr/src/**');
-		project.addIncludeDir('backends/system/windows/libraries/steamvr/src');
-		project.addIncludeDir('backends/system/windows/libraries/steamvr/src/vrcommon');
-		project.addIncludeDir('backends/system/windows/libraries/steamvr/headers');
+		project.addFile('backends/system/windows/libs/steamvr/src/**');
+		project.addIncludeDir('backends/system/windows/libs/steamvr/src');
+		project.addIncludeDir('backends/system/windows/libs/steamvr/src/vrcommon');
+		project.addIncludeDir('backends/system/windows/libs/steamvr/headers');
 	}
 	else if (vr === VrApi.None) {
 
@@ -161,8 +162,8 @@ if (platform === Platform.Windows) {
 
 	if (Options.pix) {
 		project.addDefine('KORE_PIX');
-		project.addIncludeDir('backends/gpu/direct3d12/pix/Include');
-		project.addLib('backends/gpu/direct3d12/pix/bin/x64/WinPixEventRuntime');
+		project.addIncludeDir('backends/gpu/direct3d12/libs/pix/Include');
+		project.addLib('backends/gpu/direct3d12/libs/pix/bin/x64/WinPixEventRuntime');
 	}
 }
 else if (platform === Platform.WindowsApp) {
@@ -437,11 +438,10 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 	}
 	else if (graphics === GraphicsApi.OpenGL || (platform === Platform.FreeBSD && graphics === GraphicsApi.Default)) {
 		addBackend('gpu/opengl');
-		project.addExclude('backends/Graphics4/opengl/sources/GL/glew.c');
-		project.addLib('GL');
 		addKoreDefine('OPENGL');
+		addKoreDefine('EGL');
+		project.addLib('GL');
 		project.addLib('EGL');
-		project.addDefine('KORE_EGL');
 	}
 	else {
 		throw new Error('Graphics API ' + graphics + ' is not available for Linux.');
