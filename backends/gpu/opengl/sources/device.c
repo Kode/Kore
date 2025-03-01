@@ -94,6 +94,7 @@ void kore_opengl_device_set_name(kore_gpu_device *device, const char *name) {}
 
 void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
 	glGenBuffers(1, &buffer->opengl.buffer);
+
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_VERTEX) != 0) {
 		buffer->opengl.buffer_type = GL_ARRAY_BUFFER;
 	}
@@ -103,6 +104,8 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	else {
 		assert(false);
 	}
+
+	buffer->opengl.size = parameters->size;
 
 	glBindBuffer(buffer->opengl.buffer_type, buffer->opengl.buffer);
 	kore_opengl_check_errors();
