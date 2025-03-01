@@ -12,12 +12,14 @@
 #include <kore3/util/align.h>
 
 #include <assert.h>
+#include <stdlib.h>
 
 typedef enum command_type {
 	COMMAND_SET_INDEX_BUFFER,
 	COMMAND_SET_VERTEX_BUFFER,
 	COMMAND_DRAW_INDEXED,
 	COMMAND_SET_RENDER_PIPELINE,
+	COMMAND_COPY_TEXTURE_TO_BUFFER,
 } command_type;
 
 typedef struct set_index_buffer_data {
@@ -47,13 +49,24 @@ typedef struct set_render_pipeline {
 	kore_opengl_render_pipeline *pipeline;
 } set_render_pipeline;
 
+typedef struct copy_texture_to_buffer {
+	const kore_gpu_image_copy_texture *source;
+	const kore_gpu_image_copy_buffer *destination;
+	uint32_t width;
+	uint32_t height;
+	uint32_t depth_or_array_layers;
+} copy_texture_to_buffer;
+
 typedef struct command {
 	command_type type;
 	uint32_t size;
 	uint32_t data;
 } command;
 
-void kore_opengl_command_list_destroy(kore_gpu_command_list *list) {}
+void kore_opengl_command_list_destroy(kore_gpu_command_list *list) {
+	free(list->opengl.commands);
+	list->opengl.commands = NULL;
+}
 
 void kore_opengl_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {}
 
@@ -142,7 +155,21 @@ void kore_opengl_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
 
 void kore_opengl_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                      const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
-                                                     uint32_t depth_or_array_layers) {}
+                                                     uint32_t depth_or_array_layers) {
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
+
+	c->type = COMMAND_COPY_TEXTURE_TO_BUFFER;
+
+	copy_texture_to_buffer *data = (copy_texture_to_buffer *)&c->data;
+	data->source = source;
+	data->destination = destination;
+	data->width = width;
+	data->height = height;
+	data->depth_or_array_layers = depth_or_array_layers;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->opengl.commands_offset += c->size;
+}
 
 void kore_opengl_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                       const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,

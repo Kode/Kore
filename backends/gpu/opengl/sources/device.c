@@ -102,6 +102,9 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_INDEX) != 0) {
 		buffer->opengl.buffer_type = GL_ELEMENT_ARRAY_BUFFER;
 	}
+	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0) {
+		buffer->opengl.buffer_type = GL_PIXEL_PACK_BUFFER;
+	}
 	else {
 		assert(false);
 	}
@@ -178,6 +181,15 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			break;
 		}
+		case COMMAND_COPY_TEXTURE_TO_BUFFER: {
+			copy_texture_to_buffer *data = (copy_texture_to_buffer *)&c->data;
+
+			glBindBuffer(data->destination->buffer->opengl.buffer_type, data->destination->buffer->opengl.buffer);
+			glReadPixels(0, 0, data->width, data->height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+			glBindBuffer(data->destination->buffer->opengl.buffer_type, 0);
+
+			break;
+		}
 		}
 
 		kore_opengl_check_errors();
@@ -194,7 +206,9 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	}
 }
 
-void kore_opengl_device_wait_until_idle(kore_gpu_device *device) {}
+void kore_opengl_device_wait_until_idle(kore_gpu_device *device) {
+	glFlush();
+}
 
 void kore_opengl_device_create_descriptor_set(kore_gpu_device *device, uint32_t descriptor_count, uint32_t dynamic_descriptor_count,
                                               uint32_t bindless_descriptor_count, uint32_t sampler_count, kore_opengl_descriptor_set *set) {}
@@ -210,7 +224,7 @@ void kore_opengl_device_create_raytracing_hierarchy(kore_gpu_device *device, kor
 void kore_opengl_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set) {}
 
 uint32_t kore_opengl_device_align_texture_row_bytes(kore_gpu_device *device, uint32_t row_bytes) {
-	return 0;
+	return row_bytes;
 }
 
 void kore_opengl_device_create_fence(kore_gpu_device *device, kore_gpu_fence *fence) {}
