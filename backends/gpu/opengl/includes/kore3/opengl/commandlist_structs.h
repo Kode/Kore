@@ -18,7 +18,9 @@ typedef struct kore_opengl_buffer_access {
 } kore_opengl_buffer_access;
 
 typedef struct kore_opengl_command_list {
-	int nothing;
+	uint8_t *commands;
+	uint64_t commands_offset;
+	bool presents;
 } kore_opengl_command_list;
 
 #ifdef __cplusplus

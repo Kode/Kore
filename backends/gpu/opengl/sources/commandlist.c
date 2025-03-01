@@ -13,19 +13,83 @@
 
 #include <assert.h>
 
+typedef enum command_type {
+	COMMAND_SET_INDEX_BUFFER,
+	COMMAND_SET_VERTEX_BUFFER,
+	COMMAND_DRAW_INDEXED,
+} command_type;
+
+typedef struct set_index_buffer_data {
+	kore_gpu_buffer *buffer;
+	kore_gpu_index_format index_format;
+	uint64_t offset;
+	uint64_t size;
+} set_index_buffer_data;
+
+typedef struct set_vertex_buffer_data {
+	uint32_t slot;
+	kore_opengl_buffer *buffer;
+	uint64_t offset;
+	uint64_t size;
+	uint64_t stride;
+} set_vertex_buffer_data;
+
+typedef struct draw_indexed_data {
+	uint32_t index_count;
+	uint32_t instance_count;
+	uint32_t first_index;
+	int32_t base_vertex;
+	uint32_t first_instance;
+} draw_indexed_data;
+
+typedef struct command {
+	command_type type;
+	uint32_t size;
+	uint32_t data;
+} command;
+
 void kore_opengl_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_opengl_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {}
 
 void kore_opengl_command_list_end_render_pass(kore_gpu_command_list *list) {}
 
-void kore_opengl_command_list_present(kore_gpu_command_list *list) {}
+void kore_opengl_command_list_present(kore_gpu_command_list *list) {
+	list->opengl.presents = true;
+}
 
 void kore_opengl_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                               uint64_t size) {}
+                                               uint64_t size) {
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
+
+	c->type = COMMAND_SET_INDEX_BUFFER;
+
+	set_index_buffer_data *data = (set_index_buffer_data *)&c->data;
+	data->buffer = buffer;
+	data->index_format = index_format;
+	data->offset = offset;
+	data->size = size;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->opengl.commands_offset += c->size;
+}
 
 void kore_opengl_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_opengl_buffer *buffer, uint64_t offset, uint64_t size,
-                                                uint64_t stride) {}
+                                                uint64_t stride) {
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
+
+	c->type = COMMAND_SET_VERTEX_BUFFER;
+
+	set_vertex_buffer_data *data = (set_vertex_buffer_data *)&c->data;
+	data->slot = slot;
+	data->buffer = buffer;
+	data->offset = offset;
+	data->size = size;
+	data->stride = stride;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->opengl.commands_offset += c->size;
+}
 
 void kore_opengl_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_opengl_render_pipeline *pipeline) {}
 
@@ -33,7 +97,21 @@ void kore_opengl_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_
                                    uint32_t first_instance) {}
 
 void kore_opengl_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
-                                           int32_t base_vertex, uint32_t first_instance) {}
+                                           int32_t base_vertex, uint32_t first_instance) {
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
+
+	c->type = COMMAND_DRAW_INDEXED;
+
+	draw_indexed_data *data = (draw_indexed_data *)&c->data;
+	data->index_count = index_count;
+	data->instance_count = instance_count;
+	data->first_index = first_index;
+	data->base_vertex = base_vertex;
+	data->first_instance = first_instance;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->opengl.commands_offset += c->size;
+}
 
 void kore_opengl_command_list_set_descriptor_table(kore_gpu_command_list *list, uint32_t table_index, kore_opengl_descriptor_set *set,
                                                    kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {}

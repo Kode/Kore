@@ -24,6 +24,7 @@ static HDC device_context;
 #endif
 
 static GLint framebuffer;
+static GLuint vertex_array;
 
 #if defined(KORE_WINDOWS) && !defined(NDEBUG)
 static void __stdcall debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
@@ -82,6 +83,9 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
 #endif
+
+	glGenVertexArrays(1, &vertex_array);
+	glBindVertexArray(vertex_array);
 }
 
 void kore_opengl_device_destroy(kore_gpu_device *device) {}
@@ -106,7 +110,11 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	glBindBuffer(buffer->opengl.buffer_type, 0);
 }
 
-void kore_opengl_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {}
+void kore_opengl_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
+	list->opengl.commands = malloc(1024 * 1024);
+	list->opengl.commands_offset = 0;
+	list->opengl.presents = false;
+}
 
 void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {}
 
@@ -119,9 +127,44 @@ kore_gpu_texture_format kore_opengl_device_framebuffer_format(kore_gpu_device *d
 }
 
 void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
+	kore_gpu_index_format index_format = KORE_GPU_INDEX_FORMAT_UINT16;
+
+	uint64_t offset = 0;
+
+	while (offset < list->opengl.commands_offset) {
+		command *c = (command *)&list->opengl.commands[offset];
+
+		switch (c->type) {
+		case COMMAND_SET_INDEX_BUFFER: {
+			set_index_buffer_data *data = (set_index_buffer_data *)&c->data;
+			index_format = data->index_format;
+			glBindBuffer(data->buffer->opengl.buffer_type, data->buffer->opengl.buffer);
+			break;
+		}
+		case COMMAND_SET_VERTEX_BUFFER: {
+			set_vertex_buffer_data *data = (set_vertex_buffer_data *)&c->data;
+			glBindBuffer(data->buffer->buffer_type, data->buffer->buffer);
+			break;
+		}
+		case COMMAND_DRAW_INDEXED: {
+			draw_indexed_data *data = (draw_indexed_data *)&c->data;
+
+			void *start =
+			    index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? (void *)(data->first_index * sizeof(uint16_t)) : (void *)(data->first_index * sizeof(uint32_t));
+			glDrawElements(GL_TRIANGLES, data->index_count, index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, start);
+		}
+		}
+
+		kore_opengl_check_errors();
+
+		offset += c->size;
+	}
+
+	if (list->opengl.presents) {
 #ifdef KORE_WINDOWS
-	SwapBuffers(device_context);
+		SwapBuffers(device_context);
 #endif
+	}
 }
 
 void kore_opengl_device_wait_until_idle(kore_gpu_device *device) {}
