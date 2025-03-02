@@ -41,24 +41,29 @@ static EGLContext egl_context = EGL_NO_CONTEXT;
 static EGLConfig egl_config = NULL;
 static EGLSurface egl_surface;
 
-static void kore_egl_check_errors(void) {
-	EGLint error = eglGetError();
-	if (error != EGL_SUCCESS) {
-		kore_log(KORE_LOG_LEVEL_ERROR, "EGL Error at line %i: %i", __LINE__, error);
-		kore_debug_break();
-		exit(1);
-	}
+#define kore_egl_check_errors() {                                                     \
+	EGLint error = eglGetError();                                                     \
+	if (error != EGL_SUCCESS) {                                                       \
+		kore_log(KORE_LOG_LEVEL_ERROR, "EGL Error at line %i: %i", __LINE__, error);  \
+		kore_debug_break();                                                           \
+		exit(1);                                                                      \
+	}                                                                                 \
 }
 
 static void kore_egl_init_window(int window) {
-	EGLSurface new_egl_surface = eglCreateWindowSurface(egl_display, egl_config, kore_egl_get_native_window(egl_display, egl_config, window), NULL);
+	egl_surface = eglCreateWindowSurface(egl_display, egl_config, kore_egl_get_native_window(egl_display, egl_config, window), NULL);
 	kore_egl_check_errors();
-	eglMakeCurrent(egl_display, new_egl_surface, new_egl_surface, egl_context);
+	eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);
 	kore_egl_check_errors();
-	egl_surface = new_egl_surface;
 }
 
 static void kore_egl_init(void) {
+#if !defined(KORE_OPENGL_ES)
+	eglBindAPI(EGL_OPENGL_API);
+#else
+	eglBindAPI(EGL_OPENGL_ES_API);
+#endif
+
 	egl_display = kore_egl_get_display();
 	eglInitialize(egl_display, &egl_major, &egl_minor);
 	kore_egl_check_errors();
@@ -218,6 +223,7 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 #ifdef KORE_LINUX
 	kore_egl_init();
+	kore_egl_init_window(0);
 #endif
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer.opengl.framebuffer);
