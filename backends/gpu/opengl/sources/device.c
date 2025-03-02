@@ -119,6 +119,10 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	kore_opengl_check_errors();
 	glBufferData(buffer->opengl.buffer_type, parameters->size, NULL, GL_STATIC_DRAW);
 	glBindBuffer(buffer->opengl.buffer_type, 0);
+
+#ifdef KORE_WEBGL
+	buffer->opengl.data = malloc(parameters->size);
+#endif
 }
 
 void kore_opengl_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {

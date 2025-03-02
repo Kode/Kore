@@ -290,6 +290,7 @@ else if (platform === Platform.Emscripten) {
 		addBackend('gpu/opengl');
 		addKoreDefine('OPENGL');
 		addKoreDefine('OPENGL_ES');
+		addKoreDefine('WEBGL');
 		project.addLib('USE_WEBGL2=1');
 	}
 	else {
@@ -309,6 +310,7 @@ else if (platform === Platform.Wasm) {
 		addBackend('gpu/opengl');
 		addKoreDefine('OPENGL');
 		addKoreDefine('OPENGL_ES');
+		addKoreDefine('WEBGL');
 	}
 	else {
 		throw new Error('Graphics API ' + graphics + ' is not available for Wasm.');
