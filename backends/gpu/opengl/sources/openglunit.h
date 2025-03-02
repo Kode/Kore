@@ -59,4 +59,8 @@ static inline void kore_opengl_check_errors(void) {}
 void kore_opengl_check_errors(void);
 #endif
 
+static void init_flip(void);
+static uint32_t compile_shader(uint32_t shader_type, const char *source);
+static void link_program(uint32_t program);
+
 #endif

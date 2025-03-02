@@ -87,6 +87,8 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
+
+	init_flip();
 }
 
 void kore_opengl_device_destroy(kore_gpu_device *device) {}

@@ -23,6 +23,17 @@ static uint32_t compile_shader(uint32_t shader_type, const char *source) {
 	return shader;
 }
 
+static void link_program(uint32_t program) {
+	glLinkProgram(program);
+
+	int result = GL_FALSE;
+	glGetProgramiv(program, GL_LINK_STATUS, &result);
+	if (result != GL_TRUE) {
+		glGetProgramInfoLog(program, COMPILE_ERROR_MESSAGE_MAX_LENGTH, NULL, compile_error_message);
+		kore_log(KORE_LOG_LEVEL_ERROR, "GLSL link error: %s", compile_error_message);
+	}
+}
+
 void kore_opengl_render_pipeline_init(kore_opengl_device *device, kore_opengl_render_pipeline *pipe, const kore_opengl_render_pipeline_parameters *parameters) {
 	pipe->program = glCreateProgram();
 	kore_opengl_check_errors();
@@ -42,14 +53,7 @@ void kore_opengl_render_pipeline_init(kore_opengl_device *device, kore_opengl_re
 		}
 	}
 
-	glLinkProgram(pipe->program);
-
-	int result = GL_FALSE;
-	glGetProgramiv(pipe->program, GL_LINK_STATUS, &result);
-	if (result != GL_TRUE) {
-		glGetProgramInfoLog(pipe->program, COMPILE_ERROR_MESSAGE_MAX_LENGTH, NULL, compile_error_message);
-		kore_log(KORE_LOG_LEVEL_ERROR, "GLSL link error: %s", compile_error_message);
-	}
+	link_program(pipe->program);
 }
 
 void kore_opengl_render_pipeline_destroy(kore_opengl_render_pipeline *pipe) {}

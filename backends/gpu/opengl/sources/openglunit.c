@@ -8,6 +8,7 @@
 #include "commandlist.c"
 #include "descriptorset.c"
 #include "device.c"
+#include "flip.c"
 #include "pipeline.c"
 #include "sampler.c"
 #include "texture.c"
