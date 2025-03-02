@@ -24,7 +24,7 @@ static HGLRC context;
 static HDC device_context;
 #endif
 
-static GLint framebuffer;
+static kore_gpu_texture framebuffer;
 static GLuint vertex_array;
 
 #if defined(KORE_WINDOWS) && !defined(NDEBUG)
@@ -77,12 +77,14 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 		wglSwapIntervalEXT(true);
 	}
 
-#if defined(KORE_WINDOWS) && !defined(NDEBUG)
+#if !defined(NDEBUG)
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(debug_callback, NULL);
 #endif
 
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer.opengl.framebuffer);
+	framebuffer.opengl.texture = 0;
+	framebuffer.opengl.is_primary_framebuffer = true;
 #endif
 
 	glGenVertexArrays(1, &vertex_array);
@@ -115,20 +117,19 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 
 	glBindBuffer(buffer->opengl.buffer_type, buffer->opengl.buffer);
 	kore_opengl_check_errors();
-	glBufferData(buffer->opengl.buffer_type, parameters->size, NULL, GL_DYNAMIC_DRAW);
+	glBufferData(buffer->opengl.buffer_type, parameters->size, NULL, GL_STATIC_DRAW);
 	glBindBuffer(buffer->opengl.buffer_type, 0);
 }
 
 void kore_opengl_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
 	list->opengl.commands = malloc(1024 * 1024);
 	list->opengl.commands_offset = 0;
-	list->opengl.presents = false;
 }
 
 void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {}
 
 kore_gpu_texture *kore_opengl_device_get_framebuffer(kore_gpu_device *device) {
-	return NULL;
+	return &framebuffer;
 }
 
 kore_gpu_texture_format kore_opengl_device_framebuffer_format(kore_gpu_device *device) {
@@ -186,11 +187,45 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		case COMMAND_COPY_TEXTURE_TO_BUFFER: {
 			copy_texture_to_buffer *data = (copy_texture_to_buffer *)&c->data;
 
-			glBindBuffer(data->destination->buffer->opengl.buffer_type, data->destination->buffer->opengl.buffer);
-			glReadPixels(0, 0, data->width, data->height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-			glBindBuffer(data->destination->buffer->opengl.buffer_type, 0);
+			if (data->source->texture->opengl.is_primary_framebuffer) {
+				// read framebuffer into the buffer
+				glBindBuffer(data->destination->buffer->opengl.buffer_type, data->destination->buffer->opengl.buffer);
+				glReadPixels(0, 0, data->width, data->height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+				glBindBuffer(data->destination->buffer->opengl.buffer_type, 0);
+
+				kore_opengl_check_errors();
+
+				// create texture backed by the buffer
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, data->destination->buffer->opengl.buffer);
+				uint32_t texture;
+				glGenTextures(1, &texture);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, data->width, data->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+				glBindTexture(GL_TEXTURE_2D, 0);
+
+				kore_opengl_check_errors();
+
+				uint32_t flipped_framebuffer = flip(data->width, data->height, texture);
+
+				// read the flipped framebuffer into the buffer
+				glBindFramebuffer(GL_FRAMEBUFFER, flipped_framebuffer);
+				glBindBuffer(data->destination->buffer->opengl.buffer_type, data->destination->buffer->opengl.buffer);
+				glReadPixels(0, 0, data->width, data->height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+				glBindBuffer(data->destination->buffer->opengl.buffer_type, 0);
+
+				kore_opengl_check_errors();
+			}
+			else {
+				assert(false);
+			}
 
 			break;
+		}
+		case COMMAND_PRESENT: {
+#ifdef KORE_WINDOWS
+			SwapBuffers(device_context);
+#endif
 		}
 		}
 
@@ -200,12 +235,6 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	}
 
 	list->opengl.commands_offset = 0;
-
-	if (list->opengl.presents) {
-#ifdef KORE_WINDOWS
-		SwapBuffers(device_context);
-#endif
-	}
 }
 
 void kore_opengl_device_wait_until_idle(kore_gpu_device *device) {

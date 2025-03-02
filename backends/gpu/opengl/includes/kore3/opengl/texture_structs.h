@@ -6,7 +6,9 @@ extern "C" {
 #endif
 
 typedef struct kore_opengl_texture {
-	int nothing;
+	uint32_t framebuffer;
+	uint32_t texture;
+	bool is_primary_framebuffer;
 } kore_opengl_texture;
 
 #ifdef __cplusplus

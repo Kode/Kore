@@ -20,6 +20,7 @@ typedef enum command_type {
 	COMMAND_DRAW_INDEXED,
 	COMMAND_SET_RENDER_PIPELINE,
 	COMMAND_COPY_TEXTURE_TO_BUFFER,
+	COMMAND_PRESENT,
 } command_type;
 
 typedef struct set_index_buffer_data {
@@ -73,7 +74,12 @@ void kore_opengl_command_list_begin_render_pass(kore_gpu_command_list *list, con
 void kore_opengl_command_list_end_render_pass(kore_gpu_command_list *list) {}
 
 void kore_opengl_command_list_present(kore_gpu_command_list *list) {
-	list->opengl.presents = true;
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
+
+	c->type = COMMAND_PRESENT;
+
+	c->size = sizeof(command) - sizeof(c->data);
+	list->opengl.commands_offset += c->size;
 }
 
 void kore_opengl_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
