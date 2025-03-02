@@ -21,6 +21,8 @@ typedef enum command_type {
 	COMMAND_SET_RENDER_PIPELINE,
 	COMMAND_COPY_TEXTURE_TO_BUFFER,
 	COMMAND_PRESENT,
+	COMMAND_BEGIN_RENDER_PASS,
+	COMMAND_END_RENDER_PASS,
 } command_type;
 
 typedef struct set_index_buffer_data {
@@ -58,6 +60,10 @@ typedef struct copy_texture_to_buffer {
 	uint32_t depth_or_array_layers;
 } copy_texture_to_buffer;
 
+typedef struct begin_render_pass {
+	kore_gpu_render_pass_parameters parameters;
+} begin_render_pass;
+
 typedef struct command {
 	command_type type;
 	uint32_t size;
@@ -69,9 +75,26 @@ void kore_opengl_command_list_destroy(kore_gpu_command_list *list) {
 	list->opengl.commands = NULL;
 }
 
-void kore_opengl_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {}
+void kore_opengl_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
 
-void kore_opengl_command_list_end_render_pass(kore_gpu_command_list *list) {}
+	c->type = COMMAND_BEGIN_RENDER_PASS;
+
+	begin_render_pass *data = (begin_render_pass *)&c->data;
+	data->parameters = *parameters;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->opengl.commands_offset += c->size;
+}
+
+void kore_opengl_command_list_end_render_pass(kore_gpu_command_list *list) {
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
+
+	c->type = COMMAND_END_RENDER_PASS;
+
+	c->size = sizeof(command) - sizeof(c->data);
+	list->opengl.commands_offset += c->size;
+}
 
 void kore_opengl_command_list_present(kore_gpu_command_list *list) {
 	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];

@@ -138,6 +138,7 @@ kore_gpu_texture_format kore_opengl_device_framebuffer_format(kore_gpu_device *d
 
 void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
 	kore_gpu_index_format index_format = KORE_GPU_INDEX_FORMAT_UINT16;
+	kore_gpu_texture_view framebuffer_view = {0};
 
 	uint64_t offset = 0;
 
@@ -179,7 +180,12 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		case COMMAND_SET_RENDER_PIPELINE: {
 			set_render_pipeline *data = (set_render_pipeline *)&c->data;
 
-			glUseProgram(data->pipeline->program);
+			if (framebuffer_view.texture->opengl.is_primary_framebuffer) {
+				glUseProgram(data->pipeline->program);
+			}
+			else {
+				glUseProgram(data->pipeline->flip_program);
+			}
 			kore_opengl_check_errors();
 
 			break;
@@ -220,6 +226,14 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				assert(false);
 			}
 
+			break;
+		}
+		case COMMAND_BEGIN_RENDER_PASS: {
+			begin_render_pass *data = (begin_render_pass *)&c->data;
+			framebuffer_view = data->parameters.color_attachments[0].texture;
+			break;
+		}
+		case COMMAND_END_RENDER_PASS: {
 			break;
 		}
 		case COMMAND_PRESENT: {

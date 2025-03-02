@@ -34,6 +34,16 @@ static void link_program(uint32_t program) {
 	}
 }
 
+static void bind_attributes(const kore_opengl_vertex_state *vertex_state, uint32_t program) {
+	for (size_t buffer_index = 0; buffer_index < vertex_state->buffers_count; ++buffer_index) {
+		for (size_t attribute_index = 0; attribute_index < vertex_state->buffers[buffer_index].attributes_count; ++attribute_index) {
+			const kore_opengl_vertex_attribute *attribute = &vertex_state->buffers[buffer_index].attributes[attribute_index];
+			glBindAttribLocation(program, (GLuint)attribute_index, attribute->name);
+			kore_opengl_check_errors();
+		}
+	}
+}
+
 void kore_opengl_render_pipeline_init(kore_opengl_device *device, kore_opengl_render_pipeline *pipe, const kore_opengl_render_pipeline_parameters *parameters) {
 	pipe->program = glCreateProgram();
 	kore_opengl_check_errors();
@@ -45,15 +55,22 @@ void kore_opengl_render_pipeline_init(kore_opengl_device *device, kore_opengl_re
 	glAttachShader(pipe->program, pipe->fragment_shader);
 	kore_opengl_check_errors();
 
-	for (size_t buffer_index = 0; buffer_index < parameters->vertex.buffers_count; ++buffer_index) {
-		for (size_t attribute_index = 0; attribute_index < parameters->vertex.buffers[buffer_index].attributes_count; ++attribute_index) {
-			const kore_opengl_vertex_attribute *attribute = &parameters->vertex.buffers[buffer_index].attributes[attribute_index];
-			glBindAttribLocation(pipe->program, (GLuint)attribute_index, attribute->name);
-			kore_opengl_check_errors();
-		}
-	}
+	bind_attributes(&parameters->vertex, pipe->program);
 
 	link_program(pipe->program);
+
+	pipe->flip_program = glCreateProgram();
+	kore_opengl_check_errors();
+
+	pipe->flip_vertex_shader = compile_shader(GL_VERTEX_SHADER, parameters->vertex.shader.flip_data);
+
+	glAttachShader(pipe->flip_program, pipe->flip_vertex_shader);
+	glAttachShader(pipe->flip_program, pipe->fragment_shader);
+	kore_opengl_check_errors();
+
+	bind_attributes(&parameters->vertex, pipe->flip_program);
+
+	link_program(pipe->flip_program);
 }
 
 void kore_opengl_render_pipeline_destroy(kore_opengl_render_pipeline *pipe) {}

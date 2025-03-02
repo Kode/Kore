@@ -64,6 +64,8 @@ typedef struct kore_opengl_vertex_buffer_layout {
 typedef struct kore_opengl_shader {
 	const char *data;
 	size_t size;
+	const char *flip_data;
+	size_t flip_size;
 } kore_opengl_shader;
 
 #define KORE_OPENGL_MAX_VERTEX_BUFFERS 16
@@ -200,6 +202,9 @@ typedef struct kore_opengl_render_pipeline {
 	uint32_t program;
 	uint32_t vertex_shader;
 	uint32_t fragment_shader;
+
+	uint32_t flip_vertex_shader;
+	uint32_t flip_program;
 } kore_opengl_render_pipeline;
 
 typedef struct kore_opengl_compute_pipeline_parameters {
