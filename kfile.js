@@ -79,7 +79,7 @@ if (platform === Platform.Windows) {
 		project.addLib('winmm');
 	}
 	else {
-		project.addDefine('KORE_NO_DIRECTSHOW');
+		addKoreDefine('NO_DIRECTSHOW');
 	}
 
 	project.addLib('wbemuuid');
@@ -104,6 +104,12 @@ if (platform === Platform.Windows) {
 		addKoreDefine('DIRECT3D12');
 		project.addLib('dxgi');
 		project.addLib('d3d12');
+
+		if (Options.pix) {
+			addKoreDefine('PIX');
+			project.addIncludeDir('backends/gpu/direct3d12/libs/pix/Include');
+			project.addLib('backends/gpu/direct3d12/libs/pix/bin/x64/WinPixEventRuntime');
+		}
 	}
 	else if (graphics === GraphicsApi.Vulkan) {
 		addBackend('gpu/vulkan');
@@ -158,12 +164,6 @@ if (platform === Platform.Windows) {
 	}
 	else {
 		throw new Error('VR API ' + vr + ' is not available for Windows.');
-	}
-
-	if (Options.pix) {
-		project.addDefine('KORE_PIX');
-		project.addIncludeDir('backends/gpu/direct3d12/libs/pix/Include');
-		project.addLib('backends/gpu/direct3d12/libs/pix/bin/x64/WinPixEventRuntime');
 	}
 }
 else if (platform === Platform.WindowsApp) {
@@ -265,7 +265,7 @@ else if (platform === Platform.Android) {
 		addKoreDefine('OPENGL');
 		addKoreDefine('OPENGL_ES');
 		addKoreDefine('ANDROID_API=19');
-		project.addDefine('KORE_EGL');
+		addKoreDefine('EGL');
 	}
 	else {
 		throw new Error('Graphics API ' + graphics + ' is not available for Android.');
@@ -288,7 +288,6 @@ else if (platform === Platform.Emscripten) {
 	}
 	else if (graphics === GraphicsApi.OpenGL || graphics === GraphicsApi.Default) {
 		addBackend('gpu/opengl');
-		project.addExclude('backends/Graphics4/opengl/sources/GL/**');
 		addKoreDefine('OPENGL');
 		addKoreDefine('OPENGL_ES');
 		project.addLib('USE_WEBGL2=1');
@@ -308,7 +307,6 @@ else if (platform === Platform.Wasm) {
 	}
 	else if (graphics === GraphicsApi.OpenGL || graphics === GraphicsApi.Default) {
 		addBackend('gpu/opengl');
-		project.addExclude('backends/Graphics4/opengl/sources/GL/**');
 		addKoreDefine('OPENGL');
 		addKoreDefine('OPENGL_ES');
 	}
@@ -317,7 +315,7 @@ else if (platform === Platform.Wasm) {
 	}
 }
 else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
-	if (platform === Platform.FreeBSD) { // TODO
+	if (platform === Platform.FreeBSD) { // global.h sets this for Linux
 		addKoreDefine('LINUX');
 	}
 	addBackend('system/linux');
@@ -421,14 +419,14 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 		catch (err) {
 			log.error('Failed to include wayland-support, setting KORE_NO_WAYLAND.');
 			log.error('Wayland error was: ' + err);
-			project.addDefine('KORE_NO_WAYLAND');
+			addKoreDefine('NO_WAYLAND');
 		}
 	}
 	else if (platform === Platform.FreeBSD) {
 		addBackend('system/linux');
 		addBackend('system/posix');
 		addBackend('system/freebsd');
-		project.addDefine('KORE_NO_WAYLAND');
+		project.addKoreDefine('NO_WAYLAND');
 	}
 
 	if (graphics === GraphicsApi.Vulkan || (platform === Platform.Linux && graphics === GraphicsApi.Default)) {
@@ -457,7 +455,6 @@ else if (platform === Platform.Pi) {
 	addBackend('system/pi');
 	addBackend('system/posix');
 	addBackend('gpu/opengl');
-	project.addExclude('backends/Graphics4/opengl/sources/GL/**');
 	addKoreDefine('OPENGL');
 	addKoreDefine('OPENGL_ES');
 	addKoreDefine('POSIX');
