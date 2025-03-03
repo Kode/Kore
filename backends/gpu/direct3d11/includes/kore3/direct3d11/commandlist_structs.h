@@ -18,7 +18,8 @@ typedef struct kore_d3d11_buffer_access {
 } kore_d3d11_buffer_access;
 
 typedef struct kore_d3d11_command_list {
-	int nothing;
+	uint8_t *commands;
+	uint64_t commands_offset;
 } kore_d3d11_command_list;
 
 #ifdef __cplusplus

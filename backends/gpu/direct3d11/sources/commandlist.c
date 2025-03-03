@@ -12,29 +12,163 @@
 #include <kore3/util/align.h>
 
 #include <assert.h>
+#include <stdlib.h>
 
-void kore_d3d11_command_list_destroy(kore_gpu_command_list *list) {}
+typedef enum command_type {
+	COMMAND_SET_INDEX_BUFFER,
+	COMMAND_SET_VERTEX_BUFFER,
+	COMMAND_DRAW_INDEXED,
+	COMMAND_SET_RENDER_PIPELINE,
+	COMMAND_COPY_TEXTURE_TO_BUFFER,
+	COMMAND_PRESENT,
+	COMMAND_BEGIN_RENDER_PASS,
+	COMMAND_END_RENDER_PASS,
+} command_type;
 
-void kore_d3d11_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {}
+typedef struct set_index_buffer_data {
+	kore_gpu_buffer *buffer;
+	kore_gpu_index_format index_format;
+	uint64_t offset;
+	uint64_t size;
+} set_index_buffer_data;
 
-void kore_d3d11_command_list_end_render_pass(kore_gpu_command_list *list) {}
+typedef struct set_vertex_buffer_data {
+	uint32_t slot;
+	kore_d3d11_buffer *buffer;
+	uint64_t offset;
+	uint64_t size;
+	uint64_t stride;
+} set_vertex_buffer_data;
 
-void kore_d3d11_command_list_present(kore_gpu_command_list *list) {}
+typedef struct draw_indexed_data {
+	uint32_t index_count;
+	uint32_t instance_count;
+	uint32_t first_index;
+	int32_t base_vertex;
+	uint32_t first_instance;
+} draw_indexed_data;
+
+typedef struct set_render_pipeline {
+	kore_d3d11_render_pipeline *pipeline;
+} set_render_pipeline;
+
+typedef struct copy_texture_to_buffer {
+	const kore_gpu_image_copy_texture *source;
+	const kore_gpu_image_copy_buffer *destination;
+	uint32_t width;
+	uint32_t height;
+	uint32_t depth_or_array_layers;
+} copy_texture_to_buffer;
+
+typedef struct begin_render_pass {
+	kore_gpu_render_pass_parameters parameters;
+} begin_render_pass;
+
+typedef struct command {
+	command_type type;
+	uint32_t size;
+	uint32_t data;
+} command;
+
+void kore_d3d11_command_list_destroy(kore_gpu_command_list *list) {
+	free(list->d3d11.commands);
+	list->d3d11.commands = NULL;
+}
+
+void kore_d3d11_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
+	command *c = (command *)&list->d3d11.commands[list->d3d11.commands_offset];
+
+	c->type = COMMAND_BEGIN_RENDER_PASS;
+
+	begin_render_pass *data = (begin_render_pass *)&c->data;
+	data->parameters = *parameters;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->d3d11.commands_offset += c->size;
+}
+
+void kore_d3d11_command_list_end_render_pass(kore_gpu_command_list *list) {
+	command *c = (command *)&list->d3d11.commands[list->d3d11.commands_offset];
+
+	c->type = COMMAND_END_RENDER_PASS;
+
+	c->size = sizeof(command) - sizeof(c->data);
+	list->d3d11.commands_offset += c->size;
+}
+
+void kore_d3d11_command_list_present(kore_gpu_command_list *list) {
+	command *c = (command *)&list->d3d11.commands[list->d3d11.commands_offset];
+
+	c->type = COMMAND_PRESENT;
+
+	c->size = sizeof(command) - sizeof(c->data);
+	list->d3d11.commands_offset += c->size;
+}
 
 void kore_d3d11_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                              uint64_t size) {}
+                                              uint64_t size) {
+	command *c = (command *)&list->d3d11.commands[list->d3d11.commands_offset];
+
+	c->type = COMMAND_SET_INDEX_BUFFER;
+
+	set_index_buffer_data *data = (set_index_buffer_data *)&c->data;
+	data->buffer = buffer;
+	data->index_format = index_format;
+	data->offset = offset;
+	data->size = size;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->d3d11.commands_offset += c->size;
+}
 
 void kore_d3d11_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_d3d11_buffer *buffer, uint64_t offset, uint64_t size,
-                                               uint64_t stride) {}
+                                               uint64_t stride) {
+	command *c = (command *)&list->d3d11.commands[list->d3d11.commands_offset];
 
-void kore_d3d11_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_d3d11_render_pipeline *pipeline) {}
+	c->type = COMMAND_SET_VERTEX_BUFFER;
+
+	set_vertex_buffer_data *data = (set_vertex_buffer_data *)&c->data;
+	data->slot = slot;
+	data->buffer = buffer;
+	data->offset = offset;
+	data->size = size;
+	data->stride = stride;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->d3d11.commands_offset += c->size;
+}
+
+void kore_d3d11_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_d3d11_render_pipeline *pipeline) {
+	command *c = (command *)&list->d3d11.commands[list->d3d11.commands_offset];
+
+	c->type = COMMAND_SET_RENDER_PIPELINE;
+
+	set_render_pipeline *data = (set_render_pipeline *)&c->data;
+	data->pipeline = pipeline;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->d3d11.commands_offset += c->size;
+}
 
 void kore_d3d11_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {
-
 }
 
 void kore_d3d11_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index, int32_t base_vertex,
-                                          uint32_t first_instance) {}
+                                          uint32_t first_instance) {
+	command *c = (command *)&list->d3d11.commands[list->d3d11.commands_offset];
+
+	c->type = COMMAND_DRAW_INDEXED;
+
+	draw_indexed_data *data = (draw_indexed_data *)&c->data;
+	data->index_count = index_count;
+	data->instance_count = instance_count;
+	data->first_index = first_index;
+	data->base_vertex = base_vertex;
+	data->first_instance = first_instance;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->d3d11.commands_offset += c->size;
+}
 
 void kore_d3d11_command_list_set_descriptor_table(kore_gpu_command_list *list, uint32_t table_index, kore_d3d11_descriptor_set *set,
                                                   kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {}
@@ -50,7 +184,21 @@ void kore_d3d11_command_list_copy_buffer_to_texture(kore_gpu_command_list *list,
 
 void kore_d3d11_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                     const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
-                                                    uint32_t depth_or_array_layers) {}
+                                                    uint32_t depth_or_array_layers) {
+	command *c = (command *)&list->d3d11.commands[list->d3d11.commands_offset];
+
+	c->type = COMMAND_COPY_TEXTURE_TO_BUFFER;
+
+	copy_texture_to_buffer *data = (copy_texture_to_buffer *)&c->data;
+	data->source = source;
+	data->destination = destination;
+	data->width = width;
+	data->height = height;
+	data->depth_or_array_layers = depth_or_array_layers;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->d3d11.commands_offset += c->size;
+}
 
 void kore_d3d11_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                      const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
