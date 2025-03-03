@@ -9,12 +9,16 @@
 #include <kore3/window.h>
 
 #include <kore3/backend/microsoft.h>
+#ifdef KORE_WINDOWS
 #include <kore3/backend/windows.h>
+#endif
 
 #include <d3d11.h>
 #include <dxgi.h>
 
 #include <assert.h>
+
+static IDXGISwapChain *swap_chain;
 
 #ifdef KORE_WINDOWS
 static bool isWindowsVersionOrGreater(WORD wMajorVersion, WORD wMinorVersion, WORD wServicePackMajor) {
@@ -62,32 +66,31 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	flags = D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-	ID3D11Device *d3d11_device;
-	ID3D11DeviceContext *context;
 	IDXGIDevice *dxgi_device;
 	IDXGIAdapter *dxgi_adapter;
 	IDXGIFactory *dxgi_factory;
+
 	D3D_FEATURE_LEVEL feature_level;
 
 	IDXGIAdapter *adapter = NULL;
 	HRESULT result = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, feature_levels, sizeof(feature_levels) / sizeof(feature_levels[0]),
-	                                   D3D11_SDK_VERSION, &d3d11_device, &feature_level, &context);
+	                                   D3D11_SDK_VERSION, &device->d3d11.device, &feature_level, &device->d3d11.context);
 
 #ifndef NDEBUG
 	if (result == E_FAIL || result == DXGI_ERROR_SDK_COMPONENT_MISSING) {
 		kore_log(KORE_LOG_LEVEL_WARNING, "%s", "Failed to create device with D3D11_CREATE_DEVICE_DEBUG, trying without");
 		flags ^= D3D11_CREATE_DEVICE_DEBUG;
 		result = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, feature_levels, sizeof(feature_levels) / sizeof(feature_levels[0]),
-		                           D3D11_SDK_VERSION, &d3d11_device, &feature_level, &context);
+		                           D3D11_SDK_VERSION, &device->d3d11.device, &feature_level, &device->d3d11.context);
 	}
 #endif
 
 	if (result != S_OK) {
 		kore_log(KORE_LOG_LEVEL_WARNING, "%s", "Falling back to the WARP driver, things will be slow.");
 		kore_microsoft_affirm(D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_WARP, NULL, flags, feature_levels, sizeof(feature_levels) / sizeof(feature_levels[0]),
-		                                        D3D11_SDK_VERSION, &d3d11_device, &feature_level, &context));
+		                                        D3D11_SDK_VERSION, &device->d3d11.device, &feature_level, &device->d3d11.context));
 	}
-	kore_microsoft_affirm(d3d11_device->lpVtbl->QueryInterface(d3d11_device, &IID_IDXGIDevice, (void **)&dxgi_device));
+	kore_microsoft_affirm(device->d3d11.device->lpVtbl->QueryInterface(device->d3d11.device, &IID_IDXGIDevice, (void **)&dxgi_device));
 	kore_microsoft_affirm(dxgi_device->lpVtbl->GetAdapter(dxgi_device, &dxgi_adapter));
 	kore_microsoft_affirm(dxgi_adapter->lpVtbl->GetParent(dxgi_adapter, &IID_IDXGIFactory, (void **)&dxgi_factory));
 
@@ -140,11 +143,11 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	    .BufferCount = 2, // use two buffers to enable flip effect
 	    .SwapEffect = swap_effect,
 	    .Flags = 0,
+#ifdef KORE_WINDOWS
 	    .OutputWindow = kore_windows_window_handle(0),
+#endif
 	    .Windowed = true,
 	};
-
-	IDXGISwapChain *swap_chain;
 
 	kore_microsoft_affirm(dxgi_factory->lpVtbl->CreateSwapChain(dxgi_factory, (IUnknown *)dxgi_device, &swap_chain_desc, &swap_chain));
 
@@ -154,7 +157,7 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	kore_microsoft_affirm(swap_chain->lpVtbl->GetBuffer(swap_chain, 0, &IID_ID3D11Texture2D, (void **)&backbuffer));
 
 	ID3D11RenderTargetView *render_target_view;
-	kore_microsoft_affirm(d3d11_device->lpVtbl->CreateRenderTargetView(d3d11_device, (ID3D11Resource *)&backbuffer, NULL, &render_target_view));
+	kore_microsoft_affirm(device->d3d11.device->lpVtbl->CreateRenderTargetView(device->d3d11.device, (ID3D11Resource *)backbuffer, NULL, &render_target_view));
 
 	D3D11_TEXTURE2D_DESC backbuffer_desc;
 	backbuffer->lpVtbl->GetDesc(backbuffer, &backbuffer_desc);
@@ -169,16 +172,39 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	    .MinDepth = D3D11_MIN_DEPTH,
 	    .MaxDepth = D3D11_MAX_DEPTH,
 	};
-	context->lpVtbl->RSSetViewports(context, 1, &view_port);
+	device->d3d11.context->lpVtbl->RSSetViewports(device->d3d11.context, 1, &view_port);
 }
 
 void kore_d3d11_device_destroy(kore_gpu_device *device) {}
 
 void kore_d3d11_device_set_name(kore_gpu_device *device, const char *name) {}
 
-void kore_d3d11_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {}
+void kore_d3d11_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
+	D3D11_BUFFER_DESC buffer_desc = {
+	    .Usage = D3D11_USAGE_DYNAMIC,
+	    .ByteWidth = (UINT)parameters->size,
+	    .BindFlags = 0,
+	    .CPUAccessFlags = D3D11_CPU_ACCESS_WRITE,
+	    .MiscFlags = 0,
+	    .StructureByteStride = 0,
+	};
 
-void kore_d3d11_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {}
+	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_INDEX) != 0) {
+		buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	}
+	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_VERTEX) != 0) {
+		buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	}
+
+	kore_microsoft_affirm(device->d3d11.device->lpVtbl->CreateBuffer(device->d3d11.device, &buffer_desc, NULL, &buffer->d3d11.buffer));
+
+	buffer->d3d11.context = device->d3d11.context;
+}
+
+void kore_d3d11_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
+	list->d3d11.commands = malloc(1024 * 1024);
+	list->d3d11.commands_offset = 0;
+}
 
 void kore_d3d11_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {}
 
@@ -190,7 +216,70 @@ kore_gpu_texture_format kore_d3d11_device_framebuffer_format(kore_gpu_device *de
 	return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
 }
 
-void kore_d3d11_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {}
+void kore_d3d11_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
+	uint64_t offset = 0;
+
+	while (offset < list->d3d11.commands_offset) {
+		command *c = (command *)&list->d3d11.commands[offset];
+
+		switch (c->type) {
+		case COMMAND_SET_INDEX_BUFFER: {
+			set_index_buffer_data *data = (set_index_buffer_data *)&c->data;
+
+			break;
+		}
+		case COMMAND_SET_VERTEX_BUFFER: {
+			set_vertex_buffer_data *data = (set_vertex_buffer_data *)&c->data;
+
+			break;
+		}
+		case COMMAND_DRAW_INDEXED: {
+			draw_indexed_data *data = (draw_indexed_data *)&c->data;
+
+			break;
+		}
+		case COMMAND_SET_RENDER_PIPELINE: {
+			set_render_pipeline *data = (set_render_pipeline *)&c->data;
+
+			break;
+		}
+		case COMMAND_COPY_TEXTURE_TO_BUFFER: {
+			copy_texture_to_buffer *data = (copy_texture_to_buffer *)&c->data;
+
+			break;
+		}
+		case COMMAND_BEGIN_RENDER_PASS: {
+			begin_render_pass *data = (begin_render_pass *)&c->data;
+
+			break;
+		}
+		case COMMAND_END_RENDER_PASS: {
+			break;
+		}
+		case COMMAND_PRESENT: {
+			if (swap_chain->lpVtbl->Present(swap_chain, true, 0) != S_OK) {
+				kore_log(KORE_LOG_LEVEL_WARNING, "Coudld not swap the swap chain");
+			}
+
+			// TODO: if (hr == DXGI_STATUS_OCCLUDED)...
+			// http://www.pouet.net/topic.php?which=10454
+			// "Proper handling of DXGI_STATUS_OCCLUDED would be to pause the application,
+			// and periodically call Present with the TEST flag, and when it returns S_OK, resume rendering."
+
+			// if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
+			//	Initialize(m_window);
+			//}
+			// else {
+			// return success;
+			//}
+		}
+		}
+
+		offset += c->size;
+	}
+
+	list->d3d11.commands_offset = 0;
+}
 
 void kore_d3d11_device_wait_until_idle(kore_gpu_device *device) {}
 
