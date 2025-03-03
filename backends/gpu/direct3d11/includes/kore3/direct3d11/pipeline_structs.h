@@ -196,8 +196,18 @@ typedef struct kore_d3d11_render_pipeline_parameters {
 	kore_d3d11_fragment_state fragment;
 } kore_d3d11_render_pipeline_parameters;
 
+struct ID3D11VertexShader;
+struct ID3D11PixelShader;
+struct ID3D11InputLayout;
+struct ID3D11DepthStencilState;
+struct ID3D11RasterizerState;
+
 typedef struct kore_d3d11_render_pipeline {
-	int nothing;
+	struct ID3D11VertexShader *vertex_shader;
+	struct ID3D11PixelShader *fragment_shader;
+	struct ID3D11InputLayout *input_layout;
+	struct ID3D11DepthStencilState *depth_stencil_state;
+	struct ID3D11RasterizerState *rasterizer_state;
 } kore_d3d11_render_pipeline;
 
 typedef struct kore_d3d11_compute_pipeline_parameters {

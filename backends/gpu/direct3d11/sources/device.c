@@ -19,6 +19,7 @@
 #include <assert.h>
 
 static IDXGISwapChain *swap_chain;
+static kore_gpu_texture framebuffer;
 
 #ifdef KORE_WINDOWS
 static bool isWindowsVersionOrGreater(WORD wMajorVersion, WORD wMinorVersion, WORD wServicePackMajor) {
@@ -153,26 +154,15 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 
 	swap_chain->lpVtbl->ResizeBuffers(swap_chain, 1, kore_window_width(0), kore_window_height(0), DXGI_FORMAT_B8G8R8A8_UNORM, 0);
 
-	ID3D11Texture2D *backbuffer;
-	kore_microsoft_affirm(swap_chain->lpVtbl->GetBuffer(swap_chain, 0, &IID_ID3D11Texture2D, (void **)&backbuffer));
+	kore_microsoft_affirm(swap_chain->lpVtbl->GetBuffer(swap_chain, 0, &IID_ID3D11Texture2D, (void **)&framebuffer.d3d11.texture));
 
-	ID3D11RenderTargetView *render_target_view;
-	kore_microsoft_affirm(device->d3d11.device->lpVtbl->CreateRenderTargetView(device->d3d11.device, (ID3D11Resource *)backbuffer, NULL, &render_target_view));
+	kore_microsoft_affirm(device->d3d11.device->lpVtbl->CreateRenderTargetView(device->d3d11.device, (ID3D11Resource *)framebuffer.d3d11.texture, NULL,
+	                                                                           &framebuffer.d3d11.render_target_view));
 
 	D3D11_TEXTURE2D_DESC backbuffer_desc;
-	backbuffer->lpVtbl->GetDesc(backbuffer, &backbuffer_desc);
-	// int width = backbuffer_desc.Width;
-	// int height = backbuffer_desc.Height;
-
-	D3D11_VIEWPORT view_port = {
-	    .TopLeftX = 0.0f,
-	    .TopLeftY = 0.0f,
-	    .Width = (float)kore_window_width(0),
-	    .Height = (float)kore_window_height(0),
-	    .MinDepth = D3D11_MIN_DEPTH,
-	    .MaxDepth = D3D11_MAX_DEPTH,
-	};
-	device->d3d11.context->lpVtbl->RSSetViewports(device->d3d11.context, 1, &view_port);
+	framebuffer.d3d11.texture->lpVtbl->GetDesc(framebuffer.d3d11.texture, &backbuffer_desc);
+	framebuffer.d3d11.width = backbuffer_desc.Width;
+	framebuffer.d3d11.height = backbuffer_desc.Height;
 }
 
 void kore_d3d11_device_destroy(kore_gpu_device *device) {}
@@ -209,7 +199,7 @@ void kore_d3d11_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 void kore_d3d11_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {}
 
 kore_gpu_texture *kore_d3d11_device_get_framebuffer(kore_gpu_device *device) {
-	return NULL;
+	return &framebuffer;
 }
 
 kore_gpu_texture_format kore_d3d11_device_framebuffer_format(kore_gpu_device *device) {
@@ -226,20 +216,42 @@ void kore_d3d11_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 		case COMMAND_SET_INDEX_BUFFER: {
 			set_index_buffer_data *data = (set_index_buffer_data *)&c->data;
 
+			device->d3d11.context->lpVtbl->IASetIndexBuffer(device->d3d11.context, data->buffer->d3d11.buffer,
+			                                                data->index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT,
+			                                                (UINT)data->offset);
+
 			break;
 		}
 		case COMMAND_SET_VERTEX_BUFFER: {
 			set_vertex_buffer_data *data = (set_vertex_buffer_data *)&c->data;
+
+			ID3D11Buffer *buffers[1] = {data->buffer->buffer};
+			UINT strides[1] = {(UINT)data->stride};
+			UINT offsets[1] = {(UINT)data->offset};
+
+			device->d3d11.context->lpVtbl->IASetVertexBuffers(device->d3d11.context, 0, 1, buffers, strides, offsets);
 
 			break;
 		}
 		case COMMAND_DRAW_INDEXED: {
 			draw_indexed_data *data = (draw_indexed_data *)&c->data;
 
+			device->d3d11.context->lpVtbl->IASetPrimitiveTopology(device->d3d11.context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			device->d3d11.context->lpVtbl->DrawIndexed(device->d3d11.context, data->index_count, data->first_index, data->base_vertex);
+
 			break;
 		}
 		case COMMAND_SET_RENDER_PIPELINE: {
 			set_render_pipeline *data = (set_render_pipeline *)&c->data;
+
+			device->d3d11.context->lpVtbl->OMSetDepthStencilState(device->d3d11.context, data->pipeline->depth_stencil_state, 0);
+
+			device->d3d11.context->lpVtbl->RSSetState(device->d3d11.context, data->pipeline->rasterizer_state);
+
+			device->d3d11.context->lpVtbl->VSSetShader(device->d3d11.context, data->pipeline->vertex_shader, NULL, 0);
+			device->d3d11.context->lpVtbl->PSSetShader(device->d3d11.context, data->pipeline->fragment_shader, NULL, 0);
+
+			device->d3d11.context->lpVtbl->IASetInputLayout(device->d3d11.context, data->pipeline->input_layout);
 
 			break;
 		}
@@ -250,6 +262,19 @@ void kore_d3d11_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 		}
 		case COMMAND_BEGIN_RENDER_PASS: {
 			begin_render_pass *data = (begin_render_pass *)&c->data;
+
+			device->d3d11.context->lpVtbl->OMSetRenderTargets(device->d3d11.context, 1,
+			                                                  &data->parameters.color_attachments[0].texture.texture->d3d11.render_target_view, NULL);
+
+			D3D11_VIEWPORT view_port = {
+			    .TopLeftX = 0.0f,
+			    .TopLeftY = 0.0f,
+			    .Width = (float)data->parameters.color_attachments[0].texture.texture->d3d11.width,
+			    .Height = (float)data->parameters.color_attachments[0].texture.texture->d3d11.height,
+			    .MinDepth = D3D11_MIN_DEPTH,
+			    .MaxDepth = D3D11_MAX_DEPTH,
+			};
+			device->d3d11.context->lpVtbl->RSSetViewports(device->d3d11.context, 1, &view_port);
 
 			break;
 		}
