@@ -6,6 +6,7 @@
 #include <kore3/util/align.h>
 
 #include <kore3/log.h>
+#include <kore3/system.h>
 #include <kore3/window.h>
 
 #include <kore3/backend/microsoft.h>
@@ -282,21 +283,25 @@ void kore_d3d11_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 			break;
 		}
 		case COMMAND_PRESENT: {
-			if (swap_chain->lpVtbl->Present(swap_chain, true, 0) != S_OK) {
+			HRESULT result = swap_chain->lpVtbl->Present(swap_chain, true, 0);
+
+			while (result == DXGI_STATUS_OCCLUDED) {
+				// http://www.pouet.net/topic.php?which=10454
+				// "Proper handling of DXGI_STATUS_OCCLUDED would be to pause the application,
+				// and periodically call Present with the TEST flag, and when it returns S_OK, resume rendering."
+
+				Sleep(50);
+				kore_internal_handle_messages();
+				result = swap_chain->lpVtbl->Present(swap_chain, true, DXGI_PRESENT_TEST);
+			}
+
+			if (result != S_OK) {
 				kore_log(KORE_LOG_LEVEL_WARNING, "Coudld not swap the swap chain");
 			}
 
-			// TODO: if (hr == DXGI_STATUS_OCCLUDED)...
-			// http://www.pouet.net/topic.php?which=10454
-			// "Proper handling of DXGI_STATUS_OCCLUDED would be to pause the application,
-			// and periodically call Present with the TEST flag, and when it returns S_OK, resume rendering."
-
-			// if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
-			//	Initialize(m_window);
-			//}
-			// else {
-			// return success;
-			//}
+			if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET) {
+				exit(1);
+			}
 		}
 		}
 
