@@ -190,7 +190,7 @@ void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipeline) {
 				//kinc_log(KINC_LOG_LEVEL_INFO, "Adding attribute: %s", element.name);
 				//kinc_log(KINC_LOG_LEVEL_INFO, "Index: %i", index);
 				//kinc_log(KINC_LOG_LEVEL_INFO, "Instanced: %s", pipeline->inputLayout[binding_index]->instanced ? "true" : "false");
-				vertexDescriptor.attributes[index].bufferIndex = binding_index;
+				vertexDescriptor.attributes[index].bufferIndex = binding_index + 1;
 				vertexDescriptor.attributes[index].offset = offset;
 				offset += kinc_g4_vertex_data_size(element.data);
 				stride += kinc_g4_vertex_data_size(element.data);
@@ -317,8 +317,8 @@ void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipeline) {
 			}
 		}
 		
-		vertexDescriptor.layouts[binding_index].stride = stride;
-		vertexDescriptor.layouts[binding_index].stepFunction = pipeline->inputLayout[binding_index]->instanced ? MTLVertexStepFunctionPerInstance : MTLVertexStepFunctionPerVertex;
+		vertexDescriptor.layouts[binding_index + 1].stride = stride;
+		vertexDescriptor.layouts[binding_index + 1].stepFunction = pipeline->inputLayout[binding_index]->instanced ? MTLVertexStepFunctionPerInstance : MTLVertexStepFunctionPerVertex;
 		// stepRate default is 1, so we probably don’t need this.
 		// I also think kinc doesn't allow a step rate to be set
 		// vertexDescriptor.layouts[binding_index].stepRate = 1;
