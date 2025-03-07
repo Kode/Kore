@@ -22,6 +22,10 @@
 #error("Unknown GPU backend")
 #endif
 
+/*! \file texture.h
+    \brief Provides functions for handling textures.
+*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif

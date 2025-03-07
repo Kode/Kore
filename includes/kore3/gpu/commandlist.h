@@ -30,6 +30,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+/*! \file commandlist.h
+    \brief The command list is used to send commands to the GPU.
+*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif

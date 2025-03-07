@@ -4,6 +4,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+/*! \file textureformat.h
+    \brief Provides an enum containing all supported texture formats and some companion functions.
+*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif
