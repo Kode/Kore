@@ -9,8 +9,12 @@ extern "C" {
 
 struct kore_gpu_device;
 
+struct ID3D11DeviceContext;
+struct ID3D11Buffer;
+
 typedef struct kore_d3d11_buffer {
-	int nothing;
+	struct ID3D11DeviceContext *context;
+	struct ID3D11Buffer *buffer;
 } kore_d3d11_buffer;
 
 #ifdef __cplusplus

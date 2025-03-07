@@ -95,7 +95,7 @@ void kore_linux_init_procs() {
 	else
 #endif
 #ifndef KORE_NO_X11
-	    if (kore_x11_init()) {
+	if (kore_x11_init()) {
 		procs.handle_messages = kore_x11_handle_messages;
 		procs.shutdown = kore_x11_shutdown;
 

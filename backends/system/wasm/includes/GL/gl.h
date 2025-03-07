@@ -135,6 +135,8 @@ typedef char GLchar;
 #define GL_MAP_READ_BIT 0x0001
 #define GL_MAP_WRITE_BIT 0x0002
 #define GL_PIXEL_PACK_BUFFER 0x88EB
+#define GL_PIXEL_UNPACK_BUFFER 0x88EC
+#define GL_FRAMEBUFFER_BINDING 0x8CA6
 
 __attribute__((import_module("imports"), import_name("glUniform1i"))) void glUniform1i(GLint location, GLint v0);
 __attribute__((import_module("imports"), import_name("glUniform2i"))) void glUniform2i(GLint location, GLint v0, GLint v1);
@@ -252,5 +254,6 @@ __attribute__((import_module("imports"), import_name("glMapBufferRange"))) void 
 __attribute__((import_module("imports"), import_name("glUnmapBuffer"))) GLboolean glUnmapBuffer(GLenum target);
 __attribute__((import_module("imports"), import_name("glGenVertexArrays"))) void glGenVertexArrays(GLsizei n, GLuint* arrays);
 __attribute__((import_module("imports"), import_name("glBindVertexArray"))) void glBindVertexArray(GLuint array);
+__attribute__((import_module("imports"), import_name("glGetBufferSubData"))) void glGetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, void* data);
 
 #endif

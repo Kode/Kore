@@ -52,13 +52,21 @@ static void init_flip(void) {
 		glGenBuffers(1, &flip_vertex_buffer);
 		glBindBuffer(GL_ARRAY_BUFFER, flip_vertex_buffer);
 		glBufferData(GL_ARRAY_BUFFER, 3 * 4 * 4, NULL, GL_DYNAMIC_DRAW);
+#ifdef KORE_WEBGL
+		float data[3 * 4];
+#else
 		float *data = (float *)glMapBufferRange(GL_ARRAY_BUFFER, 0, 3 * 4 * 4, GL_MAP_WRITE_BIT);
+#endif
 		// clang-format off
 		data[0] = -1.0f; data[1] =  1.0f; data[ 2] = 0.0f; data[ 3] = 0.0f;
 		data[4] =  3.0f; data[5] =  1.0f; data[ 6] = 2.0f; data[ 7] = 0.0f;
 		data[8] = -1.0f; data[9] = -3.0f; data[10] = 0.0f; data[11] = 2.0f;
 		// clang-format on
+#ifdef KORE_WEBGL
+		glBufferData(GL_ARRAY_BUFFER, 3 * 4 * 4, data, GL_STATIC_DRAW);
+#else
 		glUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
@@ -66,11 +74,19 @@ static void init_flip(void) {
 		glGenBuffers(1, &flip_index_buffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, flip_index_buffer);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 2, NULL, GL_DYNAMIC_DRAW);
+#ifdef KORE_WEBGL
+		uint16_t data[3];
+#else
 		uint16_t *data = (uint16_t *)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, 3 * 2, GL_MAP_WRITE_BIT);
+#endif
 		data[0] = 0;
 		data[1] = 1;
 		data[2] = 2;
+#ifdef KORE_WEBGL
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 2, data, GL_STATIC_DRAW);
+#else
 		glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+#endif
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 }
