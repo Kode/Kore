@@ -22,24 +22,24 @@ jobs:
     - name: Create documentation
       run: doxygen Doxyfile
     - name: Clone website
-      run: git clone -b gh-pages https://github.com/Kode/Kore.git Kinc-pages
+      run: git clone -b gh-pages https://github.com/Kode/Kore.git Kore-pages
     - name: Remove old documentation
-      run: rm -r Kinc-pages/api
+      run: rm -r Kore-pages/api2
     - name: Copy new documentation
-      run: cp -R Docs/html Kinc-pages/api
+      run: cp -R Docs/html Kore-pages/api2
     - name: Set name
       run: git config --global user.name "Robbot"
     - name: Set email
       run: git config --global user.email "robbot2019@robdangero.us"
     - name: Add documentation
-      run: git -C Kinc-pages add .
+      run: git -C Kore-pages add .
     - name: Commit documentation
       id: commit
       continue-on-error: true
-      run: git -C Kinc-pages commit -m "Update documentation to $GITHUB_SHA."
+      run: git -C Kore-pages commit -m "Update documentation to $GITHUB_SHA."
     - name: Push documentation
       if: steps.commit.outcome == 'success'
       continue-on-error: true
-      run: git -C Kinc-pages push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kinc.git gh-pages
+      run: git -C Kore-pages push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore.git gh-pages
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
