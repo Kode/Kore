@@ -14,8 +14,7 @@
 #include <kore3/backend/windows.h>
 #endif
 
-#include <d3d11.h>
-#include <dxgi.h>
+#include "d3d11unit.h"
 
 #include <assert.h>
 
@@ -186,6 +185,11 @@ void kore_d3d11_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_VERTEX) != 0) {
 		buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	}
+	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0) {
+		buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+		buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		buffer_desc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+	}
 
 	kore_microsoft_affirm(device->d3d11.device->lpVtbl->CreateBuffer(device->d3d11.device, &buffer_desc, NULL, &buffer->d3d11.buffer));
 
@@ -327,7 +331,7 @@ void kore_d3d11_device_create_raytracing_hierarchy(kore_gpu_device *device, kore
 void kore_d3d11_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set) {}
 
 uint32_t kore_d3d11_device_align_texture_row_bytes(kore_gpu_device *device, uint32_t row_bytes) {
-	return 0;
+	return row_bytes;
 }
 
 void kore_d3d11_device_create_fence(kore_gpu_device *device, kore_gpu_fence *fence) {}
