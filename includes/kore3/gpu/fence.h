@@ -21,6 +21,10 @@
 #error("Unknown GPU backend")
 #endif
 
+/*! \file fence.h
+    \brief Provides various functions for GPU fences which are used for synchronizing GPU queues.
+*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif

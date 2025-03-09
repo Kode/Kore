@@ -28,6 +28,10 @@
 #error("Unknown GPU backend")
 #endif
 
+/*! \file device.h
+    \brief The device is the entry point for doing anything with the GPU.
+*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif

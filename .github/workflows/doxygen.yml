@@ -1,0 +1,49 @@
+name: Doxygen
+
+on:
+  push:
+    branches:
+    - v3
+  pull_request:
+    branches:
+    - v3
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Apt Update
+      run: sudo apt-get update
+    - name: Apt Install
+      run: sudo apt-get install doxygen imagemagick --yes --quiet
+    - name: Get Submodules
+      run: ./get_dlc
+    - name: Create icon
+      run: convert -resize 55x55 tools/linux_x64/icon.png icon.png
+    - name: Create documentation
+      run: doxygen Doxyfile
+    - name: Clone website
+      run: git clone -b gh-pages https://github.com/Kode/Kore.git Kore-pages
+    - name: Remove old documentation
+      run: rm -r Kore-pages/api3
+    - name: Copy new documentation
+      run: cp -R Docs/html Kore-pages/api3
+    - name: Set name
+      run: git config --global user.name "Robbot"
+    - name: Set email
+      run: git config --global user.email "robbot2019@robdangero.us"
+    - name: Add documentation
+      run: git -C Kore-pages add .
+    - name: Commit documentation
+      id: commit
+      continue-on-error: true
+      run: git -C Kore-pages commit -m "Update documentation to $GITHUB_SHA."
+    - name: Push documentation
+      if: steps.commit.outcome == 'success'
+      continue-on-error: true
+      run: git -C Kore-pages push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore.git gh-pages
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}

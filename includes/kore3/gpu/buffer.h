@@ -23,6 +23,10 @@
 
 #include <stdint.h>
 
+/*! \file buffer.h
+    \brief Provides various functions for GPU buffers.
+*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif

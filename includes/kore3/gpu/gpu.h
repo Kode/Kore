@@ -5,6 +5,10 @@
 
 #include "api.h"
 
+/*! \file gpu.h
+    \brief Provides just kore_gpu_init which has to be called to initialize the GPU API.
+*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif

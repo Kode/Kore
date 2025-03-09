@@ -21,6 +21,10 @@
 #error("Unknown GPU backend")
 #endif
 
+/*! \file sampler.h
+    \brief Provides functions for handling samplers.
+*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif
