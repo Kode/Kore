@@ -13,6 +13,10 @@ extern "C" {
 
 #if defined(KORE_SSE2)
 
+static inline kore_uint32x4 kore_uint32x4_load_float32x4(kore_float32x4 value) {
+	return _mm_cvtps_epi32(value);
+}
+
 static inline kore_uint32x4 kore_uint32x4_intrin_load(const uint32_t *values) {
 	return _mm_load_si128((const kore_uint32x4 *)values);
 }
@@ -23,6 +27,10 @@ static inline kore_uint32x4 kore_uint32x4_intrin_load_unaligned(const uint32_t *
 
 static inline kore_uint32x4 kore_uint32x4_load(const uint32_t values[4]) {
 	return _mm_set_epi32(values[3], values[2], values[1], values[0]);
+}
+
+static inline kore_uint32x4 kore_uint32x4_load_values(uint32_t value0, uint32_t value1, uint32_t value2, uint32_t value3) {
+	return _mm_set_epi32(value3, value2, value1, value0);
 }
 
 static inline kore_uint32x4 kore_uint32x4_load_all(uint32_t t) {
@@ -52,6 +60,27 @@ static inline kore_uint32x4 kore_uint32x4_add(kore_uint32x4 a, kore_uint32x4 b) 
 
 static inline kore_uint32x4 kore_uint32x4_sub(kore_uint32x4 a, kore_uint32x4 b) {
 	return _mm_sub_epi32(a, b);
+}
+
+static inline kore_uint32x4 kore_uint32x4_mul(kore_uint32x4 a, kore_uint32x4 b) {
+#ifdef KORE_SSE4_1
+	return _mm_mullo_epi32(a, b);
+#else
+	// via https://fgiesen.wordpress.com/2016/04/03/sse-mind-the-gap
+	//
+	// even and odd lane products
+	__m128i evnp = _mm_mul_epu32(a, b);
+	__m128i odda = _mm_srli_epi64(a, 32);
+	__m128i oddb = _mm_srli_epi64(b, 32);
+	__m128i oddp = _mm_mul_epu32(odda, oddb);
+
+	// merge results
+	__m128i evn_mask = _mm_setr_epi32(-1, 0, -1, 0);
+	__m128i evn_result = _mm_and_si128(evnp, evn_mask);
+	__m128i odd_result = _mm_slli_epi64(oddp, 32);
+
+	return _mm_or_si128(evn_result, odd_result);
+#endif
 }
 
 static inline kore_uint32x4_mask kore_uint32x4_cmpeq(kore_uint32x4 a, kore_uint32x4 b) {

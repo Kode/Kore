@@ -14,6 +14,14 @@ extern "C" {
 
 #if defined(KORE_SSE)
 
+static inline kore_float32x4 kore_float32x4_load_int32x4(kore_int32x4 value) {
+	return _mm_cvtepi32_ps(value);
+}
+
+static inline kore_float32x4 kore_float32x4_load_uint32x4(kore_uint32x4 value) {
+	return _mm_cvtepi32_ps(value);
+}
+
 static inline kore_float32x4 kore_float32x4_intrin_load(const float *values) {
 	return _mm_load_ps(values);
 }
