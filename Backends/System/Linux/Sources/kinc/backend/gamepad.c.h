@@ -183,8 +183,6 @@ void kinc_linux_closeHIDGamepads() {
 	HIDGamepadUdevHelper_close(&udev_helper);
 }
 
-void kinc_gamepad_set_count(int count) {}
-
 const char *kinc_gamepad_vendor(int gamepad) {
 	return "Linux gamepad";
 }
