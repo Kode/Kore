@@ -412,8 +412,6 @@ void kinc_login() {}
 
 void kinc_unlock_achievement(int id) {}
 
-void kinc_gamepad_set_count(int count) {}
-
 bool kinc_gamepad_connected(int num) {
 	return true;
 }

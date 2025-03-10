@@ -1,7 +1,5 @@
 #include <kinc/input/gamepad.h>
 
-void kinc_gamepad_set_count(int count) {}
-
 const char *kinc_gamepad_vendor(int gamepad) {
 	return "None";
 }
