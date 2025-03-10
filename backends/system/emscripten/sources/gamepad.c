@@ -1,7 +1,5 @@
 #include <kore3/input/gamepad.h>
 
-void kore_gamepad_set_count(int count) {}
-
 const char *kore_gamepad_vendor(int gamepad) {
 	return "None";
 }

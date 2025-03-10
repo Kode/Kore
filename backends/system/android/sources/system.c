@@ -1133,8 +1133,6 @@ void kore_login() {}
 
 void kore_unlock_achievement(int id) {}
 
-void kore_gamepad_set_count(int count) {}
-
 bool kore_gamepad_connected(int num) {
 	return num == 0;
 }

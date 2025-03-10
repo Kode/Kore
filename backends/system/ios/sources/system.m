@@ -159,8 +159,6 @@ void kore_login(void) {}
 
 void kore_unlock_achievement(int id) {}
 
-void kore_gamepad_set_count(int count) {}
-
 const char *kore_gamepad_vendor(int gamepad) {
 	return "nobody";
 }
