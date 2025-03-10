@@ -31,6 +31,8 @@ double exp(double x);
 
 double sqrt(double x);
 
+float sqrtf(float x);
+
 #ifdef __cplusplus
 }
 #endif

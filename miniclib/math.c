@@ -98,3 +98,10 @@ double sqrt(double x) {
 #endif
 	return 0.0;
 }
+
+float sqrtf(float x) {
+#ifdef KORE_WASM
+	return js_sqrt(x);
+#endif
+	return 0.0f;
+}
