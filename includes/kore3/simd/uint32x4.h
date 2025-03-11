@@ -17,6 +17,10 @@ static inline kore_uint32x4 kore_uint32x4_load_float32x4(kore_float32x4 value) {
 	return _mm_cvtps_epi32(value);
 }
 
+static inline kore_uint32x4 kore_uint32x4_load_int32x4(kore_int32x4 value) {
+	return value;
+}
+
 static inline kore_uint32x4 kore_uint32x4_intrin_load(const uint32_t *values) {
 	return _mm_load_si128((const kore_uint32x4 *)values);
 }
@@ -145,6 +149,10 @@ static inline kore_uint32x4 kore_uint32x4_load_float32x4(kore_float32x4 value) {
 	return vcvtq_u32_f32(value);
 }
 
+static inline kore_uint32x4 kore_uint32x4_load_int32x4(kore_int32x4 value) {
+	return value;
+}
+
 static inline kore_uint32x4 kore_uint32x4_intrin_load(const uint32_t *values) {
 	return vld1q_u32(values);
 }
@@ -243,6 +251,24 @@ static inline kore_uint32x4 kore_uint32x4_not(kore_uint32x4 t) {
 
 #else
 
+static inline kore_uint32x4 kore_uint32x4_load_float32x4(kore_float32x4 value) {
+	kore_uint32x4 u;
+	u.values[0] = (uint32_t)value.values[0];
+	u.values[1] = (uint32_t)value.values[1];
+	u.values[2] = (uint32_t)value.values[2];
+	u.values[3] = (uint32_t)value.values[3];
+	return u;
+}
+
+static inline kore_uint32x4 kore_uint32x4_load_int32x4(kore_int32x4 value) {
+	kore_uint32x4 u;
+	u.values[0] = (uint32_t)value.values[0];
+	u.values[1] = (uint32_t)value.values[1];
+	u.values[2] = (uint32_t)value.values[2];
+	u.values[3] = (uint32_t)value.values[3];
+	return u;
+}
+
 static inline kore_uint32x4 kore_uint32x4_intrin_load(const uint32_t *values) {
 	kore_uint32x4 value;
 	value.values[0] = values[0];
@@ -256,12 +282,12 @@ static inline kore_uint32x4 kore_uint32x4_intrin_load_unaligned(const uint32_t *
 	return kore_uint32x4_intrin_load(values);
 }
 
-static inline kore_uint32x4 kore_uint32x4_load(const uint32_t values[4]) {
+static inline kore_uint32x4 kore_uint32x4_load(uint32_t value0, uint32_t value1, uint32_t value2, uint32_t value3) {
 	kore_uint32x4 value;
-	value.values[0] = values[0];
-	value.values[1] = values[1];
-	value.values[2] = values[2];
-	value.values[3] = values[3];
+	value.values[0] = value0;
+	value.values[1] = value1;
+	value.values[2] = value2;
+	value.values[3] = value3;
 	return value;
 }
 
@@ -304,6 +330,15 @@ static inline kore_uint32x4 kore_uint32x4_sub(kore_uint32x4 a, kore_uint32x4 b) 
 	value.values[1] = a.values[1] - b.values[1];
 	value.values[2] = a.values[2] - b.values[2];
 	value.values[3] = a.values[3] - b.values[3];
+	return value;
+}
+
+static inline kore_uint32x4 kore_uint32x4_mul(kore_uint32x4 a, kore_uint32x4 b) {
+	kore_uint32x4 value;
+	value.values[0] = a.values[0] * b.values[0];
+	value.values[1] = a.values[1] * b.values[1];
+	value.values[2] = a.values[2] * b.values[2];
+	value.values[3] = a.values[3] * b.values[3];
 	return value;
 }
 

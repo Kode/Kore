@@ -21,8 +21,8 @@ kore_float32x4 kore_cpu_compute_length_f2(kore_float2x4 value) {
 
 kore_int2x4 kore_cpu_compute_int2_u2(kore_uint2x4 value) {
 	kore_int2x4 i;
-	i.x = value.x;
-	i.y = value.y;
+	i.x = kore_int32x4_load_uint32x4(value.x);
+	i.y = kore_int32x4_load_uint32x4(value.y);
 	return i;
 }
 
@@ -75,11 +75,11 @@ kore_float32x4 kore_cpu_compute_sub_f1_f1(kore_float32x4 value0, kore_float32x4 
 }
 
 kore_int32x4 kore_cpu_compute_mult_u1_i1(kore_uint32x4 value0, kore_int32x4 value1) {
-	return kore_int32x4_mul(value0, value1);
+	return kore_int32x4_mul(kore_int32x4_load_uint32x4(value0), value1);
 }
 
 kore_int32x4 kore_cpu_compute_add_u1_i1(kore_uint32x4 value0, kore_int32x4 value1) {
-	return kore_int32x4_add(value0, value1);
+	return kore_int32x4_add(kore_int32x4_load_uint32x4(value0), value1);
 }
 
 kore_uint2x4 kore_cpu_compute_swizzle_xy_u3(kore_uint3x4 value) {

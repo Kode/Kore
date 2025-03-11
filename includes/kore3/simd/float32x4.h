@@ -375,6 +375,24 @@ static inline kore_float32x4 kore_float32x4_shuffle_ghcd(kore_float32x4 abcd, ko
 
 #include <math.h>
 
+static inline kore_float32x4 kore_float32x4_load_int32x4(kore_int32x4 value) {
+	kore_float32x4 f;
+	f.values[0] = (float)value.values[0];
+	f.values[1] = (float)value.values[1];
+	f.values[2] = (float)value.values[2];
+	f.values[3] = (float)value.values[3];
+	return f;
+}
+
+static inline kore_float32x4 kore_float32x4_load_uint32x4(kore_uint32x4 value) {
+	kore_float32x4 f;
+	f.values[0] = (float)value.values[0];
+	f.values[1] = (float)value.values[1];
+	f.values[2] = (float)value.values[2];
+	f.values[3] = (float)value.values[3];
+	return f;
+}
+
 static inline kore_float32x4 kore_float32x4_intrin_load(const float *values) {
 	kore_float32x4 value;
 	value.values[0] = values[0];
