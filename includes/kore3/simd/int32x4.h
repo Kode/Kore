@@ -25,11 +25,7 @@ static inline kore_int32x4 kore_int32x4_intrin_load_unaligned(const int32_t *val
 	return _mm_loadu_si128((const kore_int32x4 *)values);
 }
 
-static inline kore_int32x4 kore_int32x4_load(const int32_t values[4]) {
-	return _mm_set_epi32(values[3], values[2], values[1], values[0]);
-}
-
-static inline kore_int32x4 kore_int32x4_load_values(int32_t value0, int32_t value1, int32_t value2, int32_t value3) {
+static inline kore_int32x4 kore_int32x4_load(int32_t value0, int32_t value1, int32_t value2, int32_t value3) {
 	return _mm_set_epi32(value3, value2, value1, value0);
 }
 
@@ -139,6 +135,10 @@ static inline kore_int32x4 kore_int32x4_not(kore_int32x4 t) {
 
 #elif defined(KORE_NEON)
 
+static inline kore_int32x4 kore_int32x4_load_float32x4(kore_float32x4 value) {
+	return vcvtq_s32_f32(value);
+}
+
 static inline kore_int32x4 kore_int32x4_intrin_load(const int32_t *values) {
 	return vld1q_s32(values);
 }
@@ -147,8 +147,8 @@ static inline kore_int32x4 kore_int32x4_intrin_load_unaligned(const int32_t *val
 	return kore_int32x4_intrin_load(values);
 }
 
-static inline kore_int32x4 kore_int32x4_load(const int32_t values[4]) {
-	return (kore_int32x4){values[0], values[1], values[2], values[3]};
+static inline kore_int32x4 kore_int32x4_load(int32_t value0, int32_t value1, int32_t value2, int32_t value3) {
+	return (kore_int32x4){value0, value1, value2, value3};
 }
 
 static inline kore_int32x4 kore_int32x4_load_all(int32_t t) {
@@ -173,6 +173,10 @@ static inline kore_int32x4 kore_int32x4_add(kore_int32x4 a, kore_int32x4 b) {
 
 static inline kore_int32x4 kore_int32x4_sub(kore_int32x4 a, kore_int32x4 b) {
 	return vsubq_s32(a, b);
+}
+
+static inline kore_uint32x4 kore_int32x4_mul(kore_uint32x4 a, kore_uint32x4 b) {
+	return vmulq_s32(a, b);
 }
 
 static inline kore_int32x4 kore_int32x4_max(kore_int32x4 a, kore_int32x4 b) {

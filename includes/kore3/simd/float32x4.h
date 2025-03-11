@@ -171,6 +171,14 @@ static inline kore_float32x4 kore_float32x4_shuffle_ghcd(kore_float32x4 abcd, ko
 
 #elif defined(KORE_NEON)
 
+static inline kore_float32x4 kore_float32x4_load_int32x4(kore_int32x4 value) {
+	return vcvtq_f32_s32(value);
+}
+
+static inline kore_float32x4 kore_float32x4_load_uint32x4(kore_uint32x4 value) {
+	return vcvtq_f32_u32(value);
+}
+
 static inline kore_float32x4 kore_float32x4_intrin_load(const float *values) {
 	return vld1q_f32(values);
 }
