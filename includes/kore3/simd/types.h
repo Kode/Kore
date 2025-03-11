@@ -21,13 +21,16 @@ extern "C" {
 #define KORE_SSE4_1
 #define KORE_SSSE3
 #define KORE_SSE3
-#endif
+#define KORE_SSE2
+#define KORE_SSE
+
+#else
 
 // SSE2 Capability check
 // Note for Windows:
 //	_M_IX86_FP checks SSE2 and SSE for 32bit Windows programs only, and is unset if not a 32bit program.
 //	SSE2 and earlier is --guaranteed-- to be active for any 64bit Windows program
-#if defined(__SSE2__) || (_M_IX86_FP == 2) || (defined(KORE_WINDOWS) && defined(KORE_64))
+#if defined(__SSE2__) || (_M_IX86_FP == 2) || ((defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)) && defined(KORE_64) && !defined(__aarch64__))
 #define KORE_SSE2
 #endif
 
@@ -36,6 +39,8 @@ extern "C" {
     (defined(KORE_WINDOWSAPP) && !defined(__aarch64__)) || (defined(KORE_MACOS) && __x86_64)
 
 #define KORE_SSE
+#endif
+
 #endif
 
 // NEON Capability check
