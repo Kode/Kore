@@ -230,7 +230,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>}</div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
 <div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span><span class="keyword">static</span> <span class="keyword">inline</span> <a class="code hl_struct" href="structkore__uint32x4.html">kore_uint32x4</a> kore_uint32x4_load_int32x4(<a class="code hl_struct" href="structkore__int32x4.html">kore_int32x4</a> value) {</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <span class="keywordflow">return</span> value;</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <span class="keywordflow">return</span> vreinterpretq_u32_s32(value);</div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>}</div>
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span> </div>
 <div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="keyword">static</span> <span class="keyword">inline</span> <a class="code hl_struct" href="structkore__uint32x4.html">kore_uint32x4</a> kore_uint32x4_intrin_load(<span class="keyword">const</span> uint32_t *values) {</div>
