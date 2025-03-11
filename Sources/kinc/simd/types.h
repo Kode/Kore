@@ -20,13 +20,16 @@ extern "C" {
 #define KINC_SSE4_1
 #define KINC_SSSE3
 #define KINC_SSE3
-#endif
+#define KINC_SSE2
+#define KINC_SSE
+
+#else
 
 // SSE2 Capability check
 // Note for Windows:
 //	_M_IX86_FP checks SSE2 and SSE for 32bit Windows programs only, and is unset if not a 32bit program.
 //	SSE2 and earlier is --guaranteed-- to be active for any 64bit Windows program
-#if defined(__SSE2__) || (_M_IX86_FP == 2) || (defined(KINC_WINDOWS) && defined(KINC_64))
+#if defined(__SSE2__) || (_M_IX86_FP == 2) || ((defined(KINC_WINDOWS) || defined(KINC_WINDOWSAPP)) && defined(KINC_64) && !defined(__aarch64__))
 #define KINC_SSE2
 #endif
 
@@ -35,6 +38,8 @@ extern "C" {
     (defined(KINC_WINDOWSAPP) && !defined(__aarch64__)) || (defined(KINC_MACOS) && __x86_64)
 
 #define KINC_SSE
+#endif
+
 #endif
 
 // NEON Capability check
