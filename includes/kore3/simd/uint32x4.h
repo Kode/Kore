@@ -150,7 +150,7 @@ static inline kore_uint32x4 kore_uint32x4_load_float32x4(kore_float32x4 value) {
 }
 
 static inline kore_uint32x4 kore_uint32x4_load_int32x4(kore_int32x4 value) {
-	return value;
+	return vreinterpretq_u32_s32(value);
 }
 
 static inline kore_uint32x4 kore_uint32x4_intrin_load(const uint32_t *values) {
