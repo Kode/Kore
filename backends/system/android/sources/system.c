@@ -971,7 +971,7 @@ extern int kore_egl_height(int window);
 int kore_android_width() {
 #if defined(KORE_EGL)
 	// TODO
-	//return kore_egl_width(0);
+	// return kore_egl_width(0);
 #elif defined(KORE_VULKAN)
 	// TODO
 	// int width, height;
@@ -986,7 +986,7 @@ int kore_android_width() {
 int kore_android_height() {
 #if defined(KORE_EGL)
 	// TODO
-	//return kore_egl_height(0);
+	// return kore_egl_height(0);
 #elif defined(KORE_VULKAN)
 	// TODO
 	// int width, height;

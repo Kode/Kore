@@ -41,14 +41,15 @@ static EGLContext egl_context = EGL_NO_CONTEXT;
 static EGLConfig egl_config = NULL;
 static EGLSurface egl_surface;
 
-#define kore_egl_check_errors() {                                                     \
-	EGLint error = eglGetError();                                                     \
-	if (error != EGL_SUCCESS) {                                                       \
-		kore_log(KORE_LOG_LEVEL_ERROR, "EGL Error at line %i: %i", __LINE__, error);  \
-		kore_debug_break();                                                           \
-		exit(1);                                                                      \
-	}                                                                                 \
-}
+#define kore_egl_check_errors()                                                                                                                                \
+	{                                                                                                                                                          \
+		EGLint error = eglGetError();                                                                                                                          \
+		if (error != EGL_SUCCESS) {                                                                                                                            \
+			kore_log(KORE_LOG_LEVEL_ERROR, "EGL Error at line %i: %i", __LINE__, error);                                                                       \
+			kore_debug_break();                                                                                                                                \
+			exit(1);                                                                                                                                           \
+		}                                                                                                                                                      \
+	}
 
 static void kore_egl_init_window(int window) {
 	egl_surface = eglCreateWindowSurface(egl_display, egl_config, kore_egl_get_native_window(egl_display, egl_config, window), NULL);
@@ -122,12 +123,12 @@ static void kore_egl_init(void) {
 	for (int i = 0; i < sizeof(gl_versions) / sizeof(EGLint) / 2; ++i) {
 		{
 			EGLint context_attribs[] = {EGL_CONTEXT_MAJOR_VERSION,
-			                           gl_versions[i][0],
-			                           EGL_CONTEXT_MINOR_VERSION,
-			                           gl_versions[i][1],
-			                           EGL_CONTEXT_OPENGL_FORWARD_COMPATIBLE,
-			                           EGL_TRUE,
-			                           EGL_NONE};
+			                            gl_versions[i][0],
+			                            EGL_CONTEXT_MINOR_VERSION,
+			                            gl_versions[i][1],
+			                            EGL_CONTEXT_OPENGL_FORWARD_COMPATIBLE,
+			                            EGL_TRUE,
+			                            EGL_NONE};
 			egl_context = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
 			EGLint error = eglGetError();
 			if (error == EGL_SUCCESS) {
@@ -229,7 +230,7 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer.opengl.framebuffer);
 	framebuffer.opengl.texture = 0;
 	framebuffer.opengl.is_primary_framebuffer = true;
-	
+
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
 
