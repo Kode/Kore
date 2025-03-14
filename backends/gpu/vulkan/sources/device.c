@@ -475,33 +475,33 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 static void create_descriptor_pool(kore_gpu_device *device) {
 	VkDescriptorPoolSize pool_sizes[] = {
 	    {
-         .type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-         .descriptorCount = 128,
-	     },
+	        .type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	        .descriptorCount = 128,
+	    },
 	    {
-         .type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
-         .descriptorCount = 128,
-	     },
+	        .type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+	        .descriptorCount = 128,
+	    },
 	    {
-         .type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-         .descriptorCount = 128,
-	     },
+	        .type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+	        .descriptorCount = 128,
+	    },
 	    {
-         .type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
-         .descriptorCount = 128,
-	     },
+	        .type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
+	        .descriptorCount = 128,
+	    },
 	    {
-         .type            = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-         .descriptorCount = 128,
-	     },
+	        .type            = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+	        .descriptorCount = 128,
+	    },
 	    {
-         .type            = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-         .descriptorCount = 128,
-	     },
+	        .type            = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+	        .descriptorCount = 128,
+	    },
 	    {
-         .type            = VK_DESCRIPTOR_TYPE_SAMPLER,
-         .descriptorCount = 128,
-	     },
+	        .type            = VK_DESCRIPTOR_TYPE_SAMPLER,
+	        .descriptorCount = 128,
+	    },
 	};
 
 	VkDescriptorPoolCreateInfo pool_create_info = {
@@ -982,12 +982,12 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		    .image         = framebuffers[framebuffer_index].vulkan.image,
 		    .subresourceRange =
 		        {
-		                           .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-		                           .baseMipLevel   = 0,
-		                           .levelCount     = 1,
-		                           .baseArrayLayer = 0,
-		                           .layerCount     = 1,
-		                           },
+		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+		            .baseMipLevel   = 0,
+		            .levelCount     = 1,
+		            .baseArrayLayer = 0,
+		            .layerCount     = 1,
+		        },
 		    .srcAccessMask = 0,
 		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
 		};

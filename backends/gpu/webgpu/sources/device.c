@@ -43,8 +43,8 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .selector = "#canvas",
 	    .chain =
 	        {
-	                .sType = WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector,
-	                },
+	            .sType = WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector,
+	        },
 	};
 
 	WGPUSurfaceDescriptor surface_descriptor = {

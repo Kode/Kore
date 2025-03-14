@@ -895,9 +895,7 @@ void KoreAndroidKeyboardInit() {
 	jclass clazz = kore_android_find_class(env, "tech.kore.KoreActivity");
 
 	// String chars
-	JNINativeMethod methodTable[] = {
-	    {"nativeKoreKeyPress", "(Ljava/lang/String;)V", (void *)Java_tech_kore_KoreActivity_nativeKoreKeyPress}
-    };
+	JNINativeMethod methodTable[] = {{"nativeKoreKeyPress", "(Ljava/lang/String;)V", (void *)Java_tech_kore_KoreActivity_nativeKoreKeyPress}};
 
 	int methodTableSize = sizeof(methodTable) / sizeof(methodTable[0]);
 

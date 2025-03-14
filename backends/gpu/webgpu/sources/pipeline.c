@@ -79,16 +79,16 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 	WGPUBlendState blend_state = {
 	    .color =
 	        {
-	                .operation = WGPUBlendOperation_Add,
-	                .srcFactor = WGPUBlendFactor_One,
-	                .dstFactor = WGPUBlendFactor_Zero,
-	                },
+	            .operation = WGPUBlendOperation_Add,
+	            .srcFactor = WGPUBlendFactor_One,
+	            .dstFactor = WGPUBlendFactor_Zero,
+	        },
 	    .alpha =
 	        {
-	                .operation = WGPUBlendOperation_Add,
-	                .srcFactor = WGPUBlendFactor_One,
-	                .dstFactor = WGPUBlendFactor_Zero,
-	                },
+	            .operation = WGPUBlendOperation_Add,
+	            .srcFactor = WGPUBlendFactor_One,
+	            .dstFactor = WGPUBlendFactor_Zero,
+	        },
 	};
 	color_target_state.blend = &blend_state;
 

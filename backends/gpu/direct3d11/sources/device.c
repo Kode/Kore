@@ -123,22 +123,23 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	    .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
 	    .BufferDesc =
 	        {
-	                     .RefreshRate =
+	            .RefreshRate =
 	                {
 	                    .Denominator = 1, // 60Hz
 	                    .Numerator   = 60,
-	                }, .Width            = kore_window_width(0), // use automatic sizing
+	                },
+	            .Width            = kore_window_width(0), // use automatic sizing
 	            .Height           = kore_window_height(0),
-	                     .Format           = DXGI_FORMAT_B8G8R8A8_UNORM, // this is the most common swapchain format
+	            .Format           = DXGI_FORMAT_B8G8R8A8_UNORM, // this is the most common swapchain format
 	            .ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED,
-	                     .Scaling          = DXGI_MODE_SCALING_UNSPECIFIED, // DXGI_SCALING_NONE
+	            .Scaling          = DXGI_MODE_SCALING_UNSPECIFIED, // DXGI_SCALING_NONE
 	        },
 	    // .Stereo = false,
 	    .SampleDesc =
 	        {
-	                     .Count   = 1,
-	                     .Quality = 0,
-	                     },
+	            .Count   = 1,
+	            .Quality = 0,
+	        },
 	    .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
 	    .BufferCount = 2, // use two buffers to enable flip effect
 	    .SwapEffect  = swap_effect,

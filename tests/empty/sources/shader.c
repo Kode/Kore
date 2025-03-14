@@ -27,7 +27,7 @@ static void update(void *data) {
 	    .color_attachments_count = 1,
 	    .color_attachments =
 	        {
-	                            {
+	            {
 	                .load_op     = KORE_GPU_LOAD_OP_CLEAR,
 	                .clear_value = clear_color,
 	                .texture =
@@ -38,7 +38,8 @@ static void update(void *data) {
 	                        .format            = KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM,
 	                        .dimension         = KORE_GPU_TEXTURE_VIEW_DIMENSION_2D,
 	                    },
-	            }, },
+	            },
+	        },
 	};
 	kore_gpu_command_list_begin_render_pass(&list, &parameters);
 

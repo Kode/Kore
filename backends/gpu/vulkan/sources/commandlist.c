@@ -23,13 +23,13 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	const VkClearValue clear_value = {
 	    .color =
 	        {
-	                .float32 = {0.0f, 0.0f, 0.0f, 1.0f},
-	                },
+	            .float32 = {0.0f, 0.0f, 0.0f, 1.0f},
+	        },
 	    .depthStencil =
 	        {
-	                .depth   = 1.0f,
-	                .stencil = 0,
-	                },
+	            .depth   = 1.0f,
+	            .stencil = 0,
+	        },
 	};
 
 	const VkRenderingAttachmentInfo color_attachment_info = {
@@ -48,14 +48,14 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	const VkRect2D render_area = {
 	    .offset =
 	        {
-	                 .x = 0,
-	                 .y = 0,
-	                 },
+	            .x = 0,
+	            .y = 0,
+	        },
 	    .extent =
 	        {
-	                 .width  = texture->vulkan.width,
-	                 .height = texture->vulkan.height,
-	                 },
+	            .width  = texture->vulkan.width,
+	            .height = texture->vulkan.height,
+	        },
 	};
 
 	const VkRenderingInfo rendering_info = {
@@ -81,14 +81,14 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	VkRect2D scissor = {
 	    .offset =
 	        {
-	                 .x = 0,
-	                 .y = 0,
-	                 },
+	            .x = 0,
+	            .y = 0,
+	        },
 	    .extent =
 	        {
-	                 .width  = texture->vulkan.width,
-	                 .height = texture->vulkan.height,
-	                 },
+	            .width  = texture->vulkan.width,
+	            .height = texture->vulkan.height,
+	        },
 	};
 	vkCmdSetScissor(list->vulkan.command_buffer, 0, 1, &scissor);
 }

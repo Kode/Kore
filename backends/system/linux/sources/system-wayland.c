@@ -1115,7 +1115,7 @@ bool kore_wayland_handle_messages() {
 
 	struct pollfd fds[] = {
 	    {wl_display_get_fd(wl_ctx.display), POLLIN},
-	    {     wl_ctx.seat.keyboard.timerfd, POLLIN},
+	    {wl_ctx.seat.keyboard.timerfd, POLLIN},
 	};
 
 	if (poll(fds, sizeof(fds) / sizeof(struct pollfd), 10) <= 0) {

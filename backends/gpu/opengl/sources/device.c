@@ -118,22 +118,8 @@ static void kore_egl_init(void) {
 	}
 
 #if !defined(KORE_OPENGL_ES)
-	EGLint gl_versions[][2] = {
-	    {4, 6},
-        {4, 5},
-        {4, 4},
-        {4, 3},
-        {4, 2},
-        {4, 1},
-        {4, 0},
-        {3, 3},
-        {3, 2},
-        {3, 1},
-        {3, 0},
-        {2, 1},
-        {2, 0}
-    };
-	bool gl_initialized = false;
+	EGLint gl_versions[][2] = {{4, 6}, {4, 5}, {4, 4}, {4, 3}, {4, 2}, {4, 1}, {4, 0}, {3, 3}, {3, 2}, {3, 1}, {3, 0}, {2, 1}, {2, 0}};
+	bool gl_initialized     = false;
 	for (int i = 0; i < sizeof(gl_versions) / sizeof(EGLint) / 2; ++i) {
 		{
 			EGLint context_attribs[] = {EGL_CONTEXT_MAJOR_VERSION,
