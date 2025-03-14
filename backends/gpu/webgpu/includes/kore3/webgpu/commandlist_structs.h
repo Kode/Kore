@@ -20,7 +20,7 @@ typedef struct kore_webgpu_buffer_access {
 } kore_webgpu_buffer_access;
 
 typedef struct kore_webgpu_command_list {
-	WGPUCommandEncoder command_encoder;
+	WGPUCommandEncoder    command_encoder;
 	WGPURenderPassEncoder render_pass_encoder;
 } kore_webgpu_command_list;
 

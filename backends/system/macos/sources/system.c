@@ -4,7 +4,7 @@
 #include <kore3/system.h>
 #include <kore3/video.h>
 
-static int mouseX, mouseY;
+static int  mouseX, mouseY;
 static bool keyboardShown = false;
 
 void Kore_Mouse_GetPosition(int window, int *x, int *y) {

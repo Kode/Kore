@@ -306,7 +306,7 @@ void kore_d3d12_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 
 static uint8_t command_list_oldest_allocator(kore_gpu_command_list *list) {
 	uint64_t lowest_execution_index = UINT64_MAX;
-	uint8_t allocator_index         = 255;
+	uint8_t  allocator_index        = 255;
 
 	for (uint8_t i = 0; i < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++i) {
 		if (list->d3d12.allocator_execution_index[i] < lowest_execution_index) {
@@ -524,7 +524,7 @@ void kore_d3d12_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 	desc.Layout             = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	desc.Flags              = D3D12_RESOURCE_FLAG_NONE;
 
-	D3D12_CLEAR_VALUE optimizedClearValue;
+	D3D12_CLEAR_VALUE  optimizedClearValue;
 	D3D12_CLEAR_VALUE *optimizedClearValuePointer = NULL;
 
 	if ((parameters->usage & KONG_G5_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
@@ -601,7 +601,7 @@ static void wait_for_frame(kore_gpu_device *device, uint64_t frame_index) {
 
 static void clean_buffer_accesses(kore_gpu_buffer *buffer, uint64_t finished_execution_index) {
 	kore_d3d12_buffer_range ranges[KORE_D3D12_MAX_BUFFER_RANGES];
-	uint32_t ranges_count = 0;
+	uint32_t                ranges_count = 0;
 
 	for (uint32_t range_index = 0; range_index < buffer->d3d12.ranges_count; ++range_index) {
 		if (buffer->d3d12.ranges[range_index].execution_index > finished_execution_index) {
@@ -641,7 +641,7 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 
 	for (uint32_t buffer_access_index = 0; buffer_access_index < list->d3d12.queued_buffer_accesses_count; ++buffer_access_index) {
 		kore_d3d12_buffer_access access = list->d3d12.queued_buffer_accesses[buffer_access_index];
-		kore_gpu_buffer *buffer         = access.buffer;
+		kore_gpu_buffer         *buffer = access.buffer;
 
 		clean_buffer_accesses(buffer, device->d3d12.execution_fence->GetCompletedValue());
 

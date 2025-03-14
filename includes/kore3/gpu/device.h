@@ -86,15 +86,15 @@ typedef enum kore_gpu_texture_usage {
 } kore_gpu_texture_usage;
 
 typedef struct kore_gpu_texture_parameters {
-	uint32_t width;
-	uint32_t height;
-	uint32_t depth_or_array_layers;
-	uint32_t mip_level_count;
-	uint32_t sample_count;
+	uint32_t                   width;
+	uint32_t                   height;
+	uint32_t                   depth_or_array_layers;
+	uint32_t                   mip_level_count;
+	uint32_t                   sample_count;
 	kore_gpu_texture_dimension dimension;
-	kore_gpu_texture_format format;
-	kore_gpu_texture_usage usage;
-	kore_gpu_texture_format view_formats[8]; // necessary?
+	kore_gpu_texture_format    format;
+	kore_gpu_texture_usage     usage;
+	kore_gpu_texture_format    view_formats[8]; // necessary?
 } kore_gpu_texture_parameters;
 
 KORE_FUNC void kore_gpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture);
@@ -127,16 +127,16 @@ typedef enum kore_gpu_compare_function {
 } kore_gpu_compare_function;
 
 typedef struct kore_gpu_sampler_parameters {
-	kore_gpu_address_mode address_mode_u;
-	kore_gpu_address_mode address_mode_v;
-	kore_gpu_address_mode address_mode_w;
-	kore_gpu_filter_mode mag_filter;
-	kore_gpu_filter_mode min_filter;
+	kore_gpu_address_mode       address_mode_u;
+	kore_gpu_address_mode       address_mode_v;
+	kore_gpu_address_mode       address_mode_w;
+	kore_gpu_filter_mode        mag_filter;
+	kore_gpu_filter_mode        min_filter;
 	kore_gpu_mipmap_filter_mode mipmap_filter;
-	float lod_min_clamp;
-	float lod_max_clamp;
-	kore_gpu_compare_function compare;
-	uint16_t max_anisotropy;
+	float                       lod_min_clamp;
+	float                       lod_max_clamp;
+	kore_gpu_compare_function   compare;
+	uint16_t                    max_anisotropy;
 } kore_gpu_sampler_parameters;
 
 KORE_FUNC void kore_gpu_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler);
@@ -157,7 +157,7 @@ typedef enum kore_gpu_query_type { KORE_GPU_QUERY_TYPE_OCCLUSION, KORE_GPU_QUERY
 
 typedef struct kore_gpu_query_set_parameters {
 	kore_gpu_query_type type;
-	uint32_t count;
+	uint32_t            count;
 } kore_gpu_query_set_parameters;
 
 KORE_FUNC void kore_gpu_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set);

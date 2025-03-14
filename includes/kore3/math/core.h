@@ -19,8 +19,8 @@ KORE_FUNC float kore_round(float value);
 KORE_FUNC float kore_abs(float value);
 KORE_FUNC float kore_min(float a, float b);
 KORE_FUNC float kore_max(float a, float b);
-KORE_FUNC int kore_mini(int a, int b);
-KORE_FUNC int kore_maxi(int a, int b);
+KORE_FUNC int   kore_mini(int a, int b);
+KORE_FUNC int   kore_maxi(int a, int b);
 KORE_FUNC float kore_clamp(float value, float minValue, float maxValue);
 
 #ifdef __cplusplus

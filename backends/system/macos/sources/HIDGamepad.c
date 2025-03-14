@@ -201,8 +201,8 @@ static void initDeviceElements(struct HIDGamepad *gamepad, CFArrayRef elements) 
 	kore_affirm(elements != NULL);
 
 	for (CFIndex i = 0, count = CFArrayGetCount(elements); i < count; ++i) {
-		IOHIDElementRef elementRef = (IOHIDElementRef)CFArrayGetValueAtIndex(elements, i);
-		IOHIDElementType elemType  = IOHIDElementGetType(elementRef);
+		IOHIDElementRef  elementRef = (IOHIDElementRef)CFArrayGetValueAtIndex(elements, i);
+		IOHIDElementType elemType   = IOHIDElementGetType(elementRef);
 
 		IOHIDElementCookie cookie = IOHIDElementGetCookie(elementRef);
 

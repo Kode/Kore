@@ -15,7 +15,7 @@ void kore_http_request(const char *url, const char *path, const char *data, int 
 
 	NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
 	sessionConfiguration.HTTPAdditionalHeaders      = @{@"Content-Type" : @"application/json"};
-	NSURLSession *session                           = [NSURLSession sessionWithConfiguration:sessionConfiguration];
+	NSURLSession        *session                    = [NSURLSession sessionWithConfiguration:sessionConfiguration];
 	NSMutableURLRequest *request                    = [NSMutableURLRequest requestWithURL:aUrl];
 	if (data != 0) {
 		// printf("Sending %s\n\n", data);
@@ -41,7 +41,7 @@ void kore_http_request(const char *url, const char *path, const char *data, int 
 	NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
 	                                            completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
 		                                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-		                                            int statusCode                  = (int)[httpResponse statusCode];
+		                                            int                statusCode   = (int)[httpResponse statusCode];
 
 		                                            NSMutableData *responseData = [[NSMutableData alloc] init];
 		                                            [responseData appendData:data];

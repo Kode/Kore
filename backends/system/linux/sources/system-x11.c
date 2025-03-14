@@ -17,11 +17,11 @@
 #define Button6 6
 #define Button7 7
 
-struct kore_x11_procs xlib = {0};
-struct x11_context x11_ctx = {0};
+struct kore_x11_procs xlib    = {0};
+struct x11_context    x11_ctx = {0};
 
 static size_t clipboardStringSize = 1024;
-static char *clipboardString      = NULL;
+static char  *clipboardString     = NULL;
 
 char buffer[1024];
 
@@ -42,7 +42,7 @@ struct kore_x11_window *window_from_window(Window window) {
 	return NULL;
 }
 
-void kore_internal_resize(int window_index, int width, int height);
+void        kore_internal_resize(int window_index, int width, int height);
 static void init_pen_device(XDeviceInfo *info, struct x11_pen_device *pen, bool eraser);
 
 static void load_lib(void **lib, const char *name);
@@ -197,7 +197,7 @@ bool kore_x11_init() {
 	x11_ctx.pen.id    = -1;
 	x11_ctx.eraser.id = -1;
 
-	int count;
+	int            count;
 	XDeviceInfoPtr devices = (XDeviceInfoPtr)xlib.XListInputDevices(x11_ctx.display, &count);
 	for (int i = 0; i < count; i++) {
 		strncpy(buffer, devices[i].name, 1023);
@@ -227,8 +227,8 @@ void kore_x11_shutdown() {
 }
 
 static void init_pen_device(XDeviceInfo *info, struct x11_pen_device *pen, bool eraser) {
-	XDevice *device = xlib.XOpenDevice(x11_ctx.display, info->id);
-	XAnyClassPtr c  = info->inputclassinfo;
+	XDevice     *device = xlib.XOpenDevice(x11_ctx.display, info->id);
+	XAnyClassPtr c      = info->inputclassinfo;
 	for (int j = 0; j < device->num_classes; j++) {
 		if (c->class == ValuatorClass) {
 			XValuatorInfo *valuator_info = (XValuatorInfo *)c;
@@ -275,13 +275,13 @@ static void check_pen_device(struct kore_x11_window *window, XEvent *event, stru
 
 bool kore_x11_handle_messages() {
 	static bool controlDown             = false;
-	static int ignoreKeycode            = 0;
+	static int  ignoreKeycode           = 0;
 	static bool preventNextKeyDownEvent = false;
 
 	while (xlib.XPending(x11_ctx.display)) {
 		XEvent event;
 		xlib.XNextEvent(x11_ctx.display, &event);
-		Window window                    = event.xclient.window;
+		Window                  window   = event.xclient.window;
 		struct kore_x11_window *k_window = window_from_window(window);
 		if (k_window == NULL) {
 			continue;
@@ -295,7 +295,7 @@ bool kore_x11_handle_messages() {
 		case KeyPress: {
 
 			XKeyEvent *key = (XKeyEvent *)&event;
-			KeySym keysym;
+			KeySym     keysym;
 
 			wchar_t wchar;
 
@@ -661,8 +661,8 @@ bool kore_x11_handle_messages() {
 #undef KEY
 		}
 		case ButtonPress: {
-			XButtonEvent *button = (XButtonEvent *)&event;
-			int window_index     = k_window->window_index;
+			XButtonEvent *button       = (XButtonEvent *)&event;
+			int           window_index = k_window->window_index;
 
 			switch (button->button) {
 			case Button1:
@@ -687,8 +687,8 @@ bool kore_x11_handle_messages() {
 			break;
 		}
 		case ButtonRelease: {
-			XButtonEvent *button = (XButtonEvent *)&event;
-			int window_index     = k_window->window_index;
+			XButtonEvent *button       = (XButtonEvent *)&event;
+			int           window_index = k_window->window_index;
 
 			switch (button->button) {
 			case Button1:
@@ -764,20 +764,20 @@ bool kore_x11_handle_messages() {
 		}; break;
 		case SelectionNotify: {
 			if (event.xselection.selection == x11_ctx.atoms.CLIPBOARD) {
-				char *result;
+				char         *result;
 				unsigned long ressize, restail;
-				int resbits;
+				int           resbits;
 				xlib.XGetWindowProperty(x11_ctx.display, window, x11_ctx.atoms.XSEL_DATA, 0, LONG_MAX / 4, False, AnyPropertyType, &x11_ctx.atoms.UTF8_STRING,
 				                        &resbits, &ressize, &restail, (unsigned char **)&result);
 				kore_internal_paste_callback(result);
 				xlib.XFree(result);
 			}
 			else if (event.xselection.property == x11_ctx.atoms.XdndSelection) {
-				Atom type;
-				int format;
-				unsigned long numItems;
-				unsigned long bytesAfter = 1;
-				unsigned char *data      = 0;
+				Atom           type;
+				int            format;
+				unsigned long  numItems;
+				unsigned long  bytesAfter = 1;
+				unsigned char *data       = 0;
 				xlib.XGetWindowProperty(x11_ctx.display, event.xselection.requestor, event.xselection.property, 0, LONG_MAX, False, event.xselection.target,
 				                        &type, &format, &numItems, &bytesAfter, &data);
 				size_t pos = 0;
@@ -952,15 +952,15 @@ void kore_x11_mouse_hide() {
 	struct kore_x11_window *window = &x11_ctx.windows[x11_ctx.mouse.current_window];
 	if (!mouseHidden) {
 		XColor col;
-		col.pixel     = 0;
-		col.red       = 0;
-		col.green     = 0;
-		col.blue      = 0;
-		col.flags     = DoRed | DoGreen | DoBlue;
-		col.pad       = 0;
-		char data[1]  = {'\0'};
-		Pixmap blank  = xlib.XCreateBitmapFromData(x11_ctx.display, window->window, data, 1, 1);
-		Cursor cursor = xlib.XCreatePixmapCursor(x11_ctx.display, blank, blank, &col, &col, 0, 0);
+		col.pixel      = 0;
+		col.red        = 0;
+		col.green      = 0;
+		col.blue       = 0;
+		col.flags      = DoRed | DoGreen | DoBlue;
+		col.pad        = 0;
+		char   data[1] = {'\0'};
+		Pixmap blank   = xlib.XCreateBitmapFromData(x11_ctx.display, window->window, data, 1, 1);
+		Cursor cursor  = xlib.XCreatePixmapCursor(x11_ctx.display, blank, blank, &col, &col, 0, 0);
 		xlib.XDefineCursor(x11_ctx.display, window->window, cursor);
 		xlib.XFreePixmap(x11_ctx.display, blank);
 		mouseHidden = true;
@@ -1046,10 +1046,10 @@ void kore_x11_mouse_set_position(int window_index, int x, int y) {
 
 void kore_x11_mouse_get_position(int window_index, int *x, int *y) {
 	struct kore_x11_window *window = &x11_ctx.windows[window_index];
-	Window inwin;
-	Window inchildwin;
-	int rootx, rooty;
-	unsigned int mask;
+	Window                  inwin;
+	Window                  inchildwin;
+	int                     rootx, rooty;
+	unsigned int            mask;
 
 	xlib.XQueryPointer(x11_ctx.display, window->window, &inwin, &inchildwin, &rootx, &rooty, x, y, &mask);
 }

@@ -1,8 +1,8 @@
 #include <stdbool.h>
 
 struct WindowData {
-	id handle;
-	id view;
+	id   handle;
+	id   view;
 	bool fullscreen;
 	void (*resizeCallback)(int width, int height, void *data);
 	void *resizeCallbackData;
@@ -10,8 +10,8 @@ struct WindowData {
 	void *closeCallbackData;
 };
 
-static struct WindowData windows[10] = {};
-static int windowCounter             = 0;
+static struct WindowData windows[10]   = {};
+static int               windowCounter = 0;
 
 #include "BasicOpenGLView.m"
 #include "HIDGamepad.c"

@@ -10,17 +10,17 @@ static kore_matrix4x4_t colored_projection_matrix;
 // static var standardColorPipeline : PipelineCache = null;
 // static VertexStructure structure;
 
-static int colored_rect_buffer_size = 1000;
-static int colored_rect_buffer_index;
-static kore_g4_vertex_buffer_t colored_rect_vertex_buffer;
+static int                        colored_rect_buffer_size = 1000;
+static int                        colored_rect_buffer_index;
+static kore_g4_vertex_buffer_t    colored_rect_vertex_buffer;
 static kore_g2_colored_vertex_in *colored_rect_vertices;
-static kore_g4_index_buffer_t colored_rect_index_buffer;
+static kore_g4_index_buffer_t     colored_rect_index_buffer;
 
-static int colored_triangle_buffer_size = 1000;
-static int colored_triangle_buffer_index;
-static kore_g4_vertex_buffer_t colored_triangle_vertex_buffer;
+static int                        colored_triangle_buffer_size = 1000;
+static int                        colored_triangle_buffer_index;
+static kore_g4_vertex_buffer_t    colored_triangle_vertex_buffer;
 static kore_g2_colored_vertex_in *colored_triangle_vertices;
-static kore_g4_index_buffer_t colored_triangle_index_buffer;
+static kore_g4_index_buffer_t     colored_triangle_index_buffer;
 
 static kore_g2_constants_type_buffer colored_constants;
 

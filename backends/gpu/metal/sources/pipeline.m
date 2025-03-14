@@ -252,7 +252,7 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 	render_pipeline_descriptor.depthAttachmentPixelFormat   = MTLPixelFormatInvalid;
 	render_pipeline_descriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
 
-	float offset                           = 0;
+	float                offset            = 0;
 	MTLVertexDescriptor *vertex_descriptor = [[MTLVertexDescriptor alloc] init];
 
 	uint32_t attributes_count = 0;
@@ -368,9 +368,9 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 
 	render_pipeline_descriptor.vertexDescriptor = vertex_descriptor;
 
-	NSError *errors                         = nil;
-	MTLRenderPipelineReflection *reflection = nil;
-	id<MTLDevice> metal_device              = (__bridge id<MTLDevice>)device->device;
+	NSError                     *errors       = nil;
+	MTLRenderPipelineReflection *reflection   = nil;
+	id<MTLDevice>                metal_device = (__bridge id<MTLDevice>)device->device;
 
 	pipe->pipeline = (__bridge_retained void *)[metal_device newRenderPipelineStateWithDescriptor:render_pipeline_descriptor
 	                                                                                      options:MTLPipelineOptionBufferTypeInfo

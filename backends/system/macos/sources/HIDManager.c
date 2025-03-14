@@ -1,8 +1,8 @@
 #include <kore3/backend/HIDManager.h>
 #include <kore3/log.h>
 
-static int initHIDManager(struct HIDManager *manager);
-static bool addMatchingArray(struct HIDManager *manager, CFMutableArrayRef matchingCFArrayRef, CFDictionaryRef matchingCFDictRef);
+static int                    initHIDManager(struct HIDManager *manager);
+static bool                   addMatchingArray(struct HIDManager *manager, CFMutableArrayRef matchingCFArrayRef, CFDictionaryRef matchingCFDictRef);
 static CFMutableDictionaryRef createDeviceMatchingDictionary(struct HIDManager *manager, uint32_t inUsagePage, uint32_t inUsage);
 
 static void deviceConnected(void *inContext, IOReturn inResult, void *inSender, IOHIDDeviceRef inIOHIDDeviceRef);

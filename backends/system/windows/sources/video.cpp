@@ -49,10 +49,10 @@ bool kore_video_paused(kore_video *video) {
 #include <streams.h>
 
 namespace {
-	IGraphBuilder *graphBuilder;
-	IMediaControl *mediaControl;
+	IGraphBuilder  *graphBuilder;
+	IMediaControl  *mediaControl;
 	IMediaPosition *mediaPosition;
-	IMediaEvent *mediaEvent;
+	IMediaEvent    *mediaEvent;
 
 	struct __declspec(uuid("{71771540-2017-11cf-ae24-0020afd79767}")) CLSID_TextureRenderer;
 }
@@ -73,9 +73,9 @@ public:
 	// LONG m_lVidPitch;   // Video Pitch
 
 	kore_gpu_texture image;
-	int width;
-	int height;
-	uint8_t *pixels;
+	int              width;
+	int              height;
+	uint8_t         *pixels;
 };
 
 CTextureRenderer::CTextureRenderer(LPUNKNOWN pUnk, HRESULT *phr) : CBaseVideoRenderer(__uuidof(CLSID_TextureRenderer), TEXT("Texture Renderer"), pUnk, phr) {
@@ -90,7 +90,7 @@ CTextureRenderer::~CTextureRenderer() {
 }
 
 HRESULT CTextureRenderer::CheckMediaType(const CMediaType *pmt) {
-	HRESULT hr     = E_FAIL;
+	HRESULT    hr  = E_FAIL;
 	VIDEOINFO *pvi = 0;
 
 	CheckPointer(pmt, E_POINTER);
@@ -149,9 +149,9 @@ void kore_video_init(kore_video *video, const char *filename) {
 	video->impl.paused   = false;
 	// image = new Graphics4::Texture(100, 100, Graphics4::Image::RGBA32, false);
 
-	HRESULT hr = S_OK;
-	IBaseFilter *pFSrc; // Source Filter
-	IPin *pFSrcPinOut;  // Source Filter Output Pin
+	HRESULT      hr = S_OK;
+	IBaseFilter *pFSrc;       // Source Filter
+	IPin        *pFSrcPinOut; // Source Filter Output Pin
 
 	hr                   = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC, __uuidof(IGraphBuilder), (void **)&graphBuilder);
 	video->impl.renderer = new CTextureRenderer(NULL, &hr);

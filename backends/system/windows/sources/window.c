@@ -15,11 +15,11 @@ typedef unsigned long DWORD;
 
 typedef struct {
 	struct HWND__ *handle;
-	int display_index;
-	bool mouseInside;
-	int index;
-	int x, y, mode, bpp, frequency, features;
-	int manualWidth, manualHeight;
+	int            display_index;
+	bool           mouseInside;
+	int            index;
+	int            x, y, mode, bpp, frequency, features;
+	int            manualWidth, manualHeight;
 	void (*resizeCallback)(int x, int y, void *data);
 	void *resizeCallbackData;
 	void (*ppiCallback)(int ppi, void *data);
@@ -32,7 +32,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 
 #define MAXIMUM_WINDOWS 16
 static WindowData windows[MAXIMUM_WINDOWS] = {0};
-static int window_counter                  = 0;
+static int        window_counter           = 0;
 
 #ifdef KORE_OCULUS
 const wchar_t *windowClassName = L"ORT";
@@ -276,8 +276,8 @@ void kore_window_resize(int window_index, int width, int height) {
 		break;
 	}
 	case KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN: {
-		int display_index              = kore_window_display(window_index);
-		kore_display_mode display_mode = kore_display_current_mode(display_index);
+		int               display_index = kore_window_display(window_index);
+		kore_display_mode display_mode  = kore_display_current_mode(display_index);
 		kore_windows_set_display_mode(display_index, width, height, win->bpp, win->frequency);
 		SetWindowPos(win->handle, NULL, display_mode.x, display_mode.y, display_mode.width, display_mode.height, 0);
 		break;
@@ -324,9 +324,9 @@ void kore_window_change_features(int window_index, int features) {
 }
 
 void kore_window_change_mode(int window_index, kore_window_mode mode) {
-	WindowData *win                = &windows[window_index];
-	int display_index              = kore_window_display(window_index);
-	kore_display_mode display_mode = kore_display_current_mode(display_index);
+	WindowData       *win           = &windows[window_index];
+	int               display_index = kore_window_display(window_index);
+	kore_display_mode display_mode  = kore_display_current_mode(display_index);
 	switch (mode) {
 	case KORE_WINDOW_MODE_WINDOW:
 		kore_windows_restore_display(display_index);
@@ -399,7 +399,7 @@ void kore_window_set_title(int window_index, const char *title) {
 }
 
 int kore_window_create(kore_window_parameters *win, kore_framebuffer_parameters *frame) {
-	kore_window_parameters defaultWin;
+	kore_window_parameters      defaultWin;
 	kore_framebuffer_parameters defaultFrame;
 
 	if (win == NULL) {

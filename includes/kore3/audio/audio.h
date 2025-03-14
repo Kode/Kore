@@ -16,8 +16,8 @@ extern "C" {
 #define KORE_AUDIO_MAX_CHANNELS 8
 
 typedef struct kore_audio_buffer {
-	uint8_t channel_count;
-	float *channels[KORE_AUDIO_MAX_CHANNELS];
+	uint8_t  channel_count;
+	float   *channels[KORE_AUDIO_MAX_CHANNELS];
 	uint32_t data_size;
 	uint32_t read_location;
 	uint32_t write_location;

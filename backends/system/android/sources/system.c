@@ -26,12 +26,12 @@
 void pauseAudio();
 void resumeAudio();
 
-static struct android_app *app             = NULL;
-static ANativeActivity *activity           = NULL;
-static ASensorManager *sensorManager       = NULL;
-static const ASensor *accelerometerSensor  = NULL;
-static const ASensor *gyroSensor           = NULL;
-static ASensorEventQueue *sensorEventQueue = NULL;
+static struct android_app *app                 = NULL;
+static ANativeActivity    *activity            = NULL;
+static ASensorManager     *sensorManager       = NULL;
+static const ASensor      *accelerometerSensor = NULL;
+static const ASensor      *gyroSensor          = NULL;
+static ASensorEventQueue  *sensorEventQueue    = NULL;
 
 static bool started              = false;
 static bool paused               = true;
@@ -140,11 +140,11 @@ static bool isPenEvent(AInputEvent *event) {
 }
 
 static void touchInput(AInputEvent *event) {
-	int action = AMotionEvent_getAction(event);
-	int index  = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-	int id     = AMotionEvent_getPointerId(event, index);
-	float x    = AMotionEvent_getX(event, index);
-	float y    = AMotionEvent_getY(event, index);
+	int   action = AMotionEvent_getAction(event);
+	int   index  = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+	int   id     = AMotionEvent_getPointerId(event, index);
+	float x      = AMotionEvent_getX(event, index);
+	float y      = AMotionEvent_getY(event, index);
 	switch (action & AMOTION_EVENT_ACTION_MASK) {
 	case AMOTION_EVENT_ACTION_DOWN:
 	case AMOTION_EVENT_ACTION_POINTER_DOWN:
@@ -192,14 +192,14 @@ static void touchInput(AInputEvent *event) {
 	}
 }
 
-static float last_x        = 0.0f;
-static float last_y        = 0.0f;
-static float last_l        = 0.0f;
-static float last_r        = 0.0f;
-static bool last_hat_left  = false;
-static bool last_hat_right = false;
-static bool last_hat_up    = false;
-static bool last_hat_down  = false;
+static float last_x         = 0.0f;
+static float last_y         = 0.0f;
+static float last_l         = 0.0f;
+static float last_r         = 0.0f;
+static bool  last_hat_left  = false;
+static bool  last_hat_right = false;
+static bool  last_hat_up    = false;
+static bool  last_hat_down  = false;
 
 static int32_t input(struct android_app *app, AInputEvent *event) {
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
@@ -858,26 +858,26 @@ AAssetManager *kore_android_get_asset_manager(void) {
 }
 
 jclass kore_android_find_class(JNIEnv *env, const char *name) {
-	jobject nativeActivity   = activity->clazz;
-	jclass acl               = (*env)->GetObjectClass(env, nativeActivity);
+	jobject   nativeActivity = activity->clazz;
+	jclass    acl            = (*env)->GetObjectClass(env, nativeActivity);
 	jmethodID getClassLoader = (*env)->GetMethodID(env, acl, "getClassLoader", "()Ljava/lang/ClassLoader;");
-	jobject cls              = (*env)->CallObjectMethod(env, nativeActivity, getClassLoader);
-	jclass classLoader       = (*env)->FindClass(env, "java/lang/ClassLoader");
+	jobject   cls            = (*env)->CallObjectMethod(env, nativeActivity, getClassLoader);
+	jclass    classLoader    = (*env)->FindClass(env, "java/lang/ClassLoader");
 	jmethodID findClass      = (*env)->GetMethodID(env, classLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
-	jstring strClassName     = (*env)->NewStringUTF(env, name);
-	jclass clazz             = (jclass)((*env)->CallObjectMethod(env, cls, findClass, strClassName));
+	jstring   strClassName   = (*env)->NewStringUTF(env, name);
+	jclass    clazz          = (jclass)((*env)->CallObjectMethod(env, cls, findClass, strClassName));
 	(*env)->DeleteLocalRef(env, strClassName);
 	return clazz;
 }
 
 #define UNICODE_STACK_SIZE 256
-static uint16_t unicode_stack[UNICODE_STACK_SIZE];
-static int unicode_stack_index = 0;
+static uint16_t   unicode_stack[UNICODE_STACK_SIZE];
+static int        unicode_stack_index = 0;
 static kore_mutex unicode_mutex;
 
 JNIEXPORT void JNICALL Java_tech_kore_KoreActivity_nativeKoreKeyPress(JNIEnv *env, jobject jobj, jstring chars) {
-	const jchar *text  = (*env)->GetStringChars(env, chars, NULL);
-	const jsize length = (*env)->GetStringLength(env, chars);
+	const jchar *text   = (*env)->GetStringChars(env, chars, NULL);
+	const jsize  length = (*env)->GetStringLength(env, chars);
 
 	kore_mutex_lock(&unicode_mutex);
 	for (jsize i = 0; i < length && unicode_stack_index < UNICODE_STACK_SIZE; ++i) {
@@ -934,8 +934,8 @@ bool kore_keyboard_active() {
 void kore_load_url(const char *url) {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
-	jstring jurl             = (*env)->NewStringUTF(env, url);
+	jclass  koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
+	jstring jurl              = (*env)->NewStringUTF(env, url);
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "loadURL", "(Ljava/lang/String;)V"), jurl);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -951,10 +951,10 @@ void kore_vibrate(int ms) {
 const char *kore_language() {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
-	jstring s                = (jstring)(*env)->CallStaticObjectMethod(env, koreActivityClass,
-	                                                                   (*env)->GetStaticMethodID(env, koreActivityClass, "getLanguage", "()Ljava/lang/String;"));
-	const char *str          = (*env)->GetStringUTFChars(env, s, 0);
+	jclass      koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
+	jstring     s                 = (jstring)(*env)->CallStaticObjectMethod(env, koreActivityClass,
+	                                                                        (*env)->GetStaticMethodID(env, koreActivityClass, "getLanguage", "()Ljava/lang/String;"));
+	const char *str               = (*env)->GetStringUTFChars(env, s, 0);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 	return str;
 }
@@ -1055,8 +1055,8 @@ bool kore_internal_handle_messages(void) {
 	unicode_stack_index = 0;
 	kore_mutex_unlock(&unicode_mutex);
 
-	int ident;
-	int events;
+	int                         ident;
+	int                         events;
 	struct android_poll_source *source;
 
 	while ((ident = ALooper_pollAll(paused ? -1 : 0, NULL, &events, (void **)&source)) >= 0) {
@@ -1168,8 +1168,8 @@ void android_main(struct android_app *application) {
 	JNIEnv *env = NULL;
 	(*kore_android_get_activity()->vm)->AttachCurrentThread(kore_android_get_activity()->vm, &env, NULL);
 
-	jclass koreMoviePlayerClass = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
-	jmethodID updateAll         = (*env)->GetStaticMethodID(env, koreMoviePlayerClass, "updateAll", "()V");
+	jclass    koreMoviePlayerClass = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
+	jmethodID updateAll            = (*env)->GetStaticMethodID(env, koreMoviePlayerClass, "updateAll", "()V");
 
 	while (!started) {
 		kore_internal_handle_messages();
@@ -1179,8 +1179,8 @@ void android_main(struct android_app *application) {
 	kickstart(0, NULL);
 
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
-	jmethodID FinishHim      = (*env)->GetStaticMethodID(env, koreActivityClass, "stop", "()V");
+	jclass    koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
+	jmethodID FinishHim         = (*env)->GetStaticMethodID(env, koreActivityClass, "stop", "()V");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, FinishHim);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -1236,15 +1236,15 @@ void initAndroidFileReader(void) {
 
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
 
-	jclass android_app_NativeActivity = (*env)->FindClass(env, CLASS_NAME);
-	jmethodID getExternalFilesDir     = (*env)->GetMethodID(env, android_app_NativeActivity, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
-	jobject file                      = (*env)->CallObjectMethod(env, activity->clazz, getExternalFilesDir, NULL);
-	jclass java_io_File               = (*env)->FindClass(env, "java/io/File");
-	jmethodID getPath                 = (*env)->GetMethodID(env, java_io_File, "getPath", "()Ljava/lang/String;");
-	jstring jPath                     = (*env)->CallObjectMethod(env, file, getPath);
+	jclass    android_app_NativeActivity = (*env)->FindClass(env, CLASS_NAME);
+	jmethodID getExternalFilesDir        = (*env)->GetMethodID(env, android_app_NativeActivity, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
+	jobject   file                       = (*env)->CallObjectMethod(env, activity->clazz, getExternalFilesDir, NULL);
+	jclass    java_io_File               = (*env)->FindClass(env, "java/io/File");
+	jmethodID getPath                    = (*env)->GetMethodID(env, java_io_File, "getPath", "()Ljava/lang/String;");
+	jstring   jPath                      = (*env)->CallObjectMethod(env, file, getPath);
 
-	const char *path       = (*env)->GetStringUTFChars(env, jPath, NULL);
-	char *externalFilesDir = malloc(strlen(path) + 1);
+	const char *path             = (*env)->GetStringUTFChars(env, jPath, NULL);
+	char       *externalFilesDir = malloc(strlen(path) + 1);
 	strcpy(externalFilesDir, path);
 	kore_internal_set_files_location(externalFilesDir);
 

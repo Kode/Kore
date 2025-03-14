@@ -34,7 +34,7 @@ int kore_x11_window_create(kore_window_parameters *win, kore_framebuffer_paramet
 	window->width                  = win->width;
 	window->height                 = win->height;
 
-	Visual *visual                          = NULL;
+	Visual              *visual             = NULL;
 	XSetWindowAttributes set_window_attribs = {0};
 
 	set_window_attribs.border_pixel = 0;
@@ -47,7 +47,7 @@ int kore_x11_window_create(kore_window_parameters *win, kore_framebuffer_paramet
 	window->window = xlib.XCreateWindow(x11_ctx.display, RootWindow(x11_ctx.display, DefaultScreen(x11_ctx.display)), 0, 0, win->width, win->height, 0, depth,
 	                                    InputOutput, visual, CWBorderPixel | CWColormap | CWEventMask, &set_window_attribs);
 
-	static char nameClass[256];
+	static char        nameClass[256];
 	static const char *nameClassAddendum = "_KoreApplication";
 	strncpy(nameClass, kore_application_name(), sizeof(nameClass) - strlen(nameClassAddendum) - 1);
 	strcat(nameClass, nameClassAddendum);
@@ -96,7 +96,7 @@ void kore_x11_window_destroy(int window_index) {
 }
 
 void kore_x11_window_set_title(int window_index, const char *_title) {
-	const char *title              = _title == NULL ? "" : _title;
+	const char             *title  = _title == NULL ? "" : _title;
 	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	xlib.XChangeProperty(x11_ctx.display, window->window, x11_ctx.atoms.NET_WM_NAME, x11_ctx.atoms.UTF8_STRING, 8, PropModeReplace, (unsigned char *)title,
 	                     strlen(title));

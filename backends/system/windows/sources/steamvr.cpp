@@ -17,11 +17,11 @@
 using namespace Kore;
 
 namespace {
-	vr::IVRSystem *hmd;
+	vr::IVRSystem          *hmd;
 	kore_g4_render_target_t leftTexture;
 	kore_g4_render_target_t rightTexture;
-	kore_vr_sensor_state_t sensorStates[2];
-	kore_vr_pose_state_t controller[vr::k_unMaxTrackedDeviceCount];
+	kore_vr_sensor_state_t  sensorStates[2];
+	kore_vr_pose_state_t    controller[vr::k_unMaxTrackedDeviceCount];
 
 	kore_matrix4x4_t convert3x4(vr::HmdMatrix34_t &m) {
 		kore_matrix4x4_t mat;

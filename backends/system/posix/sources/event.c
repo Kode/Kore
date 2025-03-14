@@ -47,8 +47,8 @@ bool kore_event_try_to_wait(kore_event *event, double seconds) {
 	struct timeval tv;
 	gettimeofday(&tv, 0);
 
-	int isec = (int)seconds;
-	int usec = (int)((seconds - isec) * 1000000.0);
+	int             isec = (int)seconds;
+	int             usec = (int)((seconds - isec) * 1000000.0);
 	struct timespec spec;
 	spec.tv_nsec = (tv.tv_usec + usec) * 1000;
 	if (spec.tv_nsec > 1000000000) {

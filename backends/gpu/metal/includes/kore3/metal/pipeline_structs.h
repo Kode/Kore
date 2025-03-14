@@ -48,17 +48,17 @@ typedef enum kore_metal_vertex_format {
 
 typedef struct kore_metal_vertex_attribute {
 	kore_metal_vertex_format format;
-	uint64_t offset;
-	uint32_t shader_location;
+	uint64_t                 offset;
+	uint32_t                 shader_location;
 } kore_metal_vertex_attribute;
 
 #define KORE_METAL_MAX_VERTEX_ATTRIBUTES 32
 
 typedef struct kore_metal_vertex_buffer_layout {
-	uint64_t array_stride;
+	uint64_t                    array_stride;
 	kore_metal_vertex_step_mode step_mode;
 	kore_metal_vertex_attribute attributes[KORE_METAL_MAX_VERTEX_ATTRIBUTES];
-	size_t attributes_count;
+	size_t                      attributes_count;
 } kore_metal_vertex_buffer_layout;
 
 typedef struct kore_metal_shader {
@@ -68,9 +68,9 @@ typedef struct kore_metal_shader {
 #define KORE_METAL_MAX_VERTEX_BUFFERS 16
 
 typedef struct kore_metal_vertex_state {
-	kore_metal_shader shader;
+	kore_metal_shader               shader;
 	kore_metal_vertex_buffer_layout buffers[KORE_METAL_MAX_VERTEX_BUFFERS];
-	size_t buffers_count;
+	size_t                          buffers_count;
 } kore_metal_vertex_state;
 
 typedef enum kore_metal_primitive_topology {
@@ -87,10 +87,10 @@ typedef enum kore_metal_cull_mode { KORE_METAL_CULL_MODE_NONE, KORE_METAL_CULL_M
 
 typedef struct kore_metal_primitive_state {
 	kore_metal_primitive_topology topology;
-	kore_gpu_index_format strip_index_format;
-	kore_metal_front_face front_face;
-	kore_metal_cull_mode cull_mode;
-	bool unclipped_depth;
+	kore_gpu_index_format         strip_index_format;
+	kore_metal_front_face         front_face;
+	kore_metal_cull_mode          cull_mode;
+	bool                          unclipped_depth;
 } kore_metal_primitive_state;
 
 typedef enum kore_metal_stencil_operation {
@@ -105,29 +105,29 @@ typedef enum kore_metal_stencil_operation {
 } kore_metal_stencil_operation;
 
 typedef struct kore_metal_stencil_face_state {
-	kore_gpu_compare_function compare;
+	kore_gpu_compare_function    compare;
 	kore_metal_stencil_operation fail_op;
 	kore_metal_stencil_operation depth_fail_op;
 	kore_metal_stencil_operation pass_op;
 } kore_metal_stencil_face_state;
 
 typedef struct kore_metal_depth_stencil_state {
-	kore_gpu_texture_format format;
-	bool depth_write_enabled;
-	kore_gpu_compare_function depth_compare;
+	kore_gpu_texture_format       format;
+	bool                          depth_write_enabled;
+	kore_gpu_compare_function     depth_compare;
 	kore_metal_stencil_face_state stencil_front;
 	kore_metal_stencil_face_state stencil_back;
-	uint32_t stencil_read_mask;
-	uint32_t stencil_write_mask;
-	int32_t depth_bias;
-	float depth_bias_slope_scale;
-	float depth_bias_clamp;
+	uint32_t                      stencil_read_mask;
+	uint32_t                      stencil_write_mask;
+	int32_t                       depth_bias;
+	float                         depth_bias_slope_scale;
+	float                         depth_bias_clamp;
 } kore_metal_depth_stencil_state;
 
 typedef struct kore_metal_multisample_state {
 	uint32_t count;
 	uint32_t mask;
-	bool alpha_to_coverage_enabled;
+	bool     alpha_to_coverage_enabled;
 } kore_metal_multisample_state;
 
 typedef enum kore_metal_blend_operation {
@@ -156,8 +156,8 @@ typedef enum kore_metal_blend_factor {
 
 typedef struct kore_metal_blend_component {
 	kore_metal_blend_operation operation;
-	kore_metal_blend_factor src_factor;
-	kore_metal_blend_factor dst_factor;
+	kore_metal_blend_factor    src_factor;
+	kore_metal_blend_factor    dst_factor;
 } kore_metal_blend_component;
 
 typedef struct kore_metal_blend_state {
@@ -175,24 +175,24 @@ typedef enum kore_metal_color_write_flags {
 
 typedef struct kore_metal_color_target_state {
 	kore_gpu_texture_format format;
-	kore_metal_blend_state blend;
-	uint32_t write_mask;
+	kore_metal_blend_state  blend;
+	uint32_t                write_mask;
 } kore_metal_color_target_state;
 
 #define KORE_METAL_MAX_COLOR_TARGETS 8
 
 typedef struct kore_metal_fragment_state {
-	kore_metal_shader shader;
+	kore_metal_shader             shader;
 	kore_metal_color_target_state targets[KORE_METAL_MAX_COLOR_TARGETS];
-	size_t targets_count;
+	size_t                        targets_count;
 } kore_metal_fragment_state;
 
 typedef struct kore_metal_render_pipeline_parameters {
-	kore_metal_vertex_state vertex;
-	kore_metal_primitive_state primitive;
+	kore_metal_vertex_state        vertex;
+	kore_metal_primitive_state     primitive;
 	kore_metal_depth_stencil_state depth_stencil;
-	kore_metal_multisample_state multisample;
-	kore_metal_fragment_state fragment;
+	kore_metal_multisample_state   multisample;
+	kore_metal_fragment_state      fragment;
 } kore_metal_render_pipeline_parameters;
 
 typedef struct kore_metal_render_pipeline {

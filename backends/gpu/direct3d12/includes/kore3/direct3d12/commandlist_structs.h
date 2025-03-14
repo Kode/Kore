@@ -31,8 +31,8 @@ struct ID3D12Fence;
 
 typedef struct kore_d3d12_buffer_access {
 	kore_gpu_buffer *buffer;
-	uint64_t offset;
-	uint64_t size;
+	uint64_t         offset;
+	uint64_t         size;
 } kore_d3d12_buffer_access;
 
 typedef struct kore_d3d12_command_list {
@@ -41,18 +41,18 @@ typedef struct kore_d3d12_command_list {
 	int list_type;
 
 	struct ID3D12CommandAllocator *allocator[KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT];
-	uint64_t allocator_execution_index[KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT];
-	oa_allocation_t dynamic_descriptor_allocations[KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT];
-	uint32_t dynamic_descriptor_offsets[KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT];
-	uint8_t current_allocator_index;
+	uint64_t                       allocator_execution_index[KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT];
+	oa_allocation_t                dynamic_descriptor_allocations[KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT];
+	uint32_t                       dynamic_descriptor_offsets[KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT];
+	uint8_t                        current_allocator_index;
 
 	struct ID3D12GraphicsCommandList4 *list;
 
 	struct ID3D12DescriptorHeap *rtv_descriptors;
-	uint32_t rtv_increment;
+	uint32_t                     rtv_increment;
 
 	struct ID3D12DescriptorHeap *dsv_descriptor;
-	uint32_t dsv_increment;
+	uint32_t                     dsv_increment;
 
 	// set when a framebuffer is attached to a render-pass so we don't render into it during scan-out
 	uint64_t blocking_frame_index;
@@ -64,17 +64,17 @@ typedef struct kore_d3d12_command_list {
 	struct kore_d3d12_ray_pipeline *ray_pipe;
 
 	struct kore_gpu_query_set *occlusion_query_set;
-	uint32_t current_occlusion_query_index;
+	uint32_t                   current_occlusion_query_index;
 
 	struct kore_gpu_query_set *timestamp_query_set;
-	uint32_t timestamp_beginning_of_pass_write_index;
-	uint32_t timestamp_end_of_pass_write_index;
+	uint32_t                   timestamp_beginning_of_pass_write_index;
+	uint32_t                   timestamp_end_of_pass_write_index;
 
 	kore_d3d12_buffer_access queued_buffer_accesses[KORE_D3D12_COMMAND_LIST_MAX_QUEUED_BUFFER_ACCESSES];
-	uint32_t queued_buffer_accesses_count;
+	uint32_t                 queued_buffer_accesses_count;
 
 	struct kore_d3d12_descriptor_set *queued_descriptor_set_accesses[KORE_D3D12_COMMAND_LIST_MAX_QUEUED_DESCRIPTOR_SET_ACCESSES];
-	uint32_t queued_descriptor_set_accesses_count;
+	uint32_t                          queued_descriptor_set_accesses_count;
 
 	bool presenting;
 } kore_d3d12_command_list;

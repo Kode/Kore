@@ -53,7 +53,7 @@ extern int kore_internal_fb_tex_width;
 
 extern kore_fb_texture_filter kore_internal_fb_texture_filter_min;
 extern kore_fb_texture_filter kore_internal_fb_texture_filter_mag;
-extern kore_fb_mipmap_filter kore_internal_fb_mipmap_filter;
+extern kore_fb_mipmap_filter  kore_internal_fb_mipmap_filter;
 
 #if defined(KORE_DYNAMIC_COMPILE) || defined(KORE_DYNAMIC) || defined(KORE_DOCS)
 

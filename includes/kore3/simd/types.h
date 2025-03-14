@@ -111,11 +111,11 @@ typedef struct kore_uint32x4 {
 	uint32_t values[4];
 } kore_uint32x4;
 
-typedef kore_int8x16 kore_int8x16_mask;
+typedef kore_int8x16  kore_int8x16_mask;
 typedef kore_uint8x16 kore_uint8x16_mask;
-typedef kore_int16x8 kore_int16x8_mask;
+typedef kore_int16x8  kore_int16x8_mask;
 typedef kore_uint16x8 kore_uint16x8_mask;
-typedef kore_int32x4 kore_int32x4_mask;
+typedef kore_int32x4  kore_int32x4_mask;
 typedef kore_uint32x4 kore_uint32x4_mask;
 
 #elif defined(KORE_NEON)
@@ -123,17 +123,17 @@ typedef kore_uint32x4 kore_uint32x4_mask;
 #include <arm_neon.h>
 
 typedef float32x4_t kore_float32x4;
-typedef uint32x4_t kore_float32x4_mask;
+typedef uint32x4_t  kore_float32x4_mask;
 
-typedef int8x16_t kore_int8x16;
+typedef int8x16_t  kore_int8x16;
 typedef uint8x16_t kore_int8x16_mask;
 typedef uint8x16_t kore_uint8x16;
 typedef uint8x16_t kore_uint8x16_mask;
-typedef int16x8_t kore_int16x8;
+typedef int16x8_t  kore_int16x8;
 typedef uint16x8_t kore_int16x8_mask;
 typedef uint16x8_t kore_uint16x8;
 typedef uint16x8_t kore_uint16x8_mask;
-typedef int32x4_t kore_int32x4;
+typedef int32x4_t  kore_int32x4;
 typedef uint32x4_t kore_int32x4_mask;
 typedef uint32x4_t kore_uint32x4;
 typedef uint32x4_t kore_uint32x4_mask;
@@ -172,11 +172,11 @@ typedef struct kore_uint32x4 {
 	uint32_t values[4];
 } kore_uint32x4;
 
-typedef kore_int8x16 kore_int8x16_mask;
+typedef kore_int8x16  kore_int8x16_mask;
 typedef kore_uint8x16 kore_uint8x16_mask;
-typedef kore_int16x8 kore_int16x8_mask;
+typedef kore_int16x8  kore_int16x8_mask;
 typedef kore_uint16x8 kore_uint16x8_mask;
-typedef kore_int32x4 kore_int32x4_mask;
+typedef kore_int32x4  kore_int32x4_mask;
 typedef kore_uint32x4 kore_uint32x4_mask;
 
 #endif

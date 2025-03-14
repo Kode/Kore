@@ -25,12 +25,12 @@ static void affirm(OSStatus err) {
 	}
 }
 
-static bool initialized;
-static bool soundPlaying;
+static bool                        initialized;
+static bool                        soundPlaying;
 static AudioStreamBasicDescription deviceFormat;
-static AudioComponentInstance audioUnit;
-static bool isFloat       = false;
-static bool isInterleaved = true;
+static AudioComponentInstance      audioUnit;
+static bool                        isFloat       = false;
+static bool                        isInterleaved = true;
 
 static kore_audio_buffer audio_buffer;
 
@@ -117,7 +117,7 @@ static uint32_t samples_per_second = 44100;
 
 static void sampleRateListener(void *inRefCon, AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement) {
 	Float64 sampleRate;
-	UInt32 size = sizeof(sampleRate);
+	UInt32  size = sizeof(sampleRate);
 	affirm(AudioUnitGetProperty(inUnit, kAudioUnitProperty_SampleRate, kAudioUnitScope_Output, 0, &sampleRate, &size));
 
 	if (samples_per_second != (uint32_t)sampleRate) {

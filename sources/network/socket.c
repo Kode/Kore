@@ -282,7 +282,7 @@ void kore_socket_destroy(kore_socket *sock) {
 
 bool kore_socket_select(kore_socket *sock, uint32_t waittime, bool read, bool write) {
 #if !defined(KORE_EMSCRIPTEN) && (defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX))
-	fd_set r_fds, w_fds;
+	fd_set         r_fds, w_fds;
 	struct timeval timeout;
 
 	FD_ZERO(&r_fds);
@@ -339,7 +339,7 @@ bool kore_socket_set(kore_socket *sock, const char *host, int port, kore_socket_
 	}
 	else {
 		struct addrinfo *address = NULL;
-		int res                  = resolveAddress(host, port, &address);
+		int              res     = resolveAddress(host, port, &address);
 		if (res != 0) {
 			kore_log(KORE_LOG_LEVEL_ERROR, "Could not resolve address.");
 			return false;
@@ -373,8 +373,8 @@ bool kore_socket_accept(kore_socket *sock, kore_socket *newSocket, unsigned *rem
 #endif
 #if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	struct sockaddr_in addr;
-	socklen_t addrLength = sizeof(addr);
-	newSocket->handle    = accept(sock->handle, (struct sockaddr *)&addr, &addrLength);
+	socklen_t          addrLength = sizeof(addr);
+	newSocket->handle             = accept(sock->handle, (struct sockaddr *)&addr, &addrLength);
 	if (newSocket->handle <= 0) {
 		return false;
 	}
@@ -461,7 +461,7 @@ int kore_socket_send_address(kore_socket *sock, unsigned address, int port, cons
 int kore_socket_send_url(kore_socket *sock, const char *url, int port, const uint8_t *data, int size) {
 #if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP) || defined(KORE_POSIX)
 	struct addrinfo *address = NULL;
-	int res                  = resolveAddress(url, port, &address);
+	int              res     = resolveAddress(url, port, &address);
 	if (res != 0) {
 		kore_log(KORE_LOG_LEVEL_ERROR, "Could not resolve address.");
 		return 0;
@@ -487,8 +487,8 @@ int kore_socket_receive(kore_socket *sock, uint8_t *data, int maxSize, unsigned 
 
 	if (sock->protocol == KORE_SOCKET_PROTOCOL_UDP) {
 		struct sockaddr_in from;
-		socklen_t fromLength = sizeof(from);
-		ssize_t bytes        = recvfrom(sock->handle, (char *)data, maxSize, 0, (struct sockaddr *)&from, &fromLength);
+		socklen_t          fromLength = sizeof(from);
+		ssize_t            bytes      = recvfrom(sock->handle, (char *)data, maxSize, 0, (struct sockaddr *)&from, &fromLength);
 		if (bytes <= 0) {
 			return (int)bytes;
 		}
@@ -515,7 +515,7 @@ int kore_socket_receive(kore_socket *sock, uint8_t *data, int maxSize, unsigned 
 unsigned kore_url_to_int(const char *url, int port) {
 #if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	struct addrinfo *address = NULL;
-	int res                  = resolveAddress(url, port, &address);
+	int              res     = resolveAddress(url, port, &address);
 	if (res != 0) {
 		kore_log(KORE_LOG_LEVEL_ERROR, "Could not resolve address.");
 		return -1;

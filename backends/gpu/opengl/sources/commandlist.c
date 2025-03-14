@@ -26,25 +26,25 @@ typedef enum command_type {
 } command_type;
 
 typedef struct set_index_buffer_data {
-	kore_gpu_buffer *buffer;
+	kore_gpu_buffer      *buffer;
 	kore_gpu_index_format index_format;
-	uint64_t offset;
-	uint64_t size;
+	uint64_t              offset;
+	uint64_t              size;
 } set_index_buffer_data;
 
 typedef struct set_vertex_buffer_data {
-	uint32_t slot;
+	uint32_t            slot;
 	kore_opengl_buffer *buffer;
-	uint64_t offset;
-	uint64_t size;
-	uint64_t stride;
+	uint64_t            offset;
+	uint64_t            size;
+	uint64_t            stride;
 } set_vertex_buffer_data;
 
 typedef struct draw_indexed_data {
 	uint32_t index_count;
 	uint32_t instance_count;
 	uint32_t first_index;
-	int32_t base_vertex;
+	int32_t  base_vertex;
 	uint32_t first_instance;
 } draw_indexed_data;
 
@@ -54,10 +54,10 @@ typedef struct set_render_pipeline {
 
 typedef struct copy_texture_to_buffer {
 	const kore_gpu_image_copy_texture *source;
-	const kore_gpu_image_copy_buffer *destination;
-	uint32_t width;
-	uint32_t height;
-	uint32_t depth_or_array_layers;
+	const kore_gpu_image_copy_buffer  *destination;
+	uint32_t                           width;
+	uint32_t                           height;
+	uint32_t                           depth_or_array_layers;
 } copy_texture_to_buffer;
 
 typedef struct begin_render_pass {
@@ -66,8 +66,8 @@ typedef struct begin_render_pass {
 
 typedef struct command {
 	command_type type;
-	uint32_t size;
-	uint32_t data;
+	uint32_t     size;
+	uint32_t     data;
 } command;
 
 void kore_opengl_command_list_destroy(kore_gpu_command_list *list) {

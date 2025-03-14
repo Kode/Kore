@@ -29,7 +29,7 @@ typedef struct __sFILE FILE;
 #define KORE_FILE_TYPE_SAVE  1
 
 typedef struct kore_file_reader {
-	void *data; // A file handle or a more complex structure
+	void  *data; // A file handle or a more complex structure
 	size_t size;
 	size_t offset; // Needed by some implementations
 
@@ -181,10 +181,10 @@ KORE_FUNC uint8_t kore_read_u8(uint8_t *data);
 /// </summary>
 KORE_FUNC int8_t kore_read_s8(uint8_t *data);
 
-void kore_internal_set_files_location(char *dir);
+void  kore_internal_set_files_location(char *dir);
 char *kore_internal_get_files_location(void);
-bool kore_internal_file_reader_callback(kore_file_reader *reader, const char *filename, int type);
-bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filename, int type);
+bool  kore_internal_file_reader_callback(kore_file_reader *reader, const char *filename, int type);
+bool  kore_internal_file_reader_open(kore_file_reader *reader, const char *filename, int type);
 
 #ifdef __cplusplus
 }

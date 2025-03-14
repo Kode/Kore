@@ -67,55 +67,55 @@ typedef struct kore_gpu_color {
 
 typedef struct kore_gpu_render_pass_color_attachment {
 	kore_gpu_texture_view texture;
-	uint32_t depth_slice;
+	uint32_t              depth_slice;
 	kore_gpu_texture_view resolve_target;
-	kore_gpu_color clear_value;
-	kore_gpu_load_op load_op;
-	kore_gpu_store_op store_op;
+	kore_gpu_color        clear_value;
+	kore_gpu_load_op      load_op;
+	kore_gpu_store_op     store_op;
 } kore_gpu_render_pass_color_attachment;
 
 typedef struct kore_gpu_render_pass_depth_stencil_attachment {
 	kore_gpu_texture *texture;
-	float depth_clear_value;
-	kore_gpu_load_op depth_load_op;
+	float             depth_clear_value;
+	kore_gpu_load_op  depth_load_op;
 	kore_gpu_store_op depth_store_op;
-	bool depth_read_only;
-	uint32_t stencil_clear_value;
-	kore_gpu_load_op stencil_load_op;
+	bool              depth_read_only;
+	uint32_t          stencil_clear_value;
+	kore_gpu_load_op  stencil_load_op;
 	kore_gpu_store_op stencil_store_op;
-	bool stencil_read_only;
+	bool              stencil_read_only;
 } kore_gpu_render_pass_depth_stencil_attachment;
 
 typedef struct kore_gpu_render_pass_timestamp_writes {
 	struct kore_gpu_query_set *query_set;
-	uint32_t beginning_of_pass_write_index;
-	uint32_t end_of_pass_write_index;
+	uint32_t                   beginning_of_pass_write_index;
+	uint32_t                   end_of_pass_write_index;
 } kore_gpu_render_pass_timestamp_writes;
 
 typedef struct kore_gpu_render_pass_parameters {
-	kore_gpu_render_pass_color_attachment color_attachments[8];
-	size_t color_attachments_count;
+	kore_gpu_render_pass_color_attachment         color_attachments[8];
+	size_t                                        color_attachments_count;
 	kore_gpu_render_pass_depth_stencil_attachment depth_stencil_attachment;
-	struct kore_gpu_query_set *occlusion_query_set;
-	kore_gpu_render_pass_timestamp_writes timestamp_writes;
+	struct kore_gpu_query_set                    *occlusion_query_set;
+	kore_gpu_render_pass_timestamp_writes         timestamp_writes;
 } kore_gpu_render_pass_parameters;
 
 KORE_FUNC void kore_gpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters);
 
 typedef struct kore_gpu_image_copy_texture {
 	kore_gpu_texture_aspect aspect;
-	uint32_t mip_level;
-	uint32_t origin_x;
-	uint32_t origin_y;
-	uint32_t origin_z;
-	kore_gpu_texture *texture;
+	uint32_t                mip_level;
+	uint32_t                origin_x;
+	uint32_t                origin_y;
+	uint32_t                origin_z;
+	kore_gpu_texture       *texture;
 } kore_gpu_image_copy_texture;
 
 typedef struct kore_gpu_image_copy_buffer {
 	kore_gpu_buffer *buffer;
-	uint64_t offset;
-	uint32_t bytes_per_row;
-	uint32_t rows_per_image;
+	uint64_t         offset;
+	uint32_t         bytes_per_row;
+	uint32_t         rows_per_image;
 } kore_gpu_image_copy_buffer;
 
 KORE_FUNC void kore_gpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset,
@@ -166,7 +166,7 @@ typedef struct kore_gpu_draw_indexed_arguments {
 	uint32_t index_count;
 	uint32_t instance_count;
 	uint32_t first_index;
-	int32_t base_vertex;
+	int32_t  base_vertex;
 	uint32_t first_instance;
 } kore_gpu_draw_indexed_arguments;
 

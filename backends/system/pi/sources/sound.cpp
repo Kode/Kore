@@ -11,11 +11,11 @@
 using namespace Kore;
 
 namespace {
-	pthread_t threadid;
-	bool audioRunning = false;
+	pthread_t  threadid;
+	bool       audioRunning = false;
 	snd_pcm_t *playback_handle;
-	const int bufferSize = 4096 * 4;
-	short buf[bufferSize];
+	const int  bufferSize = 4096 * 4;
+	short      buf[bufferSize];
 
 	void copySample(void *buffer) {
 		float value = *(float *)&Audio2::buffer.data[Audio2::buffer.readLocation];
@@ -57,7 +57,7 @@ namespace {
 	void *doAudio(void *arg) {
 		snd_pcm_hw_params_t *hw_params;
 		snd_pcm_sw_params_t *sw_params;
-		snd_pcm_sframes_t frames_to_deliver;
+		snd_pcm_sframes_t    frames_to_deliver;
 		// int nfds;
 		int err;
 		// struct pollfd *pfds;
@@ -88,7 +88,7 @@ namespace {
 		}
 
 		uint rate = 44100;
-		int dir   = 0;
+		int  dir  = 0;
 		if ((err = snd_pcm_hw_params_set_rate_near(playback_handle, hw_params, &rate, &dir)) < 0) {
 			fprintf(stderr, "cannot set sample rate (%s)\n", snd_strerror(err));
 			exit(1);

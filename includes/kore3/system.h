@@ -346,22 +346,22 @@ KORE_FUNC void kore_LivePP_start(void);
 /// <returns></returns>
 KORE_FUNC void kore_LivePP_stop(void);
 
-bool kore_internal_frame(void);
+bool        kore_internal_frame(void);
 const char *kore_internal_save_path(void);
-bool kore_internal_handle_messages(void);
-void kore_internal_shutdown(void);
-void kore_internal_update_callback(void);
-void kore_internal_foreground_callback(void);
-void kore_internal_resume_callback(void);
-void kore_internal_pause_callback(void);
-void kore_internal_background_callback(void);
-void kore_internal_shutdown_callback(void);
-void kore_internal_drop_files_callback(wchar_t *);
-char *kore_internal_cut_callback(void);
-char *kore_internal_copy_callback(void);
-void kore_internal_paste_callback(char *);
-void kore_internal_login_callback(void);
-void kore_internal_logout_callback(void);
+bool        kore_internal_handle_messages(void);
+void        kore_internal_shutdown(void);
+void        kore_internal_update_callback(void);
+void        kore_internal_foreground_callback(void);
+void        kore_internal_resume_callback(void);
+void        kore_internal_pause_callback(void);
+void        kore_internal_background_callback(void);
+void        kore_internal_shutdown_callback(void);
+void        kore_internal_drop_files_callback(wchar_t *);
+char       *kore_internal_cut_callback(void);
+char       *kore_internal_copy_callback(void);
+void        kore_internal_paste_callback(char *);
+void        kore_internal_login_callback(void);
+void        kore_internal_logout_callback(void);
 
 #ifdef __cplusplus
 }

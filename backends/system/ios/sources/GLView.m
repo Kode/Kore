@@ -11,7 +11,7 @@
 #include <kore3/system.h>
 
 static const int touchmaxcount = 20;
-static void *touches[touchmaxcount];
+static void     *touches[touchmaxcount];
 
 static void initTouches(void) {
 	for (int i = 0; i < touchmaxcount; ++i) {
@@ -262,8 +262,8 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 			index = addTouch((__bridge void *)touch);
 		if (index >= 0) {
 			CGPoint point = [touch locationInView:self];
-			float x       = point.x * self.contentScaleFactor;
-			float y       = point.y * self.contentScaleFactor;
+			float   x     = point.x * self.contentScaleFactor;
+			float   y     = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				if (@available(iOS 13.4, *)) {
 					kore_internal_mouse_trigger_press(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
@@ -286,8 +286,8 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 		int index = getTouchIndex((__bridge void *)touch);
 		if (index >= 0) {
 			CGPoint point = [touch locationInView:self];
-			float x       = point.x * self.contentScaleFactor;
-			float y       = point.y * self.contentScaleFactor;
+			float   x     = point.x * self.contentScaleFactor;
+			float   y     = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				kore_internal_mouse_trigger_move(0, x, y);
 			}
@@ -300,8 +300,8 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 	for (UITouch *touch in touches) {
 		if (touch.type == UITouchTypePencil) {
 			CGPoint point = [touch locationInView:self];
-			float x       = point.x * self.contentScaleFactor;
-			float y       = point.y * self.contentScaleFactor;
+			float   x     = point.x * self.contentScaleFactor;
+			float   y     = point.y * self.contentScaleFactor;
 			kore_internal_pen_trigger_move(0, x, y, touch.force);
 		}
 	}
@@ -312,8 +312,8 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 		int index = removeTouch((__bridge void *)touch);
 		if (index >= 0) {
 			CGPoint point = [touch locationInView:self];
-			float x       = point.x * self.contentScaleFactor;
-			float y       = point.y * self.contentScaleFactor;
+			float   x     = point.x * self.contentScaleFactor;
+			float   y     = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				if (@available(iOS 13.4, *)) {
 					kore_internal_mouse_trigger_release(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
@@ -336,8 +336,8 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 		int index = removeTouch((__bridge void *)touch);
 		if (index >= 0) {
 			CGPoint point = [touch locationInView:self];
-			float x       = point.x * self.contentScaleFactor;
-			float y       = point.y * self.contentScaleFactor;
+			float   x     = point.x * self.contentScaleFactor;
+			float   y     = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				if (@available(iOS 13.4, *)) {
 					kore_internal_mouse_trigger_release(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
@@ -355,9 +355,9 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 	}
 }
 
-static NSString *keyboardstring;
+static NSString    *keyboardstring;
 static UITextField *myTextField = NULL;
-static bool shiftDown           = false;
+static bool         shiftDown   = false;
 
 - (void)showKeyboard {
 	[self becomeFirstResponder];

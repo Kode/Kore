@@ -304,7 +304,7 @@ void xdg_toplevel_decoration_configure(void *data, struct zxdg_toplevel_decorati
 }
 
 void wl_surface_handle_enter(void *data, struct wl_surface *wl_surface, struct wl_output *output) {
-	struct kore_wl_window *window   = wl_surface_get_user_data(wl_surface);
+	struct kore_wl_window  *window  = wl_surface_get_user_data(wl_surface);
 	struct kore_wl_display *display = wl_output_get_user_data(output);
 
 	if (display && window) {

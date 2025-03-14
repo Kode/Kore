@@ -6,13 +6,13 @@
 #include <IOKit/hid/IOHIDManager.h>
 
 struct HIDGamepad {
-	int padIndex;
+	int            padIndex;
 	IOHIDDeviceRef hidDeviceRef;
-	IOHIDQueueRef hidQueueRef;
-	int hidDeviceVendorID;
-	int hidDeviceProductID;
-	char hidDeviceVendor[64];
-	char hidDeviceProduct[64];
+	IOHIDQueueRef  hidQueueRef;
+	int            hidDeviceVendorID;
+	int            hidDeviceProductID;
+	char           hidDeviceVendor[64];
+	char           hidDeviceProduct[64];
 
 	IOHIDElementCookie axis[6];
 	IOHIDElementCookie buttons[15];

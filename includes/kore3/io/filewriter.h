@@ -15,9 +15,9 @@ extern "C" {
 #endif
 
 typedef struct kore_file_writer {
-	void *file;
+	void       *file;
 	const char *filename;
-	bool mounted;
+	bool        mounted;
 } kore_file_writer;
 
 /// <summary>

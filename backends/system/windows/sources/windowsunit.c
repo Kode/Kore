@@ -69,21 +69,21 @@ typedef enum tagPOINTER_BUTTON_CHANGE_TYPE {
 } POINTER_BUTTON_CHANGE_TYPE;
 
 typedef struct tagPOINTER_INFO {
-	POINTER_INPUT_TYPE pointerType;
-	UINT32 pointerId;
-	UINT32 frameId;
-	POINTER_FLAGS pointerFlags;
-	HANDLE sourceDevice;
-	HWND hwndTarget;
-	POINT ptPixelLocation;
-	POINT ptHimetricLocation;
-	POINT ptPixelLocationRaw;
-	POINT ptHimetricLocationRaw;
-	DWORD dwTime;
-	UINT32 historyCount;
-	INT32 InputData;
-	DWORD dwKeyStates;
-	UINT64 PerformanceCount;
+	POINTER_INPUT_TYPE         pointerType;
+	UINT32                     pointerId;
+	UINT32                     frameId;
+	POINTER_FLAGS              pointerFlags;
+	HANDLE                     sourceDevice;
+	HWND                       hwndTarget;
+	POINT                      ptPixelLocation;
+	POINT                      ptHimetricLocation;
+	POINT                      ptPixelLocationRaw;
+	POINT                      ptHimetricLocationRaw;
+	DWORD                      dwTime;
+	UINT32                     historyCount;
+	INT32                      InputData;
+	DWORD                      dwKeyStates;
+	UINT64                     PerformanceCount;
 	POINTER_BUTTON_CHANGE_TYPE ButtonChangeType;
 } POINTER_INFO;
 
@@ -93,12 +93,12 @@ typedef UINT32 PEN_MASK;
 
 typedef struct tagPOINTER_PEN_INFO {
 	POINTER_INFO pointerInfo;
-	PEN_FLAGS penFlags;
-	PEN_MASK penMask;
-	UINT32 pressure;
-	UINT32 rotation;
-	INT32 tiltX;
-	INT32 tiltY;
+	PEN_FLAGS    penFlags;
+	PEN_MASK     penMask;
+	UINT32       pressure;
+	UINT32       rotation;
+	INT32        tiltX;
+	INT32        tiltY;
 } POINTER_PEN_INFO;
 
 #define WM_POINTERUPDATE 0x0245

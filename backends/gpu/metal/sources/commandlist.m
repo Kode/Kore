@@ -44,8 +44,8 @@ void kore_metal_command_list_end_render_pass(kore_gpu_command_list *list) {
 void kore_metal_command_list_present(kore_gpu_command_list *list) {
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 
-	CAMetalLayer *metal_layer    = getMetalLayer();
-	id<CAMetalDrawable> drawable = [metal_layer nextDrawable];
+	CAMetalLayer       *metal_layer = getMetalLayer();
+	id<CAMetalDrawable> drawable    = [metal_layer nextDrawable];
 
 	[command_buffer presentDrawable:drawable];
 }

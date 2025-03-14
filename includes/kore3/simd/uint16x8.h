@@ -39,7 +39,7 @@ static inline void kore_uint16x8_store_unaligned(uint16_t *destination, kore_uin
 
 static inline uint16_t kore_uint16x8_get(kore_uint16x8 t, int index) {
 	union {
-		__m128i value;
+		__m128i  value;
 		uint16_t elements[8];
 	} converter;
 	converter.value = t;

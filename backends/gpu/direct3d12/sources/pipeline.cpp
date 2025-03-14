@@ -458,7 +458,7 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 
 	kore_microsoft_affirm(device->d3d12.device->CreateStateObject(&desc, IID_PPV_ARGS(&pipe->pipe)));
 
-	uint32_t shader_id_count = 3;
+	uint32_t                   shader_id_count = 3;
 	kore_gpu_buffer_parameters id_buffer_params;
 	id_buffer_params.size        = shader_id_count * D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT;
 	id_buffer_params.usage_flags = KORE_GPU_BUFFER_USAGE_CPU_WRITE;

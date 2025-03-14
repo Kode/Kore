@@ -283,8 +283,8 @@ void kore_disallow_user_change(void) {}
 
 void kore_allow_user_change(void) {}
 
-static uint8_t *current_file    = NULL;
-static size_t current_file_size = 0;
+static uint8_t *current_file      = NULL;
+static size_t   current_file_size = 0;
 
 bool kore_save_file_loaded(void) {
 	return true;

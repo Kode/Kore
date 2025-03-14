@@ -6,11 +6,11 @@ extern "C" {
 #endif
 
 typedef struct {
-	void *renderer;
+	void  *renderer;
 	double duration;
 	double position;
-	bool finished;
-	bool paused;
+	bool   finished;
+	bool   paused;
 } kore_video_impl;
 
 typedef struct kore_internal_video_sound_stream {

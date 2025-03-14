@@ -12,12 +12,12 @@ extern "C" {
 struct kore_gpu_device;
 
 typedef struct kore_vulkan_buffer {
-	VkDevice device;
-	VkBuffer buffer;
+	VkDevice       device;
+	VkBuffer       buffer;
 	VkDeviceMemory memory;
-	uint64_t size;
+	uint64_t       size;
 
-	void *locked_data;
+	void    *locked_data;
 	uint64_t locked_data_offset;
 	uint64_t locked_data_size;
 } kore_vulkan_buffer;

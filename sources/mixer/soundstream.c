@@ -9,9 +9,9 @@
 #include <string.h>
 
 static kore_mixer_sound_stream streams[256];
-static int nextStream = 0;
-static uint8_t buffer[1024 * 1024 * 10];
-static int bufferIndex;
+static int                     nextStream = 0;
+static uint8_t                 buffer[1024 * 1024 * 10];
+static int                     bufferIndex;
 
 kore_mixer_sound_stream *kore_mixer_sound_stream_create(const char *filename, bool looping) {
 	kore_mixer_sound_stream *stream = &streams[nextStream];
@@ -103,9 +103,9 @@ float *kore_mixer_sound_stream_next_frame(kore_mixer_sound_stream *stream) {
 		}
 	}
 
-	float left, right;
+	float  left, right;
 	float *samples_array[2] = {&left, &right};
-	int read                = stb_vorbis_get_samples_float(stream->vorbis, stream->chans, samples_array, 1);
+	int    read             = stb_vorbis_get_samples_float(stream->vorbis, stream->chans, samples_array, 1);
 	if (read == 0) {
 		if (kore_mixer_sound_stream_looping(stream)) {
 			stb_vorbis_seek_start(stream->vorbis);

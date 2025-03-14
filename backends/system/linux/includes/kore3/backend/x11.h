@@ -22,29 +22,29 @@
 #define MAXIMUM_DISPLAYS 16
 
 struct kore_x11_window {
-	int display_index;
-	int window_index;
-	int width;
-	int height;
+	int              display_index;
+	int              window_index;
+	int              width;
+	int              height;
 	kore_window_mode mode;
-	Window window;
-	XIM xInputMethod;
-	XIC xInputContext;
+	Window           window;
+	XIM              xInputMethod;
+	XIC              xInputContext;
 };
 
 struct kore_x11_display {
-	int index;
-	int current_mode;
-	int num_modes;
-	int x;
-	int y;
-	int width;
-	int height;
+	int  index;
+	int  current_mode;
+	int  num_modes;
+	int  x;
+	int  y;
+	int  width;
+	int  height;
 	bool primary;
 	char name[64];
 
 	RROutput output;
-	RRCrtc crtc;
+	RRCrtc   crtc;
 };
 
 struct kore_x11_mouse {
@@ -169,11 +169,11 @@ struct kore_x11_procs {
 };
 
 struct x11_pen_device {
-	XID id;
-	uint32_t motionEvent;
+	XID         id;
+	uint32_t    motionEvent;
 	XEventClass motionClass;
-	uint32_t maxPressure;
-	float current_pressure;
+	uint32_t    maxPressure;
+	float       current_pressure;
 
 	void (*press)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/);
 	void (*move)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/);
@@ -181,22 +181,22 @@ struct x11_pen_device {
 };
 
 struct x11_context {
-	Display *display;
-	struct kore_x11_libs libs;
+	Display              *display;
+	struct kore_x11_libs  libs;
 	struct kore_x11_atoms atoms;
 	struct kore_x11_mouse mouse;
 
 	struct x11_pen_device pen;
 	struct x11_pen_device eraser;
 
-	int num_windows;
-	struct kore_x11_window windows[MAXIMUM_WINDOWS];
-	int num_displays;
+	int                     num_windows;
+	struct kore_x11_window  windows[MAXIMUM_WINDOWS];
+	int                     num_displays;
 	struct kore_x11_display displays[MAXIMUM_DISPLAYS];
 };
 
 struct kore_x11_procs xlib;
-struct x11_context x11_ctx;
+struct x11_context    x11_ctx;
 
 void kore_x11_copy_to_clipboard(const char *text);
 

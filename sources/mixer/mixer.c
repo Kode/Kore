@@ -14,13 +14,13 @@
 static kore_mutex mutex;
 
 #define CHANNEL_COUNT 16
-static kore_mixer_channel channels[CHANNEL_COUNT];
-static kore_mixer_stream_channel streamchannels[CHANNEL_COUNT];
+static kore_mixer_channel          channels[CHANNEL_COUNT];
+static kore_mixer_stream_channel   streamchannels[CHANNEL_COUNT];
 static kore_internal_video_channel videos[CHANNEL_COUNT];
 
 static float sampleLinear(int16_t *data, double position) {
-	int pos1      = (int)position;
-	int pos2      = (int)(position + 1);
+	int   pos1    = (int)position;
+	int   pos2    = (int)(position + 1);
 	float sample1 = data[pos1] / 32767.0f;
 	float sample2 = data[pos2] / 32767.0f;
 	float a       = (float)(position - pos1);

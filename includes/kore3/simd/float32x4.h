@@ -49,7 +49,7 @@ static inline void kore_float32x4_store_unaligned(float *destination, kore_float
 static inline float kore_float32x4_get(kore_float32x4 t, int index) {
 	union {
 		__m128 value;
-		float elements[4];
+		float  elements[4];
 	} converter;
 	converter.value = t;
 	return converter.elements[index];

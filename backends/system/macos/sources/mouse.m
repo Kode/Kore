@@ -28,8 +28,8 @@ void kore_mouse_hide(void) {
 void kore_mouse_set_position(int windowId, int x, int y) {
 
 	NSWindow *window = kore_get_mac_window_handle(windowId);
-	float scale      = [window backingScaleFactor];
-	NSRect rect      = [[NSScreen mainScreen] frame];
+	float     scale  = [window backingScaleFactor];
+	NSRect    rect   = [[NSScreen mainScreen] frame];
 
 	CGPoint point;
 	point.x = window.frame.origin.x + (x / scale);
@@ -42,7 +42,7 @@ void kore_mouse_set_position(int windowId, int x, int y) {
 void kore_mouse_get_position(int windowId, int *x, int *y) {
 
 	NSWindow *window = kore_get_mac_window_handle(windowId);
-	NSPoint point    = [window mouseLocationOutsideOfEventStream];
+	NSPoint   point  = [window mouseLocationOutsideOfEventStream];
 	*x               = (int)point.x;
 	*y               = (int)point.y;
 }

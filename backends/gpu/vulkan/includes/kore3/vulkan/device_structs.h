@@ -8,11 +8,11 @@ extern "C" {
 #endif
 
 typedef struct kore_vulkan_device {
-	VkDevice device;
-	VkCommandPool command_pool;
-	VkQueue queue;
+	VkDevice                         device;
+	VkCommandPool                    command_pool;
+	VkQueue                          queue;
 	VkPhysicalDeviceMemoryProperties device_memory_properties;
-	VkDescriptorPool descriptor_pool;
+	VkDescriptorPool                 descriptor_pool;
 } kore_vulkan_device;
 
 typedef struct kore_vulkan_query_set {

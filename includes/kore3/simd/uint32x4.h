@@ -47,7 +47,7 @@ static inline void kore_uint32x4_store_unaligned(uint32_t *destination, kore_uin
 
 static inline uint32_t kore_uint32x4_get(kore_uint32x4 t, int index) {
 	union {
-		__m128i value;
+		__m128i  value;
 		uint32_t elements[4];
 	} converter;
 	converter.value = t;

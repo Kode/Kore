@@ -27,7 +27,7 @@
 
 static void load_lib(void **lib, const char *name);
 
-struct kore_wl_procs wl      = {0};
+struct kore_wl_procs  wl     = {0};
 struct kore_xkb_procs wl_xkb = {0};
 
 bool kore_wayland_load_procs() {
@@ -133,15 +133,15 @@ static void wl_output_handle_geometry(void *data, struct wl_output *wl_output, i
 static void wl_output_handle_mode(void *data, struct wl_output *wl_output, uint32_t flags, int32_t width, int32_t height, int32_t refresh) {
 	struct kore_wl_display *display = data;
 	if (display->num_modes < MAXIMUM_DISPLAY_MODES) {
-		int mode_index          = display->num_modes++;
-		kore_display_mode *mode = &display->modes[mode_index];
-		mode->x                 = 0;
-		mode->y                 = 0;
-		mode->width             = width;
-		mode->height            = height;
-		mode->bits_per_pixel    = 32;
-		mode->pixels_per_inch   = 96;
-		mode->frequency         = (refresh / 1000);
+		int                mode_index = display->num_modes++;
+		kore_display_mode *mode       = &display->modes[mode_index];
+		mode->x                       = 0;
+		mode->y                       = 0;
+		mode->width                   = width;
+		mode->height                  = height;
+		mode->bits_per_pixel          = 32;
+		mode->pixels_per_inch         = 96;
+		mode->frequency               = (refresh / 1000);
 		if (flags & WL_OUTPUT_MODE_CURRENT)
 			display->current_mode = mode_index;
 	}
@@ -197,11 +197,11 @@ struct kore_wl_window *kore_wayland_window_from_surface(struct wl_surface *surfa
 
 void wl_pointer_handle_enter(void *data, struct wl_pointer *wl_pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t surface_x,
                              wl_fixed_t surface_y) {
-	enum kore_wl_decoration_focus focus = KORE_WL_DECORATION_FOCUS_MAIN;
-	struct kore_wl_window *window       = kore_wayland_window_from_surface(surface, &focus);
-	struct kore_wl_mouse *mouse         = data;
-	mouse->enter_serial                 = serial;
-	window->decorations.focus           = focus;
+	enum kore_wl_decoration_focus focus  = KORE_WL_DECORATION_FOCUS_MAIN;
+	struct kore_wl_window        *window = kore_wayland_window_from_surface(surface, &focus);
+	struct kore_wl_mouse         *mouse  = data;
+	mouse->enter_serial                  = serial;
+	window->decorations.focus            = focus;
 	if (window != NULL) {
 		mouse->current_window = window->window_id;
 		kore_internal_mouse_trigger_enter_window(window->window_id);
@@ -209,8 +209,8 @@ void wl_pointer_handle_enter(void *data, struct wl_pointer *wl_pointer, uint32_t
 }
 
 void wl_pointer_handle_leave(void *data, struct wl_pointer *wl_pointer, uint32_t serial, struct wl_surface *surface) {
-	enum kore_wl_decoration_focus focus = KORE_WL_DECORATION_FOCUS_MAIN;
-	struct kore_wl_window *window       = kore_wayland_window_from_surface(surface, &focus);
+	enum kore_wl_decoration_focus focus  = KORE_WL_DECORATION_FOCUS_MAIN;
+	struct kore_wl_window        *window = kore_wayland_window_from_surface(surface, &focus);
 
 	if (window != NULL) {
 		kore_internal_mouse_trigger_leave_window(window->window_id);
@@ -242,7 +242,7 @@ void kore_wayland_set_cursor(struct kore_wl_mouse *mouse, const char *name) {
 }
 
 void wl_pointer_handle_motion(void *data, struct wl_pointer *wl_pointer, uint32_t time, wl_fixed_t surface_x, wl_fixed_t surface_y) {
-	struct kore_wl_mouse *mouse   = data;
+	struct kore_wl_mouse  *mouse  = data;
 	struct kore_wl_window *window = &wl_ctx.windows[mouse->current_window];
 
 	int x = wl_fixed_to_int(surface_x);
@@ -306,9 +306,9 @@ void wl_pointer_handle_motion(void *data, struct wl_pointer *wl_pointer, uint32_
 #include <linux/input-event-codes.h>
 
 void wl_pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state) {
-	struct kore_wl_mouse *mouse   = data;
-	struct kore_wl_window *window = &wl_ctx.windows[mouse->current_window];
-	int kore_button               = button - BTN_MOUSE; // evdev codes should have the same order as Kore buttons
+	struct kore_wl_mouse  *mouse       = data;
+	struct kore_wl_window *window      = &wl_ctx.windows[mouse->current_window];
+	int                    kore_button = button - BTN_MOUSE; // evdev codes should have the same order as Kore buttons
 	if (!window->decorations.server_side) {
 		if (kore_button == 0) {
 			enum xdg_toplevel_resize_edge edges = XDG_TOPLEVEL_RESIZE_EDGE_NONE;
@@ -476,9 +476,9 @@ void handle_paste(void *data, size_t data_size, void *user_data) {
 void wl_keyboard_handle_key(void *data, struct wl_keyboard *wl_keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state) {
 	struct kore_wl_keyboard *keyboard = wl_keyboard_get_user_data(wl_keyboard);
 	if (keyboard->keymap && keyboard->state) {
-		xkb_keysym_t symbol = wl_xkb.xkb_state_key_get_one_sym(keyboard->state, key + 8);
-		uint32_t character  = wl_xkb.xkb_state_key_get_utf32(keyboard->state, key + 8);
-		int kore_key        = xkb_to_kore(symbol);
+		xkb_keysym_t symbol    = wl_xkb.xkb_state_key_get_one_sym(keyboard->state, key + 8);
+		uint32_t     character = wl_xkb.xkb_state_key_get_utf32(keyboard->state, key + 8);
+		int          kore_key  = xkb_to_kore(symbol);
 		if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
 			if (keyboard->ctrlDown && (symbol == XKB_KEY_c || symbol == XKB_KEY_C)) {
 				char *text = kore_internal_copy_callback();
@@ -732,8 +732,8 @@ static void dnd_callback(void *data, size_t data_size, void *user_data) {
 	if (strncmp(data, "file://", strlen("file://")) == 0) {
 		str += strlen("file://");
 	}
-	size_t wide_size = mbstowcs(NULL, str, 0) + 1;
-	wchar_t *dest    = malloc(wide_size * sizeof(wchar_t));
+	size_t   wide_size = mbstowcs(NULL, str, 0) + 1;
+	wchar_t *dest      = malloc(wide_size * sizeof(wchar_t));
 	mbstowcs(dest, str, wide_size);
 	kore_internal_drop_files_callback(dest);
 	free(dest);
@@ -814,12 +814,12 @@ void zwp_tablet_tool_v2_handle_done(void *data, struct zwp_tablet_tool_v2 *zwp_t
 }
 
 void zwp_tablet_tool_v2_handle_removed(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2) {
-	struct kore_wl_tablet_tool *tool   = data;
-	struct kore_wl_tablet_seat *seat   = tool->seat;
+	struct kore_wl_tablet_tool  *tool  = data;
+	struct kore_wl_tablet_seat  *seat  = tool->seat;
 	struct kore_wl_tablet_tool **tools = &seat->tablet_tools;
 	while (*tools != NULL) {
-		struct kore_wl_tablet_tool *current = *tools;
-		struct kore_wl_tablet_tool **next   = &current->next;
+		struct kore_wl_tablet_tool  *current = *tools;
+		struct kore_wl_tablet_tool **next    = &current->next;
 
 		if (current == tool) {
 			*tools = *next;
@@ -836,10 +836,10 @@ void zwp_tablet_tool_v2_handle_removed(void *data, struct zwp_tablet_tool_v2 *zw
 
 void zwp_tablet_tool_v2_handle_proximity_in(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, uint32_t serial, struct zwp_tablet_v2 *tablet,
                                             struct wl_surface *surface) {
-	struct kore_wl_tablet_tool *tool = data;
+	struct kore_wl_tablet_tool   *tool = data;
 	enum kore_wl_decoration_focus focus;
-	struct kore_wl_window *window = kore_wayland_window_from_surface(surface, &focus);
-	tool->current_window          = window->window_id;
+	struct kore_wl_window        *window = kore_wayland_window_from_surface(surface, &focus);
+	tool->current_window                 = window->window_id;
 }
 
 void zwp_tablet_tool_v2_handle_proximity_out(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2) {
@@ -1050,11 +1050,11 @@ bool kore_wayland_init() {
 	if (wl_ctx.seat.mouse.pointer && wl_ctx.shm) {
 		const char *cursor_theme    = getenv("XCURSOR_THEME");
 		const char *cursor_size_str = getenv("XCURSOR_SIZE");
-		int cursor_size             = 32;
+		int         cursor_size     = 32;
 
 		if (cursor_size_str) {
 			char *end_ptr;
-			long size = strtol(cursor_size_str, &end_ptr, 10);
+			long  size = strtol(cursor_size_str, &end_ptr, 10);
 			if (!(*end_ptr) && size > 0 && size < INT32_MAX) {
 				cursor_size = (int)size;
 			}
@@ -1073,7 +1073,7 @@ void kore_wayland_shutdown() {
 
 void kore_wayland_set_selection(struct kore_wl_seat *seat, const char *text, int serial) {
 	static const char *mime_types[] = {"text/plain"};
-	char *copy                      = malloc(strlen(text) + 1);
+	char              *copy         = malloc(strlen(text) + 1);
 	strcpy(copy, text);
 	struct kore_wl_data_source *data_source = kore_wl_create_data_source(seat, mime_types, sizeof mime_types / sizeof mime_types[0], copy, strlen(text));
 	wl_data_device_set_selection(seat->data_device, data_source->source, serial);
@@ -1145,8 +1145,8 @@ bool kore_wayland_handle_messages() {
 
 	struct kore_wl_data_offer **offer = &wl_ctx.data_offer_queue;
 	while (*offer != NULL) {
-		struct kore_wl_data_offer *current = *offer;
-		struct kore_wl_data_offer **next   = &current->next;
+		struct kore_wl_data_offer  *current = *offer;
+		struct kore_wl_data_offer **next    = &current->next;
 		if (current->buf_pos + READ_SIZE > current->buf_size) {
 			current->buffer = realloc(current->buffer, current->buf_size + READ_SIZE);
 			current->buf_size += READ_SIZE;
@@ -1235,8 +1235,8 @@ void kore_wl_mouse_hide() {
 }
 
 void kore_wl_mouse_lock(int window) {
-	struct kore_wl_mouse *mouse = &wl_ctx.seat.mouse;
-	struct wl_region *region    = wl_compositor_create_region(wl_ctx.compositor);
+	struct kore_wl_mouse *mouse  = &wl_ctx.seat.mouse;
+	struct wl_region     *region = wl_compositor_create_region(wl_ctx.compositor);
 	wl_region_add(region, mouse->x, mouse->y, 0, 0);
 	mouse->lock = zwp_pointer_constraints_v1_lock_pointer(wl_ctx.pointer_constraints, wl_ctx.windows[window].surface, wl_ctx.seat.mouse.pointer, region,
 	                                                      ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT);

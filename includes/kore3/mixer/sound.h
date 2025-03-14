@@ -16,15 +16,15 @@ extern "C" {
 #endif
 
 typedef struct kore_mixer_sound {
-	uint8_t channel_count;
-	uint8_t bits_per_sample;
+	uint8_t  channel_count;
+	uint8_t  bits_per_sample;
 	uint32_t samples_per_second;
 	int16_t *left;
 	int16_t *right;
-	int size;
-	float sample_rate_pos;
-	float volume;
-	bool in_use;
+	int      size;
+	float    sample_rate_pos;
+	float    volume;
+	bool     in_use;
 } kore_mixer_sound;
 
 typedef enum { KORE_MIXER_AUDIOFORMAT_WAV, KORE_MIXER_AUDIOFORMAT_OGG } kore_mixer_audioformat;

@@ -64,18 +64,18 @@ typedef struct kore_android_video {
 	XAObjectItf outputMixObject;
 	const char *path;
 
-	AAsset *file;
-	XAObjectItf playerObj;
-	XAPlayItf playerPlayItf;
+	AAsset                 *file;
+	XAObjectItf             playerObj;
+	XAPlayItf               playerPlayItf;
 	XAAndroidBufferQueueItf playerBQItf;
-	XAStreamInformationItf playerStreamInfoItf;
-	XAVolumeItf playerVolItf;
-	char dataCache[BUFFER_SIZE * NB_BUFFERS];
-	ANativeWindow *theNativeWindow;
-	jboolean reachedEof;
-	pthread_mutex_t mutex;
-	pthread_cond_t cond;
-	bool discontinuity;
+	XAStreamInformationItf  playerStreamInfoItf;
+	XAVolumeItf             playerVolItf;
+	char                    dataCache[BUFFER_SIZE * NB_BUFFERS];
+	ANativeWindow          *theNativeWindow;
+	jboolean                reachedEof;
+	pthread_mutex_t         mutex;
+	pthread_cond_t          cond;
+	bool                    discontinuity;
 } kore_android_video_t;
 
 void kore_android_video_init(kore_android_video_t *video) {
@@ -123,7 +123,7 @@ bool kore_android_video_enqueue_initial_buffers(kore_android_video_t *video, boo
 		if (packetsThisBuffer > PACKETS_PER_BUFFER) {
 			packetsThisBuffer = PACKETS_PER_BUFFER;
 		}
-		size_t bufferSize = packetsThisBuffer * MPEG2_TS_PACKET_SIZE;
+		size_t   bufferSize = packetsThisBuffer * MPEG2_TS_PACKET_SIZE;
 		XAresult res;
 		if (discontinuity) {
 			// signal discontinuity
@@ -149,15 +149,15 @@ bool kore_android_video_enqueue_initial_buffers(kore_android_video_t *video, boo
 }
 
 static XAresult AndroidBufferQueueCallback(XAAndroidBufferQueueItf caller, void *pCallbackContext, /* input */
-                                           void *pBufferContext,                                   /* input */
-                                           void *pBufferData,                                      /* input */
-                                           XAuint32 dataSize,                                      /* input */
-                                           XAuint32 dataUsed,                                      /* input */
+                                           void                      *pBufferContext,              /* input */
+                                           void                      *pBufferData,                 /* input */
+                                           XAuint32                   dataSize,                    /* input */
+                                           XAuint32                   dataUsed,                    /* input */
                                            const XAAndroidBufferItem *pItems,                      /* input */
-                                           XAuint32 itemsLength /* input */) {
+                                           XAuint32                   itemsLength /* input */) {
 	kore_android_video_t *self = (kore_android_video_t *)pCallbackContext;
-	XAresult res;
-	int ok;
+	XAresult              res;
+	int                   ok;
 
 	// pCallbackContext was specified as NULL at RegisterCallback and is unused here
 	// assert(NULL == pCallbackContext);
@@ -307,13 +307,13 @@ bool kore_android_video_open(kore_android_video_t *video, const char *filename) 
 	}
 
 	// configure data source
-	XADataLocator_AndroidBufferQueue loc_abq = {XA_DATALOCATOR_ANDROIDBUFFERQUEUE, NB_BUFFERS};
-	XADataFormat_MIME format_mime            = {XA_DATAFORMAT_MIME, XA_ANDROID_MIME_MP2TS, XA_CONTAINERTYPE_MPEG_TS};
-	XADataSource dataSrc                     = {&loc_abq, &format_mime};
+	XADataLocator_AndroidBufferQueue loc_abq     = {XA_DATALOCATOR_ANDROIDBUFFERQUEUE, NB_BUFFERS};
+	XADataFormat_MIME                format_mime = {XA_DATAFORMAT_MIME, XA_ANDROID_MIME_MP2TS, XA_CONTAINERTYPE_MPEG_TS};
+	XADataSource                     dataSrc     = {&loc_abq, &format_mime};
 
 	// configure audio sink
 	XADataLocator_OutputMix loc_outmix = {XA_DATALOCATOR_OUTPUTMIX, video->outputMixObject};
-	XADataSink audioSnk                = {&loc_outmix, NULL};
+	XADataSink              audioSnk   = {&loc_outmix, NULL};
 
 	// configure image video sink
 	XADataLocator_NativeDisplay loc_nd = {
@@ -326,7 +326,7 @@ bool kore_android_video_open(kore_android_video_t *video, const char *filename) 
 	XADataSink imageVideoSink = {&loc_nd, NULL};
 
 	// declare interfaces to use
-	XAboolean required[NB_MAXAL_INTERFACES]     = {XA_BOOLEAN_TRUE, XA_BOOLEAN_TRUE, XA_BOOLEAN_TRUE};
+	XAboolean     required[NB_MAXAL_INTERFACES] = {XA_BOOLEAN_TRUE, XA_BOOLEAN_TRUE, XA_BOOLEAN_TRUE};
 	XAInterfaceID iidArray[NB_MAXAL_INTERFACES] = {XA_IID_PLAY, XA_IID_ANDROIDBUFFERQUEUESOURCE, XA_IID_STREAMINFORMATION};
 
 	// create media player
@@ -432,8 +432,8 @@ void kore_android_video_shutdown(kore_android_video_t *video) {
 
 JNIEXPORT void JNICALL Java_tech_kore_KoreMoviePlayer_nativeCreate(JNIEnv *env, jobject jobj, jstring jpath, jobject surface, jint id) {
 #if KORE_ANDROID_API >= 15 && !defined(KORE_VULKAN)
-	const char *path         = (*env)->GetStringUTFChars(env, jpath, NULL);
-	kore_android_video_t *av = malloc(sizeof *av);
+	const char           *path = (*env)->GetStringUTFChars(env, jpath, NULL);
+	kore_android_video_t *av   = malloc(sizeof *av);
 	kore_android_video_init(av);
 	av->theNativeWindow = ANativeWindow_fromSurface(env, surface);
 	kore_android_video_open(av, path);
@@ -479,9 +479,9 @@ void kore_video_init(kore_video *video, const char *filename) {
 
 	JNIEnv *env = NULL;
 	(*kore_android_get_activity()->vm)->AttachCurrentThread(kore_android_get_activity()->vm, &env, NULL);
-	jclass koreMoviePlayerClass = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
-	jmethodID constructor       = (*env)->GetMethodID(env, koreMoviePlayerClass, "<init>", "(Ljava/lang/String;)V");
-	jobject object              = (*env)->NewObject(env, koreMoviePlayerClass, constructor, (*env)->NewStringUTF(env, filename));
+	jclass    koreMoviePlayerClass = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
+	jmethodID constructor          = (*env)->GetMethodID(env, koreMoviePlayerClass, "<init>", "(Ljava/lang/String;)V");
+	jobject   object               = (*env)->NewObject(env, koreMoviePlayerClass, constructor, (*env)->NewStringUTF(env, filename));
 
 	jmethodID getId = (*env)->GetMethodID(env, koreMoviePlayerClass, "getId", "()I");
 	video->impl.id  = (*env)->CallIntMethod(env, object, getId);
@@ -497,7 +497,7 @@ void kore_video_init(kore_video *video, const char *filename) {
 	(*env)->CallVoidMethod(env, object, jinit);
 
 	jmethodID getTextureId = (*env)->GetMethodID(env, koreMoviePlayerClass, "getTextureId", "()I");
-	int texid              = (*env)->CallIntMethod(env, object, getTextureId);
+	int       texid        = (*env)->CallIntMethod(env, object, getTextureId);
 
 	(*kore_android_get_activity()->vm)->DetachCurrentThread(kore_android_get_activity()->vm);
 

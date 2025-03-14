@@ -15,8 +15,8 @@
 #include <string.h>
 
 #define BUFFER_SIZE 4096 * 4096 * 4
-static uint8_t buffer[BUFFER_SIZE];
-static size_t buffer_offset            = 0;
+static uint8_t  buffer[BUFFER_SIZE];
+static size_t   buffer_offset          = 0;
 static uint8_t *last_allocated_pointer = 0;
 
 static void *buffer_malloc(size_t size) {
@@ -36,7 +36,7 @@ static void *buffer_realloc(void *p, size_t size) {
 		return buffer_malloc(size);
 	}
 	uint8_t *old_pointer = (uint8_t *)p;
-	size_t old_size      = *(size_t *)(old_pointer - sizeof(size_t));
+	size_t   old_size    = *(size_t *)(old_pointer - sizeof(size_t));
 	if (size <= old_size) {
 		return old_pointer;
 	}
@@ -77,7 +77,7 @@ static void buffer_free(void *p) {}
 
 typedef struct {
 	kore_image_read_callbacks callbacks;
-	void *user_data;
+	void                     *user_data;
 } read_data;
 
 // fill 'data' with 'size' bytes.  return number of bytes actually read
@@ -336,7 +336,7 @@ static bool loadImage(kore_image_read_callbacks callbacks, void *user_data, cons
 		reader.callbacks = callbacks;
 		reader.user_data = user_data;
 
-		int comp;
+		int    comp;
 		float *uncompressed = stbi_loadf_from_callbacks(&stbi_callbacks, &reader, width, height, &comp, 4);
 		if (uncompressed == NULL) {
 			kore_log(KORE_LOG_LEVEL_ERROR, stbi_failure_reason());
@@ -361,7 +361,7 @@ static bool loadImage(kore_image_read_callbacks callbacks, void *user_data, cons
 		reader.callbacks = callbacks;
 		reader.user_data = user_data;
 
-		int comp;
+		int      comp;
 		uint8_t *uncompressed = stbi_load_from_callbacks(&stbi_callbacks, &reader, width, height, &comp, 4);
 		if (uncompressed == NULL) {
 			kore_log(KORE_LOG_LEVEL_ERROR, stbi_failure_reason());
@@ -461,13 +461,13 @@ static void seek_callback(void *user_data, size_t pos) {
 
 struct kore_internal_image_memory {
 	uint8_t *data;
-	size_t size;
-	size_t offset;
+	size_t   size;
+	size_t   offset;
 };
 
 static size_t memory_read_callback(void *user_data, void *data, size_t size) {
-	struct kore_internal_image_memory *memory = (struct kore_internal_image_memory *)user_data;
-	size_t read_size                          = memory->size - memory->offset < size ? memory->size - memory->offset : size;
+	struct kore_internal_image_memory *memory    = (struct kore_internal_image_memory *)user_data;
+	size_t                             read_size = memory->size - memory->offset < size ? memory->size - memory->offset : size;
 	memcpy(data, &memory->data[memory->offset], read_size);
 	memory->offset += read_size;
 	return read_size;

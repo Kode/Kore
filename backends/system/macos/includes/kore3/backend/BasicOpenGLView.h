@@ -15,9 +15,9 @@ struct kore_g5_render_target;
 
 @interface BasicOpenGLView : MTKView {
 @private
-	id<MTLDevice> device;
+	id<MTLDevice>       device;
 	id<MTLCommandQueue> commandQueue;
-	id<MTLLibrary> library;
+	id<MTLLibrary>      library;
 }
 
 #else

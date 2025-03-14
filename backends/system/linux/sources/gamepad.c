@@ -11,11 +11,11 @@
 #include <unistd.h>
 
 struct HIDGamepad {
-	int idx;
-	char gamepad_dev_name[256];
-	char name[385];
-	int file_descriptor;
-	bool connected;
+	int             idx;
+	char            gamepad_dev_name[256];
+	char            name[385];
+	int             file_descriptor;
+	bool            connected;
 	struct js_event gamepadEvent;
 };
 
@@ -80,9 +80,9 @@ void HIDGamepad_update(struct HIDGamepad *pad) {
 }
 
 struct HIDGamepadUdevHelper {
-	struct udev *udevPtr;
+	struct udev         *udevPtr;
 	struct udev_monitor *udevMonitorPtr;
-	int udevMonitorFD;
+	int                  udevMonitorFD;
 };
 
 static struct HIDGamepadUdevHelper udev_helper;
@@ -132,8 +132,8 @@ static void HIDGamepadUdevHelper_init(struct HIDGamepadUdevHelper *helper) {
 	struct udev_list_entry *entry;
 
 	udev_list_entry_foreach(entry, devices) {
-		const char *path        = udev_list_entry_get_name(entry);
-		struct udev_device *dev = udev_device_new_from_syspath(udevPtrNew, path);
+		const char         *path = udev_list_entry_get_name(entry);
+		struct udev_device *dev  = udev_device_new_from_syspath(udevPtrNew, path);
 		HIDGamepadUdevHelper_processDevice(helper, dev);
 	}
 

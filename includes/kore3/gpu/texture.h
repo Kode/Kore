@@ -53,14 +53,14 @@ typedef enum kore_gpu_texture_aspect {
 } kore_gpu_texture_aspect;
 
 typedef struct kore_gpu_texture_view {
-	kore_gpu_texture *texture;
-	kore_gpu_texture_format format;
+	kore_gpu_texture               *texture;
+	kore_gpu_texture_format         format;
 	kore_gpu_texture_view_dimension dimension;
-	kore_gpu_texture_aspect aspect;
-	uint32_t base_mip_level;
-	uint32_t mip_level_count;
-	uint32_t base_array_layer;
-	uint32_t array_layer_count;
+	kore_gpu_texture_aspect         aspect;
+	uint32_t                        base_mip_level;
+	uint32_t                        mip_level_count;
+	uint32_t                        base_array_layer;
+	uint32_t                        array_layer_count;
 } kore_gpu_texture_view;
 
 KORE_FUNC void kore_gpu_texture_set_name(kore_gpu_texture *texture, const char *name);

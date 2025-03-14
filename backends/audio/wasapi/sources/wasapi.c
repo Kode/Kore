@@ -71,15 +71,15 @@ DEFINE_GUID(CLSID_MMDeviceEnumerator, 0xBCDE0395, 0xE52F, 0x467C, 0x8E, 0x3D, 0x
 static kore_audio_buffer audio_buffer;
 
 static IMMDeviceEnumerator *deviceEnumerator;
-static IMMDevice *device;
-static IAudioClient *audioClient        = NULL;
-static IAudioRenderClient *renderClient = NULL;
-static HANDLE bufferEndEvent            = 0;
-static UINT32 bufferFrames;
-static WAVEFORMATEX requestedFormat;
-static WAVEFORMATEX *closestFormat;
-static WAVEFORMATEX *format;
-static uint32_t samples_per_second = 44100;
+static IMMDevice           *device;
+static IAudioClient        *audioClient    = NULL;
+static IAudioRenderClient  *renderClient   = NULL;
+static HANDLE               bufferEndEvent = 0;
+static UINT32               bufferFrames;
+static WAVEFORMATEX         requestedFormat;
+static WAVEFORMATEX        *closestFormat;
+static WAVEFORMATEX        *format;
+static uint32_t             samples_per_second = 44100;
 
 uint32_t kore_audio_samples_per_second(void) {
 	return samples_per_second;
@@ -163,7 +163,7 @@ static bool initDefaultDevice() {
 }
 
 static void submitEmptyBuffer(unsigned frames) {
-	BYTE *buffer   = NULL;
+	BYTE   *buffer = NULL;
 	HRESULT result = renderClient->lpVtbl->GetBuffer(renderClient, frames, &buffer);
 	if (FAILED(result)) {
 		return;
@@ -203,7 +203,7 @@ static void copyFloatSample(float *left, float *right) {
 }
 
 static void submitBuffer(unsigned frames) {
-	BYTE *buffer   = NULL;
+	BYTE   *buffer = NULL;
 	HRESULT result = renderClient->lpVtbl->GetBuffer(renderClient, frames, &buffer);
 	if (FAILED(result)) {
 		if (result == AUDCLNT_E_DEVICE_INVALIDATED) {
@@ -241,8 +241,8 @@ static DWORD WINAPI audioThread(LPVOID ignored) {
 	audioClient->lpVtbl->Start(audioClient);
 	while (1) {
 		WaitForSingleObject(bufferEndEvent, INFINITE);
-		UINT32 padding = 0;
-		HRESULT result = audioClient->lpVtbl->GetCurrentPadding(audioClient, &padding);
+		UINT32  padding = 0;
+		HRESULT result  = audioClient->lpVtbl->GetCurrentPadding(audioClient, &padding);
 		if (FAILED(result)) {
 			if (result == AUDCLNT_E_DEVICE_INVALIDATED) {
 				restartAudio();

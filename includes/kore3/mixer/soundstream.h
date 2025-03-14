@@ -18,14 +18,14 @@ struct stb_vorbis;
 
 typedef struct kore_mixer_sound_stream {
 	struct stb_vorbis *vorbis;
-	int chans;
-	int rate;
-	bool myLooping;
-	float myVolume;
-	bool rateDecodedHack;
-	bool end;
-	float samples[2];
-	uint8_t *buffer;
+	int                chans;
+	int                rate;
+	bool               myLooping;
+	float              myVolume;
+	bool               rateDecodedHack;
+	bool               end;
+	float              samples[2];
+	uint8_t           *buffer;
 } kore_mixer_sound_stream;
 
 /// <summary>

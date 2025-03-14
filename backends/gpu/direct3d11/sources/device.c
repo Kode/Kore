@@ -18,13 +18,13 @@
 
 #include <assert.h>
 
-static IDXGISwapChain *swap_chain;
+static IDXGISwapChain  *swap_chain;
 static kore_gpu_texture framebuffer;
 
 #ifdef KORE_WINDOWS
 static bool isWindowsVersionOrGreater(WORD wMajorVersion, WORD wMinorVersion, WORD wServicePackMajor) {
 	OSVERSIONINFOEXW osvi = {sizeof(osvi), 0, 0, 0, 0, {0}, 0, 0};
-	DWORDLONG const dwlConditionMask =
+	DWORDLONG const  dwlConditionMask =
 	    VerSetConditionMask(VerSetConditionMask(VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL), VER_MINORVERSION, VER_GREATER_EQUAL),
 	                        VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
 
@@ -67,15 +67,15 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	flags = D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-	IDXGIDevice *dxgi_device;
+	IDXGIDevice  *dxgi_device;
 	IDXGIAdapter *dxgi_adapter;
 	IDXGIFactory *dxgi_factory;
 
 	D3D_FEATURE_LEVEL feature_level;
 
 	IDXGIAdapter *adapter = NULL;
-	HRESULT result = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, feature_levels, sizeof(feature_levels) / sizeof(feature_levels[0]),
-	                                   D3D11_SDK_VERSION, &device->d3d11.device, &feature_level, &device->d3d11.context);
+	HRESULT       result = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, feature_levels, sizeof(feature_levels) / sizeof(feature_levels[0]),
+	                                         D3D11_SDK_VERSION, &device->d3d11.device, &feature_level, &device->d3d11.context);
 
 #ifndef NDEBUG
 	if (result == E_FAIL || result == DXGI_ERROR_SDK_COMPONENT_MISSING) {
@@ -95,9 +95,9 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	kore_microsoft_affirm(dxgi_device->lpVtbl->GetAdapter(dxgi_device, &dxgi_adapter));
 	kore_microsoft_affirm(dxgi_adapter->lpVtbl->GetParent(dxgi_adapter, &IID_IDXGIFactory, (void **)&dxgi_factory));
 
-	int depth_bits   = 24;
-	int stencil_bits = 8;
-	bool vsync       = true;
+	int  depth_bits   = 24;
+	int  stencil_bits = 8;
+	bool vsync        = true;
 
 	const int _DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL = 3;
 	const int _DXGI_SWAP_EFFECT_FLIP_DISCARD    = 4;
@@ -231,8 +231,8 @@ void kore_d3d11_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 			set_vertex_buffer_data *data = (set_vertex_buffer_data *)&c->data;
 
 			ID3D11Buffer *buffers[1] = {data->buffer->buffer};
-			UINT strides[1]          = {(UINT)data->stride};
-			UINT offsets[1]          = {(UINT)data->offset};
+			UINT          strides[1] = {(UINT)data->stride};
+			UINT          offsets[1] = {(UINT)data->offset};
 
 			device->d3d11.context->lpVtbl->IASetVertexBuffers(device->d3d11.context, 0, 1, buffers, strides, offsets);
 

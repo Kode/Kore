@@ -15,8 +15,8 @@ namespace Kore {
 		enum { MAXIMUM_DISPLAY_COUNT = 10 };
 
 		DeviceInfo displays[MAXIMUM_DISPLAY_COUNT];
-		int displayCounter = -1;
-		bool initialized   = false;
+		int        displayCounter = -1;
+		bool       initialized    = false;
 
 		void enumDisplayMonitors(DeviceInfo screens[], int &displayCounter);
 

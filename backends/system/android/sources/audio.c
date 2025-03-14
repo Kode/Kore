@@ -8,11 +8,11 @@
 
 static kore_audio_buffer audio_buffer;
 
-static SLObjectItf engineObject;
-static SLEngineItf engineEngine;
-static SLObjectItf outputMixObject;
-static SLObjectItf bqPlayerObject;
-static SLPlayItf bqPlayerPlay = NULL;
+static SLObjectItf                   engineObject;
+static SLEngineItf                   engineEngine;
+static SLObjectItf                   outputMixObject;
+static SLObjectItf                   bqPlayerObject;
+static SLPlayItf                     bqPlayerPlay = NULL;
 static SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
 #define AUDIO_BUFFER_SIZE 1 * 1024
 static int16_t tempBuffer[AUDIO_BUFFER_SIZE];
@@ -63,22 +63,22 @@ void kore_audio_init() {
 	result = (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);
 
 	const SLInterfaceID ids[] = {SL_IID_VOLUME};
-	const SLboolean req[]     = {SL_BOOLEAN_FALSE};
+	const SLboolean     req[] = {SL_BOOLEAN_FALSE};
 	result                    = (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 1, ids, req);
 	result                    = (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);
 
-	SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
-	SLDataFormat_PCM format_pcm                     = {SL_DATAFORMAT_PCM,           2,
-	                                                   SL_SAMPLINGRATE_44_1,        SL_PCMSAMPLEFORMAT_FIXED_16,
-	                                                   SL_PCMSAMPLEFORMAT_FIXED_16, SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
-	                                                   SL_BYTEORDER_LITTLEENDIAN};
-	SLDataSource audioSrc                           = {&loc_bufq, &format_pcm};
+	SLDataLocator_AndroidSimpleBufferQueue loc_bufq   = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
+	SLDataFormat_PCM                       format_pcm = {SL_DATAFORMAT_PCM,           2,
+	                                                     SL_SAMPLINGRATE_44_1,        SL_PCMSAMPLEFORMAT_FIXED_16,
+	                                                     SL_PCMSAMPLEFORMAT_FIXED_16, SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
+	                                                     SL_BYTEORDER_LITTLEENDIAN};
+	SLDataSource                           audioSrc   = {&loc_bufq, &format_pcm};
 
 	SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, outputMixObject};
-	SLDataSink audioSnk                = {&loc_outmix, NULL};
+	SLDataSink              audioSnk   = {&loc_outmix, NULL};
 
 	const SLInterfaceID ids1[] = {SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
-	const SLboolean req1[]     = {SL_BOOLEAN_TRUE};
+	const SLboolean     req1[] = {SL_BOOLEAN_TRUE};
 	result                     = (*engineEngine)->CreateAudioPlayer(engineEngine, &(bqPlayerObject), &audioSrc, &audioSnk, 1, ids1, req1);
 	result                     = (*bqPlayerObject)->Realize(bqPlayerObject, SL_BOOLEAN_FALSE);
 

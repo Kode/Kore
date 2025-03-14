@@ -71,7 +71,7 @@ void *kore_d3d12_buffer_lock_all(kore_gpu_buffer *buffer) {
 
 void *kore_d3d12_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {
 	if (check_for_fence(buffer->d3d12.device->d3d12.execution_fence, find_max_execution_index(buffer, offset, size))) {
-		D3D12_RANGE read_range;
+		D3D12_RANGE  read_range;
 		D3D12_RANGE *read_range_pointer = NULL;
 
 		if (buffer->d3d12.cpu_read) {
@@ -96,7 +96,7 @@ void *kore_d3d12_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, ui
 void *kore_d3d12_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {
 	wait_for_fence(buffer->d3d12.device, buffer->d3d12.device->d3d12.execution_fence, buffer->d3d12.device->d3d12.execution_event,
 	               find_max_execution_index(buffer, offset, size));
-	D3D12_RANGE read_range;
+	D3D12_RANGE  read_range;
 	D3D12_RANGE *read_range_pointer = NULL;
 
 	if (buffer->d3d12.cpu_read) {
@@ -115,7 +115,7 @@ void *kore_d3d12_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t 
 }
 
 void kore_d3d12_buffer_unlock(kore_gpu_buffer *buffer) {
-	D3D12_RANGE written;
+	D3D12_RANGE  written;
 	D3D12_RANGE *written_pointer = NULL;
 
 	if (buffer->d3d12.cpu_write && buffer->d3d12.locked_data_size < UINT64_MAX) {

@@ -11,7 +11,7 @@ struct ID3D11Device;
 struct ID3D11DeviceContext;
 
 typedef struct kore_d3d11_device {
-	struct ID3D11Device *device;
+	struct ID3D11Device        *device;
 	struct ID3D11DeviceContext *context;
 } kore_d3d11_device;
 

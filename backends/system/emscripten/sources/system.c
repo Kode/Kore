@@ -316,7 +316,7 @@ int kore_hardware_threads(void) {
 
 extern int kickstart(int argc, char **argv);
 
-static int html5_argc;
+static int    html5_argc;
 static char **html5_argv;
 
 void main_after_webgpu_init(void) {

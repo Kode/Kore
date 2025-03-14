@@ -26,19 +26,19 @@
 
 #ifdef KORE_WINDOWS
 static HGLRC context;
-static HDC device_context;
+static HDC   device_context;
 #endif
 
 #ifdef KORE_LINUX
-EGLDisplay kore_egl_get_display();
+EGLDisplay          kore_egl_get_display();
 EGLNativeWindowType kore_egl_get_native_window(EGLDisplay, EGLConfig, int);
 
-static EGLint egl_major       = 0;
-static EGLint egl_minor       = 0;
-static int egl_depth_size     = 0;
-static EGLDisplay egl_display = EGL_NO_DISPLAY;
-static EGLContext egl_context = EGL_NO_CONTEXT;
-static EGLConfig egl_config   = NULL;
+static EGLint     egl_major      = 0;
+static EGLint     egl_minor      = 0;
+static int        egl_depth_size = 0;
+static EGLDisplay egl_display    = EGL_NO_DISPLAY;
+static EGLContext egl_context    = EGL_NO_CONTEXT;
+static EGLConfig  egl_config     = NULL;
 static EGLSurface egl_surface;
 
 #define kore_egl_check_errors()                                                          \
@@ -119,7 +119,7 @@ static void kore_egl_init(void) {
 
 #if !defined(KORE_OPENGL_ES)
 	EGLint gl_versions[][2] = {{4, 6}, {4, 5}, {4, 4}, {4, 3}, {4, 2}, {4, 1}, {4, 0}, {3, 3}, {3, 2}, {3, 1}, {3, 0}, {2, 1}, {2, 0}};
-	bool gl_initialized     = false;
+	bool   gl_initialized   = false;
 	for (int i = 0; i < sizeof(gl_versions) / sizeof(EGLint) / 2; ++i) {
 		{
 			EGLint context_attribs[] = {EGL_CONTEXT_MAJOR_VERSION,
@@ -163,7 +163,7 @@ static void kore_egl_init(void) {
 #endif
 
 static kore_gpu_texture framebuffer;
-static GLuint vertex_array;
+static GLuint           vertex_array;
 
 #if defined(KORE_WINDOWS) && !defined(NDEBUG)
 static void __stdcall debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {

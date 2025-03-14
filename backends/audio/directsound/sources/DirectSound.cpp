@@ -10,17 +10,17 @@
 #include <assert.h>
 
 namespace {
-	IDirectSound8 *dsound       = nullptr;
-	IDirectSoundBuffer *dbuffer = nullptr;
-	const DWORD dsize           = 50 * 1024;
-	const int samplesPerSecond  = 44100;
-	const int bitsPerSample     = 16;
+	IDirectSound8      *dsound           = nullptr;
+	IDirectSoundBuffer *dbuffer          = nullptr;
+	const DWORD         dsize            = 50 * 1024;
+	const int           samplesPerSecond = 44100;
+	const int           bitsPerSample    = 16;
 
 	DWORD lastPlayPosition = 0;
-	bool secondHalfFilled  = false;
+	bool  secondHalfFilled = false;
 
-	const int gap  = 10 * 1024;
-	DWORD writePos = gap;
+	const int gap      = 10 * 1024;
+	DWORD     writePos = gap;
 
 	kore_audio_buffer audio_buffer;
 }
@@ -65,7 +65,7 @@ void kore_audio_init() {
 
 	kore_microsoft_affirm(dsound->CreateSoundBuffer(&bufferDesc, &dbuffer, nullptr));
 
-	DWORD size1;
+	DWORD    size1;
 	uint8_t *buffer1 = NULL;
 	kore_microsoft_affirm(dbuffer->Lock(writePos, gap, (void **)&buffer1, &size1, nullptr, nullptr, 0));
 	assert(buffer1 != NULL);
@@ -130,7 +130,7 @@ void kore_audio_update() {
 
 	kore_audio_internal_callback(&audio_buffer, (uint32_t)(gap / 4));
 
-	DWORD size1;
+	DWORD    size1;
 	uint8_t *buffer1;
 	kore_microsoft_affirm(dbuffer->Lock(writePos, gap, (void **)&buffer1, &size1, NULL, NULL, 0));
 

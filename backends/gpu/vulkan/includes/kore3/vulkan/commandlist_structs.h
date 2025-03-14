@@ -18,11 +18,11 @@ typedef struct kore_vulkan_buffer_access {
 } kore_vulkan_buffer_access;
 
 typedef struct kore_vulkan_command_list {
-	VkDevice device;
-	VkCommandPool command_pool;
+	VkDevice        device;
+	VkCommandPool   command_pool;
 	VkCommandBuffer command_buffer;
-	VkFence fence;
-	bool presenting;
+	VkFence         fence;
+	bool            presenting;
 } kore_vulkan_command_list;
 
 #ifdef __cplusplus

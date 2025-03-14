@@ -130,9 +130,9 @@ extern struct kore_xkb_procs wl_xkb;
 #define MAXIMUM_DISPLAY_MODES 16
 
 struct kore_wl_decoration {
-	struct wl_surface *surface;
+	struct wl_surface    *surface;
 	struct wl_subsurface *subsurface;
-	struct wp_viewport *viewport;
+	struct wp_viewport   *viewport;
 };
 
 enum kore_wl_decoration_focus {
@@ -182,25 +182,25 @@ struct kore_wl_window {
 	int buffer_width;
 	int buffer_height;
 
-	kore_window_mode mode;
-	struct wl_surface *surface;
-	struct xdg_surface *xdg_surface;
-	struct xdg_toplevel *toplevel;
+	kore_window_mode                    mode;
+	struct wl_surface                  *surface;
+	struct xdg_surface                 *xdg_surface;
+	struct xdg_toplevel                *toplevel;
 	struct zxdg_toplevel_decoration_v1 *xdg_decoration;
-	struct wp_fractional_scale_v1 *fractional_scale;
-	struct wp_viewport *viewport;
+	struct wp_fractional_scale_v1      *fractional_scale;
+	struct wp_viewport                 *viewport;
 
 	uint32_t preferred_scale;
 
 	bool configured;
 
 	struct {
-		bool server_side;
+		bool                          server_side;
 		enum kore_wl_decoration_focus focus;
-		struct kore_wl_decoration top;
-		struct kore_wl_decoration left;
-		struct kore_wl_decoration right;
-		struct kore_wl_decoration bottom;
+		struct kore_wl_decoration     top;
+		struct kore_wl_decoration     left;
+		struct kore_wl_decoration     right;
+		struct kore_wl_decoration     bottom;
 
 		struct kore_wl_decoration close;
 		struct kore_wl_decoration max;
@@ -217,43 +217,43 @@ struct kore_wl_window {
 };
 
 struct kore_wl_display {
-	struct wl_output *output;
-	int index;
-	int current_mode;
-	int num_modes;
-	char name[64];
-	int x;
-	int y;
-	int physical_width;
-	int physical_height;
-	int subpixel;
+	struct wl_output        *output;
+	int                      index;
+	int                      current_mode;
+	int                      num_modes;
+	char                     name[64];
+	int                      x;
+	int                      y;
+	int                      physical_width;
+	int                      physical_height;
+	int                      subpixel;
 	enum wl_output_transform transform;
-	enum wl_output_subpixel scale;
-	kore_display_mode modes[MAXIMUM_DISPLAY_MODES];
+	enum wl_output_subpixel  scale;
+	kore_display_mode        modes[MAXIMUM_DISPLAY_MODES];
 };
 
 struct kore_wl_mouse {
-	struct kore_wl_seat *seat;
-	int current_window;
-	int x;
-	int y;
-	int enter_serial;
-	const char *previous_cursor_name;
-	struct wl_pointer *pointer;
-	struct wl_surface *surface;
-	bool hidden;
-	bool locked;
-	struct zwp_locked_pointer_v1 *lock;
+	struct kore_wl_seat            *seat;
+	int                             current_window;
+	int                             x;
+	int                             y;
+	int                             enter_serial;
+	const char                     *previous_cursor_name;
+	struct wl_pointer              *pointer;
+	struct wl_surface              *surface;
+	bool                            hidden;
+	bool                            locked;
+	struct zwp_locked_pointer_v1   *lock;
 	struct zwp_relative_pointer_v1 *relative;
-	int serial;
+	int                             serial;
 };
 
 struct kore_wl_keyboard {
 	struct kore_wl_seat *seat;
-	struct wl_keyboard *keyboard;
-	struct xkb_keymap *keymap;
-	struct xkb_state *state;
-	bool ctrlDown;
+	struct wl_keyboard  *keyboard;
+	struct xkb_keymap   *keymap;
+	struct xkb_state    *state;
+	bool                 ctrlDown;
 
 	int repeat_delay;
 	int repeat_rate;
@@ -267,7 +267,7 @@ struct kore_wl_keyboard {
 struct kore_wl_data_offer {
 	struct wl_data_offer *id;
 
-	int mime_type_count;
+	int    mime_type_count;
 	char **mime_types;
 
 	uint32_t source_actions;
@@ -275,9 +275,9 @@ struct kore_wl_data_offer {
 
 	void (*callback)(void *data, size_t data_size, void *user_data);
 	void *user_data;
-	int read_fd;
+	int   read_fd;
 
-	void *buffer;
+	void  *buffer;
 	size_t buf_size;
 	size_t buf_pos;
 
@@ -286,22 +286,22 @@ struct kore_wl_data_offer {
 
 struct kore_wl_data_source {
 	struct wl_data_source *source;
-	const char **mime_types;
-	int num_mime_types;
-	void *data;
-	size_t data_size;
+	const char           **mime_types;
+	int                    num_mime_types;
+	void                  *data;
+	size_t                 data_size;
 };
 
 struct kore_wl_tablet_tool {
-	struct zwp_tablet_tool_v2 *id;
+	struct zwp_tablet_tool_v2   *id;
 	enum zwp_tablet_tool_v2_type type;
-	uint32_t capabilities;
-	uint64_t hardware_serial;
-	uint64_t hardware_id_wacom;
+	uint32_t                     capabilities;
+	uint64_t                     hardware_serial;
+	uint64_t                     hardware_id_wacom;
 
-	int current_window;
-	int x;
-	int y;
+	int   current_window;
+	int   x;
+	int   y;
 	float current_pressure;
 	float current_distance;
 
@@ -314,54 +314,54 @@ struct kore_wl_tablet_tool {
 };
 
 struct kore_wl_tablet {
-	struct zwp_tablet_v2 *id;
+	struct zwp_tablet_v2       *id;
 	struct kore_wl_tablet_seat *seat;
-	struct kore_wl_tablet *next;
+	struct kore_wl_tablet      *next;
 };
 
 struct kore_wl_tablet_seat {
-	struct zwp_tablet_seat_v2 *seat;
-	struct kore_wl_tablet *tablets;
+	struct zwp_tablet_seat_v2  *seat;
+	struct kore_wl_tablet      *tablets;
 	struct kore_wl_tablet_tool *tablet_tools;
 };
 
 struct kore_wl_seat {
-	struct wl_seat *seat;
-	struct kore_wl_keyboard keyboard;
-	struct kore_wl_mouse mouse;
-	struct wl_touch *touch;
+	struct wl_seat            *seat;
+	struct kore_wl_keyboard    keyboard;
+	struct kore_wl_mouse       mouse;
+	struct wl_touch           *touch;
 	struct kore_wl_tablet_seat tablet_seat;
-	struct wl_data_device *data_device;
+	struct wl_data_device     *data_device;
 	struct kore_wl_data_offer *current_selection_offer;
 	struct kore_wl_data_offer *current_dnd_offer;
-	int current_serial;
-	uint32_t capabilities;
-	char name[64];
+	int                        current_serial;
+	uint32_t                   capabilities;
+	char                       name[64];
 };
 
 struct wayland_context {
 	struct xkb_context *xkb_context;
 
-	struct wl_display *display;
-	struct wl_shm *shm;
-	struct wl_registry *registry;
-	struct wl_compositor *compositor;
-	struct wl_subcompositor *subcompositor;
-	struct wp_viewporter *viewporter;
-	struct kore_wl_seat seat;
-	struct xdg_wm_base *xdg_wm_base;
-	struct zxdg_decoration_manager_v1 *decoration_manager;
-	struct wl_data_device_manager *data_device_manager;
-	struct zwp_tablet_manager_v2 *tablet_manager;
-	struct zwp_pointer_constraints_v1 *pointer_constraints;
+	struct wl_display                      *display;
+	struct wl_shm                          *shm;
+	struct wl_registry                     *registry;
+	struct wl_compositor                   *compositor;
+	struct wl_subcompositor                *subcompositor;
+	struct wp_viewporter                   *viewporter;
+	struct kore_wl_seat                     seat;
+	struct xdg_wm_base                     *xdg_wm_base;
+	struct zxdg_decoration_manager_v1      *decoration_manager;
+	struct wl_data_device_manager          *data_device_manager;
+	struct zwp_tablet_manager_v2           *tablet_manager;
+	struct zwp_pointer_constraints_v1      *pointer_constraints;
 	struct zwp_relative_pointer_manager_v1 *relative_pointer_manager;
-	struct wp_fractional_scale_manager_v1 *fractional_scale_manager;
-	struct wl_cursor_theme *cursor_theme;
-	int cursor_size;
-	int num_windows;
-	struct kore_wl_window windows[MAXIMUM_WINDOWS];
-	int num_displays;
-	struct kore_wl_display displays[MAXIMUM_DISPLAYS];
+	struct wp_fractional_scale_manager_v1  *fractional_scale_manager;
+	struct wl_cursor_theme                 *cursor_theme;
+	int                                     cursor_size;
+	int                                     num_windows;
+	struct kore_wl_window                   windows[MAXIMUM_WINDOWS];
+	int                                     num_displays;
+	struct kore_wl_display                  displays[MAXIMUM_DISPLAYS];
 
 	struct kore_wl_data_offer *data_offer_queue;
 };
@@ -369,7 +369,7 @@ struct wayland_context {
 extern struct wayland_context wl_ctx;
 
 struct kore_wl_data_source *kore_wl_create_data_source(struct kore_wl_seat *seat, const char *mime_types[], int num_mime_types, void *data, size_t data_size);
-void kore_wl_data_source_destroy(struct kore_wl_data_source *data_source);
+void                        kore_wl_data_source_destroy(struct kore_wl_data_source *data_source);
 void kore_wl_data_offer_accept(struct kore_wl_data_offer *offer, void (*callback)(void *data, size_t data_size, void *user_data), void *user_data);
 void kore_wl_destroy_data_offer(struct kore_wl_data_offer *offer);
 void kore_wayland_set_selection(struct kore_wl_seat *seat, const char *text, int serial);

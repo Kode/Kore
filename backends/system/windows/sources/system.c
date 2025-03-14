@@ -41,9 +41,9 @@ __itt_domain *kore_itt_domain;
 #define Graphics Graphics3
 #endif
 
-__declspec(dllexport) unsigned long NvOptimusEnablement        = 0x00000001;
-__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
-void kore_internal_resize(int window, int width, int height);
+__declspec(dllexport) unsigned long NvOptimusEnablement                  = 0x00000001;
+__declspec(dllexport) int           AmdPowerXpressRequestHighPerformance = 1;
+void                                kore_internal_resize(int window, int width, int height);
 
 typedef BOOL(WINAPI *GetPointerInfoType)(UINT32 pointerId, POINTER_INFO *pointerInfo);
 static GetPointerInfoType MyGetPointerInfo = NULL;
@@ -63,9 +63,9 @@ struct touchpoint {
 };
 
 static struct touchpoint touchPoints[MAX_TOUCH_POINTS];
-static int mouseX, mouseY;
-static bool keyPressed[256];
-static int keyTranslated[256]; // http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
+static int               mouseX, mouseY;
+static bool              keyPressed[256];
+static int               keyTranslated[256]; // http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
 
 static int GetTouchIndex(int dwID) {
 	for (int i = 0; i < MAX_TOUCH_POINTS; i++) {
@@ -278,13 +278,13 @@ static void initKeyTranslation() {
 	// keyTranslated[VK_OEM_CLEAR
 }
 
-static bool detectGamepad = true;
-static bool gamepadFound  = false;
-static unsigned r         = 0;
+static bool     detectGamepad = true;
+static bool     gamepadFound  = false;
+static unsigned r             = 0;
 
 static wchar_t toUnicode(WPARAM wParam, LPARAM lParam) {
 	wchar_t buffer[11];
-	BYTE state[256];
+	BYTE    state[256];
 	GetKeyboardState(state);
 	ToUnicode((UINT)wParam, (lParam >> 8) & 0xFFFFFF00, state, buffer, 10, 0);
 	return buffer[0];
@@ -295,7 +295,7 @@ static wchar_t toUnicode(WPARAM wParam, LPARAM lParam) {
 #endif
 
 static bool cursors_initialized = false;
-static int cursor               = 0;
+static int  cursor              = 0;
 #define NUM_CURSORS 14
 static HCURSOR cursors[NUM_CURSORS];
 
@@ -307,11 +307,11 @@ void kore_mouse_set_cursor(int set_cursor) {
 }
 
 LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	int windowId;
-	DWORD pointerId;
-	POINTER_INFO pointerInfo = {0};
-	POINTER_PEN_INFO penInfo = {0};
-	static bool controlDown  = false;
+	int              windowId;
+	DWORD            pointerId;
+	POINTER_INFO     pointerInfo = {0};
+	POINTER_PEN_INFO penInfo     = {0};
+	static bool      controlDown = false;
 #ifdef HANDLE_ALT_ENTER
 	static bool altDown = false;
 #endif
@@ -498,11 +498,11 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		}
 		break;
 	case WM_TOUCH: {
-		BOOL bHandled       = FALSE;
-		UINT cInputs        = LOWORD(wParam);
-		PTOUCHINPUT pInputs = _alloca(cInputs * sizeof(TOUCHINPUT));
-		POINT ptInput;
-		int tindex;
+		BOOL        bHandled = FALSE;
+		UINT        cInputs  = LOWORD(wParam);
+		PTOUCHINPUT pInputs  = _alloca(cInputs * sizeof(TOUCHINPUT));
+		POINT       ptInput;
+		int         tindex;
 		if (pInputs) {
 			if (GetTouchInputInfo((HTOUCHINPUT)lParam, cInputs, pInputs, sizeof(TOUCHINPUT))) {
 				for (int i = 0; i < (int)cInputs; i++) {
@@ -573,7 +573,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 						EmptyClipboard();
 						size_t size   = (wcslen(wtext) + 1) * sizeof(wchar_t);
 						HANDLE handle = GlobalAlloc(GMEM_MOVEABLE, size);
-						void *data    = GlobalLock(handle);
+						void  *data   = GlobalLock(handle);
 						memcpy(data, wtext, size);
 						GlobalUnlock(handle);
 						SetClipboardData(CF_UNICODETEXT, handle);
@@ -590,7 +590,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 						EmptyClipboard();
 						size_t size   = (wcslen(wtext) + 1) * sizeof(wchar_t);
 						HANDLE handle = GlobalAlloc(GMEM_MOVEABLE, size);
-						void *data    = GlobalLock(handle);
+						void  *data   = GlobalLock(handle);
 						memcpy(data, wtext, size);
 						GlobalUnlock(handle);
 						SetClipboardData(CF_UNICODETEXT, handle);
@@ -690,7 +690,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		detectGamepad = true;
 		break;
 	case WM_DROPFILES: {
-		HDROP hDrop    = (HDROP)wParam;
+		HDROP    hDrop = (HDROP)wParam;
 		unsigned count = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
 		for (unsigned i = 0; i < count; ++i) {
 			wchar_t filePath[260];
@@ -728,12 +728,12 @@ void loadXInput() {
 	}
 }
 
-static IDirectInput8W *di_instance = NULL;
+static IDirectInput8W       *di_instance = NULL;
 static IDirectInputDevice8W *di_pads[KORE_DINPUT_MAX_COUNT];
-static DIJOYSTATE2 di_padState[KORE_DINPUT_MAX_COUNT];
-static DIJOYSTATE2 di_lastPadState[KORE_DINPUT_MAX_COUNT];
-static DIDEVCAPS di_deviceCaps[KORE_DINPUT_MAX_COUNT];
-static int padCount = 0;
+static DIJOYSTATE2           di_padState[KORE_DINPUT_MAX_COUNT];
+static DIJOYSTATE2           di_lastPadState[KORE_DINPUT_MAX_COUNT];
+static DIDEVCAPS             di_deviceCaps[KORE_DINPUT_MAX_COUNT];
+static int                   padCount = 0;
 
 static void cleanupPad(int padIndex) {
 	if (di_pads[padIndex] != NULL) {
@@ -758,18 +758,18 @@ static void cleanupPad(int padIndex) {
 // Unfortunately this information can not be found by just using DirectInput
 //-----------------------------------------------------------------------------
 static BOOL IsXInputDevice(const GUID *pGuidProductFromDirectInput) {
-	IWbemLocator *pIWbemLocator        = NULL;
-	IEnumWbemClassObject *pEnumDevices = NULL;
-	IWbemClassObject *pDevices[20]     = {0};
-	IWbemServices *pIWbemServices      = NULL;
-	BSTR bstrNamespace                 = NULL;
-	BSTR bstrDeviceID                  = NULL;
-	BSTR bstrClassName                 = NULL;
-	DWORD uReturned                    = 0;
-	bool bIsXinputDevice               = false;
-	UINT iDevice                       = 0;
-	VARIANT var;
-	HRESULT hr;
+	IWbemLocator         *pIWbemLocator   = NULL;
+	IEnumWbemClassObject *pEnumDevices    = NULL;
+	IWbemClassObject     *pDevices[20]    = {0};
+	IWbemServices        *pIWbemServices  = NULL;
+	BSTR                  bstrNamespace   = NULL;
+	BSTR                  bstrDeviceID    = NULL;
+	BSTR                  bstrClassName   = NULL;
+	DWORD                 uReturned       = 0;
+	bool                  bIsXinputDevice = false;
+	UINT                  iDevice         = 0;
+	VARIANT               var;
+	HRESULT               hr;
 
 	// CoInit if needed
 	hr               = CoInitialize(NULL);
@@ -821,7 +821,7 @@ static BOOL IsXInputDevice(const GUID *pGuidProductFromDirectInput) {
 				// TODO: Doesn't work with an Xbox Series X|S controller
 				if (wcsstr(var.bstrVal, L"IG_")) {
 					// If it does, then get the VID/PID from var.bstrVal
-					DWORD dwPid = 0, dwVid = 0;
+					DWORD  dwPid = 0, dwVid = 0;
 					WCHAR *strVid = wcsstr(var.bstrVal, L"VID_");
 #ifndef KORE_NO_CLIB
 					if (strVid && swscanf(strVid, L"VID_%4X", &dwVid) != 1) {
@@ -1242,7 +1242,7 @@ void kore_windows_co_initialize(void) {
 }
 
 static wchar_t savePathw[2048] = {0};
-static char savePath[2048]     = {0};
+static char    savePath[2048]  = {0};
 
 static void findSavePath() {
 	kore_windows_co_initialize();
@@ -1276,7 +1276,7 @@ const char *kore_internal_save_path() {
 	return savePath;
 }
 
-static const char *videoFormats[] = {"ogv", NULL};
+static const char   *videoFormats[] = {"ogv", NULL};
 static LARGE_INTEGER frequency;
 static LARGE_INTEGER startCount;
 
@@ -1333,8 +1333,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
 
 typedef BOOL(__stdcall *MiniDumpWriteDumpType)(IN HANDLE hProcess, IN DWORD ProcessId, IN HANDLE hFile, IN MINIDUMP_TYPE DumpType,
-                                               IN CONST PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
-                                               OPTIONAL IN CONST PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+                                               IN CONST PMINIDUMP_EXCEPTION_INFORMATION                       ExceptionParam,
+                                               OPTIONAL IN CONST PMINIDUMP_USER_STREAM_INFORMATION            UserStreamParam,
                                                OPTIONAL IN CONST PMINIDUMP_CALLBACK_INFORMATION CallbackParam OPTIONAL);
 
 static MiniDumpWriteDumpType MyMiniDumpWriteDump;
@@ -1428,7 +1428,7 @@ void kore_copy_to_clipboard(const char *text) {
 	EmptyClipboard();
 	size_t size   = (wcslen(wtext) + 1) * sizeof(wchar_t);
 	HANDLE handle = GlobalAlloc(GMEM_MOVEABLE, size);
-	void *data    = GlobalLock(handle);
+	void  *data   = GlobalLock(handle);
 	memcpy(data, wtext, size);
 	GlobalUnlock(handle);
 	SetClipboardData(CF_UNICODETEXT, handle);
@@ -1437,14 +1437,14 @@ void kore_copy_to_clipboard(const char *text) {
 
 int kore_cpu_cores(void) {
 	SYSTEM_LOGICAL_PROCESSOR_INFORMATION info[1024];
-	DWORD returnLength = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) * 1024;
-	BOOL success       = GetLogicalProcessorInformation(&info[0], &returnLength);
+	DWORD                                returnLength = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) * 1024;
+	BOOL                                 success      = GetLogicalProcessorInformation(&info[0], &returnLength);
 
 	int proper_cpu_count = 0;
 
 	if (success) {
-		DWORD byteOffset                          = 0;
-		PSYSTEM_LOGICAL_PROCESSOR_INFORMATION ptr = &info[0];
+		DWORD                                 byteOffset = 0;
+		PSYSTEM_LOGICAL_PROCESSOR_INFORMATION ptr        = &info[0];
 		while (byteOffset + sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) <= returnLength) {
 			if (ptr->Relationship == RelationProcessorCore) {
 				++proper_cpu_count;

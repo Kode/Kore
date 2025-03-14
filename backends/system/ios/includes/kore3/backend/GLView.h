@@ -16,23 +16,23 @@ struct kore_g5_render_target;
 @interface GLView : UIView <UIKeyInput> {
 @private
 #ifdef KORE_METAL
-	id<MTLDevice> device;
-	id<MTLCommandQueue> commandQueue;
-	id<MTLCommandBuffer> commandBuffer;
+	id<MTLDevice>               device;
+	id<MTLCommandQueue>         commandQueue;
+	id<MTLCommandBuffer>        commandBuffer;
 	id<MTLRenderCommandEncoder> commandEncoder;
-	id<CAMetalDrawable> drawable;
-	id<MTLLibrary> library;
-	MTLRenderPassDescriptor *renderPassDescriptor;
-	id<MTLTexture> depthTexture;
+	id<CAMetalDrawable>         drawable;
+	id<MTLLibrary>              library;
+	MTLRenderPassDescriptor    *renderPassDescriptor;
+	id<MTLTexture>              depthTexture;
 #else
 	EAGLContext *context;
-	GLuint defaultFramebuffer, colorRenderbuffer, depthStencilRenderbuffer;
+	GLuint       defaultFramebuffer, colorRenderbuffer, depthStencilRenderbuffer;
 #endif
 
 #ifndef KORE_TVOS
 	CMMotionManager *motionManager;
 #endif
-	bool hasAccelerometer;
+	bool  hasAccelerometer;
 	float lastAccelerometerX, lastAccelerometerY, lastAccelerometerZ;
 }
 

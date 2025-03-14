@@ -81,15 +81,15 @@ void kore_internal_mouse_window_deactivated(int window) {
 }
 
 // TODO: handle state per window
-static bool moved        = false;
-static bool locked       = false;
-static int preLockWindow = 0;
-static int preLockX      = 0;
-static int preLockY      = 0;
-static int centerX       = 0;
-static int centerY       = 0;
-static int lastX         = 0;
-static int lastY         = 0;
+static bool moved         = false;
+static bool locked        = false;
+static int  preLockWindow = 0;
+static int  preLockX      = 0;
+static int  preLockY      = 0;
+static int  centerX       = 0;
+static int  centerY       = 0;
+static int  lastX         = 0;
+static int  lastY         = 0;
 
 void kore_internal_mouse_trigger_press(int window, int button, int x, int y) {
 	lastX = x;

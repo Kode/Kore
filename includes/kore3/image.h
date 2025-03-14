@@ -35,12 +35,12 @@ typedef enum kore_image_format {
 } kore_image_format;
 
 typedef struct kore_image {
-	int width, height, depth;
-	kore_image_format format;
-	unsigned internal_format;
+	int                    width, height, depth;
+	kore_image_format      format;
+	unsigned               internal_format;
 	kore_image_compression compression;
-	void *data;
-	size_t data_size;
+	void                  *data;
+	size_t                 data_size;
 } kore_image;
 
 typedef struct kore_image_read_callbacks {

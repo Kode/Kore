@@ -98,11 +98,11 @@ static kore_matrix4x4_t projection_matrix;
 // PipelineState videoPipeline;
 
 static kore_matrix3x3_t transformations[16];
-static uint8_t transformations_size;
-static uint8_t transformation_index;
-static float opacities[16];
-static uint8_t opacities_size;
-static int my_font_size;
+static uint8_t          transformations_size;
+static uint8_t          transformation_index;
+static float            opacities[16];
+static uint8_t          opacities_size;
+static int              my_font_size;
 
 void kore_g2_init(void) {
 	transformations[0]   = kore_matrix3x3_identity();
@@ -234,8 +234,8 @@ static kore_vector2_t kore_vector2_create(float x, float y) {
 void kore_g2_draw_image(kore_g4_texture_t *img, float x, float y) {
 	colored_end();
 	// textPainter.end();
-	float xw          = x + img->tex_width;
-	float yh          = y + img->tex_height;
+	float          xw = x + img->tex_width;
+	float          yh = y + img->tex_height;
 	kore_vector2_t p1 = multiply_matrix_vector(kore_g2_get_transformation(), kore_vector2_create(x, yh));
 	kore_vector2_t p2 = multiply_matrix_vector(kore_g2_get_transformation(), kore_vector2_create(x, y));
 	kore_vector2_t p3 = multiply_matrix_vector(kore_g2_get_transformation(), kore_vector2_create(xw, y));
@@ -450,10 +450,10 @@ void kore_g2_set_mipmap_scale_quality(kore_g2_image_scale_quality value) {
 }*/
 
 static bool scissorEnabled = false;
-static int scissorX        = -1;
-static int scissorY        = -1;
-static int scissorW        = -1;
-static int scissorH        = -1;
+static int  scissorX       = -1;
+static int  scissorY       = -1;
+static int  scissorW       = -1;
+static int  scissorH       = -1;
 
 void kore_g2_scissor(int x, int y, int width, int height) {
 	// if (!scissorEnabled || x != scissorX || y != scissorY || width != scissorW || height != scissorH) {

@@ -168,7 +168,7 @@ static VkShaderModule create_shader_module(kore_vulkan_device *device, const kor
 	};
 
 	VkShaderModule module;
-	VkResult result = vkCreateShaderModule(device->device, &shader_module_create_info, NULL, &module);
+	VkResult       result = vkCreateShaderModule(device->device, &shader_module_create_info, NULL, &module);
 	assert(result == VK_SUCCESS);
 
 	return module;
@@ -206,7 +206,7 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	descriptor_layout.pBindings                       = layoutBindings;
 
 	VkDescriptorSetLayout descriptor_set_layout;
-	VkResult result = vkCreateDescriptorSetLayout(device->device, &descriptor_layout, NULL, &descriptor_set_layout);
+	VkResult              result = vkCreateDescriptorSetLayout(device->device, &descriptor_layout, NULL, &descriptor_set_layout);
 	assert(result == VK_SUCCESS);
 
 	const VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
@@ -226,7 +226,7 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 		++bindings_count;
 	}
 
-	VkVertexInputBindingDescription vi_bindings[64];
+	VkVertexInputBindingDescription   vi_bindings[64];
 	VkVertexInputAttributeDescription vi_attrs[256];
 
 	const VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {

@@ -27,7 +27,7 @@ typedef struct WGPUChainedStruct {
 
 typedef struct WGPUSurfaceDescriptorFromCanvasHTMLSelector {
 	WGPUChainedStruct chain;
-	const char *selector;
+	const char       *selector;
 } WGPUSurfaceDescriptorFromCanvasHTMLSelector;
 
 typedef struct WGPUSurfaceDescriptor {
@@ -47,11 +47,11 @@ typedef enum WGPUTextureFormat { WGPUTextureFormat_BGRA8Unorm } WGPUTextureForma
 typedef enum WGPUPresentMode { WGPUPresentMode_Fifo } WGPUPresentMode;
 
 typedef struct WGPUSwapChainDescriptor {
-	WGPUTextureUsage usage;
+	WGPUTextureUsage  usage;
 	WGPUTextureFormat format;
-	int width;
-	int height;
-	WGPUPresentMode presentMode;
+	int               width;
+	int               height;
+	WGPUPresentMode   presentMode;
 } WGPUSwapChainDescriptor;
 
 typedef struct WGPUCommandEncoderDescriptor {
@@ -86,13 +86,13 @@ typedef struct WGPUColor {
 } WGPUColor;
 
 typedef struct WGPURenderPassColorAttachment {
-	WGPULoadOp loadOp;
+	WGPULoadOp  loadOp;
 	WGPUStoreOp storeOp;
-	WGPUColor clearValue;
+	WGPUColor   clearValue;
 } WGPURenderPassColorAttachment;
 
 typedef struct WGPURenderPassDescriptor {
-	uint32_t colorAttachmentCount;
+	uint32_t                       colorAttachmentCount;
 	WGPURenderPassColorAttachment *colorAttachments;
 } WGPURenderPassDescriptor;
 

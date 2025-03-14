@@ -13,18 +13,18 @@
 #include <stdlib.h>
 
 #define BUFFER_COUNT 2
-static int current_buffer = -1;
+static int                     current_buffer = -1;
 static kore_g5_render_target_t framebuffers[BUFFER_COUNT];
-static kore_g5_command_list_t command_list;
-static kore_g5_shader_t vertex_shader;
-static kore_g5_shader_t fragment_shader;
-static kore_g5_pipeline_t pipeline;
+static kore_g5_command_list_t  command_list;
+static kore_g5_shader_t        vertex_shader;
+static kore_g5_shader_t        fragment_shader;
+static kore_g5_pipeline_t      pipeline;
 static kore_g5_vertex_buffer_t vertices;
-static kore_g5_index_buffer_t indices;
+static kore_g5_index_buffer_t  indices;
 
 #define HEAP_SIZE 1024 * 1024
-static uint8_t *heap   = NULL;
-static size_t heap_top = 0;
+static uint8_t *heap     = NULL;
+static size_t   heap_top = 0;
 
 static void *allocate(size_t size) {
 	size_t old_top = heap_top;
@@ -47,7 +47,7 @@ static void update(void *data) {
 	kore_g5_command_list_set_pipeline(&command_list, &pipeline);
 	kore_g5_command_list_set_pipeline_layout(&command_list);
 
-	int offsets[1]                             = {0};
+	int                      offsets[1]        = {0};
 	kore_g5_vertex_buffer_t *vertex_buffers[1] = {&vertices};
 	kore_g5_command_list_set_vertex_buffers(&command_list, vertex_buffers, offsets, 1);
 	kore_g5_command_list_set_index_buffer(&command_list, &indices);
@@ -64,8 +64,8 @@ static void update(void *data) {
 static void load_shader(const char *filename, kore_g5_shader_t *shader, kore_g5_shader_type_t shader_type) {
 	kore_file_reader_t file;
 	kore_file_reader_open(&file, filename, KORE_FILE_TYPE_ASSET);
-	size_t data_size = kore_file_reader_size(&file);
-	uint8_t *data    = allocate(data_size);
+	size_t   data_size = kore_file_reader_size(&file);
+	uint8_t *data      = allocate(data_size);
 	kore_file_reader_read(&file, data, data_size);
 	kore_file_reader_close(&file);
 	kore_g5_shader_init(shader, data, data_size, shader_type);

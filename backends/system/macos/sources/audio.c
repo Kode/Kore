@@ -23,13 +23,13 @@ static void affirm(OSStatus err) {
 	}
 }
 
-static bool initialized;
-static bool soundPlaying;
-static AudioDeviceID device;
-static UInt32 deviceBufferSize;
-static UInt32 size;
+static bool                        initialized;
+static bool                        soundPlaying;
+static AudioDeviceID               device;
+static UInt32                      deviceBufferSize;
+static UInt32                      size;
 static AudioStreamBasicDescription deviceFormat;
-static AudioObjectPropertyAddress address;
+static AudioObjectPropertyAddress  address;
 
 static AudioDeviceIOProcID theIOProcID = NULL;
 

@@ -48,30 +48,30 @@ typedef enum kore_d3d11_vertex_format {
 
 typedef struct kore_d3d11_vertex_attribute {
 	kore_d3d11_vertex_format format;
-	uint64_t offset;
-	uint32_t shader_location;
+	uint64_t                 offset;
+	uint32_t                 shader_location;
 } kore_d3d11_vertex_attribute;
 
 #define KORE_D3D11_MAX_VERTEX_ATTRIBUTES 32
 
 typedef struct kore_d3d11_vertex_buffer_layout {
-	uint64_t array_stride;
+	uint64_t                    array_stride;
 	kore_d3d11_vertex_step_mode step_mode;
 	kore_d3d11_vertex_attribute attributes[KORE_D3D11_MAX_VERTEX_ATTRIBUTES];
-	size_t attributes_count;
+	size_t                      attributes_count;
 } kore_d3d11_vertex_buffer_layout;
 
 typedef struct kore_d3d11_shader {
 	uint8_t *data;
-	size_t size;
+	size_t   size;
 } kore_d3d11_shader;
 
 #define KORE_D3D11_MAX_VERTEX_BUFFERS 16
 
 typedef struct kore_d3d11_vertex_state {
-	kore_d3d11_shader shader;
+	kore_d3d11_shader               shader;
 	kore_d3d11_vertex_buffer_layout buffers[KORE_D3D11_MAX_VERTEX_BUFFERS];
-	size_t buffers_count;
+	size_t                          buffers_count;
 } kore_d3d11_vertex_state;
 
 typedef enum kore_d3d11_primitive_topology {
@@ -88,10 +88,10 @@ typedef enum kore_d3d11_cull_mode { KORE_D3D11_CULL_MODE_NONE, KORE_D3D11_CULL_M
 
 typedef struct kore_d3d11_primitive_state {
 	kore_d3d11_primitive_topology topology;
-	kore_gpu_index_format strip_index_format;
-	kore_d3d11_front_face front_face;
-	kore_d3d11_cull_mode cull_mode;
-	bool unclipped_depth;
+	kore_gpu_index_format         strip_index_format;
+	kore_d3d11_front_face         front_face;
+	kore_d3d11_cull_mode          cull_mode;
+	bool                          unclipped_depth;
 } kore_d3d11_primitive_state;
 
 typedef enum kore_d3d11_stencil_operation {
@@ -106,29 +106,29 @@ typedef enum kore_d3d11_stencil_operation {
 } kore_d3d11_stencil_operation;
 
 typedef struct kore_d3d11_stencil_face_state {
-	kore_gpu_compare_function compare;
+	kore_gpu_compare_function    compare;
 	kore_d3d11_stencil_operation fail_op;
 	kore_d3d11_stencil_operation depth_fail_op;
 	kore_d3d11_stencil_operation pass_op;
 } kore_d3d11_stencil_face_state;
 
 typedef struct kore_d3d11_depth_stencil_state {
-	kore_gpu_texture_format format;
-	bool depth_write_enabled;
-	kore_gpu_compare_function depth_compare;
+	kore_gpu_texture_format       format;
+	bool                          depth_write_enabled;
+	kore_gpu_compare_function     depth_compare;
 	kore_d3d11_stencil_face_state stencil_front;
 	kore_d3d11_stencil_face_state stencil_back;
-	uint32_t stencil_read_mask;
-	uint32_t stencil_write_mask;
-	int32_t depth_bias;
-	float depth_bias_slope_scale;
-	float depth_bias_clamp;
+	uint32_t                      stencil_read_mask;
+	uint32_t                      stencil_write_mask;
+	int32_t                       depth_bias;
+	float                         depth_bias_slope_scale;
+	float                         depth_bias_clamp;
 } kore_d3d11_depth_stencil_state;
 
 typedef struct kore_d3d11_multisample_state {
 	uint32_t count;
 	uint32_t mask;
-	bool alpha_to_coverage_enabled;
+	bool     alpha_to_coverage_enabled;
 } kore_d3d11_multisample_state;
 
 typedef enum kore_d3d11_blend_operation {
@@ -157,8 +157,8 @@ typedef enum kore_d3d11_blend_factor {
 
 typedef struct kore_d3d11_blend_component {
 	kore_d3d11_blend_operation operation;
-	kore_d3d11_blend_factor src_factor;
-	kore_d3d11_blend_factor dst_factor;
+	kore_d3d11_blend_factor    src_factor;
+	kore_d3d11_blend_factor    dst_factor;
 } kore_d3d11_blend_component;
 
 typedef struct kore_d3d11_blend_state {
@@ -176,24 +176,24 @@ typedef enum kore_d3d11_color_write_flags {
 
 typedef struct kore_d3d11_color_target_state {
 	kore_gpu_texture_format format;
-	kore_d3d11_blend_state blend;
-	uint32_t write_mask;
+	kore_d3d11_blend_state  blend;
+	uint32_t                write_mask;
 } kore_d3d11_color_target_state;
 
 #define KORE_D3D11_MAX_COLOR_TARGETS 8
 
 typedef struct kore_d3d11_fragment_state {
-	kore_d3d11_shader shader;
+	kore_d3d11_shader             shader;
 	kore_d3d11_color_target_state targets[KORE_D3D11_MAX_COLOR_TARGETS];
-	size_t targets_count;
+	size_t                        targets_count;
 } kore_d3d11_fragment_state;
 
 typedef struct kore_d3d11_render_pipeline_parameters {
-	kore_d3d11_vertex_state vertex;
-	kore_d3d11_primitive_state primitive;
+	kore_d3d11_vertex_state        vertex;
+	kore_d3d11_primitive_state     primitive;
 	kore_d3d11_depth_stencil_state depth_stencil;
-	kore_d3d11_multisample_state multisample;
-	kore_d3d11_fragment_state fragment;
+	kore_d3d11_multisample_state   multisample;
+	kore_d3d11_fragment_state      fragment;
 } kore_d3d11_render_pipeline_parameters;
 
 struct ID3D11VertexShader;
@@ -203,11 +203,11 @@ struct ID3D11DepthStencilState;
 struct ID3D11RasterizerState;
 
 typedef struct kore_d3d11_render_pipeline {
-	struct ID3D11VertexShader *vertex_shader;
-	struct ID3D11PixelShader *fragment_shader;
-	struct ID3D11InputLayout *input_layout;
+	struct ID3D11VertexShader      *vertex_shader;
+	struct ID3D11PixelShader       *fragment_shader;
+	struct ID3D11InputLayout       *input_layout;
 	struct ID3D11DepthStencilState *depth_stencil_state;
-	struct ID3D11RasterizerState *rasterizer_state;
+	struct ID3D11RasterizerState   *rasterizer_state;
 } kore_d3d11_render_pipeline;
 
 typedef struct kore_d3d11_compute_pipeline_parameters {

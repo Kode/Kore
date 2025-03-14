@@ -22,8 +22,8 @@ void kore_metal_device_destroy(kore_gpu_device *device) {}
 void kore_metal_device_set_name(kore_gpu_device *device, const char *name) {}
 
 void kore_metal_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
-	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
-	MTLResourceOptions options = MTLResourceCPUCacheModeWriteCombined;
+	id<MTLDevice>      metal_device = (__bridge id<MTLDevice>)device->metal.device;
+	MTLResourceOptions options      = MTLResourceCPUCacheModeWriteCombined;
 #ifdef KORE_APPLE_SOC
 	options |= MTLResourceStorageModeShared;
 #else
@@ -39,7 +39,7 @@ void kore_metal_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 }
 
 void kore_metal_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
-	id<MTLDevice> metal_device        = (__bridge id<MTLDevice>)device->metal.device;
+	id<MTLDevice>       metal_device  = (__bridge id<MTLDevice>)device->metal.device;
 	id<MTLCommandQueue> command_queue = [metal_device newCommandQueue];
 	list->metal.command_queue         = (__bridge_retained void *)command_queue;
 	list->metal.command_buffer        = (__bridge_retained void *)[command_queue commandBuffer];
@@ -50,9 +50,9 @@ void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 static kore_gpu_texture framebuffer;
 
 kore_gpu_texture *kore_metal_device_get_framebuffer(kore_gpu_device *device) {
-	CAMetalLayer *metal_layer    = getMetalLayer();
-	id<CAMetalDrawable> drawable = [metal_layer nextDrawable];
-	framebuffer.metal.texture    = (__bridge_retained void *)drawable.texture;
+	CAMetalLayer       *metal_layer = getMetalLayer();
+	id<CAMetalDrawable> drawable    = [metal_layer nextDrawable];
+	framebuffer.metal.texture       = (__bridge_retained void *)drawable.texture;
 	return &framebuffer;
 }
 

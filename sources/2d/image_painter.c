@@ -9,14 +9,14 @@
 static kore_matrix4x4_t image_projection_matrix;
 
 // static var standardImagePipeline : PipelineCache = null;
-static int image_buffer_size = 1500;
-static int image_vertex_size = 6;
-static int image_buffer_start;
-static int image_buffer_index;
-static kore_g4_vertex_buffer_t image_vertex_buffer;
+static int                      image_buffer_size = 1500;
+static int                      image_vertex_size = 6;
+static int                      image_buffer_start;
+static int                      image_buffer_index;
+static kore_g4_vertex_buffer_t  image_vertex_buffer;
 static kore_g2_image_vertex_in *image_vertices;
-static kore_g4_index_buffer_t image_index_buffer;
-static kore_g4_texture_t *image_last_texture = NULL;
+static kore_g4_index_buffer_t   image_index_buffer;
+static kore_g4_texture_t       *image_last_texture = NULL;
 
 static kore_g2_constants_type_buffer image_constants;
 

@@ -19,8 +19,8 @@ namespace Kore {
 		void play() {}
 		void pause() {}
 		void stop() {}
-		int width() {
-			return 100;
+		int  width() {
+            return 100;
 		}
 		int height() {
 			return 100;
@@ -30,9 +30,9 @@ namespace Kore {
 		}
 		double duration; // milliseconds
 		double position; // milliseconds
-		bool finished;
-		bool paused;
-		void update(double time) {}
+		bool   finished;
+		bool   paused;
+		void   update(double time) {}
 
 	private:
 		Graphics4::Texture *image;

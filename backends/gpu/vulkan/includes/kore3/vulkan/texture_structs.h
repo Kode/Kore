@@ -12,10 +12,10 @@ typedef struct kore_vulkan_texture {
 	uint32_t height;
 
 	VkDeviceMemory device_memory;
-	VkDeviceSize device_size;
-	VkDeviceSize row_pitch;
+	VkDeviceSize   device_size;
+	VkDeviceSize   row_pitch;
 
-	VkImage image;
+	VkImage     image;
 	VkImageView image_view;
 } kore_vulkan_texture;
 

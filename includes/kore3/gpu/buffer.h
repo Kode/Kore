@@ -38,13 +38,13 @@ typedef struct kore_gpu_buffer {
 	KORE_GPU_IMPL(buffer);
 } kore_gpu_buffer;
 
-KORE_FUNC void kore_gpu_buffer_set_name(kore_gpu_buffer *buffer, const char *name);
-KORE_FUNC void kore_gpu_buffer_destroy(kore_gpu_buffer *buffer);
+KORE_FUNC void  kore_gpu_buffer_set_name(kore_gpu_buffer *buffer, const char *name);
+KORE_FUNC void  kore_gpu_buffer_destroy(kore_gpu_buffer *buffer);
 KORE_FUNC void *kore_gpu_buffer_try_to_lock_all(kore_gpu_buffer *buffer);
 KORE_FUNC void *kore_gpu_buffer_lock_all(kore_gpu_buffer *buffer);
 KORE_FUNC void *kore_gpu_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t size);
 KORE_FUNC void *kore_gpu_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t size);
-KORE_FUNC void kore_gpu_buffer_unlock(kore_gpu_buffer *buffer);
+KORE_FUNC void  kore_gpu_buffer_unlock(kore_gpu_buffer *buffer);
 
 #ifdef __cplusplus
 }

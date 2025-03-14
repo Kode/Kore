@@ -15,7 +15,7 @@ struct thread_start {
 
 #define THREAD_STARTS 64
 static struct thread_start starts[THREAD_STARTS];
-static int thread_start_index = 0;
+static int                 thread_start_index = 0;
 
 static void *ThreadProc(void *arg) {
 	intptr_t start_index = (intptr_t)arg;

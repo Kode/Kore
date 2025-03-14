@@ -11,10 +11,10 @@
 
 kore_audio_buffer audio_buffer;
 
-pthread_t threadid;
-bool audioRunning = false;
+pthread_t  threadid;
+bool       audioRunning = false;
 snd_pcm_t *playback_handle;
-short buf[4096 * 4];
+short      buf[4096 * 4];
 
 static unsigned int samples_per_second = 44100;
 
@@ -81,8 +81,8 @@ bool tryToRecover(snd_pcm_t *handle, int errorCode) {
 void *doAudio(void *arg) {
 	snd_pcm_hw_params_t *hw_params;
 	snd_pcm_sw_params_t *sw_params;
-	snd_pcm_sframes_t frames_to_deliver;
-	int err;
+	snd_pcm_sframes_t    frames_to_deliver;
+	int                  err;
 
 	if ((err = snd_pcm_open(&playback_handle, "default", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
 		fprintf(stderr, "cannot open audio device default (%s)\n", snd_strerror(err));

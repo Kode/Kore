@@ -6,7 +6,7 @@
 
 static void winerror(HRESULT result) {
 	LPVOID buffer = NULL;
-	DWORD dw      = GetLastError();
+	DWORD  dw     = GetLastError();
 
 	__debugbreak();
 

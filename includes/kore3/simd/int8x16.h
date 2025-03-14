@@ -41,7 +41,7 @@ static inline void kore_int8x16_store_unaligned(int8_t *destination, kore_int8x1
 static inline int8_t kore_int8x16_get(kore_int8x16 t, int index) {
 	union {
 		__m128i value;
-		int8_t elements[16];
+		int8_t  elements[16];
 	} converter;
 	converter.value = t;
 	return converter.elements[index];

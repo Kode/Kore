@@ -33,11 +33,11 @@ typedef struct kore_socket {
 #else
 	int handle;
 #endif
-	uint32_t host;
-	uint32_t port;
+	uint32_t             host;
+	uint32_t             port;
 	kore_socket_protocol protocol;
-	kore_socket_family family;
-	bool connected;
+	kore_socket_family   family;
+	bool                 connected;
 } kore_socket;
 
 typedef struct kore_socket_parameters {

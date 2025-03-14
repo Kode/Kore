@@ -162,7 +162,7 @@ int kickstart(int argc, char **argv) {
 		kore_float32x4 b = kore_float32x4_load_all(2.0f);
 
 		kore_float32x4_mask mask;
-		kore_float32x4 result;
+		kore_float32x4      result;
 
 		result = kore_float32x4_abs(a);
 		failed += check_f32("float32x4 abs", result, (float[4]){1.0f, 2.0f, 3.0f, 4.0f}, EPSILON) ? 0 : 1;
@@ -230,7 +230,7 @@ int kickstart(int argc, char **argv) {
 		kore_int8x16 b = kore_int8x16_load_all(2);
 
 		kore_int8x16_mask mask;
-		kore_int8x16 result;
+		kore_int8x16      result;
 
 		result = kore_int8x16_add(a, b);
 		failed += check_i8("int8x16 add", result, (int8_t[16]){-6, -5, -4, -3, -2, -1, 0, 1, 3, 4, 5, 6, 7, 8, 9, 10}) ? 0 : 1;
@@ -296,7 +296,7 @@ int kickstart(int argc, char **argv) {
 		kore_uint8x16 b = kore_uint8x16_load_all(2);
 
 		kore_uint8x16_mask mask;
-		kore_uint8x16 result;
+		kore_uint8x16      result;
 
 		result = kore_uint8x16_add(a, b);
 		failed += check_u8("uint8x16 add", result, (uint8_t[16]){3, 4, 5, 6, 7, 8, 9, 10, 6, 4, 5, 6, 7, 8, 9, 10}) ? 0 : 1;
@@ -364,7 +364,7 @@ int kickstart(int argc, char **argv) {
 		kore_int16x8 b = kore_int16x8_load_all(2);
 
 		kore_int16x8_mask mask;
-		kore_int16x8 result;
+		kore_int16x8      result;
 
 		result = kore_int16x8_add(a, b);
 		failed += check_i16("int16x8 add", result, (int16_t[8]){-2, -1, 0, 1, 3, 4, 5, 6}) ? 0 : 1;
@@ -420,7 +420,7 @@ int kickstart(int argc, char **argv) {
 		kore_uint16x8 b = kore_uint16x8_load_all(2);
 
 		kore_uint16x8_mask mask;
-		kore_uint16x8 result;
+		kore_uint16x8      result;
 
 		result = kore_uint16x8_add(a, b);
 		failed += check_u16("uint16x8 add", result, (uint16_t[8]){3, 4, 5, 6, 7, 8, 9, 10}) ? 0 : 1;
@@ -457,7 +457,7 @@ int kickstart(int argc, char **argv) {
 		kore_int32x4 b = kore_int32x4_load_all(2);
 
 		kore_int32x4_mask mask;
-		kore_int32x4 result;
+		kore_int32x4      result;
 
 		result = kore_int32x4_add(a, b);
 		failed += check_i32("int32x4 add", result, (int32_t[4]){0, 1, 3, 4}) ? 0 : 1;
@@ -513,7 +513,7 @@ int kickstart(int argc, char **argv) {
 		kore_uint32x4 b = kore_uint32x4_load_all(2);
 
 		kore_uint32x4_mask mask;
-		kore_uint32x4 result;
+		kore_uint32x4      result;
 
 		result = kore_uint32x4_add(a, b);
 		failed += check_u32("uint32x4 add", result, (uint32_t[4]){3, 4, 5, 6}) ? 0 : 1;

@@ -15,16 +15,16 @@ typedef struct {
 	double next;
 	// double audioTime;
 	unsigned long long audioTime;
-	bool playing;
-	bool loop;
-	void *sound;
-	bool image_initialized;
-	kore_gpu_texture image;
-	double lastTime;
-	float duration;
-	bool finished;
-	int myWidth;
-	int myHeight;
+	bool               playing;
+	bool               loop;
+	void              *sound;
+	bool               image_initialized;
+	kore_gpu_texture   image;
+	double             lastTime;
+	float              duration;
+	bool               finished;
+	int                myWidth;
+	int                myHeight;
 
 	id videoAsset;
 	id assetReader;
@@ -34,10 +34,10 @@ typedef struct {
 } kore_video_impl;
 
 typedef struct kore_internal_video_sound_stream {
-	float *buffer;
-	int bufferSize;
-	int bufferWritePosition;
-	int bufferReadPosition;
+	float   *buffer;
+	int      bufferSize;
+	int      bufferWritePosition;
+	int      bufferReadPosition;
 	uint64_t read;
 	uint64_t written;
 } kore_internal_video_sound_stream;

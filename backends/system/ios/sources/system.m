@@ -62,11 +62,11 @@ void kore_vibrate(int ms) {
 static char language[3];
 
 const char *kore_language(void) {
-	NSString *nsstr  = [[NSLocale preferredLanguages] objectAtIndex:0];
-	const char *lang = [nsstr UTF8String];
-	language[0]      = lang[0];
-	language[1]      = lang[1];
-	language[2]      = 0;
+	NSString   *nsstr = [[NSLocale preferredLanguages] objectAtIndex:0];
+	const char *lang  = [nsstr UTF8String];
+	language[0]       = lang[0];
+	language[1]       = lang[1];
+	language[2]       = 0;
 	return language;
 }
 
@@ -118,7 +118,7 @@ const char *kore_system_id(void) {
 }
 
 static const char *getSavePath(void) {
-	NSArray *paths         = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSArray  *paths        = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *resolvedPath = [paths objectAtIndex:0];
 	NSString *appName      = [NSString stringWithUTF8String:kore_application_name()];
 	resolvedPath           = [resolvedPath stringByAppendingPathComponent:appName];

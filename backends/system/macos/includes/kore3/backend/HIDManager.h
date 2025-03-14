@@ -15,13 +15,13 @@ static const int KORE_MAX_HID_DEVICES = 12;
 
 // Slots to hold details on connected devices
 struct HIDManagerDeviceRecord {
-	bool connected;        // = false;
-	IOHIDDeviceRef device; // = NULL;
+	bool              connected; // = false;
+	IOHIDDeviceRef    device;    // = NULL;
 	struct HIDGamepad pad;
 };
 
 struct HIDManager {
-	IOHIDManagerRef managerRef;
+	IOHIDManagerRef               managerRef;
 	struct HIDManagerDeviceRecord devices[KORE_MAX_HID_DEVICES];
 };
 

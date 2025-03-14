@@ -29,7 +29,7 @@ typedef enum kore_gpu_api { KORE_GPU_API_DIRECT3D12, KORE_GPU_API_VULKAN, KORE_G
 
 #define KORE_GPU_IMPL(name)        \
 	union {                        \
-		kore_d3d12_##name d3d12;   \
+		kore_d3d12_##name  d3d12;  \
 		kore_vulkan_##name vulkan; \
 	}
 #define KORE_GPU_CALL(name)       \

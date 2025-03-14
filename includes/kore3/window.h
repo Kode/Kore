@@ -14,12 +14,12 @@ extern "C" {
 #endif
 
 typedef struct kore_framebuffer_parameters {
-	int frequency;
+	int  frequency;
 	bool vertical_sync;
-	int color_bits;
-	int depth_bits;
-	int stencil_bits;
-	int samples_per_pixel;
+	int  color_bits;
+	int  depth_bits;
+	int  stencil_bits;
+	int  samples_per_pixel;
 } kore_framebuffer_parameters;
 
 typedef enum {
@@ -43,8 +43,8 @@ typedef struct kore_window_parameters {
 	int height;
 	int display_index;
 
-	bool visible;
-	int window_features;
+	bool             visible;
+	int              window_features;
 	kore_window_mode mode;
 } kore_window_parameters;
 

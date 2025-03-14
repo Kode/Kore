@@ -8,7 +8,7 @@
 
 @implementation KoreAppDelegate
 
-static UIWindow *window;
+static UIWindow         *window;
 static GLViewController *glViewController;
 
 void loadURL(const char *url) {
@@ -23,11 +23,11 @@ void loadURL(const char *url) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	AVAudioSession *sessionInstance = [AVAudioSession sharedInstance];
-	NSError *error;
+	NSError        *error;
 
 	// set the session category
 	NSString *category = AVAudioSessionCategoryAmbient;
-	bool success       = [sessionInstance setCategory:category error:&error];
+	bool      success  = [sessionInstance setCategory:category error:&error];
 	if (!success)
 		NSLog(@"Error setting AVAudioSession category! %@\n", [error localizedDescription]);
 	// CGRect rect = [[UIScreen mainScreen] applicationFrame];

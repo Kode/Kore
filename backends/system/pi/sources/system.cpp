@@ -28,12 +28,12 @@ namespace {
 	// static int snglBuf[] = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_STENCIL_SIZE, 8, None};
 	// static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_STENCIL_SIZE, 8, GLX_DOUBLEBUFFER, None};
 
-	uint32_t screen_width;
-	uint32_t screen_height;
+	uint32_t         screen_width;
+	uint32_t         screen_height;
 	Kore::WindowMode windowMode;
-	uint32_t width;
-	uint32_t height;
-	bool bcmHostStarted = false;
+	uint32_t         width;
+	uint32_t         height;
+	bool             bcmHostStarted = false;
 
 	EGLDisplay display;
 	EGLSurface surface;
@@ -68,12 +68,12 @@ namespace {
 	}
 
 	struct InputDevice {
-		int fd;
+		int      fd;
 		uint16_t keys;
 		uint32_t key_state[(KEY_MAX - 1) / 32 + 1];
 	};
 
-	const int inputDevicesCount = 16;
+	const int   inputDevicesCount = 16;
 	InputDevice inputDevices[inputDevicesCount];
 
 	Display *dpy;
@@ -154,20 +154,20 @@ int createWindow(const char *title, int x, int y, int width, int height, Kore::W
 	// uint32_t screen_height = 480;
 
 	EGLBoolean result;
-	EGLint num_config;
+	EGLint     num_config;
 
 	static EGL_DISPMANX_WINDOW_T nativewindow;
 
 	DISPMANX_DISPLAY_HANDLE_T dispman_display;
-	DISPMANX_UPDATE_HANDLE_T dispman_update;
-	VC_RECT_T dst_rect;
-	VC_RECT_T src_rect;
+	DISPMANX_UPDATE_HANDLE_T  dispman_update;
+	VC_RECT_T                 dst_rect;
+	VC_RECT_T                 src_rect;
 
 	static const EGLint attribute_list[] = {EGL_RED_SIZE,   8,       EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_ALPHA_SIZE, 8, EGL_SURFACE_TYPE,
 	                                        EGL_WINDOW_BIT, EGL_NONE};
 
 	static const EGLint context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
-	EGLConfig config;
+	EGLConfig           config;
 
 	display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	assert(display != EGL_NO_DISPLAY);
@@ -401,7 +401,7 @@ bool Kore::System::handleMessages() {
 			continue;
 
 		input_event event;
-		ssize_t readsize = read(inputDevices[i].fd, &event, sizeof(event));
+		ssize_t     readsize = read(inputDevices[i].fd, &event, sizeof(event));
 		while (readsize >= 0) {
 
 			set_bit(inputDevices[i].key_state, event.code, event.value);

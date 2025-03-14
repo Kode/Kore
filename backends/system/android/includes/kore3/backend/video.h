@@ -8,29 +8,29 @@ extern "C" {
 #endif
 
 typedef struct {
-	void *assetReader;
-	void *videoTrackOutput;
-	void *audioTrackOutput;
+	void  *assetReader;
+	void  *videoTrackOutput;
+	void  *audioTrackOutput;
 	double start;
 	double next;
 	// double audioTime;
 	unsigned long long audioTime;
-	bool playing;
-	void *sound;
-	void *androidVideo;
-	int id;
-	kore_gpu_texture image;
-	double lastTime;
-	int myWidth;
-	int myHeight;
+	bool               playing;
+	void              *sound;
+	void              *androidVideo;
+	int                id;
+	kore_gpu_texture   image;
+	double             lastTime;
+	int                myWidth;
+	int                myHeight;
 } kore_video_impl;
 
 typedef struct kore_internal_video_sound_stream {
-	void *audioTrackOutput;
-	float *buffer;
-	int bufferSize;
-	int bufferWritePosition;
-	int bufferReadPosition;
+	void    *audioTrackOutput;
+	float   *buffer;
+	int      bufferSize;
+	int      bufferWritePosition;
+	int      bufferReadPosition;
 	uint64_t read;
 	uint64_t written;
 } kore_internal_video_sound_stream;

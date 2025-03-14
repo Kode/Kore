@@ -21,8 +21,8 @@ static const wchar_t *convert(int method) {
 	}
 }
 
-static char *returnData   = NULL;
-static int returnDataSize = 0;
+static char *returnData     = NULL;
+static int   returnDataSize = 0;
 
 void kore_http_request(const char *url, const char *path, const char *data, int port, bool secure, int method, const char *header, kore_http_callback callback,
                        void *callbackdata) {
@@ -70,8 +70,8 @@ void kore_http_request(const char *url, const char *path, const char *data, int 
 			}
 
 			if ((int)dwSize + 1 > returnDataSize - returnDataIndex) {
-				int newReturnDataSize = (returnDataIndex + dwSize + 1) * 2;
-				char *newReturnData   = (char *)malloc(newReturnDataSize);
+				int   newReturnDataSize = (returnDataIndex + dwSize + 1) * 2;
+				char *newReturnData     = (char *)malloc(newReturnDataSize);
 				if (newReturnData == 0) {
 					kore_log(KORE_LOG_LEVEL_ERROR, "Out of memory\n");
 				}

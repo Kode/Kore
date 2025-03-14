@@ -23,10 +23,10 @@ typedef struct kore_d3d12_buffer {
 	struct kore_gpu_device *device;
 
 	struct ID3D12Resource *resource;
-	uint32_t resource_state;
-	size_t size;
+	uint32_t               resource_state;
+	size_t                 size;
 
-	void *locked_data;
+	void    *locked_data;
 	uint64_t locked_data_offset;
 	uint64_t locked_data_size;
 
@@ -34,7 +34,7 @@ typedef struct kore_d3d12_buffer {
 	bool cpu_read;
 
 	kore_d3d12_buffer_range ranges[KORE_D3D12_MAX_BUFFER_RANGES];
-	uint32_t ranges_count;
+	uint32_t                ranges_count;
 } kore_d3d12_buffer;
 
 #ifdef __cplusplus

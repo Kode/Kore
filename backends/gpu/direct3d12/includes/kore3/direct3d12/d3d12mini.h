@@ -15,7 +15,7 @@ struct ID3D12DescriptorHeap;
 struct ID3D12Device;
 struct IDXGISwapChain;
 
-typedef void *HANDLE;
+typedef void            *HANDLE;
 typedef unsigned __int64 UINT64;
 
 #ifdef __cplusplus

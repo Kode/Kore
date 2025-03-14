@@ -10,12 +10,12 @@
 
 static kore_audio_buffer audio_buffer;
 
-static ALCdevice *device     = NULL;
-static ALCcontext *context   = NULL;
+static ALCdevice   *device   = NULL;
+static ALCcontext  *context  = NULL;
 static unsigned int channels = 0;
 static unsigned int bits     = 0;
-static ALenum format         = 0;
-static ALuint source         = 0;
+static ALenum       format   = 0;
+static ALuint       source   = 0;
 
 static bool audioRunning = false;
 #define BUFSIZE 4096

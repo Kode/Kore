@@ -31,9 +31,9 @@ kore_matrix3x3 kore_matrix3x3_identity(void) {
 }
 
 kore_matrix3x3 kore_matrix3x3_rotation_x(float alpha) {
-	kore_matrix3x3 m = kore_matrix3x3_identity();
-	float ca         = cosf(alpha);
-	float sa         = sinf(alpha);
+	kore_matrix3x3 m  = kore_matrix3x3_identity();
+	float          ca = cosf(alpha);
+	float          sa = sinf(alpha);
 	kore_matrix3x3_set(&m, 1, 1, ca);
 	kore_matrix3x3_set(&m, 2, 1, -sa);
 	kore_matrix3x3_set(&m, 1, 2, sa);
@@ -42,9 +42,9 @@ kore_matrix3x3 kore_matrix3x3_rotation_x(float alpha) {
 }
 
 kore_matrix3x3 kore_matrix3x3_rotation_y(float alpha) {
-	kore_matrix3x3 m = kore_matrix3x3_identity();
-	float ca         = cosf(alpha);
-	float sa         = sinf(alpha);
+	kore_matrix3x3 m  = kore_matrix3x3_identity();
+	float          ca = cosf(alpha);
+	float          sa = sinf(alpha);
 	kore_matrix3x3_set(&m, 0, 0, ca);
 	kore_matrix3x3_set(&m, 2, 0, sa);
 	kore_matrix3x3_set(&m, 0, 2, -sa);
@@ -53,9 +53,9 @@ kore_matrix3x3 kore_matrix3x3_rotation_y(float alpha) {
 }
 
 kore_matrix3x3 kore_matrix3x3_rotation_z(float alpha) {
-	kore_matrix3x3 m = kore_matrix3x3_identity();
-	float ca         = cosf(alpha);
-	float sa         = sinf(alpha);
+	kore_matrix3x3 m  = kore_matrix3x3_identity();
+	float          ca = cosf(alpha);
+	float          sa = sinf(alpha);
 	kore_matrix3x3_set(&m, 0, 0, ca);
 	kore_matrix3x3_set(&m, 1, 0, -sa);
 	kore_matrix3x3_set(&m, 0, 1, sa);
@@ -146,9 +146,9 @@ kore_matrix4x4 kore_matrix4x4_identity(void) {
 }
 
 kore_matrix4x4 kore_matrix4x4_rotation_x(float alpha) {
-	kore_matrix4x4 m = kore_matrix4x4_identity();
-	float ca         = cosf(alpha);
-	float sa         = sinf(alpha);
+	kore_matrix4x4 m  = kore_matrix4x4_identity();
+	float          ca = cosf(alpha);
+	float          sa = sinf(alpha);
 	kore_matrix4x4_set(&m, 1, 1, ca);
 	kore_matrix4x4_set(&m, 2, 1, -sa);
 	kore_matrix4x4_set(&m, 1, 2, sa);
@@ -157,9 +157,9 @@ kore_matrix4x4 kore_matrix4x4_rotation_x(float alpha) {
 }
 
 kore_matrix4x4 kore_matrix4x4_rotation_y(float alpha) {
-	kore_matrix4x4 m = kore_matrix4x4_identity();
-	float ca         = cosf(alpha);
-	float sa         = sinf(alpha);
+	kore_matrix4x4 m  = kore_matrix4x4_identity();
+	float          ca = cosf(alpha);
+	float          sa = sinf(alpha);
 	kore_matrix4x4_set(&m, 0, 0, ca);
 	kore_matrix4x4_set(&m, 2, 0, sa);
 	kore_matrix4x4_set(&m, 0, 2, -sa);
@@ -168,9 +168,9 @@ kore_matrix4x4 kore_matrix4x4_rotation_y(float alpha) {
 }
 
 kore_matrix4x4 kore_matrix4x4_rotation_z(float alpha) {
-	kore_matrix4x4 m = kore_matrix4x4_identity();
-	float ca         = cosf(alpha);
-	float sa         = sinf(alpha);
+	kore_matrix4x4 m  = kore_matrix4x4_identity();
+	float          ca = cosf(alpha);
+	float          sa = sinf(alpha);
 	kore_matrix4x4_set(&m, 0, 0, ca);
 	kore_matrix4x4_set(&m, 1, 0, -sa);
 	kore_matrix4x4_set(&m, 0, 1, sa);

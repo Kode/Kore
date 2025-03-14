@@ -17,16 +17,16 @@
 #include <assert.h>
 #include <stdlib.h>
 
-static VkInstance instance;
+static VkInstance       instance;
 static VkPhysicalDevice gpu;
-static VkSwapchainKHR swapchain;
+static VkSwapchainKHR   swapchain;
 static kore_gpu_texture framebuffers[4];
-static VkFormat framebuffer_format;
-static uint32_t framebuffer_count = 0;
-static uint32_t framebuffer_index = 0;
+static VkFormat         framebuffer_format;
+static uint32_t         framebuffer_count = 0;
+static uint32_t         framebuffer_index = 0;
 
 #ifdef VALIDATE
-static bool validation;
+static bool                     validation;
 static VkDebugUtilsMessengerEXT debug_utils_messenger;
 #else
 static const bool validation = false;
@@ -80,7 +80,7 @@ static VKAPI_ATTR void VKAPI_CALL vulkan_free(void *pUserData, void *pMemory) {
 #endif
 
 static VkSemaphore framebuffer_availables[4];
-static uint32_t framebuffer_available_index = 0;
+static uint32_t    framebuffer_available_index = 0;
 
 static void init_framebuffer_availables(kore_gpu_device *device) {
 	const VkSemaphoreCreateInfo semaphore_create_info = {
@@ -221,7 +221,7 @@ static void load_extension_functions(void) {
 
 void find_gpu(void) {
 	VkPhysicalDevice physical_devices[64];
-	uint32_t gpu_count = sizeof(physical_devices) / sizeof(physical_devices[0]);
+	uint32_t         gpu_count = sizeof(physical_devices) / sizeof(physical_devices[0]);
 
 	VkResult result = vkEnumeratePhysicalDevices(instance, &gpu_count, physical_devices);
 
@@ -236,7 +236,7 @@ void find_gpu(void) {
 		VkPhysicalDevice current_gpu = physical_devices[gpu_index];
 
 		VkQueueFamilyProperties queue_props[64];
-		uint32_t queue_count = sizeof(queue_props) / sizeof(queue_props[0]);
+		uint32_t                queue_count = sizeof(queue_props) / sizeof(queue_props[0]);
 		vkGetPhysicalDeviceQueueFamilyProperties(current_gpu, &queue_count, queue_props);
 
 		bool can_present = false;
@@ -300,7 +300,7 @@ void find_gpu(void) {
 
 uint32_t find_graphics_queue_family(void) {
 	VkQueueFamilyProperties queue_family_props[16];
-	uint32_t queue_family_count = sizeof(queue_family_props) / sizeof(queue_family_props[0]);
+	uint32_t                queue_family_count = sizeof(queue_family_props) / sizeof(queue_family_props[0]);
 
 	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_family_count, queue_family_props);
 
@@ -348,7 +348,7 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 #endif
 	uint32_t window_width  = kore_window_width(0);
 	uint32_t window_height = kore_window_height(0);
-	bool vsync             = true; // kore_window_vsynced(0); // TODO
+	bool     vsync         = true; // kore_window_vsynced(0); // TODO
 
 #ifdef KORE_WINDOWS
 	const VkWin32SurfaceCreateInfoKHR surface_create_info = {
@@ -361,7 +361,7 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 #endif
 
 	VkSurfaceKHR surface = {0};
-	VkResult result      = VK_SUCCESS;
+	VkResult     result  = VK_SUCCESS;
 
 #ifdef KORE_WINDOWS
 	result = vkCreateWin32SurfaceKHR(instance, &surface_create_info, NULL, &surface);
@@ -379,8 +379,8 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 	assert(result == VK_SUCCESS);
 
 	VkPresentModeKHR present_modes[32];
-	uint32_t present_mode_count = sizeof(present_modes) / sizeof(present_modes[0]);
-	result                      = vulkan_GetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &present_mode_count, present_modes);
+	uint32_t         present_mode_count = sizeof(present_modes) / sizeof(present_modes[0]);
+	result                              = vulkan_GetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &present_mode_count, present_modes);
 	assert(result == VK_SUCCESS);
 
 	VkExtent2D swapchain_extent;
@@ -518,7 +518,7 @@ static void create_descriptor_pool(kore_gpu_device *device) {
 
 void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
 	const char *instance_layers[64];
-	int instance_layers_count = 0;
+	int         instance_layers_count = 0;
 
 #ifdef VALIDATE
 	instance_layers[instance_layers_count++] = "VK_LAYER_KHRONOS_validation";
@@ -535,7 +535,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	}
 
 	const char *instance_extensions[64];
-	int instance_extensions_count = 0;
+	int         instance_extensions_count = 0;
 
 	instance_extensions[instance_extensions_count++] = VK_KHR_SURFACE_EXTENSION_NAME;
 	instance_extensions[instance_extensions_count++] = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME;
@@ -595,7 +595,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	find_gpu();
 
 	const char *device_layers[64];
-	int device_layers_count = 0;
+	int         device_layers_count = 0;
 
 	device_layers[device_layers_count++] = "VK_LAYER_KHRONOS_validation";
 
@@ -609,7 +609,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 #endif
 
 	const char *device_extensions[64];
-	int device_extensions_count = 0;
+	int         device_extensions_count = 0;
 
 	device_extensions[device_extensions_count++] = VK_EXT_DEBUG_MARKER_EXTENSION_NAME;
 	device_extensions[device_extensions_count++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;

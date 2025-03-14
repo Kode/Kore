@@ -19,11 +19,11 @@ namespace {
 		void init(int index);
 		void update();
 
-		int idx;
-		char gamepad_dev_name[256];
-		char name[384];
-		int file_descriptor;
-		bool connected;
+		int      idx;
+		char     gamepad_dev_name[256];
+		char     name[384];
+		int      file_descriptor;
+		bool     connected;
 		js_event gamepadEvent;
 
 		void open();

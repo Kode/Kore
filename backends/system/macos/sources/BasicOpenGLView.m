@@ -173,7 +173,7 @@ static bool cmd   = false;
 			}
 			if (ch == 'v' && [theEvent modifierFlags] & NSEventModifierFlagCommand) {
 				NSPasteboard *board = [NSPasteboard generalPasteboard];
-				NSString *data      = [board stringForType:NSStringPboardType];
+				NSString     *data  = [board stringForType:NSStringPboardType];
 				if (data != nil) {
 					char charData[4096];
 					strcpy(charData, [data UTF8String]);
@@ -280,14 +280,14 @@ static bool cmd   = false;
 static int getMouseX(NSEvent *event) {
 	// TODO (DK) map [theEvent window] to window id instead of 0
 	NSWindow *window = [[NSApplication sharedApplication] mainWindow];
-	float scale      = [window backingScaleFactor];
+	float     scale  = [window backingScaleFactor];
 	return (int)([event locationInWindow].x * scale);
 }
 
 static int getMouseY(NSEvent *event) {
 	// TODO (DK) map [theEvent window] to window id instead of 0
 	NSWindow *window = [[NSApplication sharedApplication] mainWindow];
-	float scale      = [window backingScaleFactor];
+	float     scale  = [window backingScaleFactor];
 	return (int)(kore_height() - [event locationInWindow].y * scale);
 }
 
@@ -372,7 +372,7 @@ static bool controlKeyMouseButton = false;
 }
 
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender {
-	NSPasteboard *pboard           = [sender draggingPasteboard];
+	NSPasteboard   *pboard         = [sender draggingPasteboard];
 	NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
 	if ([[pboard types] containsObject:NSURLPboardType]) {
 		if (sourceDragMask & NSDragOperationLink) {
@@ -386,7 +386,7 @@ static bool controlKeyMouseButton = false;
 	NSPasteboard *pboard = [sender draggingPasteboard];
 	// NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
 	if ([[pboard types] containsObject:NSURLPboardType]) {
-		NSURL *fileURL    = [NSURL URLFromPasteboard:pboard];
+		NSURL   *fileURL  = [NSURL URLFromPasteboard:pboard];
 		wchar_t *filePath = (wchar_t *)[fileURL.path cStringUsingEncoding:NSUTF32LittleEndianStringEncoding];
 		kore_internal_drop_files_callback(filePath);
 	}

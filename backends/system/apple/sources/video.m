@@ -79,7 +79,7 @@ static void load(kore_video *video, double startTime) {
 	AVAssetReaderTrackOutput *videoOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:videoTrack outputSettings:videoOutputSettings];
 	[videoOutput setSupportsRandomAccess:YES];
 
-	bool hasAudio                            = [[asset tracksWithMediaType:AVMediaTypeAudio] count] > 0;
+	bool                         hasAudio    = [[asset tracksWithMediaType:AVMediaTypeAudio] count] > 0;
 	AVAssetReaderAudioMixOutput *audioOutput = NULL;
 	if (hasAudio) {
 		AVAssetTrack *audioTrack          = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
@@ -200,14 +200,14 @@ static void updateImage(kore_video *video) {
 
 	{
 		AVAssetReaderTrackOutput *videoOutput = video->impl.videoTrackOutput;
-		CMSampleBufferRef buffer              = [videoOutput copyNextSampleBuffer];
+		CMSampleBufferRef         buffer      = [videoOutput copyNextSampleBuffer];
 		if (!buffer) {
 			if (video->impl.loop) {
 				CMTimeRange timeRange = CMTimeRangeMake(CMTimeMake(0, 1000), kCMTimePositiveInfinity);
 				[videoOutput resetForReadingTimeRanges:[NSArray arrayWithObject:[NSValue valueWithCMTimeRange:timeRange]]];
 
-				AVAssetReaderAudioMixOutput *audioOutput = video->impl.audioTrackOutput;
-				CMSampleBufferRef audio_buffer           = [audioOutput copyNextSampleBuffer];
+				AVAssetReaderAudioMixOutput *audioOutput  = video->impl.audioTrackOutput;
+				CMSampleBufferRef            audio_buffer = [audioOutput copyNextSampleBuffer];
 				while (audio_buffer) {
 					audio_buffer = [audioOutput copyNextSampleBuffer];
 				}
@@ -255,14 +255,14 @@ static void updateImage(kore_video *video) {
 			CMSampleBufferRef buffer = [audioOutput copyNextSampleBuffer];
 			if (!buffer)
 				return;
-			CMItemCount numSamplesInBuffer = CMSampleBufferGetNumSamples(buffer);
-			AudioBufferList audioBufferList;
+			CMItemCount      numSamplesInBuffer = CMSampleBufferGetNumSamples(buffer);
+			AudioBufferList  audioBufferList;
 			CMBlockBufferRef blockBufferOut = nil;
 			CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(buffer, NULL, &audioBufferList, sizeof(audioBufferList), NULL, NULL,
 			                                                        kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &blockBufferOut);
 			for (int bufferCount = 0; bufferCount < audioBufferList.mNumberBuffers; ++bufferCount) {
-				float *samples                          = (float *)audioBufferList.mBuffers[bufferCount].mData;
-				kore_internal_video_sound_stream *sound = (kore_internal_video_sound_stream *)video->impl.sound;
+				float                            *samples = (float *)audioBufferList.mBuffers[bufferCount].mData;
+				kore_internal_video_sound_stream *sound   = (kore_internal_video_sound_stream *)video->impl.sound;
 				if (video->impl.audioTime / 44100.0 > video->impl.next - 0.1) {
 					kore_internal_video_sound_stream_insert_data(sound, samples, (int)numSamplesInBuffer * 2);
 				}

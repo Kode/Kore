@@ -19,7 +19,7 @@ struct thread_start {
 
 #define THREAD_STARTS 64
 static struct thread_start starts[THREAD_STARTS];
-static int thread_start_index = 0;
+static int                 thread_start_index = 0;
 
 static DWORD WINAPI ThreadProc(LPVOID arg) {
 	intptr_t start_index = (intptr_t)arg;
@@ -57,8 +57,8 @@ bool kore_thread_try_to_destroy(kore_thread *thread) {
 }
 
 typedef HRESULT(WINAPI *SetThreadDescriptionType)(HANDLE hThread, PCWSTR lpThreadDescription);
-static SetThreadDescriptionType MySetThreadDescription = NULL;
-static bool set_thread_description_loaded              = false;
+static SetThreadDescriptionType MySetThreadDescription        = NULL;
+static bool                     set_thread_description_loaded = false;
 
 void kore_thread_set_name(const char *name) {
 	if (!set_thread_description_loaded) {

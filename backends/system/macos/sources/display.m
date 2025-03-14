@@ -18,7 +18,7 @@ int kore_count_displays(void) {
 }
 
 int kore_primary_display(void) {
-	NSArray *screens     = [NSScreen screens];
+	NSArray  *screens    = [NSScreen screens];
 	NSScreen *mainScreen = [NSScreen mainScreen];
 	for (int i = 0; i < maxDisplays; ++i) {
 		if (mainScreen == screens[i]) {
@@ -52,21 +52,21 @@ const char *kore_display_name(int display) {
 }
 
 kore_display_mode kore_display_current_mode(int display) {
-	NSArray *screens  = [NSScreen screens];
-	NSScreen *screen  = screens[display];
-	NSRect screenRect = [screen frame];
+	NSArray          *screens    = [NSScreen screens];
+	NSScreen         *screen     = screens[display];
+	NSRect            screenRect = [screen frame];
 	kore_display_mode dm;
 	dm.width          = screenRect.size.width;
 	dm.height         = screenRect.size.height;
 	dm.frequency      = 60;
 	dm.bits_per_pixel = 32;
 
-	NSDictionary *description  = [screen deviceDescription];
-	NSSize displayPixelSize    = [[description objectForKey:NSDeviceSize] sizeValue];
-	NSNumber *screenNumber     = [description objectForKey:@"NSScreenNumber"];
-	CGSize displayPhysicalSize = CGDisplayScreenSize([screenNumber unsignedIntValue]);            // in millimeters
-	double ppi                 = displayPixelSize.width / (displayPhysicalSize.width * 0.039370); // Convert MM to INCH
-	dm.pixels_per_inch         = round(ppi);
+	NSDictionary *description         = [screen deviceDescription];
+	NSSize        displayPixelSize    = [[description objectForKey:NSDeviceSize] sizeValue];
+	NSNumber     *screenNumber        = [description objectForKey:@"NSScreenNumber"];
+	CGSize        displayPhysicalSize = CGDisplayScreenSize([screenNumber unsignedIntValue]);            // in millimeters
+	double        ppi                 = displayPixelSize.width / (displayPhysicalSize.width * 0.039370); // Convert MM to INCH
+	dm.pixels_per_inch                = round(ppi);
 
 	return dm;
 }

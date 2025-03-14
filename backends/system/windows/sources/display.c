@@ -10,15 +10,15 @@
 
 typedef struct {
 	struct HMONITOR__ *monitor;
-	char name[32];
-	bool primary, available, mode_changed;
-	int index, x, y, width, height, ppi, frequency, bpp;
+	char               name[32];
+	bool               primary, available, mode_changed;
+	int                index, x, y, width, height, ppi, frequency, bpp;
 } DisplayData;
 
 static DisplayData displays[MAXIMUM_DISPLAYS];
-static DEVMODEA original_modes[MAXIMUM_DISPLAYS];
-static int screen_counter       = 0;
-static bool display_initialized = false;
+static DEVMODEA    original_modes[MAXIMUM_DISPLAYS];
+static int         screen_counter      = 0;
+static bool        display_initialized = false;
 
 typedef enum { MDT_EFFECTIVE_DPI = 0, MDT_ANGULAR_DPI = 1, MDT_RAW_DPI = 2, MDT_DEFAULT = MDT_EFFECTIVE_DPI } MONITOR_DPI_TYPE;
 typedef HRESULT(WINAPI *GetDpiForMonitorType)(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY);
@@ -188,7 +188,7 @@ const char *kore_display_name(int display_index) {
 }
 
 kore_display_mode kore_display_current_mode(int display_index) {
-	DisplayData *display = &displays[display_index];
+	DisplayData      *display = &displays[display_index];
 	kore_display_mode mode;
 	mode.x               = display->x;
 	mode.y               = display->y;
