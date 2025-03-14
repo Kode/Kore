@@ -1,4 +1,4 @@
-name: Update v2
+name: Format Code
 
 on:
   push:
