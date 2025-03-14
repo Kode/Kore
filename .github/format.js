@@ -4,9 +4,6 @@ const path = require('path');
 
 const startExcludes = [
 	'backends/gpu/direct3d12/sources/d3dx12.h',
-	'backends/gpu/direct3d12/pix',
-	'backends/system/windows/libraries',
-	'sources/libs',
 	'tools'
 ];
 
