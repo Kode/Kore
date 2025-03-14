@@ -115,7 +115,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">// SSE Capability check</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#if defined(__SSE__) || _M_IX86_FP == 2 || _M_IX86_FP == 1 || (defined(KORE_WINDOWS) &amp;&amp; !defined(__aarch64__)) ||                                              \</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#if defined(__SSE__) || _M_IX86_FP == 2 || _M_IX86_FP == 1 || (defined(KORE_WINDOWS) &amp;&amp; !defined(__aarch64__)) || \</span></div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">    (defined(KORE_WINDOWSAPP) &amp;&amp; !defined(__aarch64__)) || (defined(KORE_MACOS) &amp;&amp; __x86_64)</span></div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#define KORE_SSE</span></div>
@@ -129,13 +129,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="comment">// No SIMD Capabilities</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#if !defined(KORE_SSE4_2) &amp;&amp; !defined(KORE_SSE4_1) &amp;&amp; !defined(KORE_SSSE3) &amp;&amp; !defined(KORE_SSE3) &amp;&amp; !defined(KORE_SSE2) &amp;&amp; !defined(KORE_SSE) &amp;&amp;              \</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#if !defined(KORE_SSE4_2) &amp;&amp; !defined(KORE_SSE4_1) &amp;&amp; !defined(KORE_SSSE3) &amp;&amp; !defined(KORE_SSE3) &amp;&amp; !defined(KORE_SSE2) &amp;&amp; !defined(KORE_SSE) &amp;&amp; \</span></div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="preprocessor">    !defined(KORE_NEON)</span></div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#define KORE_NOSIMD</span></div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#define KORE_SHUFFLE_TABLE(LANE_A1, LANE_A2, LANE_B1, LANE_B2)                                                                                                 \</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#define KORE_SHUFFLE_TABLE(LANE_A1, LANE_A2, LANE_B1, LANE_B2) \</span></div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">    ((((LANE_B2) &amp; 0x3) &lt;&lt; 6) | (((LANE_B1) &amp; 0x3) &lt;&lt; 4) | (((LANE_A2) &amp; 0x3) &lt;&lt; 2) | (((LANE_A1) &amp; 0x3) &lt;&lt; 0))</span></div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#if defined(KORE_SSE2)</span></div>

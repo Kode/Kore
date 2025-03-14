@@ -226,7 +226,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <span class="keywordflow">return</span> _mm_xor_ps(t, _mm_cmpeq_ps(zeroes, zeroes));</div>
 <div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>}</div>
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span><span class="preprocessor">#define kore_float32x4_shuffle_custom(abcd, efgh, left_1, left_2, right_1, right_2)                                                                            \</span></div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span><span class="preprocessor">#define kore_float32x4_shuffle_custom(abcd, efgh, left_1, left_2, right_1, right_2) \</span></div>
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span><span class="preprocessor">    _mm_shuffle_ps((abcd), (efgh), KORE_SHUFFLE_TABLE((left_1), (left_2), (right_1), (right_2)))</span></div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
 <div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span><span class="keyword">static</span> <span class="keyword">inline</span> <a class="code hl_struct" href="structkore__float32x4.html">kore_float32x4</a> kore_float32x4_shuffle_aebf(<a class="code hl_struct" href="structkore__float32x4.html">kore_float32x4</a> abcd, <a class="code hl_struct" href="structkore__float32x4.html">kore_float32x4</a> efgh) {</div>
@@ -299,9 +299,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span><span class="preprocessor">#if defined(__aarch64__)</span></div>
 <div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keywordflow">return</span> vdivq_f32(a, b);</div>
 <div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    float32x4 inv = vrecpeq_f32(b);</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    float32x4 inv    = vrecpeq_f32(b);</div>
 <div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>    float32x4 restep = vrecpsq_f32(b, inv);</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    inv = vmulq_f32(restep, inv);</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    inv              = vmulq_f32(restep, inv);</div>
 <div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    <span class="keywordflow">return</span> vmulq_f32(a, inv);</div>
 <div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>}</div>
@@ -397,10 +397,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    <span class="keywordflow">return</span> vreinterpretq_f32_u32(vmvnq_u32(tcvt));</div>
 <div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>}</div>
 <div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span> </div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span><span class="preprocessor">#define kore_float32x4_shuffle_custom(abcd, efgh, left_1, left_2, right_1, right_2)                                                                            \</span></div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span><span class="preprocessor">    (kore_float32x4) {                                                                                                                                         \</span></div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span><span class="preprocessor">        vgetq_lane_f32((abcd), ((left_1) &amp; 0x3)), vgetq_lane_f32((abcd), ((left_2) &amp; 0x3)), vgetq_lane_f32((efgh), ((right_1) &amp; 0x3)),                         \</span></div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span><span class="preprocessor">            vgetq_lane_f32((efgh), ((right_2) &amp; 0x3))                                                                                                          \</span></div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span><span class="preprocessor">#define kore_float32x4_shuffle_custom(abcd, efgh, left_1, left_2, right_1, right_2)                                                    \</span></div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span><span class="preprocessor">    (kore_float32x4) {                                                                                                                 \</span></div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span><span class="preprocessor">        vgetq_lane_f32((abcd), ((left_1) &amp; 0x3)), vgetq_lane_f32((abcd), ((left_2) &amp; 0x3)), vgetq_lane_f32((efgh), ((right_1) &amp; 0x3)), \</span></div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span><span class="preprocessor">            vgetq_lane_f32((efgh), ((right_2) &amp; 0x3))                                                                                  \</span></div>
 <div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span><span class="preprocessor">    }</span></div>
 <div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span> </div>
 <div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span><span class="keyword">static</span> <span class="keyword">inline</span> <a class="code hl_struct" href="structkore__float32x4.html">kore_float32x4</a> kore_float32x4_shuffle_aebf(<a class="code hl_struct" href="structkore__float32x4.html">kore_float32x4</a> abcd, <a class="code hl_struct" href="structkore__float32x4.html">kore_float32x4</a> efgh) {</div>
