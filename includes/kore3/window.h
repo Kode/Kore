@@ -28,11 +28,11 @@ typedef enum {
 	KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN // Only relevant for Windows
 } kore_window_mode;
 
-#define KORE_WINDOW_FEATURE_RESIZEABLE 1
+#define KORE_WINDOW_FEATURE_RESIZEABLE  1
 #define KORE_WINDOW_FEATURE_MINIMIZABLE 2
 #define KORE_WINDOW_FEATURE_MAXIMIZABLE 4
-#define KORE_WINDOW_FEATURE_BORDERLESS 8
-#define KORE_WINDOW_FEATURE_ON_TOP 16
+#define KORE_WINDOW_FEATURE_BORDERLESS  8
+#define KORE_WINDOW_FEATURE_ON_TOP      16
 
 typedef struct kore_window_parameters {
 	const char *title;

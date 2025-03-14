@@ -24,7 +24,7 @@ void kore_mutex_unlock(kore_mutex *mutex) {
 bool kore_uber_mutex_init(kore_uber_mutex *mutex, const char *name) {
 #if defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)
 	mutex->impl.id = (void *)CreateMutexA(NULL, FALSE, name);
-	HRESULT res = GetLastError();
+	HRESULT res    = GetLastError();
 	if (res && res != ERROR_ALREADY_EXISTS) {
 		mutex->impl.id = NULL;
 		assert(false);

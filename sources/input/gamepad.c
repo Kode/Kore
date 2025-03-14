@@ -1,31 +1,31 @@
 #include <kore3/input/gamepad.h>
 
-static void (*gamepad_connect_callback)(int /*gamepad*/, void * /*userdata*/) = NULL;
-static void *gamepad_connect_callback_userdata = NULL;
-static void (*gamepad_disconnect_callback)(int /*gamepad*/, void * /*userdata*/) = NULL;
-static void *gamepad_disconnect_callback_userdata = NULL;
-static void (*gamepad_axis_callback)(int /*gamepad*/, int /*axis*/, float /*value*/, void * /*userdata*/) = NULL;
-static void *gamepad_axis_callback_userdata = NULL;
+static void (*gamepad_connect_callback)(int /*gamepad*/, void * /*userdata*/)                                 = NULL;
+static void *gamepad_connect_callback_userdata                                                                = NULL;
+static void (*gamepad_disconnect_callback)(int /*gamepad*/, void * /*userdata*/)                              = NULL;
+static void *gamepad_disconnect_callback_userdata                                                             = NULL;
+static void (*gamepad_axis_callback)(int /*gamepad*/, int /*axis*/, float /*value*/, void * /*userdata*/)     = NULL;
+static void *gamepad_axis_callback_userdata                                                                   = NULL;
 static void (*gamepad_button_callback)(int /*gamepad*/, int /*button*/, float /*value*/, void * /*userdata*/) = NULL;
-static void *gamepad_button_callback_userdata = NULL;
+static void *gamepad_button_callback_userdata                                                                 = NULL;
 
 void kore_gamepad_set_connect_callback(void (*value)(int /*gamepad*/, void * /*userdata*/), void *userdata) {
-	gamepad_connect_callback = value;
+	gamepad_connect_callback          = value;
 	gamepad_connect_callback_userdata = userdata;
 }
 
 void kore_gamepad_set_disconnect_callback(void (*value)(int /*gamepad*/, void * /*userdata*/), void *userdata) {
-	gamepad_disconnect_callback = value;
+	gamepad_disconnect_callback          = value;
 	gamepad_disconnect_callback_userdata = userdata;
 }
 
 void kore_gamepad_set_axis_callback(void (*value)(int /*gamepad*/, int /*axis*/, float /*value*/, void * /*userdata*/), void *userdata) {
-	gamepad_axis_callback = value;
+	gamepad_axis_callback          = value;
 	gamepad_axis_callback_userdata = userdata;
 }
 
 void kore_gamepad_set_button_callback(void (*value)(int /*gamepad*/, int /*button*/, float /*value*/, void * /*userdata*/), void *userdata) {
-	gamepad_button_callback = value;
+	gamepad_button_callback          = value;
 	gamepad_button_callback_userdata = userdata;
 }
 

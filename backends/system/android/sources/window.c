@@ -3,7 +3,7 @@
 #include <kore3/window.h>
 
 static void (*resizeCallback)(int x, int y, void *data) = NULL;
-static void *resizeCallbackData = NULL;
+static void *resizeCallbackData                         = NULL;
 
 int kore_count_windows(void) {
 	return 1;
@@ -58,7 +58,7 @@ int kore_window_create(kore_window_parameters *win, kore_framebuffer_parameters 
 }
 
 void kore_window_set_resize_callback(int window_index, void (*callback)(int x, int y, void *data), void *data) {
-	resizeCallback = callback;
+	resizeCallback     = callback;
 	resizeCallbackData = data;
 }
 

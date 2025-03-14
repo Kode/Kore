@@ -23,7 +23,7 @@ static kore_g5_vertex_buffer_t vertices;
 static kore_g5_index_buffer_t indices;
 
 #define HEAP_SIZE 1024 * 1024
-static uint8_t *heap = NULL;
+static uint8_t *heap   = NULL;
 static size_t heap_top = 0;
 
 static void *allocate(size_t size) {
@@ -47,7 +47,7 @@ static void update(void *data) {
 	kore_g5_command_list_set_pipeline(&command_list, &pipeline);
 	kore_g5_command_list_set_pipeline_layout(&command_list);
 
-	int offsets[1] = {0};
+	int offsets[1]                             = {0};
 	kore_g5_vertex_buffer_t *vertex_buffers[1] = {&vertices};
 	kore_g5_command_list_set_vertex_buffers(&command_list, vertex_buffers, offsets, 1);
 	kore_g5_command_list_set_index_buffer(&command_list, &indices);
@@ -65,7 +65,7 @@ static void load_shader(const char *filename, kore_g5_shader_t *shader, kore_g5_
 	kore_file_reader_t file;
 	kore_file_reader_open(&file, filename, KORE_FILE_TYPE_ASSET);
 	size_t data_size = kore_file_reader_size(&file);
-	uint8_t *data = allocate(data_size);
+	uint8_t *data    = allocate(data_size);
 	kore_file_reader_read(&file, data, data_size);
 	kore_file_reader_close(&file);
 	kore_g5_shader_init(shader, data, data_size, shader_type);
@@ -85,7 +85,7 @@ int kickstart(int argc, char **argv) {
 	kore_g4_vertex_structure_init(&structure);
 	kore_g4_vertex_structure_add(&structure, "pos", KORE_G4_VERTEX_DATA_FLOAT3);
 	kore_g5_pipeline_init(&pipeline);
-	pipeline.vertexShader = &vertex_shader;
+	pipeline.vertexShader   = &vertex_shader;
 	pipeline.fragmentShader = &fragment_shader;
 	pipeline.inputLayout[0] = &structure;
 	pipeline.inputLayout[1] = NULL;
@@ -99,23 +99,23 @@ int kickstart(int argc, char **argv) {
 
 	kore_g5_vertex_buffer_init(&vertices, 3, &structure, true, 0);
 	float *v = kore_g5_vertex_buffer_lock_all(&vertices);
-	v[0] = -1;
-	v[1] = -1;
-	v[2] = 0.5;
-	v[3] = 1;
-	v[4] = -1;
-	v[5] = 0.5;
-	v[6] = -1;
-	v[7] = 1;
-	v[8] = 0.5;
+	v[0]     = -1;
+	v[1]     = -1;
+	v[2]     = 0.5;
+	v[3]     = 1;
+	v[4]     = -1;
+	v[5]     = 0.5;
+	v[6]     = -1;
+	v[7]     = 1;
+	v[8]     = 0.5;
 	kore_g5_vertex_buffer_unlock_all(&vertices);
 	kore_g5_command_list_upload_vertex_buffer(&command_list, &vertices);
 
 	kore_g5_index_buffer_init(&indices, 3, KORE_G5_INDEX_BUFFER_FORMAT_32BIT, true);
 	int *i = kore_g5_index_buffer_lock_all(&indices);
-	i[0] = 0;
-	i[1] = 1;
-	i[2] = 2;
+	i[0]   = 0;
+	i[1]   = 1;
+	i[2]   = 2;
 	kore_g5_index_buffer_unlock_all(&indices);
 	kore_g5_command_list_upload_index_buffer(&command_list, &indices);
 

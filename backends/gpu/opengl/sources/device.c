@@ -33,22 +33,22 @@ static HDC device_context;
 EGLDisplay kore_egl_get_display();
 EGLNativeWindowType kore_egl_get_native_window(EGLDisplay, EGLConfig, int);
 
-static EGLint egl_major = 0;
-static EGLint egl_minor = 0;
-static int egl_depth_size = 0;
+static EGLint egl_major       = 0;
+static EGLint egl_minor       = 0;
+static int egl_depth_size     = 0;
 static EGLDisplay egl_display = EGL_NO_DISPLAY;
 static EGLContext egl_context = EGL_NO_CONTEXT;
-static EGLConfig egl_config = NULL;
+static EGLConfig egl_config   = NULL;
 static EGLSurface egl_surface;
 
-#define kore_egl_check_errors()                                                                                                                                \
-	{                                                                                                                                                          \
-		EGLint error = eglGetError();                                                                                                                          \
-		if (error != EGL_SUCCESS) {                                                                                                                            \
-			kore_log(KORE_LOG_LEVEL_ERROR, "EGL Error at line %i: %i", __LINE__, error);                                                                       \
-			kore_debug_break();                                                                                                                                \
-			exit(1);                                                                                                                                           \
-		}                                                                                                                                                      \
+#define kore_egl_check_errors()                                                          \
+	{                                                                                    \
+		EGLint error = eglGetError();                                                    \
+		if (error != EGL_SUCCESS) {                                                      \
+			kore_log(KORE_LOG_LEVEL_ERROR, "EGL Error at line %i: %i", __LINE__, error); \
+			kore_debug_break();                                                          \
+			exit(1);                                                                     \
+		}                                                                                \
 	}
 
 static void kore_egl_init_window(int window) {
@@ -118,7 +118,21 @@ static void kore_egl_init(void) {
 	}
 
 #if !defined(KORE_OPENGL_ES)
-	EGLint gl_versions[][2] = {{4, 6}, {4, 5}, {4, 4}, {4, 3}, {4, 2}, {4, 1}, {4, 0}, {3, 3}, {3, 2}, {3, 1}, {3, 0}, {2, 1}, {2, 0}};
+	EGLint gl_versions[][2] = {
+	    {4, 6},
+        {4, 5},
+        {4, 4},
+        {4, 3},
+        {4, 2},
+        {4, 1},
+        {4, 0},
+        {3, 3},
+        {3, 2},
+        {3, 1},
+        {3, 0},
+        {2, 1},
+        {2, 0}
+    };
 	bool gl_initialized = false;
 	for (int i = 0; i < sizeof(gl_versions) / sizeof(EGLint) / 2; ++i) {
 		{
@@ -129,8 +143,8 @@ static void kore_egl_init(void) {
 			                            EGL_CONTEXT_OPENGL_FORWARD_COMPATIBLE,
 			                            EGL_TRUE,
 			                            EGL_NONE};
-			egl_context = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
-			EGLint error = eglGetError();
+			egl_context              = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
+			EGLint error             = eglGetError();
 			if (error == EGL_SUCCESS) {
 				gl_initialized = true;
 				kore_log(KORE_LOG_LEVEL_INFO, "Using OpenGL version %i.%i (forward-compatible).", gl_versions[i][0], gl_versions[i][1]);
@@ -140,8 +154,8 @@ static void kore_egl_init(void) {
 
 		{
 			EGLint context_attribs[] = {EGL_CONTEXT_MAJOR_VERSION, gl_versions[i][0], EGL_CONTEXT_MINOR_VERSION, gl_versions[i][1], EGL_NONE};
-			egl_context = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
-			EGLint error = eglGetError();
+			egl_context              = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
+			EGLint error             = eglGetError();
 			if (error == EGL_SUCCESS) {
 				gl_initialized = true;
 				kore_log(KORE_LOG_LEVEL_INFO, "Using OpenGL version %i.%i.", gl_versions[i][0], gl_versions[i][1]);
@@ -156,7 +170,7 @@ static void kore_egl_init(void) {
 	}
 #else
 	EGLint context_attribs[] = {EGL_CONTEXT_MAJOR_VERSION, 2, EGL_NONE};
-	egl_context = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
+	egl_context              = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
 	kore_egl_check_errors();
 #endif
 }
@@ -175,7 +189,7 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 #ifdef KORE_WINDOWS
 	HWND window_handle = kore_windows_window_handle(0);
 
-	const uint32_t depth_buffer_bits = 16;
+	const uint32_t depth_buffer_bits   = 16;
 	const uint32_t stencil_buffer_bits = 8;
 
 	// clang-format off
@@ -184,7 +198,7 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 		PFD_MAIN_PLANE, 0, 0, 0, 0 };
 	// clang-format on
 
-	device_context = GetDC(window_handle);
+	device_context      = GetDC(window_handle);
 	GLuint pixel_format = ChoosePixelFormat(device_context, &pfd);
 	SetPixelFormat(device_context, pixel_format, &pfd);
 	HGLRC temp_context = wglCreateContext(device_context);
@@ -228,7 +242,7 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 #endif
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer.opengl.framebuffer);
-	framebuffer.opengl.texture = 0;
+	framebuffer.opengl.texture                = 0;
 	framebuffer.opengl.is_primary_framebuffer = true;
 
 	glGenVertexArrays(1, &vertex_array);
@@ -270,7 +284,7 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 }
 
 void kore_opengl_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
-	list->opengl.commands = malloc(1024 * 1024);
+	list->opengl.commands        = malloc(1024 * 1024);
 	list->opengl.commands_offset = 0;
 }
 
@@ -285,7 +299,7 @@ kore_gpu_texture_format kore_opengl_device_framebuffer_format(kore_gpu_device *d
 }
 
 void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
-	kore_gpu_index_format index_format = KORE_GPU_INDEX_FORMAT_UINT16;
+	kore_gpu_index_format index_format     = KORE_GPU_INDEX_FORMAT_UINT16;
 	kore_gpu_texture_view framebuffer_view = {0};
 
 	uint64_t offset = 0;
@@ -378,7 +392,7 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		}
 		case COMMAND_BEGIN_RENDER_PASS: {
 			begin_render_pass *data = (begin_render_pass *)&c->data;
-			framebuffer_view = data->parameters.color_attachments[0].texture;
+			framebuffer_view        = data->parameters.color_attachments[0].texture;
 			break;
 		}
 		case COMMAND_END_RENDER_PASS: {

@@ -26,18 +26,18 @@
 void pauseAudio();
 void resumeAudio();
 
-static struct android_app *app = NULL;
-static ANativeActivity *activity = NULL;
-static ASensorManager *sensorManager = NULL;
-static const ASensor *accelerometerSensor = NULL;
-static const ASensor *gyroSensor = NULL;
+static struct android_app *app             = NULL;
+static ANativeActivity *activity           = NULL;
+static ASensorManager *sensorManager       = NULL;
+static const ASensor *accelerometerSensor  = NULL;
+static const ASensor *gyroSensor           = NULL;
 static ASensorEventQueue *sensorEventQueue = NULL;
 
-static bool started = false;
-static bool paused = true;
+static bool started              = false;
+static bool paused               = true;
 static bool displayIsInitialized = false;
-static bool appIsForeground = false;
-static bool activityJustResized = false;
+static bool appIsForeground      = false;
+static bool activityJustResized  = false;
 
 #include <assert.h>
 
@@ -68,10 +68,10 @@ EGLNativeWindowType kore_egl_get_native_window(EGLDisplay display, EGLConfig con
 VkResult kore_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
 	assert(app->window != NULL);
 	VkAndroidSurfaceCreateInfoKHR createInfo = {};
-	createInfo.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
-	createInfo.pNext = NULL;
-	createInfo.flags = 0;
-	createInfo.window = app->window;
+	createInfo.sType                         = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
+	createInfo.pNext                         = NULL;
+	createInfo.flags                         = 0;
+	createInfo.window                        = app->window;
 	return vkCreateAndroidSurfaceKHR(instance, &createInfo, NULL, surface);
 }
 
@@ -115,10 +115,10 @@ static void termDisplay() {
 }
 
 static void updateAppForegroundStatus(bool displayIsInitializedValue, bool appIsForegroundValue) {
-	bool oldStatus = displayIsInitialized && appIsForeground;
+	bool oldStatus       = displayIsInitialized && appIsForeground;
 	displayIsInitialized = displayIsInitializedValue;
-	appIsForeground = appIsForegroundValue;
-	bool newStatus = displayIsInitialized && appIsForeground;
+	appIsForeground      = appIsForegroundValue;
+	bool newStatus       = displayIsInitialized && appIsForeground;
 	if (oldStatus != newStatus) {
 		if (newStatus) {
 			kore_internal_foreground_callback();
@@ -141,10 +141,10 @@ static bool isPenEvent(AInputEvent *event) {
 
 static void touchInput(AInputEvent *event) {
 	int action = AMotionEvent_getAction(event);
-	int index = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-	int id = AMotionEvent_getPointerId(event, index);
-	float x = AMotionEvent_getX(event, index);
-	float y = AMotionEvent_getY(event, index);
+	int index  = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+	int id     = AMotionEvent_getPointerId(event, index);
+	float x    = AMotionEvent_getX(event, index);
+	float y    = AMotionEvent_getY(event, index);
 	switch (action & AMOTION_EVENT_ACTION_MASK) {
 	case AMOTION_EVENT_ACTION_DOWN:
 	case AMOTION_EVENT_ACTION_POINTER_DOWN:
@@ -161,8 +161,8 @@ static void touchInput(AInputEvent *event) {
 		size_t count = AMotionEvent_getPointerCount(event);
 		for (int i = 0; i < count; ++i) {
 			id = AMotionEvent_getPointerId(event, i);
-			x = AMotionEvent_getX(event, i);
-			y = AMotionEvent_getY(event, i);
+			x  = AMotionEvent_getX(event, i);
+			y  = AMotionEvent_getY(event, i);
 			if (id == 0) {
 				kore_internal_mouse_trigger_move(0, x, y);
 			}
@@ -192,14 +192,14 @@ static void touchInput(AInputEvent *event) {
 	}
 }
 
-static float last_x = 0.0f;
-static float last_y = 0.0f;
-static float last_l = 0.0f;
-static float last_r = 0.0f;
-static bool last_hat_left = false;
+static float last_x        = 0.0f;
+static float last_y        = 0.0f;
+static float last_l        = 0.0f;
+static float last_r        = 0.0f;
+static bool last_hat_left  = false;
 static bool last_hat_right = false;
-static bool last_hat_up = false;
-static bool last_hat_down = false;
+static bool last_hat_up    = false;
+static bool last_hat_down  = false;
 
 static int32_t input(struct android_app *app, AInputEvent *event) {
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
@@ -237,7 +237,7 @@ static int32_t input(struct android_app *app, AInputEvent *event) {
 
 			float hat_x = AMotionEvent_getAxisValue(event, AMOTION_EVENT_AXIS_HAT_X, 0);
 
-			bool hat_left = false;
+			bool hat_left  = false;
 			bool hat_right = false;
 			if (hat_x < -0.5f) {
 				hat_left = true;
@@ -248,7 +248,7 @@ static int32_t input(struct android_app *app, AInputEvent *event) {
 
 			float hat_y = AMotionEvent_getAxisValue(event, AMOTION_EVENT_AXIS_HAT_Y, 0);
 
-			bool hat_up = false;
+			bool hat_up   = false;
 			bool hat_down = false;
 			if (hat_y < -0.5f) {
 				hat_up = true;
@@ -858,14 +858,14 @@ AAssetManager *kore_android_get_asset_manager(void) {
 }
 
 jclass kore_android_find_class(JNIEnv *env, const char *name) {
-	jobject nativeActivity = activity->clazz;
-	jclass acl = (*env)->GetObjectClass(env, nativeActivity);
+	jobject nativeActivity   = activity->clazz;
+	jclass acl               = (*env)->GetObjectClass(env, nativeActivity);
 	jmethodID getClassLoader = (*env)->GetMethodID(env, acl, "getClassLoader", "()Ljava/lang/ClassLoader;");
-	jobject cls = (*env)->CallObjectMethod(env, nativeActivity, getClassLoader);
-	jclass classLoader = (*env)->FindClass(env, "java/lang/ClassLoader");
-	jmethodID findClass = (*env)->GetMethodID(env, classLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
-	jstring strClassName = (*env)->NewStringUTF(env, name);
-	jclass clazz = (jclass)((*env)->CallObjectMethod(env, cls, findClass, strClassName));
+	jobject cls              = (*env)->CallObjectMethod(env, nativeActivity, getClassLoader);
+	jclass classLoader       = (*env)->FindClass(env, "java/lang/ClassLoader");
+	jmethodID findClass      = (*env)->GetMethodID(env, classLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+	jstring strClassName     = (*env)->NewStringUTF(env, name);
+	jclass clazz             = (jclass)((*env)->CallObjectMethod(env, cls, findClass, strClassName));
 	(*env)->DeleteLocalRef(env, strClassName);
 	return clazz;
 }
@@ -876,7 +876,7 @@ static int unicode_stack_index = 0;
 static kore_mutex unicode_mutex;
 
 JNIEXPORT void JNICALL Java_tech_kore_KoreActivity_nativeKoreKeyPress(JNIEnv *env, jobject jobj, jstring chars) {
-	const jchar *text = (*env)->GetStringChars(env, chars, NULL);
+	const jchar *text  = (*env)->GetStringChars(env, chars, NULL);
 	const jsize length = (*env)->GetStringLength(env, chars);
 
 	kore_mutex_lock(&unicode_mutex);
@@ -895,7 +895,9 @@ void KoreAndroidKeyboardInit() {
 	jclass clazz = kore_android_find_class(env, "tech.kore.KoreActivity");
 
 	// String chars
-	JNINativeMethod methodTable[] = {{"nativeKoreKeyPress", "(Ljava/lang/String;)V", (void *)Java_tech_kore_KoreActivity_nativeKoreKeyPress}};
+	JNINativeMethod methodTable[] = {
+	    {"nativeKoreKeyPress", "(Ljava/lang/String;)V", (void *)Java_tech_kore_KoreActivity_nativeKoreKeyPress}
+    };
 
 	int methodTableSize = sizeof(methodTable) / sizeof(methodTable[0]);
 
@@ -935,7 +937,7 @@ void kore_load_url(const char *url) {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
 	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
-	jstring jurl = (*env)->NewStringUTF(env, url);
+	jstring jurl             = (*env)->NewStringUTF(env, url);
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "loadURL", "(Ljava/lang/String;)V"), jurl);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -952,9 +954,9 @@ const char *kore_language() {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
 	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
-	jstring s = (jstring)(*env)->CallStaticObjectMethod(env, koreActivityClass,
-	                                                    (*env)->GetStaticMethodID(env, koreActivityClass, "getLanguage", "()Ljava/lang/String;"));
-	const char *str = (*env)->GetStringUTFChars(env, s, 0);
+	jstring s                = (jstring)(*env)->CallStaticObjectMethod(env, koreActivityClass,
+	                                                                   (*env)->GetStaticMethodID(env, koreActivityClass, "getLanguage", "()Ljava/lang/String;"));
+	const char *str          = (*env)->GetStringUTFChars(env, s, 0);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 	return str;
 }
@@ -1087,8 +1089,8 @@ bool kore_internal_handle_messages(void) {
 
 	if (activityJustResized && app->window != NULL) {
 		activityJustResized = false;
-		int32_t width = kore_android_width();
-		int32_t height = kore_android_height();
+		int32_t width       = kore_android_width();
+		int32_t height      = kore_android_height();
 #ifdef KORE_VULKAN
 		// kore_internal_resize(0, width, height); // TODO
 #endif
@@ -1149,27 +1151,27 @@ void android_main(struct android_app *application) {
 	gettimeofday(&now, NULL);
 	start_sec = now.tv_sec;
 
-	app = application;
+	app      = application;
 	activity = application->activity;
 	initAndroidFileReader();
 	KoreAndroidVideoInit();
 	KoreAndroidKeyboardInit();
-	application->onAppCmd = cmd;
-	application->onInputEvent = input;
+	application->onAppCmd                      = cmd;
+	application->onInputEvent                  = input;
 	activity->callbacks->onNativeWindowResized = resize;
 	// #ifndef KORE_VULKAN
 	// 	glContext = ndk_helper::GLContext::GetInstance();
 	// #endif
-	sensorManager = ASensorManager_getInstance();
+	sensorManager       = ASensorManager_getInstance();
 	accelerometerSensor = ASensorManager_getDefaultSensor(sensorManager, ASENSOR_TYPE_ACCELEROMETER);
-	gyroSensor = ASensorManager_getDefaultSensor(sensorManager, ASENSOR_TYPE_GYROSCOPE);
-	sensorEventQueue = ASensorManager_createEventQueue(sensorManager, application->looper, LOOPER_ID_USER, NULL, NULL);
+	gyroSensor          = ASensorManager_getDefaultSensor(sensorManager, ASENSOR_TYPE_GYROSCOPE);
+	sensorEventQueue    = ASensorManager_createEventQueue(sensorManager, application->looper, LOOPER_ID_USER, NULL, NULL);
 
 	JNIEnv *env = NULL;
 	(*kore_android_get_activity()->vm)->AttachCurrentThread(kore_android_get_activity()->vm, &env, NULL);
 
 	jclass koreMoviePlayerClass = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
-	jmethodID updateAll = (*env)->GetStaticMethodID(env, koreMoviePlayerClass, "updateAll", "()V");
+	jmethodID updateAll         = (*env)->GetStaticMethodID(env, koreMoviePlayerClass, "updateAll", "()V");
 
 	while (!started) {
 		kore_internal_handle_messages();
@@ -1180,7 +1182,7 @@ void android_main(struct android_app *application) {
 
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
 	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
-	jmethodID FinishHim = (*env)->GetStaticMethodID(env, koreActivityClass, "stop", "()V");
+	jmethodID FinishHim      = (*env)->GetStaticMethodID(env, koreActivityClass, "stop", "()V");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, FinishHim);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -1193,7 +1195,7 @@ int kore_init(const char *name, int width, int height, struct kore_window_parame
 		kore_window_options_set_defaults(&default_win);
 		win = &default_win;
 	}
-	win->width = width;
+	win->width  = width;
 	win->height = height;
 
 	kore_framebuffer_parameters default_frame;
@@ -1237,13 +1239,13 @@ void initAndroidFileReader(void) {
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
 
 	jclass android_app_NativeActivity = (*env)->FindClass(env, CLASS_NAME);
-	jmethodID getExternalFilesDir = (*env)->GetMethodID(env, android_app_NativeActivity, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
-	jobject file = (*env)->CallObjectMethod(env, activity->clazz, getExternalFilesDir, NULL);
-	jclass java_io_File = (*env)->FindClass(env, "java/io/File");
-	jmethodID getPath = (*env)->GetMethodID(env, java_io_File, "getPath", "()Ljava/lang/String;");
-	jstring jPath = (*env)->CallObjectMethod(env, file, getPath);
+	jmethodID getExternalFilesDir     = (*env)->GetMethodID(env, android_app_NativeActivity, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
+	jobject file                      = (*env)->CallObjectMethod(env, activity->clazz, getExternalFilesDir, NULL);
+	jclass java_io_File               = (*env)->FindClass(env, "java/io/File");
+	jmethodID getPath                 = (*env)->GetMethodID(env, java_io_File, "getPath", "()Ljava/lang/String;");
+	jstring jPath                     = (*env)->CallObjectMethod(env, file, getPath);
 
-	const char *path = (*env)->GetStringUTFChars(env, jPath, NULL);
+	const char *path       = (*env)->GetStringUTFChars(env, jPath, NULL);
 	char *externalFilesDir = malloc(strlen(path) + 1);
 	strcpy(externalFilesDir, path);
 	kore_internal_set_files_location(externalFilesDir);
@@ -1277,11 +1279,11 @@ static bool kore_aasset_reader_open(kore_file_reader *reader, const char *filena
 	reader->data = AAssetManager_open(kore_android_get_asset_manager(), filename, AASSET_MODE_RANDOM);
 	if (reader->data == NULL)
 		return false;
-	reader->size = AAsset_getLength((struct AAsset *)reader->data);
+	reader->size  = AAsset_getLength((struct AAsset *)reader->data);
 	reader->close = kore_aasset_reader_close;
-	reader->read = kore_aasset_reader_read;
-	reader->pos = kore_aasset_reader_pos;
-	reader->seek = kore_aasset_reader_seek;
+	reader->read  = kore_aasset_reader_read;
+	reader->pos   = kore_aasset_reader_pos;
+	reader->seek  = kore_aasset_reader_seek;
 	return true;
 }
 

@@ -10,16 +10,16 @@
 #include <assert.h>
 
 namespace {
-	IDirectSound8 *dsound = nullptr;
+	IDirectSound8 *dsound       = nullptr;
 	IDirectSoundBuffer *dbuffer = nullptr;
-	const DWORD dsize = 50 * 1024;
-	const int samplesPerSecond = 44100;
-	const int bitsPerSample = 16;
+	const DWORD dsize           = 50 * 1024;
+	const int samplesPerSecond  = 44100;
+	const int bitsPerSample     = 16;
 
 	DWORD lastPlayPosition = 0;
-	bool secondHalfFilled = false;
+	bool secondHalfFilled  = false;
 
-	const int gap = 10 * 1024;
+	const int gap  = 10 * 1024;
 	DWORD writePos = gap;
 
 	kore_audio_buffer audio_buffer;
@@ -35,32 +35,32 @@ void kore_audio_init() {
 	kore_audio_internal_init();
 	initialized = true;
 
-	audio_buffer.read_location = 0;
+	audio_buffer.read_location  = 0;
 	audio_buffer.write_location = 0;
-	audio_buffer.data_size = 128 * 1024;
-	audio_buffer.channel_count = 2;
-	audio_buffer.channels[0] = new float[audio_buffer.data_size];
-	audio_buffer.channels[1] = new float[audio_buffer.data_size];
+	audio_buffer.data_size      = 128 * 1024;
+	audio_buffer.channel_count  = 2;
+	audio_buffer.channels[0]    = new float[audio_buffer.data_size];
+	audio_buffer.channels[1]    = new float[audio_buffer.data_size];
 
 	kore_microsoft_affirm(DirectSoundCreate8(nullptr, &dsound, nullptr));
 	// TODO (DK) only for the main window?
 	kore_microsoft_affirm(dsound->SetCooperativeLevel(kore_windows_window_handle(0), DSSCL_PRIORITY));
 
 	WAVEFORMATEX waveFormat;
-	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
-	waveFormat.nSamplesPerSec = samplesPerSecond;
-	waveFormat.wBitsPerSample = bitsPerSample;
-	waveFormat.nChannels = 2;
-	waveFormat.nBlockAlign = (waveFormat.wBitsPerSample / 8) * waveFormat.nChannels;
+	waveFormat.wFormatTag      = WAVE_FORMAT_PCM;
+	waveFormat.nSamplesPerSec  = samplesPerSecond;
+	waveFormat.wBitsPerSample  = bitsPerSample;
+	waveFormat.nChannels       = 2;
+	waveFormat.nBlockAlign     = (waveFormat.wBitsPerSample / 8) * waveFormat.nChannels;
 	waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
-	waveFormat.cbSize = 0;
+	waveFormat.cbSize          = 0;
 
 	DSBUFFERDESC bufferDesc;
-	bufferDesc.dwSize = sizeof(DSBUFFERDESC);
-	bufferDesc.dwFlags = DSBCAPS_GLOBALFOCUS;
-	bufferDesc.dwBufferBytes = dsize;
-	bufferDesc.dwReserved = 0;
-	bufferDesc.lpwfxFormat = &waveFormat;
+	bufferDesc.dwSize          = sizeof(DSBUFFERDESC);
+	bufferDesc.dwFlags         = DSBCAPS_GLOBALFOCUS;
+	bufferDesc.dwBufferBytes   = dsize;
+	bufferDesc.dwReserved      = 0;
+	bufferDesc.lpwfxFormat     = &waveFormat;
 	bufferDesc.guid3DAlgorithm = GUID_NULL;
 
 	kore_microsoft_affirm(dsound->CreateSoundBuffer(&bufferDesc, &dbuffer, nullptr));

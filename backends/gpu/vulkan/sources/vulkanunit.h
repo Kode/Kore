@@ -6,7 +6,7 @@
 #ifdef KORE_WINDOWS
 
 // Windows 7
-#define WINVER 0x0601
+#define WINVER       0x0601
 #define _WIN32_WINNT 0x0601
 
 #define NOATOM
@@ -59,25 +59,25 @@
 
 #include <vulkan/vulkan.h>
 
-static PFN_vkGetPhysicalDeviceSurfaceSupportKHR vulkan_GetPhysicalDeviceSurfaceSupportKHR = NULL;
+static PFN_vkGetPhysicalDeviceSurfaceSupportKHR vulkan_GetPhysicalDeviceSurfaceSupportKHR           = NULL;
 static PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vulkan_GetPhysicalDeviceSurfaceCapabilitiesKHR = NULL;
-static PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vulkan_GetPhysicalDeviceSurfaceFormatsKHR = NULL;
+static PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vulkan_GetPhysicalDeviceSurfaceFormatsKHR           = NULL;
 static PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vulkan_GetPhysicalDeviceSurfacePresentModesKHR = NULL;
-static PFN_vkCreateSwapchainKHR vulkan_CreateSwapchainKHR = NULL;
-static PFN_vkDestroySwapchainKHR vulkan_DestroySwapchainKHR = NULL;
-static PFN_vkGetSwapchainImagesKHR vulkan_GetSwapchainImagesKHR = NULL;
-static PFN_vkDestroySurfaceKHR vulkan_DestroySurfaceKHR = NULL;
+static PFN_vkCreateSwapchainKHR vulkan_CreateSwapchainKHR                                           = NULL;
+static PFN_vkDestroySwapchainKHR vulkan_DestroySwapchainKHR                                         = NULL;
+static PFN_vkGetSwapchainImagesKHR vulkan_GetSwapchainImagesKHR                                     = NULL;
+static PFN_vkDestroySurfaceKHR vulkan_DestroySurfaceKHR                                             = NULL;
 
-static PFN_vkCreateDebugUtilsMessengerEXT vulkan_CreateDebugUtilsMessengerEXT = NULL;
+static PFN_vkCreateDebugUtilsMessengerEXT vulkan_CreateDebugUtilsMessengerEXT   = NULL;
 static PFN_vkDestroyDebugUtilsMessengerEXT vulkan_DestroyDebugUtilsMessengerEXT = NULL;
 
 static PFN_vkAcquireNextImageKHR vulkan_AcquireNextImageKHR = NULL;
-static PFN_vkQueuePresentKHR vulkan_QueuePresentKHR = NULL;
+static PFN_vkQueuePresentKHR vulkan_QueuePresentKHR         = NULL;
 
 static PFN_vkDebugMarkerSetObjectNameEXT vulkan_DebugMarkerSetObjectNameEXT = NULL;
-static PFN_vkCmdDebugMarkerBeginEXT vulkan_CmdDebugMarkerBeginEXT = NULL;
-static PFN_vkCmdDebugMarkerEndEXT vulkan_CmdDebugMarkerEndEXT = NULL;
-static PFN_vkCmdDebugMarkerInsertEXT vulkan_CmdDebugMarkerInsertEXT = NULL;
+static PFN_vkCmdDebugMarkerBeginEXT vulkan_CmdDebugMarkerBeginEXT           = NULL;
+static PFN_vkCmdDebugMarkerEndEXT vulkan_CmdDebugMarkerEndEXT               = NULL;
+static PFN_vkCmdDebugMarkerInsertEXT vulkan_CmdDebugMarkerInsertEXT         = NULL;
 
 static VkFormat convert_format(kore_gpu_texture_format format);
 

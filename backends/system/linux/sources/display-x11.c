@@ -8,16 +8,16 @@ void kore_x11_display_init(void) {
 	int eventBase;
 	int errorBase;
 
-	bool hasXinerama = (xlib.XineramaQueryExtension(x11_ctx.display, &eventBase, &errorBase) && xlib.XineramaIsActive(x11_ctx.display));
+	bool hasXinerama                     = (xlib.XineramaQueryExtension(x11_ctx.display, &eventBase, &errorBase) && xlib.XineramaIsActive(x11_ctx.display));
 	XineramaScreenInfo *xinerama_screens = NULL;
-	int xinerama_screen_count = 0;
+	int xinerama_screen_count            = 0;
 	if (hasXinerama) {
 		xinerama_screens = xlib.XineramaQueryScreens(x11_ctx.display, &xinerama_screen_count);
 	}
 
-	Window root_window = RootWindow(x11_ctx.display, DefaultScreen(x11_ctx.display));
+	Window root_window                   = RootWindow(x11_ctx.display, DefaultScreen(x11_ctx.display));
 	XRRScreenResources *screen_resources = xlib.XRRGetScreenResourcesCurrent(x11_ctx.display, root_window);
-	RROutput primary_output = xlib.XRRGetOutputPrimary(x11_ctx.display, root_window);
+	RROutput primary_output              = xlib.XRRGetOutputPrimary(x11_ctx.display, root_window);
 
 	for (int i = 0; i < screen_resources->noutput; i++) {
 		if (i >= MAXIMUM_DISPLAYS) {
@@ -34,15 +34,15 @@ void kore_x11_display_init(void) {
 		XRRCrtcInfo *crtc_info = xlib.XRRGetCrtcInfo(x11_ctx.display, screen_resources, output_info->crtc);
 
 		struct kore_x11_display *display = &x11_ctx.displays[x11_ctx.num_displays++];
-		display->index = i;
+		display->index                   = i;
 		strncpy(display->name, output_info->name, sizeof(display->name));
-		display->x = crtc_info->x;
-		display->y = crtc_info->y;
-		display->width = crtc_info->width;
-		display->height = crtc_info->height;
+		display->x       = crtc_info->x;
+		display->y       = crtc_info->y;
+		display->width   = crtc_info->width;
+		display->height  = crtc_info->height;
 		display->primary = screen_resources->outputs[i] == primary_output;
-		display->crtc = output_info->crtc;
-		display->output = screen_resources->outputs[i];
+		display->crtc    = output_info->crtc;
+		display->output  = screen_resources->outputs[i];
 
 		xlib.XRRFreeOutputInfo(output_info);
 		xlib.XRRFreeCrtcInfo(crtc_info);
@@ -88,15 +88,15 @@ kore_display_mode kore_x11_display_current_mode(int display_index) {
 		display_index = 0;
 	struct kore_x11_display *display = &x11_ctx.displays[display_index];
 	kore_display_mode mode;
-	mode.x = 0;
-	mode.y = 0;
-	mode.width = display->width;
-	mode.height = display->height;
-	mode.frequency = 60;
-	mode.bits_per_pixel = 32;
+	mode.x               = 0;
+	mode.y               = 0;
+	mode.width           = display->width;
+	mode.height          = display->height;
+	mode.frequency       = 60;
+	mode.bits_per_pixel  = 32;
 	mode.pixels_per_inch = 96;
 
-	Window root_window = DefaultRootWindow(x11_ctx.display);
+	Window root_window                   = DefaultRootWindow(x11_ctx.display);
 	XRRScreenResources *screen_resources = xlib.XRRGetScreenResourcesCurrent(x11_ctx.display, root_window);
 
 	XRROutputInfo *output_info = xlib.XRRGetOutputInfo(x11_ctx.display, screen_resources, screen_resources->outputs[display->index]);
@@ -109,7 +109,7 @@ kore_display_mode kore_x11_display_current_mode(int display_index) {
 
 	XRRCrtcInfo *crtc_info = xlib.XRRGetCrtcInfo(x11_ctx.display, screen_resources, output_info->crtc);
 	for (int j = 0; j < output_info->nmode; j++) {
-		RRMode rr_mode = crtc_info->mode;
+		RRMode rr_mode         = crtc_info->mode;
 		XRRModeInfo *mode_info = NULL;
 		for (int k = 0; k < screen_resources->nmode; k++) {
 			if (screen_resources->modes[k].id == rr_mode) {
@@ -121,12 +121,12 @@ kore_display_mode kore_x11_display_current_mode(int display_index) {
 		if (mode_info == NULL) {
 			continue;
 		}
-		mode.x = display->x;
-		mode.y = display->y;
-		mode.width = mode_info->width;
-		mode.height = mode_info->height;
+		mode.x               = display->x;
+		mode.y               = display->y;
+		mode.width           = mode_info->width;
+		mode.height          = mode_info->height;
 		mode.pixels_per_inch = 96;
-		mode.bits_per_pixel = 32;
+		mode.bits_per_pixel  = 32;
 		if (mode_info->hTotal && mode_info->vTotal) {
 			mode.frequency = (mode_info->dotClock / (mode_info->hTotal * mode_info->vTotal));
 		}
@@ -145,7 +145,7 @@ int kore_x11_display_count_available_modes(int display_index) {
 		display_index = 0;
 	struct kore_x11_display *display = &x11_ctx.displays[display_index];
 
-	Window root_window = RootWindow(x11_ctx.display, DefaultScreen(x11_ctx.display));
+	Window root_window                   = RootWindow(x11_ctx.display, DefaultScreen(x11_ctx.display));
 	XRRScreenResources *screen_resources = xlib.XRRGetScreenResourcesCurrent(x11_ctx.display, root_window);
 
 	XRROutputInfo *output_info = xlib.XRRGetOutputInfo(x11_ctx.display, screen_resources, screen_resources->outputs[display->index]);
@@ -167,15 +167,15 @@ kore_display_mode kore_x11_display_available_mode(int display_index, int mode_in
 		display_index = 0;
 	struct kore_x11_display *display = &x11_ctx.displays[display_index];
 	kore_display_mode mode;
-	mode.x = 0;
-	mode.y = 0;
-	mode.width = display->width;
-	mode.height = display->height;
-	mode.frequency = 60;
-	mode.bits_per_pixel = 32;
+	mode.x               = 0;
+	mode.y               = 0;
+	mode.width           = display->width;
+	mode.height          = display->height;
+	mode.frequency       = 60;
+	mode.bits_per_pixel  = 32;
 	mode.pixels_per_inch = 96;
 
-	Window root_window = RootWindow(x11_ctx.display, DefaultScreen(x11_ctx.display));
+	Window root_window                   = RootWindow(x11_ctx.display, DefaultScreen(x11_ctx.display));
 	XRRScreenResources *screen_resources = xlib.XRRGetScreenResourcesCurrent(x11_ctx.display, root_window);
 
 	XRROutputInfo *output_info = xlib.XRRGetOutputInfo(x11_ctx.display, screen_resources, screen_resources->outputs[display->index]);
@@ -190,7 +190,7 @@ kore_display_mode kore_x11_display_available_mode(int display_index, int mode_in
 		kore_log(KORE_LOG_LEVEL_ERROR, "Invalid mode index %i.", mode_index);
 	}
 
-	RRMode rr_mode = output_info->modes[mode_index];
+	RRMode rr_mode         = output_info->modes[mode_index];
 	XRRModeInfo *mode_info = NULL;
 
 	for (int k = 0; k < screen_resources->nmode; k++) {
@@ -201,12 +201,12 @@ kore_display_mode kore_x11_display_available_mode(int display_index, int mode_in
 	}
 
 	if (mode_info != NULL) {
-		mode.x = display->x;
-		mode.y = display->y;
-		mode.width = mode_info->width;
-		mode.height = mode_info->height;
+		mode.x               = display->x;
+		mode.y               = display->y;
+		mode.width           = mode_info->width;
+		mode.height          = mode_info->height;
 		mode.pixels_per_inch = 96;
-		mode.bits_per_pixel = 32;
+		mode.bits_per_pixel  = 32;
 		if (mode_info->hTotal && mode_info->vTotal) {
 			mode.frequency = (mode_info->dotClock / (mode_info->hTotal * mode_info->vTotal));
 		}

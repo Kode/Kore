@@ -75,7 +75,7 @@ static inline kore_int32x4 kore_int32x4_mul(kore_int32x4 a, kore_int32x4 b) {
 	__m128i oddp = _mm_mul_epu32(odda, oddb);
 
 	// merge results
-	__m128i evn_mask = _mm_setr_epi32(-1, 0, -1, 0);
+	__m128i evn_mask   = _mm_setr_epi32(-1, 0, -1, 0);
 	__m128i evn_result = _mm_and_si128(evnp, evn_mask);
 	__m128i odd_result = _mm_slli_epi64(oddp, 32);
 

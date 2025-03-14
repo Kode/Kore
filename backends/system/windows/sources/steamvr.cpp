@@ -172,9 +172,9 @@ namespace {
 			if (poses[device].bPoseIsValid) {
 				if (hmd->GetTrackedDeviceClass(device) == vr::TrackedDeviceClass_HMD) {
 					kore_vr_pose_state_t poseState;
-					poseState.linearVelocity.x = poses[device].vVelocity.v[0];
-					poseState.linearVelocity.y = poses[device].vVelocity.v[1];
-					poseState.linearVelocity.z = poses[device].vVelocity.v[2];
+					poseState.linearVelocity.x  = poses[device].vVelocity.v[0];
+					poseState.linearVelocity.y  = poses[device].vVelocity.v[1];
+					poseState.linearVelocity.z  = poses[device].vVelocity.v[2];
 					poseState.angularVelocity.x = poses[device].vAngularVelocity.v[0];
 					poseState.angularVelocity.y = poses[device].vAngularVelocity.v[1];
 					poseState.angularVelocity.z = poses[device].vAngularVelocity.v[2];
@@ -188,22 +188,22 @@ namespace {
 					sensorStates[0].pose = poseState;
 					sensorStates[1].pose = poseState;
 
-					vr::HmdMatrix34_t leftEyeMatrix = hmd->GetEyeToHeadTransform(vr::Eye_Left);
+					vr::HmdMatrix34_t leftEyeMatrix  = hmd->GetEyeToHeadTransform(vr::Eye_Left);
 					vr::HmdMatrix34_t rightEyeMatrix = hmd->GetEyeToHeadTransform(vr::Eye_Right);
-					sensorStates[0].pose.vrPose.eye = convert3x4(leftEyeMatrix).Invert() * convert3x4(m).Invert();
-					sensorStates[1].pose.vrPose.eye = convert3x4(rightEyeMatrix).Invert() * convert3x4(m).Invert();
+					sensorStates[0].pose.vrPose.eye  = convert3x4(leftEyeMatrix).Invert() * convert3x4(m).Invert();
+					sensorStates[1].pose.vrPose.eye  = convert3x4(rightEyeMatrix).Invert() * convert3x4(m).Invert();
 
-					vr::HmdMatrix44_t leftProj = hmd->GetProjectionMatrix(vr::Eye_Left, 0.1f, 100.0f);
-					vr::HmdMatrix44_t rightProj = hmd->GetProjectionMatrix(vr::Eye_Right, 0.1f, 100.0f);
+					vr::HmdMatrix44_t leftProj             = hmd->GetProjectionMatrix(vr::Eye_Left, 0.1f, 100.0f);
+					vr::HmdMatrix44_t rightProj            = hmd->GetProjectionMatrix(vr::Eye_Right, 0.1f, 100.0f);
 					sensorStates[0].pose.vrPose.projection = convert4x4(leftProj);
 					sensorStates[1].pose.vrPose.projection = convert4x4(rightProj);
 				}
 				else if (hmd->GetTrackedDeviceClass(device) == vr::TrackedDeviceClass_Controller ||
 				         hmd->GetTrackedDeviceClass(device) == vr::TrackedDeviceClass_GenericTracker) {
 					kore_vr_pose_state_t poseState;
-					poseState.linearVelocity.x = poses[device].vVelocity.v[0];
-					poseState.linearVelocity.x = poses[device].vVelocity.v[1];
-					poseState.linearVelocity.x = poses[device].vVelocity.v[2];
+					poseState.linearVelocity.x  = poses[device].vVelocity.v[0];
+					poseState.linearVelocity.x  = poses[device].vVelocity.v[1];
+					poseState.linearVelocity.x  = poses[device].vVelocity.v[2];
 					poseState.angularVelocity.x = poses[device].vAngularVelocity.v[0];
 					poseState.angularVelocity.y = poses[device].vAngularVelocity.v[1];
 					poseState.angularVelocity.z = poses[device].vAngularVelocity.v[2];

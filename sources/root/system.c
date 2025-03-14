@@ -14,92 +14,92 @@ double kore_time(void) {
 }
 #endif
 
-static void (*update_callback)(void *) = NULL;
-static void *update_callback_data = NULL;
-static void (*foreground_callback)(void *) = NULL;
-static void *foreground_callback_data = NULL;
-static void (*background_callback)(void *) = NULL;
-static void *background_callback_data = NULL;
-static void (*pause_callback)(void *) = NULL;
-static void *pause_callback_data = NULL;
-static void (*resume_callback)(void *) = NULL;
-static void *resume_callback_data = NULL;
-static void (*shutdown_callback)(void *) = NULL;
-static void *shutdown_callback_data = NULL;
+static void (*update_callback)(void *)                = NULL;
+static void *update_callback_data                     = NULL;
+static void (*foreground_callback)(void *)            = NULL;
+static void *foreground_callback_data                 = NULL;
+static void (*background_callback)(void *)            = NULL;
+static void *background_callback_data                 = NULL;
+static void (*pause_callback)(void *)                 = NULL;
+static void *pause_callback_data                      = NULL;
+static void (*resume_callback)(void *)                = NULL;
+static void *resume_callback_data                     = NULL;
+static void (*shutdown_callback)(void *)              = NULL;
+static void *shutdown_callback_data                   = NULL;
 static void (*drop_files_callback)(wchar_t *, void *) = NULL;
-static void *drop_files_callback_data = NULL;
-static char *(*cut_callback)(void *) = NULL;
-static void *cut_callback_data = NULL;
-static char *(*copy_callback)(void *) = NULL;
-static void *copy_callback_data = NULL;
-static void (*paste_callback)(char *, void *) = NULL;
-static void *paste_callback_data = NULL;
-static void (*login_callback)(void *) = NULL;
-static void *login_callback_data = NULL;
-static void (*logout_callback)(void *) = NULL;
-static void *logout_callback_data = NULL;
+static void *drop_files_callback_data                 = NULL;
+static char *(*cut_callback)(void *)                  = NULL;
+static void *cut_callback_data                        = NULL;
+static char *(*copy_callback)(void *)                 = NULL;
+static void *copy_callback_data                       = NULL;
+static void (*paste_callback)(char *, void *)         = NULL;
+static void *paste_callback_data                      = NULL;
+static void (*login_callback)(void *)                 = NULL;
+static void *login_callback_data                      = NULL;
+static void (*logout_callback)(void *)                = NULL;
+static void *logout_callback_data                     = NULL;
 
 #if defined(KORE_IOS) || defined(KORE_MACOS)
 bool withAutoreleasepool(bool (*f)(void));
 #endif
 
 void kore_set_update_callback(void (*callback)(void *), void *data) {
-	update_callback = callback;
+	update_callback      = callback;
 	update_callback_data = data;
 }
 
 void kore_set_foreground_callback(void (*callback)(void *), void *data) {
-	foreground_callback = callback;
+	foreground_callback      = callback;
 	foreground_callback_data = data;
 }
 
 void kore_set_resume_callback(void (*callback)(void *), void *data) {
-	resume_callback = callback;
+	resume_callback      = callback;
 	resume_callback_data = data;
 }
 
 void kore_set_pause_callback(void (*callback)(void *), void *data) {
-	pause_callback = callback;
+	pause_callback      = callback;
 	pause_callback_data = data;
 }
 
 void kore_set_background_callback(void (*callback)(void *), void *data) {
-	background_callback = callback;
+	background_callback      = callback;
 	background_callback_data = data;
 }
 
 void kore_set_shutdown_callback(void (*callback)(void *), void *data) {
-	shutdown_callback = callback;
+	shutdown_callback      = callback;
 	shutdown_callback_data = data;
 }
 
 void kore_set_drop_files_callback(void (*callback)(wchar_t *, void *), void *data) {
-	drop_files_callback = callback;
+	drop_files_callback      = callback;
 	drop_files_callback_data = data;
 }
 
 void kore_set_cut_callback(char *(*callback)(void *), void *data) {
-	cut_callback = callback;
+	cut_callback      = callback;
 	cut_callback_data = data;
 }
 
 void kore_set_copy_callback(char *(*callback)(void *), void *data) {
-	copy_callback = callback;
+	copy_callback      = callback;
 	copy_callback_data = data;
 }
 
 void kore_set_paste_callback(void (*callback)(char *, void *), void *data) {
-	paste_callback = callback;
+	paste_callback      = callback;
 	paste_callback_data = data;
 }
 
 void kore_set_login_callback(void (*callback)(void *), void *data) {
-	login_callback = callback;
+	login_callback      = callback;
 	login_callback_data = data;
 }
 
 void kore_set_logout_callback(void (*callback)(void *), void *data) {
-	logout_callback = callback;
+	logout_callback      = callback;
 	logout_callback_data = data;
 }
 
@@ -274,7 +274,7 @@ bool is_save_load_broken(void) {
 
 #if !defined(KORE_CONSOLE)
 
-#define SAVE_RESULT_NONE 0
+#define SAVE_RESULT_NONE    0
 #define SAVE_RESULT_SUCCESS 1
 #define SAVE_RESULT_FAILURE 2
 volatile int save_result = SAVE_RESULT_SUCCESS;
@@ -283,7 +283,7 @@ void kore_disallow_user_change(void) {}
 
 void kore_allow_user_change(void) {}
 
-static uint8_t *current_file = NULL;
+static uint8_t *current_file    = NULL;
 static size_t current_file_size = 0;
 
 bool kore_save_file_loaded(void) {
@@ -300,13 +300,13 @@ size_t kore_get_save_file_size(void) {
 
 void kore_load_save_file(const char *filename) {
 	free(current_file);
-	current_file = NULL;
+	current_file      = NULL;
 	current_file_size = 0;
 
 	kore_file_reader reader;
 	if (kore_file_reader_open(&reader, filename, KORE_FILE_TYPE_SAVE)) {
 		current_file_size = kore_file_reader_size(&reader);
-		current_file = (uint8_t *)malloc(current_file_size);
+		current_file      = (uint8_t *)malloc(current_file_size);
 		kore_file_reader_read(&reader, current_file, current_file_size);
 		kore_file_reader_close(&reader);
 	}

@@ -7,7 +7,7 @@
 static kore_mutex mutex;
 
 static void (*audio_callback)(kore_audio_buffer *buffer, uint32_t samples, void *userdata) = NULL;
-static void *audio_userdata = NULL;
+static void *audio_userdata                                                                = NULL;
 
 void kore_audio_set_callback(void (*kore_audio_callback)(kore_audio_buffer *buffer, uint32_t samples, void *userdata), void *userdata) {
 	kore_mutex_lock(&mutex);
@@ -17,7 +17,7 @@ void kore_audio_set_callback(void (*kore_audio_callback)(kore_audio_buffer *buff
 }
 
 static void (*audio_sample_rate_callback)(void *userdata) = NULL;
-static void *audio_sample_rate_userdata = NULL;
+static void *audio_sample_rate_userdata                   = NULL;
 
 void kore_audio_set_sample_rate_callback(void (*kore_audio_sample_rate_callback)(void *userdata), void *userdata) {
 	kore_mutex_lock(&mutex);

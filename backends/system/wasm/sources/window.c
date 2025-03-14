@@ -3,8 +3,8 @@
 
 #include <string.h>
 
-int kore_internal_window_width = 0;
-int kore_internal_window_height = 0;
+int kore_internal_window_width             = 0;
+int kore_internal_window_height            = 0;
 kore_window_mode kore_internal_window_mode = KORE_WINDOW_MODE_WINDOW;
 
 int kore_count_windows(void) {

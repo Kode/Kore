@@ -27,7 +27,7 @@ static struct window {
 } windows[WINDOW_COUNT] = {0};
 
 #define HEAP_SIZE 1024 * 1024
-static uint8_t *heap = NULL;
+static uint8_t *heap   = NULL;
 static size_t heap_top = 0;
 
 static void *allocate(size_t size) {
@@ -58,7 +58,7 @@ static void load_shader(const char *filename, kore_g4_shader_t *shader, kore_g4_
 	kore_file_reader_t file;
 	kore_file_reader_open(&file, filename, KORE_FILE_TYPE_ASSET);
 	size_t data_size = kore_file_reader_size(&file);
-	uint8_t *data = allocate(data_size);
+	uint8_t *data    = allocate(data_size);
 	kore_file_reader_read(&file, data, data_size);
 	kore_file_reader_close(&file);
 	kore_g4_shader_init(shader, data, data_size, shader_type);
@@ -74,7 +74,7 @@ static void mouse_up(int window, int button, int x, int y) {
 
 static bool window_close(void *data) {
 	struct window *window = data;
-	window->open = false;
+	window->open          = false;
 	return true;
 }
 
@@ -110,7 +110,7 @@ int kickstart(int argc, char **argv) {
 	kore_g4_vertex_structure_init(&structure);
 	kore_g4_vertex_structure_add(&structure, "pos", KORE_G4_VERTEX_DATA_FLOAT3);
 	kore_g4_pipeline_init(&pipeline);
-	pipeline.vertex_shader = &vertex_shader;
+	pipeline.vertex_shader   = &vertex_shader;
 	pipeline.fragment_shader = &fragment_shader;
 	pipeline.input_layout[0] = &structure;
 	pipeline.input_layout[1] = NULL;
@@ -119,7 +119,7 @@ int kickstart(int argc, char **argv) {
 	kore_g4_vertex_buffer_init(&vertices, 3, &structure, KORE_G4_USAGE_STATIC, 0);
 	{
 		float *v = kore_g4_vertex_buffer_lock_all(&vertices);
-		int i = 0;
+		int i    = 0;
 
 		v[i++] = -1;
 		v[i++] = -1;
@@ -139,20 +139,20 @@ int kickstart(int argc, char **argv) {
 	kore_g4_index_buffer_init(&indices, 3, KORE_G4_INDEX_BUFFER_FORMAT_32BIT, KORE_G4_USAGE_STATIC);
 	{
 		uint32_t *i = (uint32_t *)kore_g4_index_buffer_lock_all(&indices);
-		i[0] = 0;
-		i[1] = 1;
-		i[2] = 2;
+		i[0]        = 0;
+		i[1]        = 1;
+		i[2]        = 2;
 		kore_g4_index_buffer_unlock_all(&indices);
 	}
 	kore_window_options_t options;
 	kore_framebuffer_options_t frame_options;
 	kore_window_options_set_defaults(&options);
 	kore_framebuffer_options_set_defaults(&frame_options);
-	int window_two = kore_window_create(&options, &frame_options);
+	int window_two   = kore_window_create(&options, &frame_options);
 	windows[0].index = 0;
-	windows[0].open = true;
+	windows[0].open  = true;
 	windows[1].index = 1;
-	windows[1].open = true;
+	windows[1].open  = true;
 	kore_window_set_close_callback(first_window, window_close, &windows[0]);
 	kore_window_set_close_callback(window_two, window_close, &windows[1]);
 

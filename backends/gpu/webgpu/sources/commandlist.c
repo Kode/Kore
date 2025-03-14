@@ -17,24 +17,24 @@ void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	WGPUTextureViewDescriptor texture_view_descriptor = {
-	    .format = WGPUTextureFormat_BGRA8Unorm,
-	    .dimension = WGPUTextureViewDimension_2D,
+	    .format          = WGPUTextureFormat_BGRA8Unorm,
+	    .dimension       = WGPUTextureViewDimension_2D,
 	    .arrayLayerCount = 1,
-	    .mipLevelCount = 1,
+	    .mipLevelCount   = 1,
 	};
 	WGPUTextureView texture_view = wgpuTextureCreateView(parameters->color_attachments[0].texture.texture->webgpu.texture, &texture_view_descriptor);
 
 	WGPURenderPassColorAttachment color_attachment = {
-	    .view = texture_view,
-	    .loadOp = WGPULoadOp_Clear,
-	    .storeOp = WGPUStoreOp_Store,
+	    .view       = texture_view,
+	    .loadOp     = WGPULoadOp_Clear,
+	    .storeOp    = WGPUStoreOp_Store,
 	    .clearValue = {0, 0, 0, 1},
 	    .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
 	};
 
 	WGPURenderPassDescriptor render_pass_descriptor = {
 	    .colorAttachmentCount = 1,
-	    .colorAttachments = &color_attachment,
+	    .colorAttachments     = &color_attachment,
 	};
 
 	list->webgpu.render_pass_encoder = wgpuCommandEncoderBeginRenderPass(list->webgpu.command_encoder, &render_pass_descriptor);
@@ -51,7 +51,7 @@ void kore_webgpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore
 	if (buffer->webgpu.copy_scheduled) {
 		assert(scheduled_buffer_uploads_count < 256);
 		scheduled_buffer_uploads[scheduled_buffer_uploads_count++] = &buffer->webgpu;
-		buffer->webgpu.copy_scheduled = false;
+		buffer->webgpu.copy_scheduled                              = false;
 	}
 	wgpuRenderPassEncoderSetIndexBuffer(list->webgpu.render_pass_encoder, buffer->webgpu.buffer,
 	                                    index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? WGPUIndexFormat_Uint16 : WGPUIndexFormat_Uint32, offset, size);
@@ -62,7 +62,7 @@ void kore_webgpu_command_list_set_vertex_buffer(kore_gpu_command_list *list, uin
 	if (buffer->copy_scheduled) {
 		assert(scheduled_buffer_uploads_count < 256);
 		scheduled_buffer_uploads[scheduled_buffer_uploads_count++] = buffer;
-		buffer->copy_scheduled = false;
+		buffer->copy_scheduled                                     = false;
 	}
 	wgpuRenderPassEncoderSetVertexBuffer(list->webgpu.render_pass_encoder, slot, buffer->buffer, offset, size); // why is stride not needed?
 }

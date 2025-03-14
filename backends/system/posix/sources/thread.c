@@ -25,7 +25,7 @@ static void *ThreadProc(void *arg) {
 }
 
 void kore_thread_init(kore_thread *t, void (*thread)(void *param), void *param) {
-	t->impl.param = param;
+	t->impl.param  = param;
 	t->impl.thread = thread;
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
@@ -39,8 +39,8 @@ void kore_thread_init(kore_thread *t, void (*thread)(void *param), void *param) 
 		thread_start_index = 0;
 	}
 	starts[start_index].thread = thread;
-	starts[start_index].param = param;
-	int ret = pthread_create(&t->impl.pthread, &attr, &ThreadProc, (void *)start_index);
+	starts[start_index].param  = param;
+	int ret                    = pthread_create(&t->impl.pthread, &attr, &ThreadProc, (void *)start_index);
 	assert(ret == 0);
 	pthread_attr_destroy(&attr);
 }

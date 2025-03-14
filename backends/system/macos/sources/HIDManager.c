@@ -114,7 +114,7 @@ void deviceConnected(void *inContext, IOReturn inResult, void *inSender, IOHIDDe
 	for (int i = 0; i < KORE_MAX_HID_DEVICES; ++i, ++device) {
 		if (!device->connected) {
 			device->connected = true;
-			device->device = inIOHIDDeviceRef;
+			device->device    = inIOHIDDeviceRef;
 			HIDGamepad_bind(&device->pad, inIOHIDDeviceRef, i);
 			break;
 		}
@@ -132,7 +132,7 @@ void deviceRemoved(void *inContext, IOReturn inResult, void *inSender, IOHIDDevi
 		// TODO: is comparing IOHIDDeviceRef to match devices safe? Is there a better way?
 		if (device->connected && device->device == inIOHIDDeviceRef) {
 			device->connected = false;
-			device->device = NULL;
+			device->device    = NULL;
 			HIDGamepad_unbind(&device->pad);
 			break;
 		}

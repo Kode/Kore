@@ -13,8 +13,8 @@
 extern "C" {
 #endif
 
-#define KORE_MOUSE_LEFT 0
-#define KORE_MOUSE_RIGHT 1
+#define KORE_MOUSE_LEFT   0
+#define KORE_MOUSE_RIGHT  1
 #define KORE_MOUSE_MIDDLE 2
 // eg backward sidebutton
 #define KORE_MOUSE_EXTRA1 3

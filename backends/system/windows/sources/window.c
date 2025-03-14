@@ -32,7 +32,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 
 #define MAXIMUM_WINDOWS 16
 static WindowData windows[MAXIMUM_WINDOWS] = {0};
-static int window_counter = 0;
+static int window_counter                  = 0;
 
 #ifdef KORE_OCULUS
 const wchar_t *windowClassName = L"ORT";
@@ -46,11 +46,11 @@ const wchar_t *windowClassName = L"KoreWindow";
 
 VkResult kore_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
 	VkWin32SurfaceCreateInfoKHR createInfo = {0};
-	createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-	createInfo.pNext = NULL;
-	createInfo.flags = 0;
-	createInfo.hinstance = GetModuleHandle(NULL);
-	createInfo.hwnd = windows[window_index].handle;
+	createInfo.sType                       = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	createInfo.pNext                       = NULL;
+	createInfo.flags                       = 0;
+	createInfo.hinstance                   = GetModuleHandle(NULL);
+	createInfo.hwnd                        = windows[window_index].handle;
 	return vkCreateWin32SurfaceKHR(instance, &createInfo, NULL, surface);
 }
 
@@ -205,9 +205,9 @@ static int createWindow(const wchar_t *title, int x, int y, int width, int heigh
 	HWND hwnd = (HWND)kore_vr_interface_init(inst, titleutf8, classNameutf8);
 #else
 	RECT WindowRect;
-	WindowRect.left = 0;
-	WindowRect.right = width;
-	WindowRect.top = 0;
+	WindowRect.left   = 0;
+	WindowRect.right  = width;
+	WindowRect.top    = 0;
 	WindowRect.bottom = height;
 
 	if (windowMode == KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN) {
@@ -245,38 +245,38 @@ static int createWindow(const wchar_t *title, int x, int y, int width, int heigh
 	SetCursor(LoadCursor(NULL, IDC_ARROW));
 	DragAcceptFiles(hwnd, true);
 
-	windows[window_counter].handle = hwnd;
-	windows[window_counter].x = dstx;
-	windows[window_counter].y = dsty;
-	windows[window_counter].mode = windowMode;
+	windows[window_counter].handle        = hwnd;
+	windows[window_counter].x             = dstx;
+	windows[window_counter].y             = dsty;
+	windows[window_counter].mode          = windowMode;
 	windows[window_counter].display_index = display_index;
-	windows[window_counter].bpp = bpp;
-	windows[window_counter].frequency = frequency;
-	windows[window_counter].features = features;
-	windows[window_counter].manualWidth = width;
-	windows[window_counter].manualHeight = height;
-	windows[window_counter].index = window_counter;
+	windows[window_counter].bpp           = bpp;
+	windows[window_counter].frequency     = frequency;
+	windows[window_counter].features      = features;
+	windows[window_counter].manualWidth   = width;
+	windows[window_counter].manualHeight  = height;
+	windows[window_counter].index         = window_counter;
 
 	return window_counter++;
 }
 
 void kore_window_resize(int window_index, int width, int height) {
-	WindowData *win = &windows[window_index];
-	win->manualWidth = width;
+	WindowData *win   = &windows[window_index];
+	win->manualWidth  = width;
 	win->manualHeight = height;
 	switch (win->mode) {
 	case KORE_WINDOW_MODE_WINDOW: {
 		RECT rect;
-		rect.left = 0;
-		rect.top = 0;
-		rect.right = width;
+		rect.left   = 0;
+		rect.top    = 0;
+		rect.right  = width;
 		rect.bottom = height;
 		AdjustWindowRectEx(&rect, getDwStyle((kore_window_mode)win->mode, win->features), FALSE, getDwExStyle((kore_window_mode)win->mode, win->features));
 		SetWindowPos(win->handle, NULL, kore_window_x(window_index), kore_window_y(window_index), rect.right - rect.left, rect.bottom - rect.top, 0);
 		break;
 	}
 	case KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN: {
-		int display_index = kore_window_display(window_index);
+		int display_index              = kore_window_display(window_index);
 		kore_display_mode display_mode = kore_display_current_mode(display_index);
 		kore_windows_set_display_mode(display_index, width, height, win->bpp, win->frequency);
 		SetWindowPos(win->handle, NULL, display_mode.x, display_mode.y, display_mode.width, display_mode.height, 0);
@@ -296,9 +296,9 @@ void kore_window_move(int window_index, int x, int y) {
 	win->y = y;
 
 	RECT rect;
-	rect.left = 0;
-	rect.top = 0;
-	rect.right = kore_window_width(window_index);
+	rect.left   = 0;
+	rect.top    = 0;
+	rect.right  = kore_window_width(window_index);
 	rect.bottom = kore_window_height(window_index);
 	AdjustWindowRectEx(&rect, getDwStyle((kore_window_mode)win->mode, win->features), FALSE, getDwExStyle((kore_window_mode)win->mode, win->features));
 
@@ -313,7 +313,7 @@ void kore_window_change_framebuffer(int window, kore_framebuffer_parameters *fra
 
 void kore_window_change_features(int window_index, int features) {
 	WindowData *win = &windows[window_index];
-	win->features = features;
+	win->features   = features;
 	SetWindowLongW(win->handle, GWL_STYLE, getStyle(features));
 	SetWindowLongW(win->handle, GWL_EXSTYLE, getExStyle(features));
 
@@ -324,8 +324,8 @@ void kore_window_change_features(int window_index, int features) {
 }
 
 void kore_window_change_mode(int window_index, kore_window_mode mode) {
-	WindowData *win = &windows[window_index];
-	int display_index = kore_window_display(window_index);
+	WindowData *win                = &windows[window_index];
+	int display_index              = kore_window_display(window_index);
 	kore_display_mode display_mode = kore_display_current_mode(display_index);
 	switch (mode) {
 	case KORE_WINDOW_MODE_WINDOW:
@@ -438,17 +438,17 @@ int kore_window_create(kore_window_parameters *win, kore_framebuffer_parameters 
 }
 
 void kore_window_set_resize_callback(int window_index, void (*callback)(int x, int y, void *data), void *data) {
-	windows[window_index].resizeCallback = callback;
+	windows[window_index].resizeCallback     = callback;
 	windows[window_index].resizeCallbackData = data;
 }
 
 void kore_window_set_ppi_changed_callback(int window_index, void (*callback)(int ppi, void *data), void *data) {
-	windows[window_index].ppiCallback = callback;
+	windows[window_index].ppiCallback     = callback;
 	windows[window_index].ppiCallbackData = data;
 }
 
 void kore_window_set_close_callback(int window_index, bool (*callback)(void *data), void *data) {
-	windows[window_index].closeCallback = callback;
+	windows[window_index].closeCallback     = callback;
 	windows[window_index].closeCallbackData = data;
 }
 

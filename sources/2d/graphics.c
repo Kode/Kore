@@ -105,12 +105,12 @@ static uint8_t opacities_size;
 static int my_font_size;
 
 void kore_g2_init(void) {
-	transformations[0] = kore_matrix3x3_identity();
+	transformations[0]   = kore_matrix3x3_identity();
 	transformations_size = 1;
 	transformation_index = 0;
-	opacities[0] = 1;
-	opacities_size = 1;
-	my_font_size = 12;
+	opacities[0]         = 1;
+	opacities_size       = 1;
+	my_font_size         = 12;
 	// pipe = NULL;
 
 	my_color = 0xffffffff;
@@ -234,8 +234,8 @@ static kore_vector2_t kore_vector2_create(float x, float y) {
 void kore_g2_draw_image(kore_g4_texture_t *img, float x, float y) {
 	colored_end();
 	// textPainter.end();
-	float xw = x + img->tex_width;
-	float yh = y + img->tex_height;
+	float xw          = x + img->tex_width;
+	float yh          = y + img->tex_height;
 	kore_vector2_t p1 = multiply_matrix_vector(kore_g2_get_transformation(), kore_vector2_create(x, yh));
 	kore_vector2_t p2 = multiply_matrix_vector(kore_g2_get_transformation(), kore_vector2_create(x, y));
 	kore_vector2_t p3 = multiply_matrix_vector(kore_g2_get_transformation(), kore_vector2_create(xw, y));
@@ -372,8 +372,8 @@ void kore_g2_draw_line(float x1, float y1, float x2, float y2, float strength /*
 	p1.x = x1 + 0.5f * vec.x;
 	p1.y = y1 + 0.5f * vec.y;
 	kore_vector2_t p2;
-	p2.x = x2 + 0.5f * vec.x;
-	p2.y = y2 + 0.5f * vec.y;
+	p2.x              = x2 + 0.5f * vec.x;
+	p2.y              = y2 + 0.5f * vec.y;
 	kore_vector2_t p3 = sub_vectors(p1, vec);
 	kore_vector2_t p4 = sub_vectors(p2, vec);
 
@@ -450,18 +450,18 @@ void kore_g2_set_mipmap_scale_quality(kore_g2_image_scale_quality value) {
 }*/
 
 static bool scissorEnabled = false;
-static int scissorX = -1;
-static int scissorY = -1;
-static int scissorW = -1;
-static int scissorH = -1;
+static int scissorX        = -1;
+static int scissorY        = -1;
+static int scissorW        = -1;
+static int scissorH        = -1;
 
 void kore_g2_scissor(int x, int y, int width, int height) {
 	// if (!scissorEnabled || x != scissorX || y != scissorY || width != scissorW || height != scissorH) {
 	scissorEnabled = true;
-	scissorX = x;
-	scissorY = y;
-	scissorW = width;
-	scissorH = height;
+	scissorX       = x;
+	scissorY       = y;
+	scissorW       = width;
+	scissorH       = height;
 	kore_g2_flush();
 	kore_g4_scissor(x, y, width, height);
 	// }
@@ -580,8 +580,8 @@ void kore_g2_scale(float x, float y) {
 }
 
 void kore_g2_push_scale(float x, float y) {
-	kore_matrix3x3_t m1 = scale(x, y);
-	kore_matrix3x3_t m2 = kore_g2_get_transformation();
+	kore_matrix3x3_t m1  = scale(x, y);
+	kore_matrix3x3_t m2  = kore_g2_get_transformation();
 	kore_matrix3x3_t mat = kore_matrix3x3_multiply(&m1, &m2);
 	kore_g2_push_transformation(mat);
 }
@@ -621,8 +621,8 @@ kore_matrix3x3_t kore_g2_rotation(float angle, float centerx, float centery) {
 	kore_matrix3x3_t m4 = kore_g2_get_transformation();
 
 	kore_matrix3x3_t m = kore_matrix3x3_multiply(&m1, &m2);
-	m = kore_matrix3x3_multiply(&m, &m3);
-	m = kore_matrix3x3_multiply(&m, &m4);
+	m                  = kore_matrix3x3_multiply(&m, &m3);
+	m                  = kore_matrix3x3_multiply(&m, &m4);
 	return m;
 }
 

@@ -90,7 +90,7 @@ CTextureRenderer::~CTextureRenderer() {
 }
 
 HRESULT CTextureRenderer::CheckMediaType(const CMediaType *pmt) {
-	HRESULT hr = E_FAIL;
+	HRESULT hr     = E_FAIL;
 	VIDEOINFO *pvi = 0;
 
 	CheckPointer(pmt, E_POINTER);
@@ -112,8 +112,8 @@ HRESULT CTextureRenderer::CheckMediaType(const CMediaType *pmt) {
 
 HRESULT CTextureRenderer::SetMediaType(const CMediaType *pmt) {
 	VIDEOINFO *info = (VIDEOINFO *)pmt->Format();
-	width = info->bmiHeader.biWidth;
-	height = abs(info->bmiHeader.biHeight);
+	width           = info->bmiHeader.biWidth;
+	height          = abs(info->bmiHeader.biHeight);
 	// kore_gpu_texture_init(&image, width, height, KORE_IMAGE_FORMAT_RGBA32); // TODO
 	pixels = (uint8_t *)malloc(width * height * 3);
 
@@ -146,16 +146,16 @@ void kore_video_init(kore_video *video, const char *filename) {
 	video->impl.duration = 1000 * 10;
 	video->impl.position = 0;
 	video->impl.finished = false;
-	video->impl.paused = false;
+	video->impl.paused   = false;
 	// image = new Graphics4::Texture(100, 100, Graphics4::Image::RGBA32, false);
 
 	HRESULT hr = S_OK;
 	IBaseFilter *pFSrc; // Source Filter
 	IPin *pFSrcPinOut;  // Source Filter Output Pin
 
-	hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC, __uuidof(IGraphBuilder), (void **)&graphBuilder);
+	hr                   = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC, __uuidof(IGraphBuilder), (void **)&graphBuilder);
 	video->impl.renderer = new CTextureRenderer(NULL, &hr);
-	hr = graphBuilder->AddFilter((CTextureRenderer *)video->impl.renderer, L"TEXTURERENDERER");
+	hr                   = graphBuilder->AddFilter((CTextureRenderer *)video->impl.renderer, L"TEXTURERENDERER");
 	wchar_t wideFilename[2048];
 	mbstowcs(wideFilename, filename, 2048 - 1);
 	hr = graphBuilder->AddSourceFilter(wideFilename, L"SOURCE", &pFSrc);

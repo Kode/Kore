@@ -21,7 +21,7 @@ struct kore_x11_procs xlib = {0};
 struct x11_context x11_ctx = {0};
 
 static size_t clipboardStringSize = 1024;
-static char *clipboardString = NULL;
+static char *clipboardString      = NULL;
 
 char buffer[1024];
 
@@ -51,15 +51,15 @@ bool kore_x11_init() {
 
 #undef LOAD_LIB
 #undef LOAD_FUN
-#define LOAD_LIB(name)                                                                                                                                         \
-	{                                                                                                                                                          \
-		load_lib(&x11_ctx.libs.name, #name);                                                                                                                   \
-                                                                                                                                                               \
-		if (x11_ctx.libs.name == NULL) {                                                                                                                       \
-			kore_log(KORE_LOG_LEVEL_ERROR, "Failed to load lib%s.so", #name);                                                                                  \
-			return false;                                                                                                                                      \
-		}                                                                                                                                                      \
-	}                                                                                                                                                          \
+#define LOAD_LIB(name)                                                        \
+	{                                                                         \
+		load_lib(&x11_ctx.libs.name, #name);                                  \
+                                                                              \
+		if (x11_ctx.libs.name == NULL) {                                      \
+			kore_log(KORE_LOG_LEVEL_ERROR, "Failed to load lib%s.so", #name); \
+			return false;                                                     \
+		}                                                                     \
+	}                                                                         \
 	// manually check for libX11, and return false if not present
 	// only error for further libs
 
@@ -72,10 +72,10 @@ bool kore_x11_init() {
 	LOAD_LIB(Xcursor);
 	LOAD_LIB(Xinerama);
 	LOAD_LIB(Xrandr);
-#define LOAD_FUN(lib, symbol)                                                                                                                                  \
-	xlib.symbol = dlsym(x11_ctx.libs.lib, #symbol);                                                                                                            \
-	if (xlib.symbol == NULL) {                                                                                                                                 \
-		kore_log(KORE_LOG_LEVEL_ERROR, "Did not find symbol %s in library %s.", #symbol, #lib);                                                                \
+#define LOAD_FUN(lib, symbol)                                                                   \
+	xlib.symbol = dlsym(x11_ctx.libs.lib, #symbol);                                             \
+	if (xlib.symbol == NULL) {                                                                  \
+		kore_log(KORE_LOG_LEVEL_ERROR, "Did not find symbol %s in library %s.", #symbol, #lib); \
 	}
 	LOAD_FUN(X11, XOpenDisplay)
 	LOAD_FUN(X11, XCloseDisplay)
@@ -194,7 +194,7 @@ bool kore_x11_init() {
 	xlib.XInternAtoms(x11_ctx.display, atom_names, sizeof atom_names / sizeof atom_names[0], False, (Atom *)&x11_ctx.atoms);
 	clipboardString = (char *)malloc(clipboardStringSize);
 
-	x11_ctx.pen.id = -1;
+	x11_ctx.pen.id    = -1;
 	x11_ctx.eraser.id = -1;
 
 	int count;
@@ -228,7 +228,7 @@ void kore_x11_shutdown() {
 
 static void init_pen_device(XDeviceInfo *info, struct x11_pen_device *pen, bool eraser) {
 	XDevice *device = xlib.XOpenDevice(x11_ctx.display, info->id);
-	XAnyClassPtr c = info->inputclassinfo;
+	XAnyClassPtr c  = info->inputclassinfo;
 	for (int j = 0; j < device->num_classes; j++) {
 		if (c->class == ValuatorClass) {
 			XValuatorInfo *valuator_info = (XValuatorInfo *)c;
@@ -238,13 +238,13 @@ static void init_pen_device(XDeviceInfo *info, struct x11_pen_device *pen, bool 
 			pen->id = info->id;
 			DeviceMotionNotify(device, pen->motionEvent, pen->motionClass);
 			if (eraser) {
-				pen->press = kore_internal_eraser_trigger_press;
-				pen->move = kore_internal_eraser_trigger_move;
+				pen->press   = kore_internal_eraser_trigger_press;
+				pen->move    = kore_internal_eraser_trigger_move;
 				pen->release = kore_internal_eraser_trigger_release;
 			}
 			else {
-				pen->press = kore_internal_pen_trigger_press;
-				pen->move = kore_internal_pen_trigger_move;
+				pen->press   = kore_internal_pen_trigger_press;
+				pen->move    = kore_internal_pen_trigger_move;
 				pen->release = kore_internal_pen_trigger_release;
 			}
 			return;
@@ -274,14 +274,14 @@ static void check_pen_device(struct kore_x11_window *window, XEvent *event, stru
 }
 
 bool kore_x11_handle_messages() {
-	static bool controlDown = false;
-	static int ignoreKeycode = 0;
+	static bool controlDown             = false;
+	static int ignoreKeycode            = 0;
 	static bool preventNextKeyDownEvent = false;
 
 	while (xlib.XPending(x11_ctx.display)) {
 		XEvent event;
 		xlib.XNextEvent(x11_ctx.display, &event);
-		Window window = event.xclient.window;
+		Window window                    = event.xclient.window;
 		struct kore_x11_window *k_window = window_from_window(window);
 		if (k_window == NULL) {
 			continue;
@@ -315,9 +315,9 @@ bool kore_x11_handle_messages() {
 				continue;
 			}
 
-#define KEY(xkey, korekey)                                                                                                                                     \
-	case xkey:                                                                                                                                                 \
-		kore_internal_keyboard_trigger_key_down(korekey);                                                                                                      \
+#define KEY(xkey, korekey)                                \
+	case xkey:                                            \
+		kore_internal_keyboard_trigger_key_down(korekey); \
 		break;
 
 			KeySym ksKey = xlib.XkbKeycodeToKeysym(x11_ctx.display, event.xkey.keycode, 0, 0);
@@ -506,9 +506,9 @@ bool kore_x11_handle_messages() {
 			char c;
 			xlib.XLookupString(key, &c, 1, &keysym, NULL);
 
-#define KEY(xkey, korekey)                                                                                                                                     \
-	case xkey:                                                                                                                                                 \
-		kore_internal_keyboard_trigger_key_up(korekey);                                                                                                        \
+#define KEY(xkey, korekey)                              \
+	case xkey:                                          \
+		kore_internal_keyboard_trigger_key_up(korekey); \
 		break;
 
 			KeySym ksKey = xlib.XkbKeycodeToKeysym(x11_ctx.display, event.xkey.keycode, 0, 0);
@@ -662,7 +662,7 @@ bool kore_x11_handle_messages() {
 		}
 		case ButtonPress: {
 			XButtonEvent *button = (XButtonEvent *)&event;
-			int window_index = k_window->window_index;
+			int window_index     = k_window->window_index;
 
 			switch (button->button) {
 			case Button1:
@@ -688,7 +688,7 @@ bool kore_x11_handle_messages() {
 		}
 		case ButtonRelease: {
 			XButtonEvent *button = (XButtonEvent *)&event;
-			int window_index = k_window->window_index;
+			int window_index     = k_window->window_index;
 
 			switch (button->button) {
 			case Button1:
@@ -724,7 +724,7 @@ bool kore_x11_handle_messages() {
 		}
 		case ConfigureNotify: {
 			if (event.xconfigure.width != k_window->width || event.xconfigure.height != k_window->height) {
-				k_window->width = event.xconfigure.width;
+				k_window->width  = event.xconfigure.width;
 				k_window->height = event.xconfigure.height;
 				// kore_internal_resize(k_window->window_index, event.xconfigure.width, event.xconfigure.height); // TODO
 				kore_internal_call_resize_callback(k_window->window_index, event.xconfigure.width, event.xconfigure.height);
@@ -736,15 +736,15 @@ bool kore_x11_handle_messages() {
 				Window source_window = event.xclient.data.l[0];
 				XEvent m;
 				memset(&m, 0, sizeof(m));
-				m.type = ClientMessage;
-				m.xclient.window = event.xclient.data.l[0];
+				m.type                 = ClientMessage;
+				m.xclient.window       = event.xclient.data.l[0];
 				m.xclient.message_type = x11_ctx.atoms.XdndStatus;
-				m.xclient.format = 32;
-				m.xclient.data.l[0] = window;
-				m.xclient.data.l[2] = 0;
-				m.xclient.data.l[3] = 0;
-				m.xclient.data.l[1] = 1;
-				m.xclient.data.l[4] = x11_ctx.atoms.XdndActionCopy;
+				m.xclient.format       = 32;
+				m.xclient.data.l[0]    = window;
+				m.xclient.data.l[2]    = 0;
+				m.xclient.data.l[3]    = 0;
+				m.xclient.data.l[1]    = 1;
+				m.xclient.data.l[4]    = x11_ctx.atoms.XdndActionCopy;
 				xlib.XSendEvent(x11_ctx.display, source_window, false, NoEventMask, (XEvent *)&m);
 				xlib.XFlush(x11_ctx.display);
 			}
@@ -777,7 +777,7 @@ bool kore_x11_handle_messages() {
 				int format;
 				unsigned long numItems;
 				unsigned long bytesAfter = 1;
-				unsigned char *data = 0;
+				unsigned char *data      = 0;
 				xlib.XGetWindowProperty(x11_ctx.display, event.xselection.requestor, event.xselection.property, 0, LONG_MAX, False, event.xselection.target,
 				                        &type, &format, &numItems, &bytesAfter, &data);
 				size_t pos = 0;
@@ -800,25 +800,25 @@ bool kore_x11_handle_messages() {
 		case SelectionRequest: {
 			if (event.xselectionrequest.target == x11_ctx.atoms.TARGETS) {
 				XEvent send;
-				send.xselection.type = SelectionNotify;
+				send.xselection.type      = SelectionNotify;
 				send.xselection.requestor = event.xselectionrequest.requestor;
 				send.xselection.selection = event.xselectionrequest.selection;
-				send.xselection.target = event.xselectionrequest.target;
-				send.xselection.property = event.xselectionrequest.property;
-				send.xselection.time = event.xselectionrequest.time;
-				Atom available[] = {x11_ctx.atoms.TARGETS, x11_ctx.atoms.MULTIPLE, x11_ctx.atoms.TEXT_PLAIN, x11_ctx.atoms.UTF8_STRING};
+				send.xselection.target    = event.xselectionrequest.target;
+				send.xselection.property  = event.xselectionrequest.property;
+				send.xselection.time      = event.xselectionrequest.time;
+				Atom available[]          = {x11_ctx.atoms.TARGETS, x11_ctx.atoms.MULTIPLE, x11_ctx.atoms.TEXT_PLAIN, x11_ctx.atoms.UTF8_STRING};
 				xlib.XChangeProperty(x11_ctx.display, send.xselection.requestor, send.xselection.property, XA_ATOM, 32, PropModeReplace,
 				                     (unsigned char *)&available[0], 4);
 				xlib.XSendEvent(x11_ctx.display, send.xselection.requestor, True, 0, &send);
 			}
 			if (event.xselectionrequest.target == x11_ctx.atoms.TEXT_PLAIN || event.xselectionrequest.target == x11_ctx.atoms.UTF8_STRING) {
 				XEvent send;
-				send.xselection.type = SelectionNotify;
+				send.xselection.type      = SelectionNotify;
 				send.xselection.requestor = event.xselectionrequest.requestor;
 				send.xselection.selection = event.xselectionrequest.selection;
-				send.xselection.target = event.xselectionrequest.target;
-				send.xselection.property = event.xselectionrequest.property;
-				send.xselection.time = event.xselectionrequest.time;
+				send.xselection.target    = event.xselectionrequest.target;
+				send.xselection.property  = event.xselectionrequest.property;
+				send.xselection.time      = event.xselectionrequest.time;
 				xlib.XChangeProperty(x11_ctx.display, send.xselection.requestor, send.xselection.property, send.xselection.target, 8, PropModeReplace,
 				                     (const unsigned char *)clipboardString, strlen(clipboardString));
 				xlib.XSendEvent(x11_ctx.display, send.xselection.requestor, True, 0, &send);
@@ -832,7 +832,7 @@ bool kore_x11_handle_messages() {
 			break;
 		}
 		case FocusOut: {
-			controlDown = false;
+			controlDown   = false;
 			ignoreKeycode = 0;
 			kore_internal_background_callback();
 			break;
@@ -855,7 +855,7 @@ void kore_x11_copy_to_clipboard(const char *text) {
 	if (textLength >= clipboardStringSize) {
 		free(clipboardString);
 		clipboardStringSize = textLength + 1;
-		clipboardString = (char *)malloc(clipboardStringSize);
+		clipboardString     = (char *)malloc(clipboardStringSize);
 	}
 	strcpy(clipboardString, text);
 }
@@ -875,11 +875,11 @@ EGLNativeWindowType kore_x11_egl_get_native_window(EGLDisplay display, EGLConfig
 #include <vulkan/vulkan_xlib.h>
 VkResult kore_x11_vulkan_create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
 	VkXlibSurfaceCreateInfoKHR info = {0};
-	info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-	info.pNext = NULL;
-	info.flags = 0;
-	info.dpy = x11_ctx.display;
-	info.window = x11_ctx.windows[window_index].window;
+	info.sType                      = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+	info.pNext                      = NULL;
+	info.flags                      = 0;
+	info.dpy                        = x11_ctx.display;
+	info.window                     = x11_ctx.windows[window_index].window;
 	return vkCreateXlibSurfaceKHR(instance, &info, NULL, surface);
 }
 
@@ -898,7 +898,7 @@ VkBool32 kore_x11_vulkan_get_physical_device_presentation_support(VkPhysicalDevi
 
 void kore_x11_mouse_lock(int window) {
 	kore_mouse_hide();
-	int width = kore_window_width(window);
+	int width  = kore_window_width(window);
 	int height = kore_window_height(window);
 
 	int x, y;
@@ -952,14 +952,14 @@ void kore_x11_mouse_hide() {
 	struct kore_x11_window *window = &x11_ctx.windows[x11_ctx.mouse.current_window];
 	if (!mouseHidden) {
 		XColor col;
-		col.pixel = 0;
-		col.red = 0;
-		col.green = 0;
-		col.blue = 0;
-		col.flags = DoRed | DoGreen | DoBlue;
-		col.pad = 0;
-		char data[1] = {'\0'};
-		Pixmap blank = xlib.XCreateBitmapFromData(x11_ctx.display, window->window, data, 1, 1);
+		col.pixel     = 0;
+		col.red       = 0;
+		col.green     = 0;
+		col.blue      = 0;
+		col.flags     = DoRed | DoGreen | DoBlue;
+		col.pad       = 0;
+		char data[1]  = {'\0'};
+		Pixmap blank  = xlib.XCreateBitmapFromData(x11_ctx.display, window->window, data, 1, 1);
 		Cursor cursor = xlib.XCreatePixmapCursor(x11_ctx.display, blank, blank, &col, &col, 0, 0);
 		xlib.XDefineCursor(x11_ctx.display, window->window, cursor);
 		xlib.XFreePixmap(x11_ctx.display, blank);

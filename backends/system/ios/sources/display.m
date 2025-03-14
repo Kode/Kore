@@ -7,9 +7,9 @@ void kore_display_init(void) {}
 
 kore_display_mode kore_display_available_mode(int display, int mode) {
 	kore_display_mode dm;
-	dm.width = kore_window_width(0);
-	dm.height = kore_window_height(0);
-	dm.frequency = 60;
+	dm.width          = kore_window_width(0);
+	dm.height         = kore_window_height(0);
+	dm.frequency      = 60;
 	dm.bits_per_pixel = 32;
 	return dm;
 }
@@ -28,9 +28,9 @@ const char *kore_display_name(int display) {
 
 kore_display_mode kore_display_current_mode(int display) {
 	kore_display_mode dm;
-	dm.width = kore_window_width(0);
-	dm.height = kore_window_height(0);
-	dm.frequency = (int)[[UIScreen mainScreen] maximumFramesPerSecond];
+	dm.width          = kore_window_width(0);
+	dm.height         = kore_window_height(0);
+	dm.frequency      = (int)[[UIScreen mainScreen] maximumFramesPerSecond];
 	dm.bits_per_pixel = 32;
 	return dm;
 }

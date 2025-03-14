@@ -189,12 +189,12 @@ static bool check_device_layers(const char **device_layers, int device_layers_co
 }
 
 static void load_extension_functions(void) {
-#define GET_VULKAN_FUNCTION(entrypoint)                                                                                                                        \
-	{                                                                                                                                                          \
-		vulkan_##entrypoint = (PFN_vk##entrypoint)vkGetInstanceProcAddr(instance, "vk" #entrypoint);                                                           \
-		if (vulkan_##entrypoint == NULL) {                                                                                                                     \
-			kore_error_message("vkGetInstanceProcAddr failed to find vk" #entrypoint);                                                                         \
-		}                                                                                                                                                      \
+#define GET_VULKAN_FUNCTION(entrypoint)                                                              \
+	{                                                                                                \
+		vulkan_##entrypoint = (PFN_vk##entrypoint)vkGetInstanceProcAddr(instance, "vk" #entrypoint); \
+		if (vulkan_##entrypoint == NULL) {                                                           \
+			kore_error_message("vkGetInstanceProcAddr failed to find vk" #entrypoint);               \
+		}                                                                                            \
 	}
 
 	if (validation) {
@@ -240,7 +240,7 @@ void find_gpu(void) {
 		vkGetPhysicalDeviceQueueFamilyProperties(current_gpu, &queue_count, queue_props);
 
 		bool can_present = false;
-		bool can_render = false;
+		bool can_render  = false;
 
 		for (uint32_t queue_index = 0; queue_index < queue_count; ++queue_index) {
 #ifdef KORE_WINDOWS
@@ -283,7 +283,7 @@ void find_gpu(void) {
 		}
 
 		if (score > best_score) {
-			gpu = current_gpu;
+			gpu        = current_gpu;
 			best_score = score;
 		}
 	}
@@ -321,7 +321,7 @@ static VkSurfaceFormatKHR find_surface_format(VkSurfaceKHR surface) {
 	VkSurfaceFormatKHR surface_formats[256];
 
 	uint32_t formats_count = sizeof(surface_formats) / sizeof(surface_formats[0]);
-	VkResult result = vulkan_GetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formats_count, surface_formats);
+	VkResult result        = vulkan_GetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formats_count, surface_formats);
 	assert(result == VK_SUCCESS);
 
 	// If the format list includes just one entry of VK_FORMAT_UNDEFINED,
@@ -346,52 +346,52 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 #ifdef KORE_WINDOWS
 	HWND window_handle = kore_windows_window_handle(0);
 #endif
-	uint32_t window_width = kore_window_width(0);
+	uint32_t window_width  = kore_window_width(0);
 	uint32_t window_height = kore_window_height(0);
-	bool vsync = true; // kore_window_vsynced(0); // TODO
+	bool vsync             = true; // kore_window_vsynced(0); // TODO
 
 #ifdef KORE_WINDOWS
 	const VkWin32SurfaceCreateInfoKHR surface_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
-	    .pNext = NULL,
-	    .flags = 0,
+	    .sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
+	    .pNext     = NULL,
+	    .flags     = 0,
 	    .hinstance = GetModuleHandle(NULL),
-	    .hwnd = window_handle,
+	    .hwnd      = window_handle,
 	};
 #endif
 
 	VkSurfaceKHR surface = {0};
-	VkResult result = VK_SUCCESS;
+	VkResult result      = VK_SUCCESS;
 
 #ifdef KORE_WINDOWS
 	result = vkCreateWin32SurfaceKHR(instance, &surface_create_info, NULL, &surface);
 #endif
 
 	VkBool32 surface_supported = false;
-	result = vkGetPhysicalDeviceSurfaceSupportKHR(gpu, graphics_queue_family_index, surface, &surface_supported);
+	result                     = vkGetPhysicalDeviceSurfaceSupportKHR(gpu, graphics_queue_family_index, surface, &surface_supported);
 	assert(result == VK_SUCCESS && surface_supported);
 
 	VkSurfaceFormatKHR format = find_surface_format(surface);
-	framebuffer_format = format.format;
+	framebuffer_format        = format.format;
 
 	VkSurfaceCapabilitiesKHR surface_capabilities = {0};
-	result = vulkan_GetPhysicalDeviceSurfaceCapabilitiesKHR(gpu, surface, &surface_capabilities);
+	result                                        = vulkan_GetPhysicalDeviceSurfaceCapabilitiesKHR(gpu, surface, &surface_capabilities);
 	assert(result == VK_SUCCESS);
 
 	VkPresentModeKHR present_modes[32];
 	uint32_t present_mode_count = sizeof(present_modes) / sizeof(present_modes[0]);
-	result = vulkan_GetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &present_mode_count, present_modes);
+	result                      = vulkan_GetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &present_mode_count, present_modes);
 	assert(result == VK_SUCCESS);
 
 	VkExtent2D swapchain_extent;
 	if (surface_capabilities.currentExtent.width == (uint32_t)-1) {
-		swapchain_extent.width = window_width;
+		swapchain_extent.width  = window_width;
 		swapchain_extent.height = window_height;
 	}
 	else {
 		swapchain_extent = surface_capabilities.currentExtent;
-		window_width = surface_capabilities.currentExtent.width;
-		window_height = surface_capabilities.currentExtent.height;
+		window_width     = surface_capabilities.currentExtent.width;
+		window_height    = surface_capabilities.currentExtent.height;
 	}
 
 	VkCompositeAlphaFlagBitsKHR composite_alpha;
@@ -412,25 +412,25 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 	}
 
 	const VkSwapchainCreateInfoKHR swapchain_info = {
-	    .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-	    .pNext = NULL,
-	    .surface = surface,
-	    .minImageCount = surface_capabilities.minImageCount,
-	    .imageFormat = format.format,
-	    .imageColorSpace = format.colorSpace,
-	    .imageExtent.width = swapchain_extent.width,
-	    .imageExtent.height = swapchain_extent.height,
-	    .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-	    .preTransform = (surface_capabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) ? VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR
-	                                                                                                       : surface_capabilities.currentTransform,
-	    .compositeAlpha = composite_alpha,
-	    .imageArrayLayers = 1,
-	    .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
+	    .sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+	    .pNext                 = NULL,
+	    .surface               = surface,
+	    .minImageCount         = surface_capabilities.minImageCount,
+	    .imageFormat           = format.format,
+	    .imageColorSpace       = format.colorSpace,
+	    .imageExtent.width     = swapchain_extent.width,
+	    .imageExtent.height    = swapchain_extent.height,
+	    .imageUsage            = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+	    .preTransform          = (surface_capabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) ? VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR
+	                                                                                                                : surface_capabilities.currentTransform,
+	    .compositeAlpha        = composite_alpha,
+	    .imageArrayLayers      = 1,
+	    .imageSharingMode      = VK_SHARING_MODE_EXCLUSIVE,
 	    .queueFamilyIndexCount = 0,
-	    .pQueueFamilyIndices = NULL,
-	    .presentMode = vsync ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_MAILBOX_KHR,
-	    .oldSwapchain = VK_NULL_HANDLE,
-	    .clipped = true,
+	    .pQueueFamilyIndices   = NULL,
+	    .presentMode           = vsync ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_MAILBOX_KHR,
+	    .oldSwapchain          = VK_NULL_HANDLE,
+	    .clipped               = true,
 	};
 
 	result = vulkan_CreateSwapchainKHR(device->vulkan.device, &swapchain_info, NULL, &swapchain);
@@ -438,78 +438,78 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 
 	VkImage images[4];
 	framebuffer_count = sizeof(images) / sizeof(images[0]);
-	result = vulkan_GetSwapchainImagesKHR(device->vulkan.device, swapchain, &framebuffer_count, images);
+	result            = vulkan_GetSwapchainImagesKHR(device->vulkan.device, swapchain, &framebuffer_count, images);
 	assert(result == VK_SUCCESS);
 
 	for (uint32_t i = 0; i < framebuffer_count; ++i) {
 		VkImageView view;
 
 		const VkImageViewCreateInfo color_attachment_view = {
-		    .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-		    .pNext = NULL,
-		    .format = format.format,
-		    .components.r = VK_COMPONENT_SWIZZLE_R,
-		    .components.g = VK_COMPONENT_SWIZZLE_G,
-		    .components.b = VK_COMPONENT_SWIZZLE_B,
-		    .components.a = VK_COMPONENT_SWIZZLE_A,
-		    .subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-		    .subresourceRange.baseMipLevel = 0,
-		    .subresourceRange.levelCount = 1,
+		    .sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+		    .pNext                           = NULL,
+		    .format                          = format.format,
+		    .components.r                    = VK_COMPONENT_SWIZZLE_R,
+		    .components.g                    = VK_COMPONENT_SWIZZLE_G,
+		    .components.b                    = VK_COMPONENT_SWIZZLE_B,
+		    .components.a                    = VK_COMPONENT_SWIZZLE_A,
+		    .subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+		    .subresourceRange.baseMipLevel   = 0,
+		    .subresourceRange.levelCount     = 1,
 		    .subresourceRange.baseArrayLayer = 0,
-		    .subresourceRange.layerCount = 1,
-		    .viewType = VK_IMAGE_VIEW_TYPE_2D,
-		    .flags = 0,
-		    .image = images[i],
+		    .subresourceRange.layerCount     = 1,
+		    .viewType                        = VK_IMAGE_VIEW_TYPE_2D,
+		    .flags                           = 0,
+		    .image                           = images[i],
 		};
 
 		result = vkCreateImageView(device->vulkan.device, &color_attachment_view, NULL, &view);
 		assert(result == VK_SUCCESS);
 
-		framebuffers[i].vulkan.image = images[i];
+		framebuffers[i].vulkan.image      = images[i];
 		framebuffers[i].vulkan.image_view = view;
-		framebuffers[i].vulkan.width = window_width;
-		framebuffers[i].vulkan.height = window_height;
+		framebuffers[i].vulkan.width      = window_width;
+		framebuffers[i].vulkan.height     = window_height;
 	}
 }
 
 static void create_descriptor_pool(kore_gpu_device *device) {
 	VkDescriptorPoolSize pool_sizes[] = {
 	    {
-	        .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-	        .descriptorCount = 128,
-	    },
+         .type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+         .descriptorCount = 128,
+	     },
 	    {
-	        .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
-	        .descriptorCount = 128,
-	    },
+         .type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+         .descriptorCount = 128,
+	     },
 	    {
-	        .type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-	        .descriptorCount = 128,
-	    },
+         .type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+         .descriptorCount = 128,
+	     },
 	    {
-	        .type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
-	        .descriptorCount = 128,
-	    },
+         .type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
+         .descriptorCount = 128,
+	     },
 	    {
-	        .type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-	        .descriptorCount = 128,
-	    },
+         .type            = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+         .descriptorCount = 128,
+	     },
 	    {
-	        .type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-	        .descriptorCount = 128,
-	    },
+         .type            = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+         .descriptorCount = 128,
+	     },
 	    {
-	        .type = VK_DESCRIPTOR_TYPE_SAMPLER,
-	        .descriptorCount = 128,
-	    },
+         .type            = VK_DESCRIPTOR_TYPE_SAMPLER,
+         .descriptorCount = 128,
+	     },
 	};
 
 	VkDescriptorPoolCreateInfo pool_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-	    .pNext = NULL,
-	    .maxSets = 128 * sizeof(pool_sizes) / sizeof(pool_sizes[0]),
+	    .sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+	    .pNext         = NULL,
+	    .maxSets       = 128 * sizeof(pool_sizes) / sizeof(pool_sizes[0]),
 	    .poolSizeCount = sizeof(pool_sizes) / sizeof(pool_sizes[0]),
-	    .pPoolSizes = pool_sizes,
+	    .pPoolSizes    = pool_sizes,
 	};
 
 	VkResult result = vkCreateDescriptorPool(device->vulkan.device, &pool_create_info, NULL, &device->vulkan.descriptor_pool);
@@ -551,31 +551,31 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	}
 
 	const VkApplicationInfo application_info = {
-	    .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-	    .pNext = NULL,
-	    .pApplicationName = kore_application_name(),
+	    .sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+	    .pNext              = NULL,
+	    .pApplicationName   = kore_application_name(),
 	    .applicationVersion = 0,
-	    .pEngineName = "Kore",
-	    .engineVersion = 0,
-	    .apiVersion = VK_API_VERSION_1_3,
+	    .pEngineName        = "Kore",
+	    .engineVersion      = 0,
+	    .apiVersion         = VK_API_VERSION_1_3,
 	};
 
 	const VkInstanceCreateInfo instance_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-	    .pNext = NULL,
+	    .sType            = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+	    .pNext            = NULL,
 	    .pApplicationInfo = &application_info,
 
-	    .enabledLayerCount = instance_layers_count,
+	    .enabledLayerCount   = instance_layers_count,
 	    .ppEnabledLayerNames = (const char *const *)instance_layers,
 
-	    .enabledExtensionCount = instance_extensions_count,
+	    .enabledExtensionCount   = instance_extensions_count,
 	    .ppEnabledExtensionNames = (const char *const *)instance_extensions,
 	};
 
 #ifndef KORE_ANDROID
 	const VkAllocationCallbacks allocator_callbacks = {
-	    .pfnAllocation = vulkan_alloc,
-	    .pfnFree = vulkan_free,
+	    .pfnAllocation   = vulkan_alloc,
+	    .pfnFree         = vulkan_free,
 	    .pfnReallocation = vulkan_realloc,
 	};
 	VkResult result = vkCreateInstance(&instance_create_info, &allocator_callbacks, &instance);
@@ -645,12 +645,12 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 #ifdef VALIDATE
 	if (validation) {
 		const VkDebugUtilsMessengerCreateInfoEXT create_info = {
-		    .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-		    .flags = 0,
+		    .sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+		    .flags           = 0,
 		    .pfnUserCallback = debug_callback,
-		    .pUserData = NULL,
-		    .pNext = NULL,
-		    .messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+		    .pUserData       = NULL,
+		    .pNext           = NULL,
+		    .messageType     = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
 		    .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
 		};
 
@@ -664,49 +664,49 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	const float queue_priorities[1] = {0.0};
 
 	const VkDeviceQueueCreateInfo queue_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-	    .pNext = NULL,
+	    .sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+	    .pNext            = NULL,
 	    .queueFamilyIndex = graphics_queue_family_index,
-	    .queueCount = 1,
+	    .queueCount       = 1,
 	    .pQueuePriorities = queue_priorities,
 	};
 
 	const VkPhysicalDeviceDynamicRenderingFeaturesKHR dynamic_rendering = {
-	    .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR,
-	    .pNext = NULL,
+	    .sType            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR,
+	    .pNext            = NULL,
 	    .dynamicRendering = VK_TRUE,
 	};
 
 #ifdef KORE_VKRT
 	const VkPhysicalDeviceRayTracingPipelineFeaturesKHR raytracing_pipeline = {
-	    .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
-	    .pNext = dynamic_rendering,
+	    .sType              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
+	    .pNext              = dynamic_rendering,
 	    .rayTracingPipeline = VK_TRUE,
 	};
 
 	const VkPhysicalDeviceAccelerationStructureFeaturesKHR raytracing_acceleration_structure = {
-	    .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
-	    .pNext = &raytracing_pipeline,
+	    .sType                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
+	    .pNext                 = &raytracing_pipeline,
 	    .accelerationStructure = VK_TRUE,
 	};
 
 	const VkPhysicalDeviceBufferDeviceAddressFeatures buffer_device_address = {
-	    .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
-	    .pNext = &raytracing_acceleration_structure,
+	    .sType               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
+	    .pNext               = &raytracing_acceleration_structure,
 	    .bufferDeviceAddress = VK_TRUE,
 	};
 #endif
 
 	const VkDeviceCreateInfo device_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-	    .pNext = NULL,
+	    .sType                = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+	    .pNext                = NULL,
 	    .queueCreateInfoCount = 1,
-	    .pQueueCreateInfos = &queue_create_info,
+	    .pQueueCreateInfos    = &queue_create_info,
 
-	    .enabledLayerCount = device_layers_count,
+	    .enabledLayerCount   = device_layers_count,
 	    .ppEnabledLayerNames = (const char *const *)device_layers,
 
-	    .enabledExtensionCount = device_extensions_count,
+	    .enabledExtensionCount   = device_extensions_count,
 	    .ppEnabledExtensionNames = (const char *const *)device_extensions,
 
 #ifdef KORE_VKRT
@@ -724,10 +724,10 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	vkGetPhysicalDeviceMemoryProperties(gpu, &device->vulkan.device_memory_properties);
 
 	const VkCommandPoolCreateInfo command_pool_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-	    .pNext = NULL,
+	    .sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+	    .pNext            = NULL,
 	    .queueFamilyIndex = graphics_queue_family_index,
-	    .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+	    .flags            = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 	};
 
 	result = vkCreateCommandPool(device->vulkan.device, &command_pool_create_info, NULL, &device->vulkan.command_pool);
@@ -747,10 +747,10 @@ void kore_vulkan_device_destroy(kore_gpu_device *device) {
 
 void kore_vulkan_device_set_name(kore_gpu_device *device, const char *name) {
 	const VkDebugMarkerObjectNameInfoEXT name_info = {
-	    .sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT,
-	    .pNext = NULL,
-	    .objectType = VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT,
-	    .object = (uint64_t)device->vulkan.device,
+	    .sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT,
+	    .pNext       = NULL,
+	    .objectType  = VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT,
+	    .object      = (uint64_t)device->vulkan.device,
 	    .pObjectName = name,
 	};
 
@@ -792,7 +792,7 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	const VkBufferCreateInfo create_info = {
 	    .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
 	    .pNext = NULL,
-	    .size = parameters->size,
+	    .size  = parameters->size,
 	    .usage = usage,
 	    .flags = 0,
 	};
@@ -804,10 +804,10 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	vkGetBufferMemoryRequirements(device->vulkan.device, buffer->vulkan.buffer, &memory_requirements);
 
 	VkMemoryAllocateInfo memory_allocate_info = {
-	    .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-	    .pNext = NULL,
+	    .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+	    .pNext           = NULL,
 	    .memoryTypeIndex = 0,
-	    .allocationSize = memory_requirements.size,
+	    .allocationSize  = memory_requirements.size,
 	};
 
 	bool memory_type_found =
@@ -830,9 +830,9 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 }
 
 void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
-	list->vulkan.device = device->vulkan.device;
+	list->vulkan.device       = device->vulkan.device;
 	list->vulkan.command_pool = device->vulkan.command_pool;
-	list->vulkan.presenting = false;
+	list->vulkan.presenting   = false;
 
 	const VkFenceCreateInfo fence_create_info = {
 	    .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
@@ -843,10 +843,10 @@ void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	vkCreateFence(device->vulkan.device, &fence_create_info, NULL, &list->vulkan.fence);
 
 	const VkCommandBufferAllocateInfo allocate_info = {
-	    .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-	    .pNext = NULL,
-	    .commandPool = device->vulkan.command_pool,
-	    .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+	    .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+	    .pNext              = NULL,
+	    .commandPool        = device->vulkan.command_pool,
+	    .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 	    .commandBufferCount = 1,
 	};
 
@@ -854,9 +854,9 @@ void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	assert(result == VK_SUCCESS);
 
 	const VkCommandBufferBeginInfo begin_info = {
-	    .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-	    .pNext = NULL,
-	    .flags = 0,
+	    .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+	    .pNext            = NULL,
+	    .flags            = 0,
 	    .pInheritanceInfo = NULL,
 	};
 
@@ -871,30 +871,30 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	assert((format_properties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) != 0);
 
-	texture->vulkan.width = parameters->width;
+	texture->vulkan.width  = parameters->width;
 	texture->vulkan.height = parameters->height;
 
 	VkImageCreateInfo image_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-	    .pNext = NULL,
-	    .imageType = VK_IMAGE_TYPE_2D,
-	    .format = format,
-	    .extent.width = parameters->width,
+	    .sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+	    .pNext         = NULL,
+	    .imageType     = VK_IMAGE_TYPE_2D,
+	    .format        = format,
+	    .extent.width  = parameters->width,
 	    .extent.height = parameters->height,
-	    .extent.depth = 1,
-	    .mipLevels = 1,
-	    .arrayLayers = 1,
-	    .samples = VK_SAMPLE_COUNT_1_BIT,
-	    .tiling = VK_IMAGE_TILING_OPTIMAL,
-	    .usage = VK_IMAGE_USAGE_SAMPLED_BIT,
-	    .flags = 0,
+	    .extent.depth  = 1,
+	    .mipLevels     = 1,
+	    .arrayLayers   = 1,
+	    .samples       = VK_SAMPLE_COUNT_1_BIT,
+	    .tiling        = VK_IMAGE_TILING_OPTIMAL,
+	    .usage         = VK_IMAGE_USAGE_SAMPLED_BIT,
+	    .flags         = 0,
 	    .initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED,
 	};
 
 	VkMemoryAllocateInfo memory_allocate_info = {
-	    .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-	    .pNext = NULL,
-	    .allocationSize = 0,
+	    .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+	    .pNext           = NULL,
+	    .allocationSize  = 0,
 	    .memoryTypeIndex = 0,
 	};
 
@@ -918,7 +918,7 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	VkImageSubresource subresource = {
 	    .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-	    .mipLevel = 0,
+	    .mipLevel   = 0,
 	    .arrayLayer = 0,
 	};
 
@@ -928,21 +928,21 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	texture->vulkan.row_pitch = layout.rowPitch;
 
 	VkImageViewCreateInfo view_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-	    .pNext = NULL,
-	    .image = texture->vulkan.image,
-	    .viewType = VK_IMAGE_VIEW_TYPE_2D,
-	    .format = format,
-	    .components.r = VK_COMPONENT_SWIZZLE_R,
-	    .components.g = VK_COMPONENT_SWIZZLE_G,
-	    .components.b = VK_COMPONENT_SWIZZLE_B,
-	    .components.a = VK_COMPONENT_SWIZZLE_A,
-	    .subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-	    .subresourceRange.baseMipLevel = 0,
-	    .subresourceRange.levelCount = 1,
+	    .sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+	    .pNext                           = NULL,
+	    .image                           = texture->vulkan.image,
+	    .viewType                        = VK_IMAGE_VIEW_TYPE_2D,
+	    .format                          = format,
+	    .components.r                    = VK_COMPONENT_SWIZZLE_R,
+	    .components.g                    = VK_COMPONENT_SWIZZLE_G,
+	    .components.b                    = VK_COMPONENT_SWIZZLE_B,
+	    .components.a                    = VK_COMPONENT_SWIZZLE_A,
+	    .subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+	    .subresourceRange.baseMipLevel   = 0,
+	    .subresourceRange.levelCount     = 1,
 	    .subresourceRange.baseArrayLayer = 0,
-	    .subresourceRange.layerCount = 1,
-	    .flags = 0,
+	    .subresourceRange.layerCount     = 1,
+	    .flags                           = 0,
 	};
 
 	result = vkCreateImageView(device->vulkan.device, &view_create_info, NULL, &texture->vulkan.image_view);
@@ -973,21 +973,21 @@ kore_gpu_texture_format kore_vulkan_device_framebuffer_format(kore_gpu_device *d
 void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
 	if (list->vulkan.presenting) {
 		VkImageMemoryBarrier barrier = {
-		    .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		    .pNext = NULL,
+		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		    .pNext         = NULL,
 		    .srcAccessMask = 0,
 		    .dstAccessMask = 0,
-		    .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-		    .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-		    .image = framebuffers[framebuffer_index].vulkan.image,
+		    .oldLayout     = VK_IMAGE_LAYOUT_UNDEFINED,
+		    .newLayout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		    .image         = framebuffers[framebuffer_index].vulkan.image,
 		    .subresourceRange =
 		        {
-		            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-		            .baseMipLevel = 0,
-		            .levelCount = 1,
-		            .baseArrayLayer = 0,
-		            .layerCount = 1,
-		        },
+		                           .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+		                           .baseMipLevel   = 0,
+		                           .levelCount     = 1,
+		                           .baseArrayLayer = 0,
+		                           .layerCount     = 1,
+		                           },
 		    .srcAccessMask = 0,
 		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
 		};
@@ -1001,20 +1001,20 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	VkPipelineStageFlags stage_mask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
 	VkSubmitInfo submit_info = {
-	    .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-	    .pNext = NULL,
-	    .waitSemaphoreCount = 0,
-	    .pWaitSemaphores = NULL,
-	    .pWaitDstStageMask = &stage_mask,
-	    .commandBufferCount = 1,
-	    .pCommandBuffers = &list->vulkan.command_buffer,
+	    .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+	    .pNext                = NULL,
+	    .waitSemaphoreCount   = 0,
+	    .pWaitSemaphores      = NULL,
+	    .pWaitDstStageMask    = &stage_mask,
+	    .commandBufferCount   = 1,
+	    .pCommandBuffers      = &list->vulkan.command_buffer,
 	    .signalSemaphoreCount = 0,
-	    .pSignalSemaphores = NULL,
+	    .pSignalSemaphores    = NULL,
 	};
 
 	if (list->vulkan.presenting) {
 		submit_info.waitSemaphoreCount = 1;
-		submit_info.pWaitSemaphores = get_framebuffer_available_semaphore();
+		submit_info.pWaitSemaphores    = get_framebuffer_available_semaphore();
 	}
 
 	VkResult result = vkQueueSubmit(device->vulkan.queue, 1, &submit_info, list->vulkan.fence);
@@ -1022,12 +1022,12 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 	if (list->vulkan.presenting) {
 		const VkPresentInfoKHR present_info = {
-		    .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-		    .pNext = NULL,
-		    .swapchainCount = 1,
-		    .pSwapchains = &swapchain,
-		    .pImageIndices = &framebuffer_index,
-		    .pWaitSemaphores = NULL,
+		    .sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+		    .pNext              = NULL,
+		    .swapchainCount     = 1,
+		    .pSwapchains        = &swapchain,
+		    .pImageIndices      = &framebuffer_index,
+		    .pWaitSemaphores    = NULL,
 		    .waitSemaphoreCount = 0,
 		};
 
@@ -1051,9 +1051,9 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	assert(result == VK_SUCCESS);
 
 	const VkCommandBufferBeginInfo begin_info = {
-	    .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-	    .pNext = NULL,
-	    .flags = 0,
+	    .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+	    .pNext            = NULL,
+	    .flags            = 0,
 	    .pInheritanceInfo = NULL,
 	};
 
@@ -1064,11 +1064,11 @@ void kore_vulkan_device_wait_until_idle(kore_gpu_device *device) {}
 
 void kore_vulkan_device_create_descriptor_set(kore_gpu_device *device, VkDescriptorSetLayout *descriptor_set_layout, kore_vulkan_descriptor_set *set) {
 	VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
-	    .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-	    .pNext = NULL,
-	    .descriptorPool = device->vulkan.descriptor_pool,
+	    .sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+	    .pNext              = NULL,
+	    .descriptorPool     = device->vulkan.descriptor_pool,
 	    .descriptorSetCount = 1,
-	    .pSetLayouts = descriptor_set_layout,
+	    .pSetLayouts        = descriptor_set_layout,
 	};
 
 	VkResult result = vkAllocateDescriptorSets(device->vulkan.device, &descriptor_set_allocate_info, &set->descriptor_set);
@@ -1149,10 +1149,10 @@ void kore_vulkan_device_create_sampler(kore_gpu_device *device, const kore_gpu_s
 	    .minFilter = convert_filter(parameters->min_filter),
 
 	    .compareEnable = parameters->compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS,
-	    .compareOp = convert_compare_function(parameters->compare),
+	    .compareOp     = convert_compare_function(parameters->compare),
 
 	    .anisotropyEnable = parameters->max_anisotropy > 1,
-	    .maxAnisotropy = parameters->max_anisotropy,
+	    .maxAnisotropy    = parameters->max_anisotropy,
 
 	    .maxLod = parameters->lod_max_clamp,
 	    .minLod = parameters->lod_min_clamp,

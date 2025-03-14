@@ -34,8 +34,8 @@ namespace {
 	HIDGamepad::HIDGamepad() {}
 
 	void HIDGamepad::init(int index) {
-		file_descriptor = -1;
-		connected = false;
+		file_descriptor     = -1;
+		connected           = false;
 		gamepad_dev_name[0] = 0;
 		if (index >= 0 && index < 12) {
 			idx = index;
@@ -69,7 +69,7 @@ namespace {
 			kore_internal_gamepad_trigger_disconnect(idx);
 			::close(file_descriptor);
 			file_descriptor = -1;
-			connected = false;
+			connected       = false;
 		}
 	}
 

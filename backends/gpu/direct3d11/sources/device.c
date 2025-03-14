@@ -28,8 +28,8 @@ static bool isWindowsVersionOrGreater(WORD wMajorVersion, WORD wMinorVersion, WO
 	    VerSetConditionMask(VerSetConditionMask(VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL), VER_MINORVERSION, VER_GREATER_EQUAL),
 	                        VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
 
-	osvi.dwMajorVersion = wMajorVersion;
-	osvi.dwMinorVersion = wMinorVersion;
+	osvi.dwMajorVersion    = wMajorVersion;
+	osvi.dwMinorVersion    = wMinorVersion;
 	osvi.wServicePackMajor = wServicePackMajor;
 
 	return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR, dwlConditionMask) != FALSE;
@@ -95,12 +95,12 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	kore_microsoft_affirm(dxgi_device->lpVtbl->GetAdapter(dxgi_device, &dxgi_adapter));
 	kore_microsoft_affirm(dxgi_adapter->lpVtbl->GetParent(dxgi_adapter, &IID_IDXGIFactory, (void **)&dxgi_factory));
 
-	int depth_bits = 24;
+	int depth_bits   = 24;
 	int stencil_bits = 8;
-	bool vsync = true;
+	bool vsync       = true;
 
 	const int _DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL = 3;
-	const int _DXGI_SWAP_EFFECT_FLIP_DISCARD = 4;
+	const int _DXGI_SWAP_EFFECT_FLIP_DISCARD    = 4;
 
 	DXGI_SWAP_EFFECT swap_effect;
 
@@ -123,27 +123,26 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	    .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
 	    .BufferDesc =
 	        {
-	            .RefreshRate =
+	                     .RefreshRate =
 	                {
 	                    .Denominator = 1, // 60Hz
-	                    .Numerator = 60,
-	                },
-	            .Width = kore_window_width(0), // use automatic sizing
-	            .Height = kore_window_height(0),
-	            .Format = DXGI_FORMAT_B8G8R8A8_UNORM, // this is the most common swapchain format
+	                    .Numerator   = 60,
+	                }, .Width            = kore_window_width(0), // use automatic sizing
+	            .Height           = kore_window_height(0),
+	                     .Format           = DXGI_FORMAT_B8G8R8A8_UNORM, // this is the most common swapchain format
 	            .ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED,
-	            .Scaling = DXGI_MODE_SCALING_UNSPECIFIED, // DXGI_SCALING_NONE
+	                     .Scaling          = DXGI_MODE_SCALING_UNSPECIFIED, // DXGI_SCALING_NONE
 	        },
 	    // .Stereo = false,
 	    .SampleDesc =
 	        {
-	            .Count = 1,
-	            .Quality = 0,
-	        },
+	                     .Count   = 1,
+	                     .Quality = 0,
+	                     },
 	    .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
 	    .BufferCount = 2, // use two buffers to enable flip effect
-	    .SwapEffect = swap_effect,
-	    .Flags = 0,
+	    .SwapEffect  = swap_effect,
+	    .Flags       = 0,
 #ifdef KORE_WINDOWS
 	    .OutputWindow = kore_windows_window_handle(0),
 #endif
@@ -161,7 +160,7 @@ void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 
 	D3D11_TEXTURE2D_DESC backbuffer_desc;
 	framebuffer.d3d11.texture->lpVtbl->GetDesc(framebuffer.d3d11.texture, &backbuffer_desc);
-	framebuffer.d3d11.width = backbuffer_desc.Width;
+	framebuffer.d3d11.width  = backbuffer_desc.Width;
 	framebuffer.d3d11.height = backbuffer_desc.Height;
 }
 
@@ -171,11 +170,11 @@ void kore_d3d11_device_set_name(kore_gpu_device *device, const char *name) {}
 
 void kore_d3d11_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
 	D3D11_BUFFER_DESC buffer_desc = {
-	    .Usage = D3D11_USAGE_DYNAMIC,
-	    .ByteWidth = (UINT)parameters->size,
-	    .BindFlags = 0,
-	    .CPUAccessFlags = D3D11_CPU_ACCESS_WRITE,
-	    .MiscFlags = 0,
+	    .Usage               = D3D11_USAGE_DYNAMIC,
+	    .ByteWidth           = (UINT)parameters->size,
+	    .BindFlags           = 0,
+	    .CPUAccessFlags      = D3D11_CPU_ACCESS_WRITE,
+	    .MiscFlags           = 0,
 	    .StructureByteStride = 0,
 	};
 
@@ -186,9 +185,9 @@ void kore_d3d11_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 		buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	}
 	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0) {
-		buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+		buffer_desc.Usage          = D3D11_USAGE_DEFAULT;
 		buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-		buffer_desc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+		buffer_desc.BindFlags      = D3D11_BIND_UNORDERED_ACCESS;
 	}
 
 	kore_microsoft_affirm(device->d3d11.device->lpVtbl->CreateBuffer(device->d3d11.device, &buffer_desc, NULL, &buffer->d3d11.buffer));
@@ -197,7 +196,7 @@ void kore_d3d11_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 }
 
 void kore_d3d11_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
-	list->d3d11.commands = malloc(1024 * 1024);
+	list->d3d11.commands        = malloc(1024 * 1024);
 	list->d3d11.commands_offset = 0;
 }
 
@@ -231,8 +230,8 @@ void kore_d3d11_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 			set_vertex_buffer_data *data = (set_vertex_buffer_data *)&c->data;
 
 			ID3D11Buffer *buffers[1] = {data->buffer->buffer};
-			UINT strides[1] = {(UINT)data->stride};
-			UINT offsets[1] = {(UINT)data->offset};
+			UINT strides[1]          = {(UINT)data->stride};
+			UINT offsets[1]          = {(UINT)data->offset};
 
 			device->d3d11.context->lpVtbl->IASetVertexBuffers(device->d3d11.context, 0, 1, buffers, strides, offsets);
 
@@ -274,8 +273,8 @@ void kore_d3d11_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 			D3D11_VIEWPORT view_port = {
 			    .TopLeftX = 0.0f,
 			    .TopLeftY = 0.0f,
-			    .Width = (float)data->parameters.color_attachments[0].texture.texture->d3d11.width,
-			    .Height = (float)data->parameters.color_attachments[0].texture.texture->d3d11.height,
+			    .Width    = (float)data->parameters.color_attachments[0].texture.texture->d3d11.width,
+			    .Height   = (float)data->parameters.color_attachments[0].texture.texture->d3d11.height,
 			    .MinDepth = D3D11_MIN_DEPTH,
 			    .MaxDepth = D3D11_MAX_DEPTH,
 			};

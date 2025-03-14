@@ -27,14 +27,14 @@ static void drawfunc() {
 #endif
 }
 
-#define KEY_DOWN(GLFW_KEYCODE, KORE_KEY)                                                                                                                       \
-	case GLFW_KEYCODE:                                                                                                                                         \
-		kore_internal_keyboard_trigger_key_down(KORE_KEY);                                                                                                     \
+#define KEY_DOWN(GLFW_KEYCODE, KORE_KEY)                   \
+	case GLFW_KEYCODE:                                     \
+		kore_internal_keyboard_trigger_key_down(KORE_KEY); \
 		break;
 
-#define KEY_UP(GLFW_KEYCODE, KORE_KEY)                                                                                                                         \
-	case GLFW_KEYCODE:                                                                                                                                         \
-		kore_internal_keyboard_trigger_key_up(KORE_KEY);                                                                                                       \
+#define KEY_UP(GLFW_KEYCODE, KORE_KEY)                   \
+	case GLFW_KEYCODE:                                   \
+		kore_internal_keyboard_trigger_key_up(KORE_KEY); \
 		break;
 
 #ifdef KORE_OPENGL
@@ -261,7 +261,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 		kore_framebuffer_options_set_defaults(&defaultFrame);
 		frame = &defaultFrame;
 	}
-	win->width = width;
+	win->width  = width;
 	win->height = height;
 
 #ifdef KORE_OPENGL
@@ -272,7 +272,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 	glfwSetMousePosCallback(onMouseMove);
 	glfwSetMouseButtonCallback(onMouseClick);
 #endif
-	kore_internal_window_width = width;
+	kore_internal_window_width  = width;
 	kore_internal_window_height = height;
 	// kore_g4_internal_init();
 	// kore_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);

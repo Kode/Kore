@@ -2,46 +2,46 @@
 
 #include <kore3/window.h>
 
-static void (*mouse_press_callback)(int /*window*/, int /*button*/, int /*x*/, int /*y*/, void * /*data*/) = NULL;
-static void *mouse_press_callback_data = NULL;
-static void (*mouse_release_callback)(int /*window*/, int /*button*/, int /*x*/, int /*y*/, void * /*data*/) = NULL;
-static void *mouse_release_callback_data = NULL;
+static void (*mouse_press_callback)(int /*window*/, int /*button*/, int /*x*/, int /*y*/, void * /*data*/)                      = NULL;
+static void *mouse_press_callback_data                                                                                          = NULL;
+static void (*mouse_release_callback)(int /*window*/, int /*button*/, int /*x*/, int /*y*/, void * /*data*/)                    = NULL;
+static void *mouse_release_callback_data                                                                                        = NULL;
 static void (*mouse_move_callback)(int /*window*/, int /*x*/, int /*y*/, int /*movementX*/, int /*movementY*/, void * /*data*/) = NULL;
-static void *mouse_move_callback_data = NULL;
-static void (*mouse_scroll_callback)(int /*window*/, int /*delta*/, void * /*data*/) = NULL;
-static void *mouse_scroll_callback_data = NULL;
-static void (*mouse_enter_window_callback)(int /*window*/, void * /*data*/) = NULL;
-static void *mouse_enter_window_callback_data = NULL;
-static void (*mouse_leave_window_callback)(int /*window*/, void * /*data*/) = NULL;
-static void *mouse_leave_window_callback_data = NULL;
+static void *mouse_move_callback_data                                                                                           = NULL;
+static void (*mouse_scroll_callback)(int /*window*/, int /*delta*/, void * /*data*/)                                            = NULL;
+static void *mouse_scroll_callback_data                                                                                         = NULL;
+static void (*mouse_enter_window_callback)(int /*window*/, void * /*data*/)                                                     = NULL;
+static void *mouse_enter_window_callback_data                                                                                   = NULL;
+static void (*mouse_leave_window_callback)(int /*window*/, void * /*data*/)                                                     = NULL;
+static void *mouse_leave_window_callback_data                                                                                   = NULL;
 
 void kore_mouse_set_press_callback(void (*value)(int /*window*/, int /*button*/, int /*x*/, int /*y*/, void * /*data*/), void *data) {
-	mouse_press_callback = value;
+	mouse_press_callback      = value;
 	mouse_press_callback_data = data;
 }
 
 void kore_mouse_set_release_callback(void (*value)(int /*window*/, int /*button*/, int /*x*/, int /*y*/, void * /*data*/), void *data) {
-	mouse_release_callback = value;
+	mouse_release_callback      = value;
 	mouse_release_callback_data = data;
 }
 
 void kore_mouse_set_move_callback(void (*value)(int /*window*/, int /*x*/, int /*y*/, int /*movement_x*/, int /*movement_y*/, void * /*data*/), void *data) {
-	mouse_move_callback = value;
+	mouse_move_callback      = value;
 	mouse_move_callback_data = data;
 }
 
 void kore_mouse_set_scroll_callback(void (*value)(int /*window*/, int /*delta*/, void * /*data*/), void *data) {
-	mouse_scroll_callback = value;
+	mouse_scroll_callback      = value;
 	mouse_scroll_callback_data = data;
 }
 
 void kore_mouse_set_enter_window_callback(void (*value)(int /*window*/, void * /*data*/), void *data) {
-	mouse_enter_window_callback = value;
+	mouse_enter_window_callback      = value;
 	mouse_enter_window_callback_data = data;
 }
 
 void kore_mouse_set_leave_window_callback(void (*value)(int /*window*/, void * /*data*/), void *data) {
-	mouse_leave_window_callback = value;
+	mouse_leave_window_callback      = value;
 	mouse_leave_window_callback_data = data;
 }
 
@@ -81,15 +81,15 @@ void kore_internal_mouse_window_deactivated(int window) {
 }
 
 // TODO: handle state per window
-static bool moved = false;
-static bool locked = false;
+static bool moved        = false;
+static bool locked       = false;
 static int preLockWindow = 0;
-static int preLockX = 0;
-static int preLockY = 0;
-static int centerX = 0;
-static int centerY = 0;
-static int lastX = 0;
-static int lastY = 0;
+static int preLockX      = 0;
+static int preLockY      = 0;
+static int centerX       = 0;
+static int centerY       = 0;
+static int lastX         = 0;
+static int lastY         = 0;
 
 void kore_internal_mouse_trigger_press(int window, int button, int x, int y) {
 	lastX = x;
@@ -144,7 +144,7 @@ void kore_mouse_unlock(void) {
 	if (!kore_mouse_can_lock()) {
 		return;
 	}
-	moved = false;
+	moved  = false;
 	locked = false;
 	kore_internal_mouse_unlock();
 	kore_mouse_set_position(preLockWindow, preLockX, preLockY);

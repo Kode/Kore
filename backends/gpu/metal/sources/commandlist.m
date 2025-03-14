@@ -17,22 +17,22 @@ void kore_metal_command_list_destroy(kore_gpu_command_list *list) {}
 void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	id<MTLTexture> texture = (__bridge id<MTLTexture>)parameters->color_attachments[0].texture.texture->metal.texture;
 
-	MTLRenderPassDescriptor *render_pass_descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
-	render_pass_descriptor.colorAttachments[0].texture = texture;
-	render_pass_descriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
+	MTLRenderPassDescriptor *render_pass_descriptor        = [MTLRenderPassDescriptor renderPassDescriptor];
+	render_pass_descriptor.colorAttachments[0].texture     = texture;
+	render_pass_descriptor.colorAttachments[0].loadAction  = MTLLoadActionClear;
 	render_pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-	render_pass_descriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 1.0);
-	render_pass_descriptor.depthAttachment.clearDepth = 1;
-	render_pass_descriptor.depthAttachment.loadAction = MTLLoadActionClear;
-	render_pass_descriptor.depthAttachment.storeAction = MTLStoreActionStore;
-	render_pass_descriptor.depthAttachment.texture = nil; // depthTexture;
-	render_pass_descriptor.stencilAttachment.clearStencil = 0;
-	render_pass_descriptor.stencilAttachment.loadAction = MTLLoadActionDontCare;
-	render_pass_descriptor.stencilAttachment.storeAction = MTLStoreActionDontCare;
-	render_pass_descriptor.stencilAttachment.texture = nil; // depthTexture;
+	render_pass_descriptor.colorAttachments[0].clearColor  = MTLClearColorMake(0.0, 0.0, 0.0, 1.0);
+	render_pass_descriptor.depthAttachment.clearDepth      = 1;
+	render_pass_descriptor.depthAttachment.loadAction      = MTLLoadActionClear;
+	render_pass_descriptor.depthAttachment.storeAction     = MTLStoreActionStore;
+	render_pass_descriptor.depthAttachment.texture         = nil; // depthTexture;
+	render_pass_descriptor.stencilAttachment.clearStencil  = 0;
+	render_pass_descriptor.stencilAttachment.loadAction    = MTLLoadActionDontCare;
+	render_pass_descriptor.stencilAttachment.storeAction   = MTLStoreActionDontCare;
+	render_pass_descriptor.stencilAttachment.texture       = nil; // depthTexture;
 
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
-	list->metal.render_command_encoder = (__bridge_retained void *)[command_buffer renderCommandEncoderWithDescriptor:render_pass_descriptor];
+	list->metal.render_command_encoder  = (__bridge_retained void *)[command_buffer renderCommandEncoderWithDescriptor:render_pass_descriptor];
 }
 
 void kore_metal_command_list_end_render_pass(kore_gpu_command_list *list) {
@@ -44,7 +44,7 @@ void kore_metal_command_list_end_render_pass(kore_gpu_command_list *list) {
 void kore_metal_command_list_present(kore_gpu_command_list *list) {
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 
-	CAMetalLayer *metal_layer = getMetalLayer();
+	CAMetalLayer *metal_layer    = getMetalLayer();
 	id<CAMetalDrawable> drawable = [metal_layer nextDrawable];
 
 	[command_buffer presentDrawable:drawable];
@@ -52,7 +52,7 @@ void kore_metal_command_list_present(kore_gpu_command_list *list) {
 
 void kore_metal_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
                                               uint64_t size) {
-	list->metal.index_buffer = buffer->metal.buffer;
+	list->metal.index_buffer        = buffer->metal.buffer;
 	list->metal.sixteen_bit_indices = index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? true : false;
 }
 

@@ -13,9 +13,9 @@
 extern "C" {
 #endif
 
-#define KORE_HTTP_GET 0
-#define KORE_HTTP_POST 1
-#define KORE_HTTP_PUT 2
+#define KORE_HTTP_GET    0
+#define KORE_HTTP_POST   1
+#define KORE_HTTP_PUT    2
 #define KORE_HTTP_DELETE 3
 
 typedef void (*kore_http_callback)(int error, int response, const char *body, void *callbackdata);

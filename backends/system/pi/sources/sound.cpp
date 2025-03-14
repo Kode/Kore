@@ -88,7 +88,7 @@ namespace {
 		}
 
 		uint rate = 44100;
-		int dir = 0;
+		int dir   = 0;
 		if ((err = snd_pcm_hw_params_set_rate_near(playback_handle, hw_params, &rate, &dir)) < 0) {
 			fprintf(stderr, "cannot set sample rate (%s)\n", snd_strerror(err));
 			exit(1);
@@ -188,10 +188,10 @@ namespace {
 }
 
 void Audio2::init() {
-	buffer.readLocation = 0;
+	buffer.readLocation  = 0;
 	buffer.writeLocation = 0;
-	buffer.dataSize = 128 * 1024;
-	buffer.data = new u8[buffer.dataSize];
+	buffer.dataSize      = 128 * 1024;
+	buffer.data          = new u8[buffer.dataSize];
 
 	audioRunning = true;
 	pthread_create(&threadid, nullptr, &doAudio, nullptr);

@@ -41,7 +41,7 @@ __itt_domain *kore_itt_domain;
 #define Graphics Graphics3
 #endif
 
-__declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+__declspec(dllexport) unsigned long NvOptimusEnablement        = 0x00000001;
 __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 void kore_internal_resize(int window, int width, int height);
 
@@ -95,8 +95,8 @@ static void ReleaseTouchIndex(int dwID) {
 	for (int i = 0; i < MAX_TOUCH_POINTS; i++) {
 		if (touchPoints[i].sysID == dwID) {
 			touchPoints[i].sysID = -1;
-			touchPoints[i].x = -1;
-			touchPoints[i].y = -1;
+			touchPoints[i].x     = -1;
+			touchPoints[i].y     = -1;
 		}
 	}
 }
@@ -105,22 +105,22 @@ static void initKeyTranslation() {
 	for (int i = 0; i < 256; ++i)
 		keyTranslated[i] = KORE_KEY_UNKNOWN;
 
-	keyTranslated[VK_BACK] = KORE_KEY_BACKSPACE;
-	keyTranslated[VK_TAB] = KORE_KEY_TAB;
-	keyTranslated[VK_CLEAR] = KORE_KEY_CLEAR;
-	keyTranslated[VK_RETURN] = KORE_KEY_RETURN;
-	keyTranslated[VK_SHIFT] = KORE_KEY_SHIFT;
+	keyTranslated[VK_BACK]    = KORE_KEY_BACKSPACE;
+	keyTranslated[VK_TAB]     = KORE_KEY_TAB;
+	keyTranslated[VK_CLEAR]   = KORE_KEY_CLEAR;
+	keyTranslated[VK_RETURN]  = KORE_KEY_RETURN;
+	keyTranslated[VK_SHIFT]   = KORE_KEY_SHIFT;
 	keyTranslated[VK_CONTROL] = KORE_KEY_CONTROL;
-	keyTranslated[VK_MENU] = KORE_KEY_ALT;
-	keyTranslated[VK_PAUSE] = KORE_KEY_PAUSE;
+	keyTranslated[VK_MENU]    = KORE_KEY_ALT;
+	keyTranslated[VK_PAUSE]   = KORE_KEY_PAUSE;
 	keyTranslated[VK_CAPITAL] = KORE_KEY_CAPS_LOCK;
-	keyTranslated[VK_KANA] = KORE_KEY_KANA;
+	keyTranslated[VK_KANA]    = KORE_KEY_KANA;
 	// keyTranslated[VK_HANGUEL]
 	keyTranslated[VK_HANGUL] = KORE_KEY_HANGUL;
-	keyTranslated[VK_JUNJA] = KORE_KEY_JUNJA;
-	keyTranslated[VK_FINAL] = KORE_KEY_FINAL;
-	keyTranslated[VK_HANJA] = KORE_KEY_HANJA;
-	keyTranslated[VK_KANJI] = KORE_KEY_KANJI;
+	keyTranslated[VK_JUNJA]  = KORE_KEY_JUNJA;
+	keyTranslated[VK_FINAL]  = KORE_KEY_FINAL;
+	keyTranslated[VK_HANJA]  = KORE_KEY_HANJA;
+	keyTranslated[VK_KANJI]  = KORE_KEY_KANJI;
 	keyTranslated[VK_ESCAPE] = KORE_KEY_ESCAPE;
 	// keyTranslated[VK_CONVERT]
 	// keyTranslated[VK_NONCONVERT
@@ -128,105 +128,105 @@ static void initKeyTranslation() {
 	// keyTranslated[VK_MODECHANGE
 	keyTranslated[VK_SPACE] = KORE_KEY_SPACE;
 	keyTranslated[VK_PRIOR] = KORE_KEY_PAGE_UP;
-	keyTranslated[VK_NEXT] = KORE_KEY_PAGE_DOWN;
-	keyTranslated[VK_END] = KORE_KEY_END;
-	keyTranslated[VK_HOME] = KORE_KEY_HOME;
-	keyTranslated[VK_LEFT] = KORE_KEY_LEFT;
-	keyTranslated[VK_UP] = KORE_KEY_UP;
+	keyTranslated[VK_NEXT]  = KORE_KEY_PAGE_DOWN;
+	keyTranslated[VK_END]   = KORE_KEY_END;
+	keyTranslated[VK_HOME]  = KORE_KEY_HOME;
+	keyTranslated[VK_LEFT]  = KORE_KEY_LEFT;
+	keyTranslated[VK_UP]    = KORE_KEY_UP;
 	keyTranslated[VK_RIGHT] = KORE_KEY_RIGHT;
-	keyTranslated[VK_DOWN] = KORE_KEY_DOWN;
+	keyTranslated[VK_DOWN]  = KORE_KEY_DOWN;
 	// keyTranslated[VK_SELECT
 	keyTranslated[VK_PRINT] = KORE_KEY_PRINT;
 	// keyTranslated[VK_EXECUTE
 	// keyTranslated[VK_SNAPSHOT
 	keyTranslated[VK_INSERT] = KORE_KEY_INSERT;
 	keyTranslated[VK_DELETE] = KORE_KEY_DELETE;
-	keyTranslated[VK_HELP] = KORE_KEY_HELP;
-	keyTranslated[0x30] = KORE_KEY_0;
-	keyTranslated[0x31] = KORE_KEY_1;
-	keyTranslated[0x32] = KORE_KEY_2;
-	keyTranslated[0x33] = KORE_KEY_3;
-	keyTranslated[0x34] = KORE_KEY_4;
-	keyTranslated[0x35] = KORE_KEY_5;
-	keyTranslated[0x36] = KORE_KEY_6;
-	keyTranslated[0x37] = KORE_KEY_7;
-	keyTranslated[0x38] = KORE_KEY_8;
-	keyTranslated[0x39] = KORE_KEY_9;
-	keyTranslated[0x41] = KORE_KEY_A;
-	keyTranslated[0x42] = KORE_KEY_B;
-	keyTranslated[0x43] = KORE_KEY_C;
-	keyTranslated[0x44] = KORE_KEY_D;
-	keyTranslated[0x45] = KORE_KEY_E;
-	keyTranslated[0x46] = KORE_KEY_F;
-	keyTranslated[0x47] = KORE_KEY_G;
-	keyTranslated[0x48] = KORE_KEY_H;
-	keyTranslated[0x49] = KORE_KEY_I;
-	keyTranslated[0x4A] = KORE_KEY_J;
-	keyTranslated[0x4B] = KORE_KEY_K;
-	keyTranslated[0x4C] = KORE_KEY_L;
-	keyTranslated[0x4D] = KORE_KEY_M;
-	keyTranslated[0x4E] = KORE_KEY_N;
-	keyTranslated[0x4F] = KORE_KEY_O;
-	keyTranslated[0x50] = KORE_KEY_P;
-	keyTranslated[0x51] = KORE_KEY_Q;
-	keyTranslated[0x52] = KORE_KEY_R;
-	keyTranslated[0x53] = KORE_KEY_S;
-	keyTranslated[0x54] = KORE_KEY_T;
-	keyTranslated[0x55] = KORE_KEY_U;
-	keyTranslated[0x56] = KORE_KEY_V;
-	keyTranslated[0x57] = KORE_KEY_W;
-	keyTranslated[0x58] = KORE_KEY_X;
-	keyTranslated[0x59] = KORE_KEY_Y;
-	keyTranslated[0x5A] = KORE_KEY_Z;
-	keyTranslated[VK_LWIN] = KORE_KEY_WIN;
-	keyTranslated[VK_RWIN] = KORE_KEY_WIN;
-	keyTranslated[VK_APPS] = KORE_KEY_CONTEXT_MENU;
+	keyTranslated[VK_HELP]   = KORE_KEY_HELP;
+	keyTranslated[0x30]      = KORE_KEY_0;
+	keyTranslated[0x31]      = KORE_KEY_1;
+	keyTranslated[0x32]      = KORE_KEY_2;
+	keyTranslated[0x33]      = KORE_KEY_3;
+	keyTranslated[0x34]      = KORE_KEY_4;
+	keyTranslated[0x35]      = KORE_KEY_5;
+	keyTranslated[0x36]      = KORE_KEY_6;
+	keyTranslated[0x37]      = KORE_KEY_7;
+	keyTranslated[0x38]      = KORE_KEY_8;
+	keyTranslated[0x39]      = KORE_KEY_9;
+	keyTranslated[0x41]      = KORE_KEY_A;
+	keyTranslated[0x42]      = KORE_KEY_B;
+	keyTranslated[0x43]      = KORE_KEY_C;
+	keyTranslated[0x44]      = KORE_KEY_D;
+	keyTranslated[0x45]      = KORE_KEY_E;
+	keyTranslated[0x46]      = KORE_KEY_F;
+	keyTranslated[0x47]      = KORE_KEY_G;
+	keyTranslated[0x48]      = KORE_KEY_H;
+	keyTranslated[0x49]      = KORE_KEY_I;
+	keyTranslated[0x4A]      = KORE_KEY_J;
+	keyTranslated[0x4B]      = KORE_KEY_K;
+	keyTranslated[0x4C]      = KORE_KEY_L;
+	keyTranslated[0x4D]      = KORE_KEY_M;
+	keyTranslated[0x4E]      = KORE_KEY_N;
+	keyTranslated[0x4F]      = KORE_KEY_O;
+	keyTranslated[0x50]      = KORE_KEY_P;
+	keyTranslated[0x51]      = KORE_KEY_Q;
+	keyTranslated[0x52]      = KORE_KEY_R;
+	keyTranslated[0x53]      = KORE_KEY_S;
+	keyTranslated[0x54]      = KORE_KEY_T;
+	keyTranslated[0x55]      = KORE_KEY_U;
+	keyTranslated[0x56]      = KORE_KEY_V;
+	keyTranslated[0x57]      = KORE_KEY_W;
+	keyTranslated[0x58]      = KORE_KEY_X;
+	keyTranslated[0x59]      = KORE_KEY_Y;
+	keyTranslated[0x5A]      = KORE_KEY_Z;
+	keyTranslated[VK_LWIN]   = KORE_KEY_WIN;
+	keyTranslated[VK_RWIN]   = KORE_KEY_WIN;
+	keyTranslated[VK_APPS]   = KORE_KEY_CONTEXT_MENU;
 	// keyTranslated[VK_SLEEP
-	keyTranslated[VK_NUMPAD0] = KORE_KEY_NUMPAD_0;
-	keyTranslated[VK_NUMPAD1] = KORE_KEY_NUMPAD_1;
-	keyTranslated[VK_NUMPAD2] = KORE_KEY_NUMPAD_2;
-	keyTranslated[VK_NUMPAD3] = KORE_KEY_NUMPAD_3;
-	keyTranslated[VK_NUMPAD4] = KORE_KEY_NUMPAD_4;
-	keyTranslated[VK_NUMPAD5] = KORE_KEY_NUMPAD_5;
-	keyTranslated[VK_NUMPAD6] = KORE_KEY_NUMPAD_6;
-	keyTranslated[VK_NUMPAD7] = KORE_KEY_NUMPAD_7;
-	keyTranslated[VK_NUMPAD8] = KORE_KEY_NUMPAD_8;
-	keyTranslated[VK_NUMPAD9] = KORE_KEY_NUMPAD_9;
+	keyTranslated[VK_NUMPAD0]  = KORE_KEY_NUMPAD_0;
+	keyTranslated[VK_NUMPAD1]  = KORE_KEY_NUMPAD_1;
+	keyTranslated[VK_NUMPAD2]  = KORE_KEY_NUMPAD_2;
+	keyTranslated[VK_NUMPAD3]  = KORE_KEY_NUMPAD_3;
+	keyTranslated[VK_NUMPAD4]  = KORE_KEY_NUMPAD_4;
+	keyTranslated[VK_NUMPAD5]  = KORE_KEY_NUMPAD_5;
+	keyTranslated[VK_NUMPAD6]  = KORE_KEY_NUMPAD_6;
+	keyTranslated[VK_NUMPAD7]  = KORE_KEY_NUMPAD_7;
+	keyTranslated[VK_NUMPAD8]  = KORE_KEY_NUMPAD_8;
+	keyTranslated[VK_NUMPAD9]  = KORE_KEY_NUMPAD_9;
 	keyTranslated[VK_MULTIPLY] = KORE_KEY_MULTIPLY;
-	keyTranslated[VK_ADD] = KORE_KEY_ADD;
+	keyTranslated[VK_ADD]      = KORE_KEY_ADD;
 	// keyTranslated[VK_SEPARATOR
 	keyTranslated[VK_SUBTRACT] = KORE_KEY_SUBTRACT;
-	keyTranslated[VK_DECIMAL] = KORE_KEY_DECIMAL;
-	keyTranslated[VK_DIVIDE] = KORE_KEY_DIVIDE;
-	keyTranslated[VK_F1] = KORE_KEY_F1;
-	keyTranslated[VK_F2] = KORE_KEY_F2;
-	keyTranslated[VK_F3] = KORE_KEY_F3;
-	keyTranslated[VK_F4] = KORE_KEY_F4;
-	keyTranslated[VK_F5] = KORE_KEY_F5;
-	keyTranslated[VK_F6] = KORE_KEY_F6;
-	keyTranslated[VK_F7] = KORE_KEY_F7;
-	keyTranslated[VK_F8] = KORE_KEY_F8;
-	keyTranslated[VK_F9] = KORE_KEY_F9;
-	keyTranslated[VK_F10] = KORE_KEY_F10;
-	keyTranslated[VK_F11] = KORE_KEY_F11;
-	keyTranslated[VK_F12] = KORE_KEY_F12;
-	keyTranslated[VK_F13] = KORE_KEY_F13;
-	keyTranslated[VK_F14] = KORE_KEY_F14;
-	keyTranslated[VK_F15] = KORE_KEY_F15;
-	keyTranslated[VK_F16] = KORE_KEY_F16;
-	keyTranslated[VK_F17] = KORE_KEY_F17;
-	keyTranslated[VK_F18] = KORE_KEY_F18;
-	keyTranslated[VK_F19] = KORE_KEY_F19;
-	keyTranslated[VK_F20] = KORE_KEY_F20;
-	keyTranslated[VK_F21] = KORE_KEY_F21;
-	keyTranslated[VK_F22] = KORE_KEY_F22;
-	keyTranslated[VK_F23] = KORE_KEY_F23;
-	keyTranslated[VK_F24] = KORE_KEY_F24;
-	keyTranslated[VK_NUMLOCK] = KORE_KEY_NUM_LOCK;
-	keyTranslated[VK_SCROLL] = KORE_KEY_SCROLL_LOCK;
+	keyTranslated[VK_DECIMAL]  = KORE_KEY_DECIMAL;
+	keyTranslated[VK_DIVIDE]   = KORE_KEY_DIVIDE;
+	keyTranslated[VK_F1]       = KORE_KEY_F1;
+	keyTranslated[VK_F2]       = KORE_KEY_F2;
+	keyTranslated[VK_F3]       = KORE_KEY_F3;
+	keyTranslated[VK_F4]       = KORE_KEY_F4;
+	keyTranslated[VK_F5]       = KORE_KEY_F5;
+	keyTranslated[VK_F6]       = KORE_KEY_F6;
+	keyTranslated[VK_F7]       = KORE_KEY_F7;
+	keyTranslated[VK_F8]       = KORE_KEY_F8;
+	keyTranslated[VK_F9]       = KORE_KEY_F9;
+	keyTranslated[VK_F10]      = KORE_KEY_F10;
+	keyTranslated[VK_F11]      = KORE_KEY_F11;
+	keyTranslated[VK_F12]      = KORE_KEY_F12;
+	keyTranslated[VK_F13]      = KORE_KEY_F13;
+	keyTranslated[VK_F14]      = KORE_KEY_F14;
+	keyTranslated[VK_F15]      = KORE_KEY_F15;
+	keyTranslated[VK_F16]      = KORE_KEY_F16;
+	keyTranslated[VK_F17]      = KORE_KEY_F17;
+	keyTranslated[VK_F18]      = KORE_KEY_F18;
+	keyTranslated[VK_F19]      = KORE_KEY_F19;
+	keyTranslated[VK_F20]      = KORE_KEY_F20;
+	keyTranslated[VK_F21]      = KORE_KEY_F21;
+	keyTranslated[VK_F22]      = KORE_KEY_F22;
+	keyTranslated[VK_F23]      = KORE_KEY_F23;
+	keyTranslated[VK_F24]      = KORE_KEY_F24;
+	keyTranslated[VK_NUMLOCK]  = KORE_KEY_NUM_LOCK;
+	keyTranslated[VK_SCROLL]   = KORE_KEY_SCROLL_LOCK;
 	// 0x92-96 //OEM specific
-	keyTranslated[VK_LSHIFT] = KORE_KEY_SHIFT;
-	keyTranslated[VK_RSHIFT] = KORE_KEY_SHIFT;
+	keyTranslated[VK_LSHIFT]   = KORE_KEY_SHIFT;
+	keyTranslated[VK_RSHIFT]   = KORE_KEY_SHIFT;
 	keyTranslated[VK_LCONTROL] = KORE_KEY_CONTROL;
 	keyTranslated[VK_RCONTROL] = KORE_KEY_CONTROL;
 	// keyTranslated[VK_LMENU
@@ -249,12 +249,12 @@ static void initKeyTranslation() {
 	// keyTranslated[VK_LAUNCH_MEDIA_SELECT
 	// keyTranslated[VK_LAUNCH_APP1
 	// keyTranslated[VK_LAUNCH_APP2
-	keyTranslated[VK_OEM_1] = KORE_KEY_SEMICOLON; // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ';:' key
-	keyTranslated[VK_OEM_PLUS] = KORE_KEY_PLUS;
-	keyTranslated[VK_OEM_COMMA] = KORE_KEY_COMMA;
-	keyTranslated[VK_OEM_MINUS] = KORE_KEY_HYPHEN_MINUS;
+	keyTranslated[VK_OEM_1]      = KORE_KEY_SEMICOLON; // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ';:' key
+	keyTranslated[VK_OEM_PLUS]   = KORE_KEY_PLUS;
+	keyTranslated[VK_OEM_COMMA]  = KORE_KEY_COMMA;
+	keyTranslated[VK_OEM_MINUS]  = KORE_KEY_HYPHEN_MINUS;
 	keyTranslated[VK_OEM_PERIOD] = KORE_KEY_PERIOD;
-	keyTranslated[VK_OEM_2] = KORE_KEY_SLASH;         // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '/?' key
+	keyTranslated[VK_OEM_2]      = KORE_KEY_SLASH;    // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '/?' key
 	keyTranslated[VK_OEM_3] = KORE_KEY_BACK_QUOTE;    // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '`~' key
 	keyTranslated[VK_OEM_4] = KORE_KEY_OPEN_BRACKET;  // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '[{' key
 	keyTranslated[VK_OEM_5] = KORE_KEY_BACK_SLASH;    // Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '\|' key
@@ -279,8 +279,8 @@ static void initKeyTranslation() {
 }
 
 static bool detectGamepad = true;
-static bool gamepadFound = false;
-static unsigned r = 0;
+static bool gamepadFound  = false;
+static unsigned r         = 0;
 
 static wchar_t toUnicode(WPARAM wParam, LPARAM lParam) {
 	wchar_t buffer[11];
@@ -295,7 +295,7 @@ static wchar_t toUnicode(WPARAM wParam, LPARAM lParam) {
 #endif
 
 static bool cursors_initialized = false;
-static int cursor = 0;
+static int cursor               = 0;
 #define NUM_CURSORS 14
 static HCURSOR cursors[NUM_CURSORS];
 
@@ -311,14 +311,14 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 	DWORD pointerId;
 	POINTER_INFO pointerInfo = {0};
 	POINTER_PEN_INFO penInfo = {0};
-	static bool controlDown = false;
+	static bool controlDown  = false;
 #ifdef HANDLE_ALT_ENTER
 	static bool altDown = false;
 #endif
-	static int last_window_width = -1;
+	static int last_window_width  = -1;
 	static int last_window_height = -1;
-	static int last_window_x = INT_MIN;
-	static int last_window_y = INT_MIN;
+	static int last_window_x      = INT_MIN;
+	static int last_window_y      = INT_MIN;
 
 	switch (msg) {
 	case WM_NCCREATE:
@@ -341,7 +341,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 	case WM_SIZE: {
 		int window = kore_windows_window_index_from_hwnd(hWnd);
 		if (window >= 0) {
-			int width = LOWORD(lParam);
+			int width  = LOWORD(lParam);
 			int height = HIWORD(lParam);
 			// kore_internal_resize(window, width, height); // TODO
 			kore_internal_call_resize_callback(window, width, height);
@@ -395,20 +395,20 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		kore_internal_mouse_trigger_move(windowId, mouseX, mouseY);
 		break;
 	case WM_CREATE:
-		cursors[0] = LoadCursor(0, IDC_ARROW);
-		cursors[1] = LoadCursor(0, IDC_HAND);
-		cursors[2] = LoadCursor(0, IDC_IBEAM);
-		cursors[3] = LoadCursor(0, IDC_SIZEWE);
-		cursors[4] = LoadCursor(0, IDC_SIZENS);
-		cursors[5] = LoadCursor(0, IDC_SIZENESW);
-		cursors[6] = LoadCursor(0, IDC_SIZENWSE);
-		cursors[7] = LoadCursor(0, IDC_SIZENWSE);
-		cursors[8] = LoadCursor(0, IDC_SIZENESW);
-		cursors[9] = LoadCursor(0, IDC_SIZEALL);
-		cursors[10] = LoadCursor(0, IDC_SIZEALL);
-		cursors[11] = LoadCursor(0, IDC_NO);
-		cursors[12] = LoadCursor(0, IDC_WAIT);
-		cursors[13] = LoadCursor(0, IDC_CROSS);
+		cursors[0]          = LoadCursor(0, IDC_ARROW);
+		cursors[1]          = LoadCursor(0, IDC_HAND);
+		cursors[2]          = LoadCursor(0, IDC_IBEAM);
+		cursors[3]          = LoadCursor(0, IDC_SIZEWE);
+		cursors[4]          = LoadCursor(0, IDC_SIZENS);
+		cursors[5]          = LoadCursor(0, IDC_SIZENESW);
+		cursors[6]          = LoadCursor(0, IDC_SIZENWSE);
+		cursors[7]          = LoadCursor(0, IDC_SIZENWSE);
+		cursors[8]          = LoadCursor(0, IDC_SIZENESW);
+		cursors[9]          = LoadCursor(0, IDC_SIZEALL);
+		cursors[10]         = LoadCursor(0, IDC_SIZEALL);
+		cursors[11]         = LoadCursor(0, IDC_NO);
+		cursors[12]         = LoadCursor(0, IDC_WAIT);
+		cursors[13]         = LoadCursor(0, IDC_CROSS);
 		cursors_initialized = true;
 		if (cursor != 0) {
 			SetCursor(cursors[cursor]);
@@ -498,8 +498,8 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		}
 		break;
 	case WM_TOUCH: {
-		BOOL bHandled = FALSE;
-		UINT cInputs = LOWORD(wParam);
+		BOOL bHandled       = FALSE;
+		UINT cInputs        = LOWORD(wParam);
 		PTOUCHINPUT pInputs = _alloca(cInputs * sizeof(TOUCHINPUT));
 		POINT ptInput;
 		int tindex;
@@ -519,7 +519,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 						}
 						else {
 							bool touchExisits = GetTouchIndex(ti.dwID) != -1;
-							tindex = GetAddTouchIndex(ti.dwID);
+							tindex            = GetAddTouchIndex(ti.dwID);
 							if (tindex >= 0) {
 								if (touchExisits) {
 									if (touchPoints[tindex].x != ptInput.x || touchPoints[tindex].y != ptInput.y) {
@@ -571,9 +571,9 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 						MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 4096);
 						OpenClipboard(hWnd);
 						EmptyClipboard();
-						size_t size = (wcslen(wtext) + 1) * sizeof(wchar_t);
+						size_t size   = (wcslen(wtext) + 1) * sizeof(wchar_t);
 						HANDLE handle = GlobalAlloc(GMEM_MOVEABLE, size);
-						void *data = GlobalLock(handle);
+						void *data    = GlobalLock(handle);
 						memcpy(data, wtext, size);
 						GlobalUnlock(handle);
 						SetClipboardData(CF_UNICODETEXT, handle);
@@ -588,9 +588,9 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 						MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 4096);
 						OpenClipboard(hWnd);
 						EmptyClipboard();
-						size_t size = (wcslen(wtext) + 1) * sizeof(wchar_t);
+						size_t size   = (wcslen(wtext) + 1) * sizeof(wchar_t);
 						HANDLE handle = GlobalAlloc(GMEM_MOVEABLE, size);
-						void *data = GlobalLock(handle);
+						void *data    = GlobalLock(handle);
 						memcpy(data, wtext, size);
 						GlobalUnlock(handle);
 						SetClipboardData(CF_UNICODETEXT, handle);
@@ -618,10 +618,10 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 #ifdef HANDLE_ALT_ENTER
 				if (altDown && keyTranslated[wParam] == KORE_KEY_RETURN) {
 					if (kore_window_get_mode(0) == KORE_WINDOW_MODE_WINDOW) {
-						last_window_width = kore_window_width(0);
+						last_window_width  = kore_window_width(0);
 						last_window_height = kore_window_height(0);
-						last_window_x = kore_window_x(0);
-						last_window_y = kore_window_y(0);
+						last_window_x      = kore_window_x(0);
+						last_window_y      = kore_window_y(0);
 						kore_window_change_mode(0, KORE_WINDOW_MODE_FULLSCREEN);
 					}
 					else {
@@ -690,7 +690,7 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		detectGamepad = true;
 		break;
 	case WM_DROPFILES: {
-		HDROP hDrop = (HDROP)wParam;
+		HDROP hDrop    = (HDROP)wParam;
 		unsigned count = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
 		for (unsigned i = 0; i < count; ++i) {
 			wchar_t filePath[260];
@@ -744,10 +744,10 @@ static void cleanupPad(int padIndex) {
 }
 
 #ifndef SAFE_RELEASE
-#define SAFE_RELEASE(x)                                                                                                                                        \
-	if (x != NULL) {                                                                                                                                           \
-		x->lpVtbl->Release(x);                                                                                                                                 \
-		x = NULL;                                                                                                                                              \
+#define SAFE_RELEASE(x)        \
+	if (x != NULL) {           \
+		x->lpVtbl->Release(x); \
+		x = NULL;              \
 	}
 #endif
 
@@ -758,21 +758,21 @@ static void cleanupPad(int padIndex) {
 // Unfortunately this information can not be found by just using DirectInput
 //-----------------------------------------------------------------------------
 static BOOL IsXInputDevice(const GUID *pGuidProductFromDirectInput) {
-	IWbemLocator *pIWbemLocator = NULL;
+	IWbemLocator *pIWbemLocator        = NULL;
 	IEnumWbemClassObject *pEnumDevices = NULL;
-	IWbemClassObject *pDevices[20] = {0};
-	IWbemServices *pIWbemServices = NULL;
-	BSTR bstrNamespace = NULL;
-	BSTR bstrDeviceID = NULL;
-	BSTR bstrClassName = NULL;
-	DWORD uReturned = 0;
-	bool bIsXinputDevice = false;
-	UINT iDevice = 0;
+	IWbemClassObject *pDevices[20]     = {0};
+	IWbemServices *pIWbemServices      = NULL;
+	BSTR bstrNamespace                 = NULL;
+	BSTR bstrDeviceID                  = NULL;
+	BSTR bstrClassName                 = NULL;
+	DWORD uReturned                    = 0;
+	bool bIsXinputDevice               = false;
+	UINT iDevice                       = 0;
 	VARIANT var;
 	HRESULT hr;
 
 	// CoInit if needed
-	hr = CoInitialize(NULL);
+	hr               = CoInitialize(NULL);
 	bool bCleanupCOM = SUCCEEDED(hr);
 
 	// Create WMI
@@ -880,12 +880,12 @@ static BOOL CALLBACK enumerateJoystickAxesCallback(LPCDIDEVICEOBJECTINSTANCEW dd
 	HWND hwnd = (HWND)context;
 
 	DIPROPRANGE propertyRange;
-	propertyRange.diph.dwSize = sizeof(DIPROPRANGE);
+	propertyRange.diph.dwSize       = sizeof(DIPROPRANGE);
 	propertyRange.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-	propertyRange.diph.dwHow = DIPH_BYID;
-	propertyRange.diph.dwObj = ddoi->dwType;
-	propertyRange.lMin = -32768;
-	propertyRange.lMax = 32768;
+	propertyRange.diph.dwHow        = DIPH_BYID;
+	propertyRange.diph.dwObj        = ddoi->dwType;
+	propertyRange.lMin              = -32768;
+	propertyRange.lMax              = 32768;
 
 	HRESULT hr = di_pads[padCount]->lpVtbl->SetProperty(di_pads[padCount], DIPROP_RANGE, &propertyRange.diph);
 
@@ -917,7 +917,7 @@ static BOOL CALLBACK enumerateJoysticksCallback(LPCDIDEVICEINSTANCEW ddi, LPVOID
 
 		if (SUCCEEDED(hr)) {
 			di_deviceCaps[padCount].dwSize = sizeof(DIDEVCAPS);
-			hr = di_pads[padCount]->lpVtbl->GetCapabilities(di_pads[padCount], &di_deviceCaps[padCount]);
+			hr                             = di_pads[padCount]->lpVtbl->GetCapabilities(di_pads[padCount], &di_deviceCaps[padCount]);
 
 			if (SUCCEEDED(hr)) {
 				hr = di_pads[padCount]->lpVtbl->EnumObjects(di_pads[padCount], enumerateJoystickAxesCallback, NULL, DIDFT_AXIS);
@@ -1002,20 +1002,20 @@ bool handleDirectInputPad(int padIndex) {
 	case S_OK: {
 		// TODO (DK) there is a lot more to handle
 		for (int axisIndex = 0; axisIndex < 2; ++axisIndex) {
-			LONG *now = NULL;
+			LONG *now  = NULL;
 			LONG *last = NULL;
 
 			switch (axisIndex) {
 			case 0: {
-				now = &di_padState[padIndex].lX;
+				now  = &di_padState[padIndex].lX;
 				last = &di_lastPadState[padIndex].lX;
 			} break;
 			case 1: {
-				now = &di_padState[padIndex].lY;
+				now  = &di_padState[padIndex].lY;
 				last = &di_lastPadState[padIndex].lY;
 			} break;
 			case 2: {
-				now = &di_padState[padIndex].lZ;
+				now  = &di_padState[padIndex].lZ;
 				last = &di_lastPadState[padIndex].lZ;
 			} break;
 			}
@@ -1026,7 +1026,7 @@ bool handleDirectInputPad(int padIndex) {
 		}
 
 		for (int buttonIndex = 0; buttonIndex < 128; ++buttonIndex) {
-			BYTE *now = &di_padState[padIndex].rgbButtons[buttonIndex];
+			BYTE *now  = &di_padState[padIndex].rgbButtons[buttonIndex];
 			BYTE *last = &di_lastPadState[padIndex].rgbButtons[buttonIndex];
 
 			if (*now != *last) {
@@ -1035,17 +1035,17 @@ bool handleDirectInputPad(int padIndex) {
 		}
 
 		for (int povIndex = 0; povIndex < 4; ++povIndex) {
-			DWORD *now = &di_padState[padIndex].rgdwPOV[povIndex];
+			DWORD *now  = &di_padState[padIndex].rgdwPOV[povIndex];
 			DWORD *last = &di_lastPadState[padIndex].rgdwPOV[povIndex];
 
-			bool up = (*now == 0 || *now == 31500 || *now == 4500);
-			bool down = (*now == 18000 || *now == 13500 || *now == 22500);
-			bool left = (*now == 27000 || *now == 22500 || *now == 31500);
+			bool up    = (*now == 0 || *now == 31500 || *now == 4500);
+			bool down  = (*now == 18000 || *now == 13500 || *now == 22500);
+			bool left  = (*now == 27000 || *now == 22500 || *now == 31500);
 			bool right = (*now == 9000 || *now == 4500 || *now == 13500);
 
-			bool lastUp = (*last == 0 || *last == 31500 || *last == 4500);
-			bool lastDown = (*last == 18000 || *last == 13500 || *last == 22500);
-			bool lastLeft = (*last == 27000 || *last == 22500 || *last == 31500);
+			bool lastUp    = (*last == 0 || *last == 31500 || *last == 4500);
+			bool lastDown  = (*last == 18000 || *last == 13500 || *last == 22500);
+			bool lastLeft  = (*last == 27000 || *last == 22500 || *last == 31500);
 			bool lastRight = (*last == 9000 || *last == 4500 || *last == 13500);
 
 			if (up != lastUp) {
@@ -1144,16 +1144,16 @@ bool kore_internal_handle_messages() {
 					}
 				}
 				float newbuttons[16];
-				newbuttons[0] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_A) ? 1.0f : 0.0f;
-				newbuttons[1] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_B) ? 1.0f : 0.0f;
-				newbuttons[2] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_X) ? 1.0f : 0.0f;
-				newbuttons[3] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_Y) ? 1.0f : 0.0f;
-				newbuttons[4] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) ? 1.0f : 0.0f;
-				newbuttons[5] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) ? 1.0f : 0.0f;
-				newbuttons[6] = state.Gamepad.bLeftTrigger / 255.0f;
-				newbuttons[7] = state.Gamepad.bRightTrigger / 255.0f;
-				newbuttons[8] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_BACK) ? 1.0f : 0.0f;
-				newbuttons[9] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_START) ? 1.0f : 0.0f;
+				newbuttons[0]  = (state.Gamepad.wButtons & XINPUT_GAMEPAD_A) ? 1.0f : 0.0f;
+				newbuttons[1]  = (state.Gamepad.wButtons & XINPUT_GAMEPAD_B) ? 1.0f : 0.0f;
+				newbuttons[2]  = (state.Gamepad.wButtons & XINPUT_GAMEPAD_X) ? 1.0f : 0.0f;
+				newbuttons[3]  = (state.Gamepad.wButtons & XINPUT_GAMEPAD_Y) ? 1.0f : 0.0f;
+				newbuttons[4]  = (state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) ? 1.0f : 0.0f;
+				newbuttons[5]  = (state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) ? 1.0f : 0.0f;
+				newbuttons[6]  = state.Gamepad.bLeftTrigger / 255.0f;
+				newbuttons[7]  = state.Gamepad.bRightTrigger / 255.0f;
+				newbuttons[8]  = (state.Gamepad.wButtons & XINPUT_GAMEPAD_BACK) ? 1.0f : 0.0f;
+				newbuttons[9]  = (state.Gamepad.wButtons & XINPUT_GAMEPAD_START) ? 1.0f : 0.0f;
 				newbuttons[10] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB) ? 1.0f : 0.0f;
 				newbuttons[11] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB) ? 1.0f : 0.0f;
 				newbuttons[12] = (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) ? 1.0f : 0.0f;
@@ -1183,7 +1183,7 @@ bool kore_internal_handle_messages() {
 //**}
 
 static bool keyboardshown = false;
-static char language[3] = {0};
+static char language[3]   = {0};
 
 void kore_keyboard_show() {
 	keyboardshown = true;
@@ -1199,8 +1199,8 @@ bool kore_keyboard_active() {
 
 void kore_load_url(const char *url) {
 #define WURL_SIZE 1024
-#define HTTP "http://"
-#define HTTPS "https://"
+#define HTTP      "http://"
+#define HTTPS     "https://"
 	if (strncmp(url, HTTP, sizeof(HTTP) - 1) == 0 || strncmp(url, HTTPS, sizeof(HTTPS) - 1) == 0) {
 		wchar_t wurl[WURL_SIZE];
 		MultiByteToWideChar(CP_UTF8, 0, url, -1, wurl, WURL_SIZE);
@@ -1242,7 +1242,7 @@ void kore_windows_co_initialize(void) {
 }
 
 static wchar_t savePathw[2048] = {0};
-static char savePath[2048] = {0};
+static char savePath[2048]     = {0};
 
 static void findSavePath() {
 	kore_windows_co_initialize();
@@ -1296,7 +1296,7 @@ void kore_gamepad_rumble(int gamepad, float left, float right) {
 	if (isXInputGamepad(gamepad)) {
 		XINPUT_VIBRATION vibration;
 		memset(&vibration, 0, sizeof(XINPUT_VIBRATION));
-		vibration.wLeftMotorSpeed = (WORD)(65535.f * left);
+		vibration.wLeftMotorSpeed  = (WORD)(65535.f * left);
 		vibration.wRightMotorSpeed = (WORD)(65535.f * right);
 		InputSetState(gamepad, &vibration);
 	}
@@ -1343,9 +1343,9 @@ static LONG __stdcall MyCrashHandlerExceptionFilter(EXCEPTION_POINTERS *pEx) {
 	HANDLE file = CreateFileA("kore.dmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (file != INVALID_HANDLE_VALUE) {
 		MINIDUMP_EXCEPTION_INFORMATION stMDEI;
-		stMDEI.ThreadId = GetCurrentThreadId();
+		stMDEI.ThreadId          = GetCurrentThreadId();
 		stMDEI.ExceptionPointers = pEx;
-		stMDEI.ClientPointers = TRUE;
+		stMDEI.ClientPointers    = TRUE;
 		MyMiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file, MiniDumpNormal, &stMDEI, NULL, NULL);
 		CloseHandle(file);
 	}
@@ -1368,9 +1368,9 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 #endif
 
 	// Pen functions are only in Windows 8 and later, so load them dynamically
-	HMODULE user32 = LoadLibraryA("user32.dll");
-	MyGetPointerInfo = (GetPointerInfoType)GetProcAddress(user32, "GetPointerInfo");
-	MyGetPointerPenInfo = (GetPointerPenInfoType)GetProcAddress(user32, "GetPointerPenInfo");
+	HMODULE user32              = LoadLibraryA("user32.dll");
+	MyGetPointerInfo            = (GetPointerInfoType)GetProcAddress(user32, "GetPointerInfo");
+	MyGetPointerPenInfo         = (GetPointerPenInfoType)GetProcAddress(user32, "GetPointerPenInfo");
 	MyEnableNonClientDpiScaling = (EnableNonClientDpiScalingType)GetProcAddress(user32, "EnableNonClientDpiScaling");
 	initKeyTranslation();
 	for (int i = 0; i < 256; ++i) {
@@ -1379,8 +1379,8 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 
 	for (int i = 0; i < MAX_TOUCH_POINTS; i++) {
 		touchPoints[i].sysID = -1;
-		touchPoints[i].x = -1;
-		touchPoints[i].y = -1;
+		touchPoints[i].x     = -1;
+		touchPoints[i].y     = -1;
 	}
 
 	kore_display_init();
@@ -1398,7 +1398,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 		kore_window_options_set_defaults(&defaultWin);
 		win = &defaultWin;
 	}
-	win->width = width;
+	win->width  = width;
 	win->height = height;
 	if (win->title == NULL) {
 		win->title = name;
@@ -1426,9 +1426,9 @@ void kore_copy_to_clipboard(const char *text) {
 	MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 4096);
 	OpenClipboard(kore_windows_window_handle(0));
 	EmptyClipboard();
-	size_t size = (wcslen(wtext) + 1) * sizeof(wchar_t);
+	size_t size   = (wcslen(wtext) + 1) * sizeof(wchar_t);
 	HANDLE handle = GlobalAlloc(GMEM_MOVEABLE, size);
-	void *data = GlobalLock(handle);
+	void *data    = GlobalLock(handle);
 	memcpy(data, wtext, size);
 	GlobalUnlock(handle);
 	SetClipboardData(CF_UNICODETEXT, handle);
@@ -1438,12 +1438,12 @@ void kore_copy_to_clipboard(const char *text) {
 int kore_cpu_cores(void) {
 	SYSTEM_LOGICAL_PROCESSOR_INFORMATION info[1024];
 	DWORD returnLength = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) * 1024;
-	BOOL success = GetLogicalProcessorInformation(&info[0], &returnLength);
+	BOOL success       = GetLogicalProcessorInformation(&info[0], &returnLength);
 
 	int proper_cpu_count = 0;
 
 	if (success) {
-		DWORD byteOffset = 0;
+		DWORD byteOffset                          = 0;
 		PSYSTEM_LOGICAL_PROCESSOR_INFORMATION ptr = &info[0];
 		while (byteOffset + sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) <= returnLength) {
 			if (ptr->Relationship == RelationProcessorCore) {

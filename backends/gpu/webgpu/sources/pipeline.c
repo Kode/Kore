@@ -72,29 +72,29 @@ static WGPUVertexFormat convert_vertex_format(kore_webgpu_vertex_format format) 
 
 void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters) {
 	WGPUColorTargetState color_target_state = {
-	    .format = WGPUTextureFormat_BGRA8Unorm,
+	    .format    = WGPUTextureFormat_BGRA8Unorm,
 	    .writeMask = WGPUColorWriteMask_All,
 	};
 
 	WGPUBlendState blend_state = {
 	    .color =
 	        {
-	            .operation = WGPUBlendOperation_Add,
-	            .srcFactor = WGPUBlendFactor_One,
-	            .dstFactor = WGPUBlendFactor_Zero,
-	        },
+	                .operation = WGPUBlendOperation_Add,
+	                .srcFactor = WGPUBlendFactor_One,
+	                .dstFactor = WGPUBlendFactor_Zero,
+	                },
 	    .alpha =
 	        {
-	            .operation = WGPUBlendOperation_Add,
-	            .srcFactor = WGPUBlendFactor_One,
-	            .dstFactor = WGPUBlendFactor_Zero,
-	        },
+	                .operation = WGPUBlendOperation_Add,
+	                .srcFactor = WGPUBlendFactor_One,
+	                .dstFactor = WGPUBlendFactor_Zero,
+	                },
 	};
 	color_target_state.blend = &blend_state;
 
 	WGPUPipelineLayoutDescriptor pipeline_layout_descriptor = {
 	    .bindGroupLayoutCount = 0,
-	    .bindGroupLayouts = NULL,
+	    .bindGroupLayouts     = NULL,
 	};
 
 	WGPUVertexAttribute attributes[8];
@@ -102,52 +102,52 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 		for (size_t attribute_index = 0; attribute_index < parameters->vertex.buffers[buffer_index].attributes_count; ++attribute_index) {
 			WGPUVertexAttribute attribute = {
 			    .shaderLocation = parameters->vertex.buffers[buffer_index].attributes[attribute_index].shader_location,
-			    .offset = parameters->vertex.buffers[buffer_index].attributes[attribute_index].offset,
-			    .format = convert_vertex_format(parameters->vertex.buffers[buffer_index].attributes[attribute_index].format),
+			    .offset         = parameters->vertex.buffers[buffer_index].attributes[attribute_index].offset,
+			    .format         = convert_vertex_format(parameters->vertex.buffers[buffer_index].attributes[attribute_index].format),
 			};
 			attributes[attribute_index] = attribute;
 		}
 	}
 
 	WGPUVertexBufferLayout vertex_buffer_layout = {
-	    .arrayStride = parameters->vertex.buffers[0].array_stride,
+	    .arrayStride    = parameters->vertex.buffers[0].array_stride,
 	    .attributeCount = parameters->vertex.buffers[0].attributes_count,
-	    .attributes = &attributes[0],
+	    .attributes     = &attributes[0],
 	};
 
 	WGPUVertexState vertex_state = {
-	    .module = device->shader_module,
-	    .entryPoint = parameters->vertex.shader.function_name,
+	    .module      = device->shader_module,
+	    .entryPoint  = parameters->vertex.shader.function_name,
 	    .bufferCount = 1,
-	    .buffers = &vertex_buffer_layout,
+	    .buffers     = &vertex_buffer_layout,
 	};
 
 	WGPUFragmentState fragment_state = {
-	    .module = device->shader_module,
-	    .entryPoint = parameters->fragment.shader.function_name,
+	    .module      = device->shader_module,
+	    .entryPoint  = parameters->fragment.shader.function_name,
 	    .targetCount = 1,
-	    .targets = &color_target_state,
+	    .targets     = &color_target_state,
 	};
 
 	WGPUPrimitiveState primitive_state = {
 	    .topology = WGPUPrimitiveTopology_TriangleList,
 	    //.stripIndexFormat = WGPUIndexFormat_Uint32,
 	    .frontFace = WGPUFrontFace_CW,
-	    .cullMode = WGPUCullMode_None,
+	    .cullMode  = WGPUCullMode_None,
 	};
 
 	WGPUMultisampleState multisample_state = {
-	    .count = 1,
-	    .mask = 0xffffffff,
+	    .count                  = 1,
+	    .mask                   = 0xffffffff,
 	    .alphaToCoverageEnabled = false,
 	};
 
 	WGPURenderPipelineDescriptor render_pipeline_descriptor = {
-	    .layout = wgpuDeviceCreatePipelineLayout(device->device, &pipeline_layout_descriptor),
-	    .fragment = &fragment_state,
-	    .vertex = vertex_state,
+	    .layout      = wgpuDeviceCreatePipelineLayout(device->device, &pipeline_layout_descriptor),
+	    .fragment    = &fragment_state,
+	    .vertex      = vertex_state,
 	    .multisample = multisample_state,
-	    .primitive = primitive_state,
+	    .primitive   = primitive_state,
 	};
 
 	pipe->render_pipeline = wgpuDeviceCreateRenderPipeline(device->device, &render_pipeline_descriptor);

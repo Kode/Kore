@@ -40,16 +40,16 @@ static void readChunk(uint8_t **data, struct WaveData *wave) {
 	uint32_t chunksize = kore_read_u32le(*data);
 	*data += 4;
 	if (strcmp(fourcc, "fmt ") == 0) {
-		wave->audioFormat = kore_read_u16le(*data + 0);
-		wave->numChannels = kore_read_u16le(*data + 2);
-		wave->sampleRate = kore_read_u32le(*data + 4);
+		wave->audioFormat    = kore_read_u16le(*data + 0);
+		wave->numChannels    = kore_read_u16le(*data + 2);
+		wave->sampleRate     = kore_read_u32le(*data + 4);
 		wave->bytesPerSecond = kore_read_u32le(*data + 8);
-		wave->bitsPerSample = kore_read_u16le(*data + 14);
+		wave->bitsPerSample  = kore_read_u16le(*data + 14);
 		*data += chunksize;
 	}
 	else if (strcmp(fourcc, "data") == 0) {
 		wave->dataSize = chunksize;
-		wave->data = (uint8_t *)malloc(chunksize * sizeof(uint8_t));
+		wave->data     = (uint8_t *)malloc(chunksize * sizeof(uint8_t));
 		kore_affirm(wave->data != NULL);
 		memcpy(wave->data, *data, chunksize);
 		*data += chunksize;
@@ -65,28 +65,28 @@ static int16_t convert8to16(uint8_t sample) {
 
 static void splitStereo8(uint8_t *data, int size, int16_t *left, int16_t *right) {
 	for (int i = 0; i < size; ++i) {
-		left[i] = convert8to16(data[i * 2 + 0]);
+		left[i]  = convert8to16(data[i * 2 + 0]);
 		right[i] = convert8to16(data[i * 2 + 1]);
 	}
 }
 
 static void splitStereo16(int16_t *data, int size, int16_t *left, int16_t *right) {
 	for (int i = 0; i < size; ++i) {
-		left[i] = data[i * 2 + 0];
+		left[i]  = data[i * 2 + 0];
 		right[i] = data[i * 2 + 1];
 	}
 }
 
 static void splitMono8(uint8_t *data, int size, int16_t *left, int16_t *right) {
 	for (int i = 0; i < size; ++i) {
-		left[i] = convert8to16(data[i]);
+		left[i]  = convert8to16(data[i]);
 		right[i] = convert8to16(data[i]);
 	}
 }
 
 static void splitMono16(int16_t *data, int size, int16_t *left, int16_t *right) {
 	for (int i = 0; i < size; ++i) {
-		left[i] = data[i];
+		left[i]  = data[i];
 		right[i] = data[i];
 	}
 }
@@ -108,9 +108,9 @@ kore_mixer_sound *kore_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 	assert(sound != NULL);
 	sound->in_use = true;
 	sound->volume = 1.0f;
-	sound->size = 0;
-	sound->left = NULL;
-	sound->right = NULL;
+	sound->size   = 0;
+	sound->left   = NULL;
+	sound->right  = NULL;
 	// size_t filenameLength = strlen(filename);
 	uint8_t *data = NULL;
 
@@ -118,10 +118,10 @@ kore_mixer_sound *kore_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 		int channels, sample_rate;
 		int samples = stb_vorbis_decode_memory(audio_data, size, &channels, &sample_rate, (short **)&data);
 		kore_affirm(samples > 0);
-		sound->channel_count = (uint8_t)channels;
+		sound->channel_count      = (uint8_t)channels;
 		sound->samples_per_second = (uint32_t)sample_rate;
-		sound->size = samples * 2 * sound->channel_count;
-		sound->bits_per_sample = 16;
+		sound->size               = samples * 2 * sound->channel_count;
+		sound->bits_per_sample    = 16;
 	}
 	else if (format == KORE_MIXER_AUDIOFORMAT_WAV) {
 		struct WaveData wave = {0};
@@ -137,11 +137,11 @@ kore_mixer_sound *kore_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 			}
 		}
 
-		sound->bits_per_sample = (uint8_t)wave.bitsPerSample;
-		sound->channel_count = (uint8_t)wave.numChannels;
+		sound->bits_per_sample    = (uint8_t)wave.bitsPerSample;
+		sound->channel_count      = (uint8_t)wave.numChannels;
 		sound->samples_per_second = wave.sampleRate;
-		data = wave.data;
-		sound->size = wave.dataSize;
+		data                      = wave.data;
+		sound->size               = wave.dataSize;
 	}
 	else {
 		kore_affirm(false);
@@ -149,13 +149,13 @@ kore_mixer_sound *kore_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 
 	if (sound->channel_count == 1) {
 		if (sound->bits_per_sample == 8) {
-			sound->left = (int16_t *)malloc(sound->size * sizeof(int16_t));
+			sound->left  = (int16_t *)malloc(sound->size * sizeof(int16_t));
 			sound->right = (int16_t *)malloc(sound->size * sizeof(int16_t));
 			splitMono8(data, sound->size, sound->left, sound->right);
 		}
 		else if (sound->bits_per_sample == 16) {
 			sound->size /= 2;
-			sound->left = (int16_t *)malloc(sound->size * sizeof(int16_t));
+			sound->left  = (int16_t *)malloc(sound->size * sizeof(int16_t));
 			sound->right = (int16_t *)malloc(sound->size * sizeof(int16_t));
 			splitMono16((int16_t *)data, sound->size, sound->left, sound->right);
 		}
@@ -167,13 +167,13 @@ kore_mixer_sound *kore_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 		// Left and right channel are in s16 audio stream, alternating.
 		if (sound->bits_per_sample == 8) {
 			sound->size /= 2;
-			sound->left = (int16_t *)malloc(sound->size * sizeof(int16_t));
+			sound->left  = (int16_t *)malloc(sound->size * sizeof(int16_t));
 			sound->right = (int16_t *)malloc(sound->size * sizeof(int16_t));
 			splitStereo8(data, sound->size, sound->left, sound->right);
 		}
 		else if (sound->bits_per_sample == 16) {
 			sound->size /= 4;
-			sound->left = (int16_t *)malloc(sound->size * sizeof(int16_t));
+			sound->left  = (int16_t *)malloc(sound->size * sizeof(int16_t));
 			sound->right = (int16_t *)malloc(sound->size * sizeof(int16_t));
 			splitStereo16((int16_t *)data, sound->size, sound->left, sound->right);
 		}
@@ -221,8 +221,8 @@ kore_mixer_sound *kore_a1_sound_create(const char *filename) {
 void kore_a1_sound_destroy(kore_mixer_sound *sound) {
 	free(sound->left);
 	free(sound->right);
-	sound->left = NULL;
-	sound->right = NULL;
+	sound->left   = NULL;
+	sound->right  = NULL;
 	sound->in_use = false;
 }
 

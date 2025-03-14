@@ -16,7 +16,7 @@ int kore_cpu_cores(void) {
 
 int kore_cpu_cores(void) {
 	uint32_t proper_cpu_count = 1;
-	size_t count_length = sizeof(count_length);
+	size_t count_length       = sizeof(count_length);
 	sysctlbyname("hw.physicalcpu", &proper_cpu_count, &count_length, 0, 0);
 	return (int)proper_cpu_count;
 }

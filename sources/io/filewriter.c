@@ -20,7 +20,7 @@ void unmountSaveData();
 #endif
 
 bool kore_file_writer_open(kore_file_writer *writer, const char *filepath) {
-	writer->file = NULL;
+	writer->file    = NULL;
 	writer->mounted = false;
 #ifdef MOUNT_SAVES
 	if (!mountSaveData(true)) {

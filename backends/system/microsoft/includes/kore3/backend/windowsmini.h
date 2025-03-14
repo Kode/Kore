@@ -16,15 +16,15 @@ typedef _W64 unsigned long ULONG_PTR;
 typedef unsigned long DWORD;
 typedef DWORD *LPDWORD;
 #define STD_OUTPUT_HANDLE ((DWORD) - 11)
-#define STD_ERROR_HANDLE ((DWORD) - 12)
-#define WINAPI __stdcall
+#define STD_ERROR_HANDLE  ((DWORD) - 12)
+#define WINAPI            __stdcall
 typedef void *HWND;
 typedef void *HANDLE;
 typedef unsigned int UINT;
 #define WINBASEAPI
 typedef int BOOL;
 #define CONST const
-#define VOID void
+#define VOID  void
 typedef void *LPVOID;
 typedef char CHAR;
 typedef const CHAR *LPCSTR;
@@ -39,7 +39,7 @@ typedef long LONG;
 typedef LONG *PLONG;
 typedef CONST void *LPCVOID;
 
-#define GENERIC_READ (0x80000000L)
+#define GENERIC_READ  (0x80000000L)
 #define GENERIC_WRITE (0x40000000L)
 
 #define FILE_SHARE_READ 0x00000001
@@ -48,10 +48,10 @@ typedef CONST void *LPCVOID;
 #define OPEN_EXISTING 3
 
 #define FILE_ATTRIBUTE_NORMAL 0x00000080
-#define INVALID_HANDLE_VALUE ((HANDLE)(LONG_PTR) - 1)
-#define FILE_BEGIN 0
-#define FILE_CURRENT 1
-#define MAX_PATH 260
+#define INVALID_HANDLE_VALUE  ((HANDLE)(LONG_PTR) - 1)
+#define FILE_BEGIN            0
+#define FILE_CURRENT          1
+#define MAX_PATH              260
 
 typedef struct _SECURITY_ATTRIBUTES {
 	DWORD nLength;

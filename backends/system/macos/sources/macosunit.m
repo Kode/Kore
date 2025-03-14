@@ -11,7 +11,7 @@ struct WindowData {
 };
 
 static struct WindowData windows[10] = {};
-static int windowCounter = 0;
+static int windowCounter             = 0;
 
 #include "BasicOpenGLView.m"
 #include "HIDGamepad.c"

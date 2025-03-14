@@ -18,7 +18,7 @@
 #include <EGL/egl.h>
 #endif
 
-#define MAXIMUM_WINDOWS 16
+#define MAXIMUM_WINDOWS  16
 #define MAXIMUM_DISPLAYS 16
 
 struct kore_x11_window {

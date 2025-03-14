@@ -1,8 +1,8 @@
 #include <kore3/input/surface.h>
 
 static void (*surface_touch_start_callback)(int /*index*/, int /*x*/, int /*y*/) = NULL;
-static void (*surface_move_callback)(int /*index*/, int /*x*/, int /*y*/) = NULL;
-static void (*surface_touch_end_callback)(int /*index*/, int /*x*/, int /*y*/) = NULL;
+static void (*surface_move_callback)(int /*index*/, int /*x*/, int /*y*/)        = NULL;
+static void (*surface_touch_end_callback)(int /*index*/, int /*x*/, int /*y*/)   = NULL;
 
 void kore_surface_set_touch_start_callback(void (*value)(int /*index*/, int /*x*/, int /*y*/)) {
 	surface_touch_start_callback = value;

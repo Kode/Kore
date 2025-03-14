@@ -62,11 +62,11 @@ void kore_vibrate(int ms) {
 static char language[3];
 
 const char *kore_language(void) {
-	NSString *nsstr = [[NSLocale preferredLanguages] objectAtIndex:0];
+	NSString *nsstr  = [[NSLocale preferredLanguages] objectAtIndex:0];
 	const char *lang = [nsstr UTF8String];
-	language[0] = lang[0];
-	language[1] = lang[1];
-	language[2] = 0;
+	language[0]      = lang[0];
+	language[1]      = lang[1];
+	language[2]      = 0;
 	return language;
 }
 
@@ -109,7 +109,7 @@ void swapBuffersiOS(void) {
 static char sysid[512];
 
 const char *kore_system_id(void) {
-	const char *name = [[[UIDevice currentDevice] name] UTF8String];
+	const char *name     = [[[UIDevice currentDevice] name] UTF8String];
 	const char *vendorId = [[[[UIDevice currentDevice] identifierForVendor] UUIDString] UTF8String];
 	strcpy(sysid, name);
 	strcat(sysid, "-");
@@ -118,10 +118,10 @@ const char *kore_system_id(void) {
 }
 
 static const char *getSavePath(void) {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSArray *paths         = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *resolvedPath = [paths objectAtIndex:0];
-	NSString *appName = [NSString stringWithUTF8String:kore_application_name()];
-	resolvedPath = [resolvedPath stringByAppendingPathComponent:appName];
+	NSString *appName      = [NSString stringWithUTF8String:kore_application_name()];
+	resolvedPath           = [resolvedPath stringByAppendingPathComponent:appName];
 
 	NSFileManager *fileMgr = [[NSFileManager alloc] init];
 

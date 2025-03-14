@@ -20,7 +20,7 @@ static kore_g4_texture_t *image_last_texture = NULL;
 
 static kore_g2_constants_type_buffer image_constants;
 
-static bool image_bilinear = false;
+static bool image_bilinear         = false;
 static bool image_bilinear_mipmaps = false;
 // var myPipeline : PipelineCache = null;
 
@@ -137,7 +137,7 @@ static void image_draw_buffer(bool end) {
 	}
 
 	kore_g2_constants_type *constants_data = kore_g2_constants_type_buffer_lock(&image_constants);
-	constants_data->projection = image_projection_matrix;
+	constants_data->projection             = image_projection_matrix;
 	kore_g2_constants_type_buffer_unlock(&image_constants);
 
 	kore_g4_vertex_buffer_unlock(&image_vertex_buffer, (image_buffer_index - image_buffer_start) * 4);
@@ -158,24 +158,24 @@ static void image_draw_buffer(bool end) {
 	if (end || (image_buffer_start + image_buffer_index + 1) * 4 >= image_buffer_size) {
 		image_buffer_start = 0;
 		image_buffer_index = 0;
-		image_vertices = (kore_g2_image_vertex_in *)kore_g4_vertex_buffer_lock_all(&image_vertex_buffer);
+		image_vertices     = (kore_g2_image_vertex_in *)kore_g4_vertex_buffer_lock_all(&image_vertex_buffer);
 	}
 	else {
 		image_buffer_start = image_buffer_index;
-		image_vertices = (kore_g2_image_vertex_in *)kore_g4_vertex_buffer_lock(&image_vertex_buffer, image_buffer_start * 4,
-		                                                                       kore_g4_vertex_buffer_count(&image_vertex_buffer) - image_buffer_start * 4);
+		image_vertices     = (kore_g2_image_vertex_in *)kore_g4_vertex_buffer_lock(&image_vertex_buffer, image_buffer_start * 4,
+		                                                                           kore_g4_vertex_buffer_count(&image_vertex_buffer) - image_buffer_start * 4);
 	}
 }
 
 static void image_set_bilinear_filter(bool bilinear) {
 	image_draw_buffer(false);
 	image_last_texture = NULL;
-	image_bilinear = bilinear;
+	image_bilinear     = bilinear;
 }
 
 static void image_set_bilinear_mipmap_filter(bool bilinear) {
 	image_draw_buffer(false);
-	image_last_texture = NULL;
+	image_last_texture     = NULL;
 	image_bilinear_mipmaps = bilinear;
 }
 

@@ -102,7 +102,7 @@ static struct {
 
 void kore_window_set_resize_callback(int window_index, void (*callback)(int width, int height, void *data), void *data) {
 	kore_internal_window_callbacks[window_index].resize_callback = callback;
-	kore_internal_window_callbacks[window_index].resize_data = data;
+	kore_internal_window_callbacks[window_index].resize_data     = data;
 }
 
 void kore_internal_call_resize_callback(int window_index, int width, int height) {
@@ -113,7 +113,7 @@ void kore_internal_call_resize_callback(int window_index, int width, int height)
 
 void kore_window_set_ppi_changed_callback(int window_index, void (*callback)(int ppi, void *data), void *data) {
 	kore_internal_window_callbacks[window_index].ppi_callback = callback;
-	kore_internal_window_callbacks[window_index].ppi_data = data;
+	kore_internal_window_callbacks[window_index].ppi_data     = data;
 }
 
 void kore_internal_call_ppi_changed_callback(int window_index, int ppi) {
@@ -124,7 +124,7 @@ void kore_internal_call_ppi_changed_callback(int window_index, int ppi) {
 
 void kore_window_set_close_callback(int window_index, bool (*callback)(void *data), void *data) {
 	kore_internal_window_callbacks[window_index].close_callback = callback;
-	kore_internal_window_callbacks[window_index].close_data = data;
+	kore_internal_window_callbacks[window_index].close_data     = data;
 }
 
 bool kore_internal_call_close_callback(int window_index) {

@@ -61,7 +61,7 @@ id getMetalQueue(void) {
 @implementation GLViewController
 
 - (void)loadView {
-	visible = true;
+	visible   = true;
 	self.view = glView = [[GLView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 }
 

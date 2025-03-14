@@ -18,13 +18,13 @@ void *kore_metal_buffer_lock_all(kore_gpu_buffer *buffer) {
 
 void *kore_metal_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {
 	id<MTLBuffer> metal_buffer = (__bridge id<MTLBuffer>)buffer->metal.buffer;
-	uint8_t *data = (uint8_t *)[metal_buffer contents];
+	uint8_t *data              = (uint8_t *)[metal_buffer contents];
 	return &data[offset];
 }
 
 void *kore_metal_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {
 	id<MTLBuffer> metal_buffer = (__bridge id<MTLBuffer>)buffer->metal.buffer;
-	uint8_t *data = (uint8_t *)[metal_buffer contents];
+	uint8_t *data              = (uint8_t *)[metal_buffer contents];
 	return &data[offset];
 }
 

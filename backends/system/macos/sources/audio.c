@@ -42,7 +42,7 @@ uint32_t kore_audio_samples_per_second(void) {
 }
 
 static void copySample(void *buffer) {
-	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float left_value  = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
 	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
 	audio_buffer.read_location += 1;
 	if (audio_buffer.read_location >= audio_buffer.data_size) {
@@ -79,33 +79,33 @@ void kore_audio_init(void) {
 	kore_audio_internal_init();
 	initialized = true;
 
-	audio_buffer.read_location = 0;
+	audio_buffer.read_location  = 0;
 	audio_buffer.write_location = 0;
-	audio_buffer.data_size = 128 * 1024;
-	audio_buffer.channel_count = 2;
-	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
-	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.data_size      = 128 * 1024;
+	audio_buffer.channel_count  = 2;
+	audio_buffer.channels[0]    = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1]    = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	device = kAudioDeviceUnknown;
 
 	initialized = false;
 
-	size = sizeof(AudioDeviceID);
+	size              = sizeof(AudioDeviceID);
 	address.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
-	address.mScope = kAudioObjectPropertyScopeGlobal;
-	address.mElement = kAudioObjectPropertyElementMaster;
+	address.mScope    = kAudioObjectPropertyScopeGlobal;
+	address.mElement  = kAudioObjectPropertyElementMaster;
 	affirm(AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, NULL, &size, &device));
 
-	size = sizeof(UInt32);
+	size              = sizeof(UInt32);
 	address.mSelector = kAudioDevicePropertyBufferSize;
-	address.mScope = kAudioDevicePropertyScopeOutput;
+	address.mScope    = kAudioDevicePropertyScopeOutput;
 	affirm(AudioObjectGetPropertyData(device, &address, 0, NULL, &size, &deviceBufferSize));
 
 	kore_log(KORE_LOG_LEVEL_INFO, "deviceBufferSize = %i\n", deviceBufferSize);
 
-	size = sizeof(AudioStreamBasicDescription);
+	size              = sizeof(AudioStreamBasicDescription);
 	address.mSelector = kAudioDevicePropertyStreamFormat;
-	address.mScope = kAudioDevicePropertyScopeOutput;
+	address.mScope    = kAudioDevicePropertyScopeOutput;
 
 	affirm(AudioObjectGetPropertyData(device, &address, 0, NULL, &size, &deviceFormat));
 

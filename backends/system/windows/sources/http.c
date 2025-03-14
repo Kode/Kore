@@ -21,7 +21,7 @@ static const wchar_t *convert(int method) {
 	}
 }
 
-static char *returnData = NULL;
+static char *returnData   = NULL;
 static int returnDataSize = 0;
 
 void kore_http_request(const char *url, const char *path, const char *data, int port, bool secure, int method, const char *header, kore_http_callback callback,
@@ -53,8 +53,8 @@ void kore_http_request(const char *url, const char *path, const char *data, int 
 			MultiByteToWideChar(CP_UTF8, 0, header, -1, wheader, 4096);
 		}
 		DWORD optionalLength = (data != 0 && strlen(data) > 0) ? (DWORD)strlen(data) : 0;
-		bResults = WinHttpSendRequest(hRequest, header == 0 ? WINHTTP_NO_ADDITIONAL_HEADERS : wheader, header == 0 ? 0 : -1L,
-		                              data == 0 ? WINHTTP_NO_REQUEST_DATA : (LPVOID)data, optionalLength, optionalLength, 0);
+		bResults             = WinHttpSendRequest(hRequest, header == 0 ? WINHTTP_NO_ADDITIONAL_HEADERS : wheader, header == 0 ? 0 : -1L,
+                                      data == 0 ? WINHTTP_NO_REQUEST_DATA : (LPVOID)data, optionalLength, optionalLength, 0);
 	}
 
 	if (bResults)
@@ -71,13 +71,13 @@ void kore_http_request(const char *url, const char *path, const char *data, int 
 
 			if ((int)dwSize + 1 > returnDataSize - returnDataIndex) {
 				int newReturnDataSize = (returnDataIndex + dwSize + 1) * 2;
-				char *newReturnData = (char *)malloc(newReturnDataSize);
+				char *newReturnData   = (char *)malloc(newReturnDataSize);
 				if (newReturnData == 0) {
 					kore_log(KORE_LOG_LEVEL_ERROR, "Out of memory\n");
 				}
 				memcpy(newReturnData, returnData, returnDataSize);
 				returnDataSize = newReturnDataSize;
-				returnData = newReturnData;
+				returnData     = newReturnData;
 			}
 
 			DWORD dwDownloaded = 0;

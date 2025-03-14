@@ -23,10 +23,10 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 		kore_framebuffer_options_set_defaults(&defaultFrame);
 		frame = &defaultFrame;
 	}
-	win->width = width;
+	win->width  = width;
 	win->height = height;
 
-	kore_internal_window_width = width;
+	kore_internal_window_width  = width;
 	kore_internal_window_height = height;
 
 	// kore_g4_internal_init();

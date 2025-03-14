@@ -25,11 +25,11 @@
 #endif
 
 void kore_video_sound_stream_impl_init(kore_internal_video_sound_stream *stream, int channel_count, int frequency) {
-	stream->bufferSize = 1;
-	stream->bufferReadPosition = 0;
+	stream->bufferSize          = 1;
+	stream->bufferReadPosition  = 0;
 	stream->bufferWritePosition = 0;
-	stream->read = 0;
-	stream->written = 0;
+	stream->read                = 0;
+	stream->written             = 0;
 }
 
 void kore_video_sound_stream_impl_destroy(kore_internal_video_sound_stream *stream) {}
@@ -51,11 +51,11 @@ bool kore_internal_video_sound_stream_ended(kore_internal_video_sound_stream *st
 #define videosCount 10
 static kore_video *videos[videosCount] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
-#define NB_MAXAL_INTERFACES 3 // XAAndroidBufferQueueItf, XAStreamInformationItf and XAPlayItf
-#define NB_BUFFERS 8
+#define NB_MAXAL_INTERFACES  3 // XAAndroidBufferQueueItf, XAStreamInformationItf and XAPlayItf
+#define NB_BUFFERS           8
 #define MPEG2_TS_PACKET_SIZE 188
-#define PACKETS_PER_BUFFER 10
-#define BUFFER_SIZE (PACKETS_PER_BUFFER * MPEG2_TS_PACKET_SIZE)
+#define PACKETS_PER_BUFFER   10
+#define BUFFER_SIZE          (PACKETS_PER_BUFFER * MPEG2_TS_PACKET_SIZE)
 static const int kEosBufferCntxt = 1980; // a magic value we can compare against
 
 typedef struct kore_android_video {
@@ -79,17 +79,17 @@ typedef struct kore_android_video {
 } kore_android_video_t;
 
 void kore_android_video_init(kore_android_video_t *video) {
-	video->engineObject = NULL;
-	video->engineEngine = NULL;
-	video->outputMixObject = NULL;
-	video->file = NULL;
-	video->playerObj = NULL;
-	video->playerPlayItf = NULL;
-	video->playerBQItf = NULL;
+	video->engineObject        = NULL;
+	video->engineEngine        = NULL;
+	video->outputMixObject     = NULL;
+	video->file                = NULL;
+	video->playerObj           = NULL;
+	video->playerPlayItf       = NULL;
+	video->playerBQItf         = NULL;
 	video->playerStreamInfoItf = NULL;
-	video->playerVolItf = NULL;
-	video->theNativeWindow = NULL;
-	video->reachedEof = JNI_FALSE;
+	video->playerVolItf        = NULL;
+	video->theNativeWindow     = NULL;
+	video->reachedEof          = JNI_FALSE;
 	memset(&video->mutex, 0, sizeof(video->mutex)); // mutex = PTHREAD_MUTEX_INITIALIZER; // simple assign stopped working in Android Studio 2.2
 	memset(&video->cond, 0, sizeof(video->cond));   // cond = PTHREAD_COND_INITIALIZER; // simple assign stopped working in Android Studio 2.2
 	video->discontinuity = false;
@@ -128,7 +128,7 @@ bool kore_android_video_enqueue_initial_buffers(kore_android_video_t *video, boo
 		if (discontinuity) {
 			// signal discontinuity
 			XAAndroidBufferItem items[1];
-			items[0].itemKey = XA_ANDROID_ITEMKEY_DISCONTINUITY;
+			items[0].itemKey  = XA_ANDROID_ITEMKEY_DISCONTINUITY;
 			items[0].itemSize = 0;
 			// DISCONTINUITY message has no parameters,
 			//   so the total size of the message is the size of the key
@@ -182,7 +182,7 @@ static XAresult AndroidBufferQueueCallback(XAAndroidBufferQueueItf caller, void 
 		}
 		// acknowledge the discontinuity request
 		self->discontinuity = JNI_FALSE;
-		ok = pthread_cond_signal(&self->cond);
+		ok                  = pthread_cond_signal(&self->cond);
 		assert(0 == ok);
 		goto exit;
 	}
@@ -217,14 +217,14 @@ static XAresult AndroidBufferQueueCallback(XAAndroidBufferQueueItf caller, void 
 			kore_log(KORE_LOG_LEVEL_INFO, "Dropping last packet because it is not whole");
 		}
 		size_t packetsRead = bytesRead / MPEG2_TS_PACKET_SIZE;
-		size_t bufferSize = packetsRead * MPEG2_TS_PACKET_SIZE;
+		size_t bufferSize  = packetsRead * MPEG2_TS_PACKET_SIZE;
 		res = (*caller)->Enqueue(caller, NULL /*pBufferContext*/, pBufferData /*pData*/, bufferSize /*dataLength*/, NULL /*pMsg*/, 0 /*msgLength*/);
 		assert(XA_RESULT_SUCCESS == res);
 	}
 	else {
 		// EOF or I/O error, signal EOS
 		XAAndroidBufferItem msgEos[1];
-		msgEos[0].itemKey = XA_ANDROID_ITEMKEY_EOS;
+		msgEos[0].itemKey  = XA_ANDROID_ITEMKEY_EOS;
 		msgEos[0].itemSize = 0;
 		// EOS message has no parameters, so the total size of the message is the size of the key
 		//   plus the size if itemSize, both XAuint32
@@ -308,12 +308,12 @@ bool kore_android_video_open(kore_android_video_t *video, const char *filename) 
 
 	// configure data source
 	XADataLocator_AndroidBufferQueue loc_abq = {XA_DATALOCATOR_ANDROIDBUFFERQUEUE, NB_BUFFERS};
-	XADataFormat_MIME format_mime = {XA_DATAFORMAT_MIME, XA_ANDROID_MIME_MP2TS, XA_CONTAINERTYPE_MPEG_TS};
-	XADataSource dataSrc = {&loc_abq, &format_mime};
+	XADataFormat_MIME format_mime            = {XA_DATAFORMAT_MIME, XA_ANDROID_MIME_MP2TS, XA_CONTAINERTYPE_MPEG_TS};
+	XADataSource dataSrc                     = {&loc_abq, &format_mime};
 
 	// configure audio sink
 	XADataLocator_OutputMix loc_outmix = {XA_DATALOCATOR_OUTPUTMIX, video->outputMixObject};
-	XADataSink audioSnk = {&loc_outmix, NULL};
+	XADataSink audioSnk                = {&loc_outmix, NULL};
 
 	// configure image video sink
 	XADataLocator_NativeDisplay loc_nd = {
@@ -326,7 +326,7 @@ bool kore_android_video_open(kore_android_video_t *video, const char *filename) 
 	XADataSink imageVideoSink = {&loc_nd, NULL};
 
 	// declare interfaces to use
-	XAboolean required[NB_MAXAL_INTERFACES] = {XA_BOOLEAN_TRUE, XA_BOOLEAN_TRUE, XA_BOOLEAN_TRUE};
+	XAboolean required[NB_MAXAL_INTERFACES]     = {XA_BOOLEAN_TRUE, XA_BOOLEAN_TRUE, XA_BOOLEAN_TRUE};
 	XAInterfaceID iidArray[NB_MAXAL_INTERFACES] = {XA_IID_PLAY, XA_IID_ANDROIDBUFFERQUEUESOURCE, XA_IID_STREAMINFORMATION};
 
 	// create media player
@@ -395,11 +395,11 @@ void kore_android_video_shutdown(kore_android_video_t *video) {
 	// destroy streaming media player object, and invalidate all associated interfaces
 	if (video->playerObj != NULL) {
 		(*video->playerObj)->Destroy(video->playerObj);
-		video->playerObj = NULL;
-		video->playerPlayItf = NULL;
-		video->playerBQItf = NULL;
+		video->playerObj           = NULL;
+		video->playerPlayItf       = NULL;
+		video->playerBQItf         = NULL;
 		video->playerStreamInfoItf = NULL;
-		video->playerVolItf = NULL;
+		video->playerVolItf        = NULL;
 	}
 
 	// destroy output mix object, and invalidate all associated interfaces
@@ -432,7 +432,7 @@ void kore_android_video_shutdown(kore_android_video_t *video) {
 
 JNIEXPORT void JNICALL Java_tech_kore_KoreMoviePlayer_nativeCreate(JNIEnv *env, jobject jobj, jstring jpath, jobject surface, jint id) {
 #if KORE_ANDROID_API >= 15 && !defined(KORE_VULKAN)
-	const char *path = (*env)->GetStringUTFChars(env, jpath, NULL);
+	const char *path         = (*env)->GetStringUTFChars(env, jpath, NULL);
 	kore_android_video_t *av = malloc(sizeof *av);
 	kore_android_video_init(av);
 	av->theNativeWindow = ANativeWindow_fromSurface(env, surface);
@@ -454,7 +454,9 @@ void KoreAndroidVideoInit() {
 	jclass clazz = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
 
 	// String path, Surface surface, int id
-	JNINativeMethod methodTable[] = {{"nativeCreate", "(Ljava/lang/String;Landroid/view/Surface;I)V", (void *)Java_tech_kore_KoreMoviePlayer_nativeCreate}};
+	JNINativeMethod methodTable[] = {
+	    {"nativeCreate", "(Ljava/lang/String;Landroid/view/Surface;I)V", (void *)Java_tech_kore_KoreMoviePlayer_nativeCreate}
+    };
 
 	int methodTableSize = sizeof(methodTable) / sizeof(methodTable[0]);
 
@@ -468,23 +470,23 @@ void KoreAndroidVideoInit() {
 
 void kore_video_init(kore_video *video, const char *filename) {
 	video->impl.playing = false;
-	video->impl.sound = NULL;
+	video->impl.sound   = NULL;
 #if KORE_ANDROID_API >= 15 && !defined(KORE_VULKAN)
 	kore_log(KORE_LOG_LEVEL_INFO, "Opening video %s.", filename);
-	video->impl.myWidth = 1023;
+	video->impl.myWidth  = 1023;
 	video->impl.myHeight = 684;
 
-	video->impl.next = 0;
+	video->impl.next      = 0;
 	video->impl.audioTime = 0;
 
 	JNIEnv *env = NULL;
 	(*kore_android_get_activity()->vm)->AttachCurrentThread(kore_android_get_activity()->vm, &env, NULL);
 	jclass koreMoviePlayerClass = kore_android_find_class(env, "tech.kore.KoreMoviePlayer");
-	jmethodID constructor = (*env)->GetMethodID(env, koreMoviePlayerClass, "<init>", "(Ljava/lang/String;)V");
-	jobject object = (*env)->NewObject(env, koreMoviePlayerClass, constructor, (*env)->NewStringUTF(env, filename));
+	jmethodID constructor       = (*env)->GetMethodID(env, koreMoviePlayerClass, "<init>", "(Ljava/lang/String;)V");
+	jobject object              = (*env)->NewObject(env, koreMoviePlayerClass, constructor, (*env)->NewStringUTF(env, filename));
 
 	jmethodID getId = (*env)->GetMethodID(env, koreMoviePlayerClass, "getId", "()I");
-	video->impl.id = (*env)->CallIntMethod(env, object, getId);
+	video->impl.id  = (*env)->CallIntMethod(env, object, getId);
 
 	for (int i = 0; i < videosCount; ++i) {
 		if (videos[i] == NULL) {
@@ -497,7 +499,7 @@ void kore_video_init(kore_video *video, const char *filename) {
 	(*env)->CallVoidMethod(env, object, jinit);
 
 	jmethodID getTextureId = (*env)->GetMethodID(env, koreMoviePlayerClass, "getTextureId", "()I");
-	int texid = (*env)->CallIntMethod(env, object, getTextureId);
+	int texid              = (*env)->CallIntMethod(env, object, getTextureId);
 
 	(*kore_android_get_activity()->vm)->DetachCurrentThread(kore_android_get_activity()->vm);
 
@@ -522,7 +524,7 @@ void kore_video_destroy(kore_video *video) {
 void kore_video_play(kore_video *video, bool loop) {
 #if KORE_ANDROID_API >= 15 && !defined(KORE_VULKAN)
 	video->impl.playing = true;
-	video->impl.start = kore_time();
+	video->impl.start   = kore_time();
 #endif
 }
 

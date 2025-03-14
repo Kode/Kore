@@ -23,7 +23,7 @@ uint32_t kore_audio_samples_per_second(void) {
 }
 
 void copySample(void *buffer) {
-	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float left_value  = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
 	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
 	audio_buffer.read_location += 1;
 	if (audio_buffer.read_location >= audio_buffer.data_size) {
@@ -215,12 +215,12 @@ void kore_audio_init() {
 	kore_audio_internal_init();
 	initialized = true;
 
-	audio_buffer.read_location = 0;
+	audio_buffer.read_location  = 0;
 	audio_buffer.write_location = 0;
-	audio_buffer.data_size = 128 * 1024;
-	audio_buffer.channel_count = 2;
-	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
-	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.data_size      = 128 * 1024;
+	audio_buffer.channel_count  = 2;
+	audio_buffer.channels[0]    = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1]    = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	audioRunning = true;
 	pthread_create(&threadid, NULL, &doAudio, NULL);

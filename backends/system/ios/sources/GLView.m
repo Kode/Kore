@@ -75,43 +75,43 @@ extern int kore_ios_gl_framebuffer;
 
 #ifdef KORE_METAL
 - (id)initWithFrame:(CGRect)frame {
-	self = [super initWithFrame:(CGRect)frame];
+	self                    = [super initWithFrame:(CGRect)frame];
 	self.contentScaleFactor = [UIScreen mainScreen].scale;
 
-	backingWidth = frame.size.width * self.contentScaleFactor;
+	backingWidth  = frame.size.width * self.contentScaleFactor;
 	backingHeight = frame.size.height * self.contentScaleFactor;
 
 	initTouches();
 
-	device = MTLCreateSystemDefaultDevice();
+	device       = MTLCreateSystemDefaultDevice();
 	commandQueue = [device newCommandQueue];
-	library = [device newDefaultLibrary];
+	library      = [device newDefaultLibrary];
 
 	CAMetalLayer *metalLayer = (CAMetalLayer *)self.layer;
 
-	metalLayer.device = device;
-	metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+	metalLayer.device          = device;
+	metalLayer.pixelFormat     = MTLPixelFormatBGRA8Unorm;
 	metalLayer.framebufferOnly = YES;
 	// metalLayer.presentsWithTransaction = YES;
 
-	metalLayer.opaque = YES;
+	metalLayer.opaque          = YES;
 	metalLayer.backgroundColor = nil;
 
 	return self;
 }
 #else
 - (id)initWithFrame:(CGRect)frame {
-	self = [super initWithFrame:(CGRect)frame];
+	self                    = [super initWithFrame:(CGRect)frame];
 	self.contentScaleFactor = [UIScreen mainScreen].scale;
 
-	backingWidth = frame.size.width * self.contentScaleFactor;
+	backingWidth  = frame.size.width * self.contentScaleFactor;
 	backingHeight = frame.size.height * self.contentScaleFactor;
 
 	initTouches();
 
 	CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
 
-	eaglLayer.opaque = YES;
+	eaglLayer.opaque             = YES;
 	eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking,
 	                                                                          kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 
@@ -196,11 +196,11 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 
 #ifdef KORE_METAL
 - (void)layoutSubviews {
-	backingWidth = self.frame.size.width * self.contentScaleFactor;
+	backingWidth  = self.frame.size.width * self.contentScaleFactor;
 	backingHeight = self.frame.size.height * self.contentScaleFactor;
 
 	CAMetalLayer *metalLayer = (CAMetalLayer *)self.layer;
-	metalLayer.drawableSize = CGSizeMake(backingWidth, backingHeight);
+	metalLayer.drawableSize  = CGSizeMake(backingWidth, backingHeight);
 
 	kore_internal_call_resize_callback(0, backingWidth, backingHeight);
 }
@@ -262,8 +262,8 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 			index = addTouch((__bridge void *)touch);
 		if (index >= 0) {
 			CGPoint point = [touch locationInView:self];
-			float x = point.x * self.contentScaleFactor;
-			float y = point.y * self.contentScaleFactor;
+			float x       = point.x * self.contentScaleFactor;
+			float y       = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				if (@available(iOS 13.4, *)) {
 					kore_internal_mouse_trigger_press(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
@@ -286,8 +286,8 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 		int index = getTouchIndex((__bridge void *)touch);
 		if (index >= 0) {
 			CGPoint point = [touch locationInView:self];
-			float x = point.x * self.contentScaleFactor;
-			float y = point.y * self.contentScaleFactor;
+			float x       = point.x * self.contentScaleFactor;
+			float y       = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				kore_internal_mouse_trigger_move(0, x, y);
 			}
@@ -300,8 +300,8 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 	for (UITouch *touch in touches) {
 		if (touch.type == UITouchTypePencil) {
 			CGPoint point = [touch locationInView:self];
-			float x = point.x * self.contentScaleFactor;
-			float y = point.y * self.contentScaleFactor;
+			float x       = point.x * self.contentScaleFactor;
+			float y       = point.y * self.contentScaleFactor;
 			kore_internal_pen_trigger_move(0, x, y, touch.force);
 		}
 	}
@@ -312,8 +312,8 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 		int index = removeTouch((__bridge void *)touch);
 		if (index >= 0) {
 			CGPoint point = [touch locationInView:self];
-			float x = point.x * self.contentScaleFactor;
-			float y = point.y * self.contentScaleFactor;
+			float x       = point.x * self.contentScaleFactor;
+			float y       = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				if (@available(iOS 13.4, *)) {
 					kore_internal_mouse_trigger_release(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
@@ -336,8 +336,8 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 		int index = removeTouch((__bridge void *)touch);
 		if (index >= 0) {
 			CGPoint point = [touch locationInView:self];
-			float x = point.x * self.contentScaleFactor;
-			float y = point.y * self.contentScaleFactor;
+			float x       = point.x * self.contentScaleFactor;
+			float y       = point.y * self.contentScaleFactor;
 			if (index == 0) {
 				if (@available(iOS 13.4, *)) {
 					kore_internal_mouse_trigger_release(0, event.buttonMask == UIEventButtonMaskSecondary ? 1 : 0, x, y);
@@ -357,7 +357,7 @@ void kore_internal_call_resize_callback(int window, int width, int height);
 
 static NSString *keyboardstring;
 static UITextField *myTextField = NULL;
-static bool shiftDown = false;
+static bool shiftDown           = false;
 
 - (void)showKeyboard {
 	[self becomeFirstResponder];

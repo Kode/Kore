@@ -221,12 +221,12 @@ static uint32_t vertex_attribute_size(kore_metal_vertex_format format) {
 void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_render_pipeline *pipe, const kore_metal_render_pipeline_parameters *parameters) {
 	id<MTLLibrary> library = (__bridge id<MTLLibrary>)device->library;
 
-	id vertex_function = [library newFunctionWithName:[NSString stringWithCString:parameters->vertex.shader.function_name encoding:NSUTF8StringEncoding]];
+	id vertex_function   = [library newFunctionWithName:[NSString stringWithCString:parameters->vertex.shader.function_name encoding:NSUTF8StringEncoding]];
 	id fragment_function = [library newFunctionWithName:[NSString stringWithCString:parameters->fragment.shader.function_name encoding:NSUTF8StringEncoding]];
 
 	MTLRenderPipelineDescriptor *render_pipeline_descriptor = [[MTLRenderPipelineDescriptor alloc] init];
-	render_pipeline_descriptor.vertexFunction = vertex_function;
-	render_pipeline_descriptor.fragmentFunction = fragment_function;
+	render_pipeline_descriptor.vertexFunction               = vertex_function;
+	render_pipeline_descriptor.fragmentFunction             = fragment_function;
 
 	for (int i = 0; i < parameters->fragment.targets_count; ++i) {
 		render_pipeline_descriptor.colorAttachments[i].pixelFormat = convert_format(parameters->fragment.targets[i].format);
@@ -249,14 +249,14 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 
 		render_pipeline_descriptor.colorAttachments[i].writeMask = parameters->fragment.targets[i].write_mask;
 	}
-	render_pipeline_descriptor.depthAttachmentPixelFormat = MTLPixelFormatInvalid;
+	render_pipeline_descriptor.depthAttachmentPixelFormat   = MTLPixelFormatInvalid;
 	render_pipeline_descriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
 
-	float offset = 0;
+	float offset                           = 0;
 	MTLVertexDescriptor *vertex_descriptor = [[MTLVertexDescriptor alloc] init];
 
 	uint32_t attributes_count = 0;
-	uint32_t bindings_count = 0;
+	uint32_t bindings_count   = 0;
 	for (int i = 0; i < parameters->vertex.buffers_count; ++i) {
 		attributes_count += (uint32_t)parameters->vertex.buffers[i].attributes_count;
 		++bindings_count;
@@ -267,7 +267,7 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 			kore_metal_vertex_attribute attribute = parameters->vertex.buffers[binding_index].attributes[attribute_index];
 
 			vertex_descriptor.attributes[attribute_index].bufferIndex = 0;
-			vertex_descriptor.attributes[attribute_index].offset = offset;
+			vertex_descriptor.attributes[attribute_index].offset      = offset;
 
 			offset += vertex_attribute_size(attribute.format);
 
@@ -363,14 +363,14 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 		}
 	}
 
-	vertex_descriptor.layouts[0].stride = offset;
+	vertex_descriptor.layouts[0].stride       = offset;
 	vertex_descriptor.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
 
 	render_pipeline_descriptor.vertexDescriptor = vertex_descriptor;
 
-	NSError *errors = nil;
+	NSError *errors                         = nil;
 	MTLRenderPipelineReflection *reflection = nil;
-	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->device;
+	id<MTLDevice> metal_device              = (__bridge id<MTLDevice>)device->device;
 
 	pipe->pipeline = (__bridge_retained void *)[metal_device newRenderPipelineStateWithDescriptor:render_pipeline_descriptor
 	                                                                                      options:MTLPipelineOptionBufferTypeInfo

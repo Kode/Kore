@@ -1,11 +1,11 @@
 #include <kore3/input/pen.h>
 
-static void (*pen_press_callback)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/) = NULL;
-static void (*pen_move_callback)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/) = NULL;
+static void (*pen_press_callback)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/)   = NULL;
+static void (*pen_move_callback)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/)    = NULL;
 static void (*pen_release_callback)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/) = NULL;
 
-static void (*eraser_press_callback)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/) = NULL;
-static void (*eraser_move_callback)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/) = NULL;
+static void (*eraser_press_callback)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/)   = NULL;
+static void (*eraser_move_callback)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/)    = NULL;
 static void (*eraser_release_callback)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/) = NULL;
 
 void kore_pen_set_press_callback(void (*value)(int /*window*/, int /*x*/, int /*y*/, float /*pressure*/)) {

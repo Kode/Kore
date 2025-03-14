@@ -26,7 +26,7 @@ typedef struct __sFILE FILE;
 #endif
 
 #define KORE_FILE_TYPE_ASSET 0
-#define KORE_FILE_TYPE_SAVE 1
+#define KORE_FILE_TYPE_SAVE  1
 
 typedef struct kore_file_reader {
 	void *data; // A file handle or a more complex structure

@@ -10,12 +10,12 @@
 
 static kore_audio_buffer audio_buffer;
 
-static ALCdevice *device = NULL;
-static ALCcontext *context = NULL;
+static ALCdevice *device     = NULL;
+static ALCcontext *context   = NULL;
 static unsigned int channels = 0;
-static unsigned int bits = 0;
-static ALenum format = 0;
-static ALuint source = 0;
+static unsigned int bits     = 0;
+static ALenum format         = 0;
+static ALuint source         = 0;
 
 static bool audioRunning = false;
 #define BUFSIZE 4096
@@ -25,7 +25,7 @@ static short buf[BUFSIZE];
 static uint32_t samples_per_second = 44100;
 
 static void copySample(void *buffer) {
-	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float left_value  = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
 	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
 	audio_buffer.read_location += 1;
 	if (audio_buffer.read_location >= audio_buffer.data_size) {
@@ -80,16 +80,16 @@ void kore_audio_init() {
 	kore_audio_internal_init();
 	a2_initialized = true;
 
-	audio_buffer.read_location = 0;
+	audio_buffer.read_location  = 0;
 	audio_buffer.write_location = 0;
-	audio_buffer.data_size = 128 * 1024;
-	audio_buffer.channel_count = 2;
-	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
-	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.data_size      = 128 * 1024;
+	audio_buffer.channel_count  = 2;
+	audio_buffer.channels[0]    = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1]    = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	audioRunning = true;
 
-	device = alcOpenDevice(NULL);
+	device  = alcOpenDevice(NULL);
 	context = alcCreateContext(device, NULL);
 	alcMakeContextCurrent(context);
 	format = AL_FORMAT_STEREO16;

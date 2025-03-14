@@ -40,7 +40,7 @@ int kore_window_create(kore_window_parameters *win, kore_framebuffer_parameters 
 
 void kore_window_set_resize_callback(int window, void (*callback)(int x, int y, void *data), void *data) {
 	assert(window < windowCounter);
-	windows[window].resizeCallback = callback;
+	windows[window].resizeCallback     = callback;
 	windows[window].resizeCallbackData = data;
 }
 

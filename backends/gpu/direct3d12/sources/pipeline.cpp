@@ -121,19 +121,19 @@ static void set_blend_state(D3D12_BLEND_DESC *desc, const kore_d3d12_color_targe
 	desc->RenderTarget[target].BlendEnable =
 	    target_state->blend.color.src_factor != KORE_D3D12_BLEND_FACTOR_ONE || target_state->blend.color.dst_factor != KORE_D3D12_BLEND_FACTOR_ZERO ||
 	    target_state->blend.alpha.src_factor != KORE_D3D12_BLEND_FACTOR_ONE || target_state->blend.alpha.dst_factor != KORE_D3D12_BLEND_FACTOR_ZERO;
-	desc->RenderTarget[target].SrcBlend = convert_blend_factor(target_state->blend.color.src_factor);
-	desc->RenderTarget[target].DestBlend = convert_blend_factor(target_state->blend.color.dst_factor);
-	desc->RenderTarget[target].BlendOp = convert_blend_operation(target_state->blend.color.operation);
-	desc->RenderTarget[target].SrcBlendAlpha = convert_blend_factor(target_state->blend.alpha.src_factor);
-	desc->RenderTarget[target].DestBlendAlpha = convert_blend_factor(target_state->blend.alpha.dst_factor);
-	desc->RenderTarget[target].BlendOpAlpha = convert_blend_operation(target_state->blend.alpha.operation);
+	desc->RenderTarget[target].SrcBlend              = convert_blend_factor(target_state->blend.color.src_factor);
+	desc->RenderTarget[target].DestBlend             = convert_blend_factor(target_state->blend.color.dst_factor);
+	desc->RenderTarget[target].BlendOp               = convert_blend_operation(target_state->blend.color.operation);
+	desc->RenderTarget[target].SrcBlendAlpha         = convert_blend_factor(target_state->blend.alpha.src_factor);
+	desc->RenderTarget[target].DestBlendAlpha        = convert_blend_factor(target_state->blend.alpha.dst_factor);
+	desc->RenderTarget[target].BlendOpAlpha          = convert_blend_operation(target_state->blend.alpha.operation);
 	desc->RenderTarget[target].RenderTargetWriteMask = (UINT8)target_state->write_mask;
 }
 
 void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_render_pipeline *pipe, const kore_d3d12_render_pipeline_parameters *parameters) {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {0};
 
-	desc.VS.BytecodeLength = parameters->vertex.shader.size;
+	desc.VS.BytecodeLength  = parameters->vertex.shader.size;
 	desc.VS.pShaderBytecode = parameters->vertex.shader.data;
 
 	assert(parameters->vertex.buffers_count <= KORE_D3D12_MAX_VERTEX_ATTRIBUTES);
@@ -142,13 +142,13 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 	size_t input_element_index = 0;
 	for (size_t buffer_index = 0; buffer_index < parameters->vertex.buffers_count; ++buffer_index) {
 		for (size_t attribute_index = 0; attribute_index < parameters->vertex.buffers[buffer_index].attributes_count; ++attribute_index) {
-			input_elements[input_element_index].SemanticName = "TEXCOORD";
-			input_elements[input_element_index].SemanticIndex = parameters->vertex.buffers[buffer_index].attributes[attribute_index].shader_location;
-			input_elements[input_element_index].InputSlot = (UINT)buffer_index;
+			input_elements[input_element_index].SemanticName      = "TEXCOORD";
+			input_elements[input_element_index].SemanticIndex     = parameters->vertex.buffers[buffer_index].attributes[attribute_index].shader_location;
+			input_elements[input_element_index].InputSlot         = (UINT)buffer_index;
 			input_elements[input_element_index].AlignedByteOffset = (attribute_index == 0) ? 0 : D3D12_APPEND_ALIGNED_ELEMENT;
-			input_elements[input_element_index].InputSlotClass = parameters->vertex.buffers[buffer_index].step_mode == KORE_D3D12_VERTEX_STEP_MODE_INSTANCE
-			                                                         ? D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA
-			                                                         : D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
+			input_elements[input_element_index].InputSlotClass    = parameters->vertex.buffers[buffer_index].step_mode == KORE_D3D12_VERTEX_STEP_MODE_INSTANCE
+			                                                            ? D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA
+			                                                            : D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
 			input_elements[input_element_index].InstanceDataStepRate =
 			    parameters->vertex.buffers[buffer_index].step_mode == KORE_D3D12_VERTEX_STEP_MODE_INSTANCE ? 1 : 0;
 
@@ -254,21 +254,21 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 		}
 	}
 
-	desc.InputLayout.NumElements = (UINT)input_element_index;
+	desc.InputLayout.NumElements        = (UINT)input_element_index;
 	desc.InputLayout.pInputElementDescs = input_elements;
 
 	desc.PrimitiveTopologyType = convert_primitive_topology(parameters->primitive.topology);
 
 	desc.RasterizerState.FrontCounterClockwise = parameters->primitive.front_face == KORE_D3D12_FRONT_FACE_CCW ? TRUE : FALSE;
-	desc.RasterizerState.CullMode = convert_cull_mode(parameters->primitive.cull_mode);
+	desc.RasterizerState.CullMode              = convert_cull_mode(parameters->primitive.cull_mode);
 
 	desc.RasterizerState.DepthClipEnable = parameters->primitive.unclipped_depth ? FALSE : TRUE;
 
 	desc.DSVFormat = convert_texture_format(parameters->depth_stencil.format);
 
-	desc.DepthStencilState.DepthEnable = parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS;
+	desc.DepthStencilState.DepthEnable    = parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS;
 	desc.DepthStencilState.DepthWriteMask = parameters->depth_stencil.depth_write_enabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
-	desc.DepthStencilState.DepthFunc = convert_compare_function(parameters->depth_stencil.depth_compare);
+	desc.DepthStencilState.DepthFunc      = convert_compare_function(parameters->depth_stencil.depth_compare);
 
 	desc.DepthStencilState.StencilEnable = parameters->depth_stencil.stencil_front.compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS ||
 	                                       parameters->depth_stencil.stencil_front.pass_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
@@ -278,28 +278,28 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 	                                       parameters->depth_stencil.stencil_back.pass_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
 	                                       parameters->depth_stencil.stencil_back.fail_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
 	                                       parameters->depth_stencil.stencil_back.depth_fail_op != KORE_D3D12_STENCIL_OPERATION_KEEP;
-	desc.DepthStencilState.StencilReadMask = parameters->depth_stencil.stencil_read_mask;
-	desc.DepthStencilState.StencilWriteMask = parameters->depth_stencil.stencil_write_mask;
-	desc.DepthStencilState.FrontFace.StencilFunc = convert_compare_function(parameters->depth_stencil.stencil_front.compare);
-	desc.DepthStencilState.FrontFace.StencilPassOp = convert_stencil_operation(parameters->depth_stencil.stencil_front.pass_op);
-	desc.DepthStencilState.FrontFace.StencilFailOp = convert_stencil_operation(parameters->depth_stencil.stencil_front.fail_op);
+	desc.DepthStencilState.StencilReadMask              = parameters->depth_stencil.stencil_read_mask;
+	desc.DepthStencilState.StencilWriteMask             = parameters->depth_stencil.stencil_write_mask;
+	desc.DepthStencilState.FrontFace.StencilFunc        = convert_compare_function(parameters->depth_stencil.stencil_front.compare);
+	desc.DepthStencilState.FrontFace.StencilPassOp      = convert_stencil_operation(parameters->depth_stencil.stencil_front.pass_op);
+	desc.DepthStencilState.FrontFace.StencilFailOp      = convert_stencil_operation(parameters->depth_stencil.stencil_front.fail_op);
 	desc.DepthStencilState.FrontFace.StencilDepthFailOp = convert_stencil_operation(parameters->depth_stencil.stencil_front.depth_fail_op);
-	desc.DepthStencilState.BackFace.StencilFunc = convert_compare_function(parameters->depth_stencil.stencil_back.compare);
-	desc.DepthStencilState.BackFace.StencilPassOp = convert_stencil_operation(parameters->depth_stencil.stencil_back.pass_op);
-	desc.DepthStencilState.BackFace.StencilFailOp = convert_stencil_operation(parameters->depth_stencil.stencil_back.fail_op);
-	desc.DepthStencilState.BackFace.StencilDepthFailOp = convert_stencil_operation(parameters->depth_stencil.stencil_back.depth_fail_op);
+	desc.DepthStencilState.BackFace.StencilFunc         = convert_compare_function(parameters->depth_stencil.stencil_back.compare);
+	desc.DepthStencilState.BackFace.StencilPassOp       = convert_stencil_operation(parameters->depth_stencil.stencil_back.pass_op);
+	desc.DepthStencilState.BackFace.StencilFailOp       = convert_stencil_operation(parameters->depth_stencil.stencil_back.fail_op);
+	desc.DepthStencilState.BackFace.StencilDepthFailOp  = convert_stencil_operation(parameters->depth_stencil.stencil_back.depth_fail_op);
 
-	desc.RasterizerState.DepthBias = parameters->depth_stencil.depth_bias;
+	desc.RasterizerState.DepthBias            = parameters->depth_stencil.depth_bias;
 	desc.RasterizerState.SlopeScaledDepthBias = parameters->depth_stencil.depth_bias_slope_scale;
-	desc.RasterizerState.DepthBiasClamp = parameters->depth_stencil.depth_bias_clamp;
+	desc.RasterizerState.DepthBiasClamp       = parameters->depth_stencil.depth_bias_clamp;
 
 	desc.RasterizerState.MultisampleEnable = parameters->multisample.count > 1 ? TRUE : FALSE;
-	desc.SampleDesc.Count = parameters->multisample.count;
-	desc.SampleDesc.Quality = 0;
-	desc.SampleMask = 0xFFFFFFFF;
-	desc.BlendState.AlphaToCoverageEnable = parameters->multisample.alpha_to_coverage_enabled ? TRUE : FALSE;
+	desc.SampleDesc.Count                  = parameters->multisample.count;
+	desc.SampleDesc.Quality                = 0;
+	desc.SampleMask                        = 0xFFFFFFFF;
+	desc.BlendState.AlphaToCoverageEnable  = parameters->multisample.alpha_to_coverage_enabled ? TRUE : FALSE;
 
-	desc.PS.BytecodeLength = parameters->fragment.shader.size;
+	desc.PS.BytecodeLength  = parameters->fragment.shader.size;
 	desc.PS.pShaderBytecode = parameters->fragment.shader.data;
 
 	desc.NumRenderTargets = (UINT)parameters->fragment.targets_count;
@@ -311,8 +311,8 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 	desc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 
 	desc.RasterizerState.AntialiasedLineEnable = FALSE;
-	desc.RasterizerState.ForcedSampleCount = 0;
-	desc.RasterizerState.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+	desc.RasterizerState.ForcedSampleCount     = 0;
+	desc.RasterizerState.ConservativeRaster    = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 
 	bool independent_blend = false;
 	for (int i = 1; i < parameters->fragment.targets_count; ++i) {
@@ -339,16 +339,16 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 	    device->device->CreateRootSignature(0, desc.VS.pShaderBytecode, desc.VS.BytecodeLength, IID_GRAPHICS_PPV_ARGS(&pipe->root_signature)));
 
 	D3D12_INDIRECT_ARGUMENT_DESC indirect_args[2];
-	indirect_args[0].Type = D3D12_INDIRECT_ARGUMENT_TYPE_CONSTANT;
-	indirect_args[0].Constant.RootParameterIndex = 0;
+	indirect_args[0].Type                             = D3D12_INDIRECT_ARGUMENT_TYPE_CONSTANT;
+	indirect_args[0].Constant.RootParameterIndex      = 0;
 	indirect_args[0].Constant.DestOffsetIn32BitValues = 0;
-	indirect_args[0].Constant.Num32BitValuesToSet = 1;
-	indirect_args[1].Type = D3D12_INDIRECT_ARGUMENT_TYPE_DRAW;
+	indirect_args[0].Constant.Num32BitValuesToSet     = 1;
+	indirect_args[1].Type                             = D3D12_INDIRECT_ARGUMENT_TYPE_DRAW;
 
 	D3D12_COMMAND_SIGNATURE_DESC command_signature_desc;
-	command_signature_desc.ByteStride = sizeof(kore_gpu_draw_arguments);
+	command_signature_desc.ByteStride       = sizeof(kore_gpu_draw_arguments);
 	command_signature_desc.NumArgumentDescs = 2;
-	command_signature_desc.pArgumentDescs = indirect_args;
+	command_signature_desc.pArgumentDescs   = indirect_args;
 
 	device->device->CreateCommandSignature(&command_signature_desc, pipe->root_signature, IID_GRAPHICS_PPV_ARGS(&pipe->draw_command_signature));
 
@@ -370,8 +370,8 @@ void kore_d3d12_compute_pipeline_init(kore_d3d12_device *device, kore_d3d12_comp
 	D3D12_COMPUTE_PIPELINE_STATE_DESC desc = {0};
 
 	desc.CS.pShaderBytecode = parameters->shader.data;
-	desc.CS.BytecodeLength = parameters->shader.size;
-	desc.pRootSignature = NULL;
+	desc.CS.BytecodeLength  = parameters->shader.size;
+	desc.pRootSignature     = NULL;
 
 	kore_microsoft_affirm(device->device->CreateComputePipelineState(&desc, IID_GRAPHICS_PPV_ARGS(&pipe->pipe)));
 
@@ -382,9 +382,9 @@ void kore_d3d12_compute_pipeline_init(kore_d3d12_device *device, kore_d3d12_comp
 	indirect_args[0].Type = D3D12_INDIRECT_ARGUMENT_TYPE_DISPATCH;
 
 	D3D12_COMMAND_SIGNATURE_DESC command_signature_desc;
-	command_signature_desc.ByteStride = sizeof(kore_gpu_compute_arguments);
+	command_signature_desc.ByteStride       = sizeof(kore_gpu_compute_arguments);
 	command_signature_desc.NumArgumentDescs = 1;
-	command_signature_desc.pArgumentDescs = indirect_args;
+	command_signature_desc.pArgumentDescs   = indirect_args;
 
 	device->device->CreateCommandSignature(&command_signature_desc, pipe->root_signature, IID_GRAPHICS_PPV_ARGS(&pipe->compute_command_signature));
 }
@@ -399,13 +399,13 @@ void kore_d3d12_compute_pipeline_destroy(kore_d3d12_compute_pipeline *pipe) {
 #ifndef KONG_HAS_NO_RAY_SHADERS
 void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeline *pipe, const kore_d3d12_ray_pipeline_parameters *parameters,
                                   ID3D12RootSignature *root_signature) {
-	D3D12_DXIL_LIBRARY_DESC lib = {0};
+	D3D12_DXIL_LIBRARY_DESC lib     = {0};
 	lib.DXILLibrary.pShaderBytecode = ray_code;
-	lib.DXILLibrary.BytecodeLength = ray_code_size;
+	lib.DXILLibrary.BytecodeLength  = ray_code_size;
 
 	D3D12_HIT_GROUP_DESC hit_group = {0};
-	hit_group.HitGroupExport = L"HitGroup";
-	hit_group.Type = D3D12_HIT_GROUP_TYPE_TRIANGLES;
+	hit_group.HitGroupExport       = L"HitGroup";
+	hit_group.Type                 = D3D12_HIT_GROUP_TYPE_TRIANGLES;
 
 	wchar_t closest_hit[1024];
 	kore_microsoft_convert_string(closest_hit, parameters->closest_shader_name, 1024);
@@ -425,42 +425,42 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 	}
 
 	D3D12_RAYTRACING_SHADER_CONFIG shader_config = {0};
-	shader_config.MaxPayloadSizeInBytes = 20;
-	shader_config.MaxAttributeSizeInBytes = 8;
+	shader_config.MaxPayloadSizeInBytes          = 20;
+	shader_config.MaxAttributeSizeInBytes        = 8;
 
 	D3D12_GLOBAL_ROOT_SIGNATURE global_signature = {0};
-	global_signature.pGlobalRootSignature = root_signature;
+	global_signature.pGlobalRootSignature        = root_signature;
 
 	D3D12_RAYTRACING_PIPELINE_CONFIG pipeline_config = {0};
-	pipeline_config.MaxTraceRecursionDepth = 3;
+	pipeline_config.MaxTraceRecursionDepth           = 3;
 
 	D3D12_STATE_SUBOBJECT subobjects[5];
 
-	subobjects[0].Type = D3D12_STATE_SUBOBJECT_TYPE_DXIL_LIBRARY;
+	subobjects[0].Type  = D3D12_STATE_SUBOBJECT_TYPE_DXIL_LIBRARY;
 	subobjects[0].pDesc = &lib;
 
-	subobjects[1].Type = D3D12_STATE_SUBOBJECT_TYPE_HIT_GROUP;
+	subobjects[1].Type  = D3D12_STATE_SUBOBJECT_TYPE_HIT_GROUP;
 	subobjects[1].pDesc = &hit_group;
 
-	subobjects[2].Type = D3D12_STATE_SUBOBJECT_TYPE_RAYTRACING_SHADER_CONFIG;
+	subobjects[2].Type  = D3D12_STATE_SUBOBJECT_TYPE_RAYTRACING_SHADER_CONFIG;
 	subobjects[2].pDesc = &shader_config;
 
-	subobjects[3].Type = D3D12_STATE_SUBOBJECT_TYPE_GLOBAL_ROOT_SIGNATURE;
+	subobjects[3].Type  = D3D12_STATE_SUBOBJECT_TYPE_GLOBAL_ROOT_SIGNATURE;
 	subobjects[3].pDesc = &global_signature;
 
-	subobjects[4].Type = D3D12_STATE_SUBOBJECT_TYPE_RAYTRACING_PIPELINE_CONFIG;
+	subobjects[4].Type  = D3D12_STATE_SUBOBJECT_TYPE_RAYTRACING_PIPELINE_CONFIG;
 	subobjects[4].pDesc = &pipeline_config;
 
 	D3D12_STATE_OBJECT_DESC desc;
-	desc.Type = D3D12_STATE_OBJECT_TYPE_RAYTRACING_PIPELINE;
+	desc.Type          = D3D12_STATE_OBJECT_TYPE_RAYTRACING_PIPELINE;
 	desc.NumSubobjects = 5;
-	desc.pSubobjects = subobjects;
+	desc.pSubobjects   = subobjects;
 
 	kore_microsoft_affirm(device->d3d12.device->CreateStateObject(&desc, IID_PPV_ARGS(&pipe->pipe)));
 
 	uint32_t shader_id_count = 3;
 	kore_gpu_buffer_parameters id_buffer_params;
-	id_buffer_params.size = shader_id_count * D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT;
+	id_buffer_params.size        = shader_id_count * D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT;
 	id_buffer_params.usage_flags = KORE_GPU_BUFFER_USAGE_CPU_WRITE;
 	kore_gpu_device_create_buffer(device, &id_buffer_params, &pipe->shader_ids);
 

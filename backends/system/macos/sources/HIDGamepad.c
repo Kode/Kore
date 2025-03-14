@@ -150,7 +150,7 @@ void HIDGamepad_bind(struct HIDGamepad *gamepad, IOHIDDeviceRef inDeviceRef, int
 
 	// Set device and device index
 	gamepad->hidDeviceRef = inDeviceRef;
-	gamepad->padIndex = inPadIndex;
+	gamepad->padIndex     = inPadIndex;
 
 	// Initialise HID Device
 	// ...open device
@@ -202,12 +202,12 @@ static void initDeviceElements(struct HIDGamepad *gamepad, CFArrayRef elements) 
 
 	for (CFIndex i = 0, count = CFArrayGetCount(elements); i < count; ++i) {
 		IOHIDElementRef elementRef = (IOHIDElementRef)CFArrayGetValueAtIndex(elements, i);
-		IOHIDElementType elemType = IOHIDElementGetType(elementRef);
+		IOHIDElementType elemType  = IOHIDElementGetType(elementRef);
 
 		IOHIDElementCookie cookie = IOHIDElementGetCookie(elementRef);
 
 		uint32_t usagePage = IOHIDElementGetUsagePage(elementRef);
-		uint32_t usage = IOHIDElementGetUsage(elementRef);
+		uint32_t usage     = IOHIDElementGetUsage(elementRef);
 
 		// Match up items
 		switch (usagePage) {
@@ -286,13 +286,13 @@ void HIDGamepad_unbind(struct HIDGamepad *gamepad) {
 }
 
 static void reset(struct HIDGamepad *gamepad) {
-	gamepad->padIndex = -1;
-	gamepad->hidDeviceRef = NULL;
-	gamepad->hidQueueRef = NULL;
-	gamepad->hidDeviceVendor[0] = '\0';
+	gamepad->padIndex            = -1;
+	gamepad->hidDeviceRef        = NULL;
+	gamepad->hidQueueRef         = NULL;
+	gamepad->hidDeviceVendor[0]  = '\0';
 	gamepad->hidDeviceProduct[0] = '\0';
-	gamepad->hidDeviceVendorID = 0;
-	gamepad->hidDeviceProductID = 0;
+	gamepad->hidDeviceVendorID   = 0;
+	gamepad->hidDeviceProductID  = 0;
 
 	memset(gamepad->axis, 0, sizeof(gamepad->axis));
 	memset(gamepad->buttons, 0, sizeof(gamepad->buttons));
@@ -303,8 +303,8 @@ static void buttonChanged(struct HIDGamepad *gamepad, IOHIDElementRef elementRef
 	double rawValue = IOHIDValueGetScaledValue(valueRef, kIOHIDValueScaleTypePhysical);
 
 	// Normalize button value to the range [0.0, 1.0] (0 - release, 1 - pressed)
-	double min = IOHIDElementGetLogicalMin(elementRef);
-	double max = IOHIDElementGetLogicalMax(elementRef);
+	double min       = IOHIDElementGetLogicalMin(elementRef);
+	double max       = IOHIDElementGetLogicalMax(elementRef);
 	double normalize = (rawValue - min) / (max - min);
 
 	// log(Info, "%f %f %f %f", rawValue, min, max, normalize);
@@ -320,8 +320,8 @@ static void axisChanged(struct HIDGamepad *gamepad, IOHIDElementRef elementRef, 
 	double rawValue = IOHIDValueGetScaledValue(valueRef, kIOHIDValueScaleTypePhysical);
 
 	// Normalize axis value to the range [-1.0, 1.0] (e.g. -1 - left, 0 - release, 1 - right)
-	double min = IOHIDElementGetPhysicalMin(elementRef);
-	double max = IOHIDElementGetPhysicalMax(elementRef);
+	double min       = IOHIDElementGetPhysicalMin(elementRef);
+	double max       = IOHIDElementGetPhysicalMax(elementRef);
 	double normalize = normalize = (((rawValue - min) / (max - min)) * 2) - 1;
 
 	// Invert Y axis

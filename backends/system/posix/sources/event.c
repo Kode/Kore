@@ -6,7 +6,7 @@
 
 void kore_event_init(kore_event *event, bool auto_reset) {
 	event->impl.auto_reset = auto_reset;
-	event->impl.set = false;
+	event->impl.set        = false;
 
 	pthread_cond_init(&event->impl.event, NULL);
 

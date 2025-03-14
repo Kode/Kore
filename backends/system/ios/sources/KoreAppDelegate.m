@@ -27,7 +27,7 @@ void loadURL(const char *url) {
 
 	// set the session category
 	NSString *category = AVAudioSessionCategoryAmbient;
-	bool success = [sessionInstance setCategory:category error:&error];
+	bool success       = [sessionInstance setCategory:category error:&error];
 	if (!success)
 		NSLog(@"Error setting AVAudioSession category! %@\n", [error localizedDescription]);
 	// CGRect rect = [[UIScreen mainScreen] applicationFrame];

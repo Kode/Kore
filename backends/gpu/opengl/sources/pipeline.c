@@ -48,7 +48,7 @@ void kore_opengl_render_pipeline_init(kore_opengl_device *device, kore_opengl_re
 	pipe->program = glCreateProgram();
 	kore_opengl_check_errors();
 
-	pipe->vertex_shader = compile_shader(GL_VERTEX_SHADER, parameters->vertex.shader.data);
+	pipe->vertex_shader   = compile_shader(GL_VERTEX_SHADER, parameters->vertex.shader.data);
 	pipe->fragment_shader = compile_shader(GL_FRAGMENT_SHADER, parameters->fragment.shader.data);
 
 	glAttachShader(pipe->program, pipe->vertex_shader);

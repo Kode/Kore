@@ -52,8 +52,8 @@ bool kore_keyboard_active() {
 
 void kore_load_url(const char *url) {
 #define MAX_COMMAND_BUFFER_SIZE 256
-#define HTTP "http://"
-#define HTTPS "https://"
+#define HTTP                    "http://"
+#define HTTPS                   "https://"
 	if (strncmp(url, HTTP, sizeof(HTTP) - 1) == 0 || strncmp(url, HTTPS, sizeof(HTTPS) - 1) == 0) {
 		char openUrlCommand[MAX_COMMAND_BUFFER_SIZE];
 		snprintf(openUrlCommand, MAX_COMMAND_BUFFER_SIZE, "xdg-open %s", url);
@@ -175,7 +175,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 		kore_framebuffer_options_set_defaults(&defaultFrame);
 		frame = &defaultFrame;
 	}
-	win->width = width;
+	win->width  = width;
 	win->height = height;
 	if (win->title == NULL) {
 		win->title = name;
@@ -207,7 +207,7 @@ void kore_copy_to_clipboard(const char *text) {
 
 static int parse_number_at_end_of_line(char *line) {
 	char *end = &line[strlen(line) - 2];
-	int num = 0;
+	int num   = 0;
 	int multi = 1;
 	while (*end >= '0' && *end <= '9') {
 		num += (*end - '0') * multi;
@@ -225,9 +225,9 @@ int kore_cpu_cores(void) {
 		int cores[1024];
 		memset(cores, 0, sizeof(cores));
 
-		int cpu_count = 0;
-		int physical_id = -1;
-		int per_cpu_cores = -1;
+		int cpu_count       = 0;
+		int physical_id     = -1;
+		int per_cpu_cores   = -1;
 		int processor_count = 0;
 
 		while (fgets(line, sizeof(line), file)) {
@@ -238,8 +238,8 @@ int kore_cpu_cores(void) {
 						cpu_count = physical_id + 1;
 					}
 					cores[physical_id] = per_cpu_cores;
-					physical_id = -1;
-					per_cpu_cores = -1;
+					physical_id        = -1;
+					per_cpu_cores      = -1;
 				}
 			}
 			else if (strncmp(line, "physical id", 11) == 0) {
@@ -286,8 +286,8 @@ int kore_hardware_threads(void) {
 #include <xkbcommon/xkbcommon.h>
 
 int xkb_to_kore(xkb_keysym_t symbol) {
-#define KEY(xkb, kore)                                                                                                                                         \
-	case xkb:                                                                                                                                                  \
+#define KEY(xkb, kore) \
+	case xkb:          \
 		return kore;
 	switch (symbol) {
 		KEY(XKB_KEY_Right, KORE_KEY_RIGHT)

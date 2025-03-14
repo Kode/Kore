@@ -13,8 +13,8 @@
 #include <wayland-client-core.h>
 #include <wayland-cursor.h>
 
-#define KORE_WL_CHECK_VERSION(x, y, z)                                                                                                                         \
-	(WAYLAND_VERSION_MAJOR > x || (WAYLAND_VERSION_MAJOR == x && WAYLAND_VERSION_MINOR > y) ||                                                                 \
+#define KORE_WL_CHECK_VERSION(x, y, z)                                                         \
+	(WAYLAND_VERSION_MAJOR > x || (WAYLAND_VERSION_MAJOR == x && WAYLAND_VERSION_MINOR > y) || \
 	 (WAYLAND_VERSION_MAJOR == x && WAYLAND_VERSION_MINOR == y && WAYLAND_VERSION_MICRO >= z))
 
 struct wl_surface;
@@ -39,60 +39,60 @@ struct kore_wl_procs {
 #endif
 };
 
-#define wl_event_queue_destroy wl._wl_event_queue_destroy
-#define wl_proxy_marshal_flags wl._wl_proxy_marshal_flags
-#define wl_proxy_marshal_array_flags wl._wl_proxy_marshal_array_flags
-#define wl_proxy_marshal wl._wl_proxy_marshal
-#define wl_proxy_marshal_array wl._wl_proxy_marshal_array
-#define wl_proxy_create wl._wl_proxy_create
-#define wl_proxy_create_wrapper wl._wl_proxy_create_wrapper
-#define wl_proxy_wrapper_destroy wl._wl_proxy_wrapper_destroy
-#define wl_proxy_marshal_constructor wl._wl_proxy_marshal_constructor
-#define wl_proxy_marshal_constructor_versioned wl._wl_proxy_marshal_constructor_versioned
-#define wl_proxy_marshal_array_constructor wl._wl_proxy_marshal_array_constructor
+#define wl_event_queue_destroy                       wl._wl_event_queue_destroy
+#define wl_proxy_marshal_flags                       wl._wl_proxy_marshal_flags
+#define wl_proxy_marshal_array_flags                 wl._wl_proxy_marshal_array_flags
+#define wl_proxy_marshal                             wl._wl_proxy_marshal
+#define wl_proxy_marshal_array                       wl._wl_proxy_marshal_array
+#define wl_proxy_create                              wl._wl_proxy_create
+#define wl_proxy_create_wrapper                      wl._wl_proxy_create_wrapper
+#define wl_proxy_wrapper_destroy                     wl._wl_proxy_wrapper_destroy
+#define wl_proxy_marshal_constructor                 wl._wl_proxy_marshal_constructor
+#define wl_proxy_marshal_constructor_versioned       wl._wl_proxy_marshal_constructor_versioned
+#define wl_proxy_marshal_array_constructor           wl._wl_proxy_marshal_array_constructor
 #define wl_proxy_marshal_array_constructor_versioned wl._wl_proxy_marshal_array_constructor_versioned
-#define wl_proxy_destroy wl._wl_proxy_destroy
-#define wl_proxy_add_listener wl._wl_proxy_add_listener
-#define wl_proxy_get_listener wl._wl_proxy_get_listener
-#define wl_proxy_add_dispatcher wl._wl_proxy_add_dispatcher
-#define wl_proxy_set_user_data wl._wl_proxy_set_user_data
-#define wl_proxy_get_user_data wl._wl_proxy_get_user_data
-#define wl_proxy_get_version wl._wl_proxy_get_version
-#define wl_proxy_get_id wl._wl_proxy_get_id
-#define wl_proxy_set_tag wl._wl_proxy_set_tag
-#define wl_proxy_get_tag wl._wl_proxy_get_tag
-#define wl_proxy_get_class wl._wl_proxy_get_class
-#define wl_proxy_set_queue wl._wl_proxy_set_queue
-#define wl_display_connect wl._wl_display_connect
-#define wl_display_connect_to_fd wl._wl_display_connect_to_fd
-#define wl_display_disconnect wl._wl_display_disconnect
-#define wl_display_get_fd wl._wl_display_get_fd
-#define wl_display_dispatch wl._wl_display_dispatch
-#define wl_display_dispatch_queue wl._wl_display_dispatch_queue
-#define wl_display_dispatch_queue_pending wl._wl_display_dispatch_queue_pending
-#define wl_display_dispatch_pending wl._wl_display_dispatch_pending
-#define wl_display_get_error wl._wl_display_get_error
-#define wl_display_get_protocol_error wl._wl_display_get_protocol_error
-#define wl_display_flush wl._wl_display_flush
-#define wl_display_roundtrip_queue wl._wl_display_roundtrip_queue
-#define wl_display_roundtrip wl._wl_display_roundtrip
-#define wl_display_create_queue wl._wl_display_create_queue
-#define wl_display_prepare_read_queue wl._wl_display_prepare_read_queue
-#define wl_display_prepare_read wl._wl_display_prepare_read
-#define wl_display_cancel_read wl._wl_display_cancel_read
-#define wl_display_read_events wl._wl_display_read_events
-#define wl_log_set_handler_client wl._wl_log_set_handler_client
+#define wl_proxy_destroy                             wl._wl_proxy_destroy
+#define wl_proxy_add_listener                        wl._wl_proxy_add_listener
+#define wl_proxy_get_listener                        wl._wl_proxy_get_listener
+#define wl_proxy_add_dispatcher                      wl._wl_proxy_add_dispatcher
+#define wl_proxy_set_user_data                       wl._wl_proxy_set_user_data
+#define wl_proxy_get_user_data                       wl._wl_proxy_get_user_data
+#define wl_proxy_get_version                         wl._wl_proxy_get_version
+#define wl_proxy_get_id                              wl._wl_proxy_get_id
+#define wl_proxy_set_tag                             wl._wl_proxy_set_tag
+#define wl_proxy_get_tag                             wl._wl_proxy_get_tag
+#define wl_proxy_get_class                           wl._wl_proxy_get_class
+#define wl_proxy_set_queue                           wl._wl_proxy_set_queue
+#define wl_display_connect                           wl._wl_display_connect
+#define wl_display_connect_to_fd                     wl._wl_display_connect_to_fd
+#define wl_display_disconnect                        wl._wl_display_disconnect
+#define wl_display_get_fd                            wl._wl_display_get_fd
+#define wl_display_dispatch                          wl._wl_display_dispatch
+#define wl_display_dispatch_queue                    wl._wl_display_dispatch_queue
+#define wl_display_dispatch_queue_pending            wl._wl_display_dispatch_queue_pending
+#define wl_display_dispatch_pending                  wl._wl_display_dispatch_pending
+#define wl_display_get_error                         wl._wl_display_get_error
+#define wl_display_get_protocol_error                wl._wl_display_get_protocol_error
+#define wl_display_flush                             wl._wl_display_flush
+#define wl_display_roundtrip_queue                   wl._wl_display_roundtrip_queue
+#define wl_display_roundtrip                         wl._wl_display_roundtrip
+#define wl_display_create_queue                      wl._wl_display_create_queue
+#define wl_display_prepare_read_queue                wl._wl_display_prepare_read_queue
+#define wl_display_prepare_read                      wl._wl_display_prepare_read
+#define wl_display_cancel_read                       wl._wl_display_cancel_read
+#define wl_display_read_events                       wl._wl_display_read_events
+#define wl_log_set_handler_client                    wl._wl_log_set_handler_client
 
-#define wl_cursor_theme_load wl._wl_cursor_theme_load
-#define wl_cursor_theme_destroy wl._wl_cursor_theme_destroy
-#define wl_cursor_theme_get_cursor wl._wl_cursor_theme_get_cursor
-#define wl_cursor_image_get_buffer wl._wl_cursor_image_get_buffer
-#define wl_cursor_frame wl._wl_cursor_frame
+#define wl_cursor_theme_load         wl._wl_cursor_theme_load
+#define wl_cursor_theme_destroy      wl._wl_cursor_theme_destroy
+#define wl_cursor_theme_get_cursor   wl._wl_cursor_theme_get_cursor
+#define wl_cursor_image_get_buffer   wl._wl_cursor_image_get_buffer
+#define wl_cursor_frame              wl._wl_cursor_frame
 #define wl_cursor_frame_and_duration wl._wl_cursor_frame_and_duration
 
-#define wl_egl_window_create wl._wl_egl_window_create
+#define wl_egl_window_create  wl._wl_egl_window_create
 #define wl_egl_window_destroy wl._wl_egl_window_destroy
-#define wl_egl_window_resize wl._wl_egl_window_resize
+#define wl_egl_window_resize  wl._wl_egl_window_resize
 
 extern struct kore_wl_procs wl;
 
@@ -125,8 +125,8 @@ struct kore_xkb_procs {
 
 extern struct kore_xkb_procs wl_xkb;
 
-#define MAXIMUM_WINDOWS 16
-#define MAXIMUM_DISPLAYS 16
+#define MAXIMUM_WINDOWS       16
+#define MAXIMUM_DISPLAYS      16
 #define MAXIMUM_DISPLAY_MODES 16
 
 struct kore_wl_decoration {
@@ -148,29 +148,29 @@ enum kore_wl_decoration_focus {
 
 #define KORE_WL_DECORATION_WIDTH 10
 
-#define KORE_WL_DECORATION_TOP_X 0
-#define KORE_WL_DECORATION_TOP_Y -(KORE_WL_DECORATION_TOP_HEIGHT)
-#define KORE_WL_DECORATION_TOP_WIDTH window->surface_width
+#define KORE_WL_DECORATION_TOP_X      0
+#define KORE_WL_DECORATION_TOP_Y      -(KORE_WL_DECORATION_TOP_HEIGHT)
+#define KORE_WL_DECORATION_TOP_WIDTH  window->surface_width
 #define KORE_WL_DECORATION_TOP_HEIGHT KORE_WL_DECORATION_WIDTH * 3
 
-#define KORE_WL_DECORATION_LEFT_X -10
-#define KORE_WL_DECORATION_LEFT_Y -(KORE_WL_DECORATION_TOP_HEIGHT)
-#define KORE_WL_DECORATION_LEFT_WIDTH KORE_WL_DECORATION_WIDTH
+#define KORE_WL_DECORATION_LEFT_X      -10
+#define KORE_WL_DECORATION_LEFT_Y      -(KORE_WL_DECORATION_TOP_HEIGHT)
+#define KORE_WL_DECORATION_LEFT_WIDTH  KORE_WL_DECORATION_WIDTH
 #define KORE_WL_DECORATION_LEFT_HEIGHT window->surface_height + KORE_WL_DECORATION_TOP_HEIGHT + KORE_WL_DECORATION_BOTTOM_HEIGHT
 
-#define KORE_WL_DECORATION_RIGHT_X window->surface_width
-#define KORE_WL_DECORATION_RIGHT_Y -(KORE_WL_DECORATION_TOP_HEIGHT)
-#define KORE_WL_DECORATION_RIGHT_WIDTH 10
+#define KORE_WL_DECORATION_RIGHT_X      window->surface_width
+#define KORE_WL_DECORATION_RIGHT_Y      -(KORE_WL_DECORATION_TOP_HEIGHT)
+#define KORE_WL_DECORATION_RIGHT_WIDTH  10
 #define KORE_WL_DECORATION_RIGHT_HEIGHT window->surface_height + KORE_WL_DECORATION_TOP_HEIGHT + KORE_WL_DECORATION_BOTTOM_HEIGHT
 
-#define KORE_WL_DECORATION_BOTTOM_X 0
-#define KORE_WL_DECORATION_BOTTOM_Y window->surface_height
-#define KORE_WL_DECORATION_BOTTOM_WIDTH window->surface_width
+#define KORE_WL_DECORATION_BOTTOM_X      0
+#define KORE_WL_DECORATION_BOTTOM_Y      window->surface_height
+#define KORE_WL_DECORATION_BOTTOM_WIDTH  window->surface_width
 #define KORE_WL_DECORATION_BOTTOM_HEIGHT KORE_WL_DECORATION_WIDTH
 
-#define KORE_WL_DECORATION_CLOSE_X window->surface_width - 10
-#define KORE_WL_DECORATION_CLOSE_Y -20
-#define KORE_WL_DECORATION_CLOSE_WIDTH 9
+#define KORE_WL_DECORATION_CLOSE_X      window->surface_width - 10
+#define KORE_WL_DECORATION_CLOSE_Y      -20
+#define KORE_WL_DECORATION_CLOSE_WIDTH  9
 #define KORE_WL_DECORATION_CLOSE_HEIGHT 9
 
 struct kore_wl_window {

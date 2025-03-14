@@ -87,7 +87,7 @@ static inline kore_int8x16_mask kore_int8x16_cmplt(kore_int8x16 a, kore_int8x16 
 
 static inline kore_int8x16_mask kore_int8x16_cmpneq(kore_int8x16 a, kore_int8x16 b) {
 	__m128i mask = _mm_cmpeq_epi8(a, b);
-	__m128i all = _mm_set1_epi32(0xffffffff);
+	__m128i all  = _mm_set1_epi32(0xffffffff);
 	return _mm_andnot_si128(mask, all);
 }
 
@@ -207,16 +207,16 @@ static inline kore_int8x16 kore_int8x16_not(kore_int8x16 t) {
 
 static inline kore_int8x16 kore_int8x16_intrin_load(const int8_t *values) {
 	kore_int8x16 value;
-	value.values[0] = values[0];
-	value.values[1] = values[1];
-	value.values[2] = values[2];
-	value.values[3] = values[3];
-	value.values[4] = values[4];
-	value.values[5] = values[5];
-	value.values[6] = values[6];
-	value.values[7] = values[7];
-	value.values[8] = values[8];
-	value.values[9] = values[9];
+	value.values[0]  = values[0];
+	value.values[1]  = values[1];
+	value.values[2]  = values[2];
+	value.values[3]  = values[3];
+	value.values[4]  = values[4];
+	value.values[5]  = values[5];
+	value.values[6]  = values[6];
+	value.values[7]  = values[7];
+	value.values[8]  = values[8];
+	value.values[9]  = values[9];
 	value.values[10] = values[10];
 	value.values[11] = values[11];
 	value.values[12] = values[12];
@@ -232,16 +232,16 @@ static inline kore_int8x16 kore_int8x16_intrin_load_unaligned(const int8_t *valu
 
 static inline kore_int8x16 kore_int8x16_load(const int8_t values[16]) {
 	kore_int8x16 value;
-	value.values[0] = values[0];
-	value.values[1] = values[1];
-	value.values[2] = values[2];
-	value.values[3] = values[3];
-	value.values[4] = values[4];
-	value.values[5] = values[5];
-	value.values[6] = values[6];
-	value.values[7] = values[7];
-	value.values[8] = values[8];
-	value.values[9] = values[9];
+	value.values[0]  = values[0];
+	value.values[1]  = values[1];
+	value.values[2]  = values[2];
+	value.values[3]  = values[3];
+	value.values[4]  = values[4];
+	value.values[5]  = values[5];
+	value.values[6]  = values[6];
+	value.values[7]  = values[7];
+	value.values[8]  = values[8];
+	value.values[9]  = values[9];
 	value.values[10] = values[10];
 	value.values[11] = values[11];
 	value.values[12] = values[12];
@@ -253,16 +253,16 @@ static inline kore_int8x16 kore_int8x16_load(const int8_t values[16]) {
 
 static inline kore_int8x16 kore_int8x16_load_all(int8_t t) {
 	kore_int8x16 value;
-	value.values[0] = t;
-	value.values[1] = t;
-	value.values[2] = t;
-	value.values[3] = t;
-	value.values[4] = t;
-	value.values[5] = t;
-	value.values[6] = t;
-	value.values[7] = t;
-	value.values[8] = t;
-	value.values[9] = t;
+	value.values[0]  = t;
+	value.values[1]  = t;
+	value.values[2]  = t;
+	value.values[3]  = t;
+	value.values[4]  = t;
+	value.values[5]  = t;
+	value.values[6]  = t;
+	value.values[7]  = t;
+	value.values[8]  = t;
+	value.values[9]  = t;
 	value.values[10] = t;
 	value.values[11] = t;
 	value.values[12] = t;
@@ -273,16 +273,16 @@ static inline kore_int8x16 kore_int8x16_load_all(int8_t t) {
 }
 
 static inline void kore_int8x16_store(int8_t *destination, kore_int8x16 value) {
-	destination[0] = value.values[0];
-	destination[1] = value.values[1];
-	destination[2] = value.values[2];
-	destination[3] = value.values[3];
-	destination[4] = value.values[4];
-	destination[5] = value.values[5];
-	destination[6] = value.values[6];
-	destination[7] = value.values[7];
-	destination[8] = value.values[8];
-	destination[9] = value.values[9];
+	destination[0]  = value.values[0];
+	destination[1]  = value.values[1];
+	destination[2]  = value.values[2];
+	destination[3]  = value.values[3];
+	destination[4]  = value.values[4];
+	destination[5]  = value.values[5];
+	destination[6]  = value.values[6];
+	destination[7]  = value.values[7];
+	destination[8]  = value.values[8];
+	destination[9]  = value.values[9];
 	destination[10] = value.values[10];
 	destination[11] = value.values[11];
 	destination[12] = value.values[12];
@@ -301,16 +301,16 @@ static inline int8_t kore_int8x16_get(kore_int8x16 t, int index) {
 
 static inline kore_int8x16 kore_int8x16_add(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16 value;
-	value.values[0] = a.values[0] + b.values[0];
-	value.values[1] = a.values[1] + b.values[1];
-	value.values[2] = a.values[2] + b.values[2];
-	value.values[3] = a.values[3] + b.values[3];
-	value.values[4] = a.values[4] + b.values[4];
-	value.values[5] = a.values[5] + b.values[5];
-	value.values[6] = a.values[6] + b.values[6];
-	value.values[7] = a.values[7] + b.values[7];
-	value.values[8] = a.values[8] + b.values[8];
-	value.values[9] = a.values[9] + b.values[9];
+	value.values[0]  = a.values[0] + b.values[0];
+	value.values[1]  = a.values[1] + b.values[1];
+	value.values[2]  = a.values[2] + b.values[2];
+	value.values[3]  = a.values[3] + b.values[3];
+	value.values[4]  = a.values[4] + b.values[4];
+	value.values[5]  = a.values[5] + b.values[5];
+	value.values[6]  = a.values[6] + b.values[6];
+	value.values[7]  = a.values[7] + b.values[7];
+	value.values[8]  = a.values[8] + b.values[8];
+	value.values[9]  = a.values[9] + b.values[9];
 	value.values[10] = a.values[10] + b.values[10];
 	value.values[11] = a.values[11] + b.values[11];
 	value.values[12] = a.values[12] + b.values[12];
@@ -322,16 +322,16 @@ static inline kore_int8x16 kore_int8x16_add(kore_int8x16 a, kore_int8x16 b) {
 
 static inline kore_int8x16 kore_int8x16_sub(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16 value;
-	value.values[0] = a.values[0] - b.values[0];
-	value.values[1] = a.values[1] - b.values[1];
-	value.values[2] = a.values[2] - b.values[2];
-	value.values[3] = a.values[3] - b.values[3];
-	value.values[4] = a.values[4] - b.values[4];
-	value.values[5] = a.values[5] - b.values[5];
-	value.values[6] = a.values[6] - b.values[6];
-	value.values[7] = a.values[7] - b.values[7];
-	value.values[8] = a.values[8] - b.values[8];
-	value.values[9] = a.values[9] - b.values[9];
+	value.values[0]  = a.values[0] - b.values[0];
+	value.values[1]  = a.values[1] - b.values[1];
+	value.values[2]  = a.values[2] - b.values[2];
+	value.values[3]  = a.values[3] - b.values[3];
+	value.values[4]  = a.values[4] - b.values[4];
+	value.values[5]  = a.values[5] - b.values[5];
+	value.values[6]  = a.values[6] - b.values[6];
+	value.values[7]  = a.values[7] - b.values[7];
+	value.values[8]  = a.values[8] - b.values[8];
+	value.values[9]  = a.values[9] - b.values[9];
 	value.values[10] = a.values[10] - b.values[10];
 	value.values[11] = a.values[11] - b.values[11];
 	value.values[12] = a.values[12] - b.values[12];
@@ -343,16 +343,16 @@ static inline kore_int8x16 kore_int8x16_sub(kore_int8x16 a, kore_int8x16 b) {
 
 static inline kore_int8x16 kore_int8x16_max(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16 value;
-	value.values[0] = a.values[0] > b.values[0] ? a.values[0] : b.values[0];
-	value.values[1] = a.values[1] > b.values[1] ? a.values[1] : b.values[1];
-	value.values[2] = a.values[2] > b.values[2] ? a.values[2] : b.values[2];
-	value.values[3] = a.values[3] > b.values[3] ? a.values[3] : b.values[3];
-	value.values[4] = a.values[4] > b.values[4] ? a.values[4] : b.values[4];
-	value.values[5] = a.values[5] > b.values[5] ? a.values[5] : b.values[5];
-	value.values[6] = a.values[6] > b.values[6] ? a.values[6] : b.values[6];
-	value.values[7] = a.values[7] > b.values[7] ? a.values[7] : b.values[7];
-	value.values[8] = a.values[8] > b.values[8] ? a.values[8] : b.values[8];
-	value.values[9] = a.values[9] > b.values[9] ? a.values[9] : b.values[9];
+	value.values[0]  = a.values[0] > b.values[0] ? a.values[0] : b.values[0];
+	value.values[1]  = a.values[1] > b.values[1] ? a.values[1] : b.values[1];
+	value.values[2]  = a.values[2] > b.values[2] ? a.values[2] : b.values[2];
+	value.values[3]  = a.values[3] > b.values[3] ? a.values[3] : b.values[3];
+	value.values[4]  = a.values[4] > b.values[4] ? a.values[4] : b.values[4];
+	value.values[5]  = a.values[5] > b.values[5] ? a.values[5] : b.values[5];
+	value.values[6]  = a.values[6] > b.values[6] ? a.values[6] : b.values[6];
+	value.values[7]  = a.values[7] > b.values[7] ? a.values[7] : b.values[7];
+	value.values[8]  = a.values[8] > b.values[8] ? a.values[8] : b.values[8];
+	value.values[9]  = a.values[9] > b.values[9] ? a.values[9] : b.values[9];
 	value.values[10] = a.values[10] > b.values[10] ? a.values[10] : b.values[10];
 	value.values[11] = a.values[11] > b.values[11] ? a.values[11] : b.values[11];
 	value.values[12] = a.values[12] > b.values[12] ? a.values[12] : b.values[12];
@@ -364,16 +364,16 @@ static inline kore_int8x16 kore_int8x16_max(kore_int8x16 a, kore_int8x16 b) {
 
 static inline kore_int8x16 kore_int8x16_min(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16 value;
-	value.values[0] = a.values[0] > b.values[0] ? b.values[0] : a.values[0];
-	value.values[1] = a.values[1] > b.values[1] ? b.values[1] : a.values[1];
-	value.values[2] = a.values[2] > b.values[2] ? b.values[2] : a.values[2];
-	value.values[3] = a.values[3] > b.values[3] ? b.values[3] : a.values[3];
-	value.values[4] = a.values[4] > b.values[4] ? b.values[4] : a.values[4];
-	value.values[5] = a.values[5] > b.values[5] ? b.values[5] : a.values[5];
-	value.values[6] = a.values[6] > b.values[6] ? b.values[6] : a.values[6];
-	value.values[7] = a.values[7] > b.values[7] ? b.values[7] : a.values[7];
-	value.values[8] = a.values[8] > b.values[8] ? b.values[8] : a.values[8];
-	value.values[9] = a.values[9] > b.values[9] ? b.values[9] : a.values[9];
+	value.values[0]  = a.values[0] > b.values[0] ? b.values[0] : a.values[0];
+	value.values[1]  = a.values[1] > b.values[1] ? b.values[1] : a.values[1];
+	value.values[2]  = a.values[2] > b.values[2] ? b.values[2] : a.values[2];
+	value.values[3]  = a.values[3] > b.values[3] ? b.values[3] : a.values[3];
+	value.values[4]  = a.values[4] > b.values[4] ? b.values[4] : a.values[4];
+	value.values[5]  = a.values[5] > b.values[5] ? b.values[5] : a.values[5];
+	value.values[6]  = a.values[6] > b.values[6] ? b.values[6] : a.values[6];
+	value.values[7]  = a.values[7] > b.values[7] ? b.values[7] : a.values[7];
+	value.values[8]  = a.values[8] > b.values[8] ? b.values[8] : a.values[8];
+	value.values[9]  = a.values[9] > b.values[9] ? b.values[9] : a.values[9];
 	value.values[10] = a.values[10] > b.values[10] ? b.values[10] : a.values[10];
 	value.values[11] = a.values[11] > b.values[11] ? b.values[11] : a.values[11];
 	value.values[12] = a.values[12] > b.values[12] ? b.values[12] : a.values[12];
@@ -385,16 +385,16 @@ static inline kore_int8x16 kore_int8x16_min(kore_int8x16 a, kore_int8x16 b) {
 
 static inline kore_int8x16_mask kore_int8x16_cmpeq(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16_mask mask;
-	mask.values[0] = a.values[0] == b.values[0] ? 0xff : 0;
-	mask.values[1] = a.values[1] == b.values[1] ? 0xff : 0;
-	mask.values[2] = a.values[2] == b.values[2] ? 0xff : 0;
-	mask.values[3] = a.values[3] == b.values[3] ? 0xff : 0;
-	mask.values[4] = a.values[4] == b.values[4] ? 0xff : 0;
-	mask.values[5] = a.values[5] == b.values[5] ? 0xff : 0;
-	mask.values[6] = a.values[6] == b.values[6] ? 0xff : 0;
-	mask.values[7] = a.values[7] == b.values[7] ? 0xff : 0;
-	mask.values[8] = a.values[8] == b.values[8] ? 0xff : 0;
-	mask.values[9] = a.values[9] == b.values[9] ? 0xff : 0;
+	mask.values[0]  = a.values[0] == b.values[0] ? 0xff : 0;
+	mask.values[1]  = a.values[1] == b.values[1] ? 0xff : 0;
+	mask.values[2]  = a.values[2] == b.values[2] ? 0xff : 0;
+	mask.values[3]  = a.values[3] == b.values[3] ? 0xff : 0;
+	mask.values[4]  = a.values[4] == b.values[4] ? 0xff : 0;
+	mask.values[5]  = a.values[5] == b.values[5] ? 0xff : 0;
+	mask.values[6]  = a.values[6] == b.values[6] ? 0xff : 0;
+	mask.values[7]  = a.values[7] == b.values[7] ? 0xff : 0;
+	mask.values[8]  = a.values[8] == b.values[8] ? 0xff : 0;
+	mask.values[9]  = a.values[9] == b.values[9] ? 0xff : 0;
 	mask.values[10] = a.values[10] == b.values[10] ? 0xff : 0;
 	mask.values[11] = a.values[11] == b.values[11] ? 0xff : 0;
 	mask.values[12] = a.values[12] == b.values[12] ? 0xff : 0;
@@ -406,16 +406,16 @@ static inline kore_int8x16_mask kore_int8x16_cmpeq(kore_int8x16 a, kore_int8x16 
 
 static inline kore_int8x16_mask kore_int8x16_cmpge(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16_mask mask;
-	mask.values[0] = a.values[0] >= b.values[0] ? 0xff : 0;
-	mask.values[1] = a.values[1] >= b.values[1] ? 0xff : 0;
-	mask.values[2] = a.values[2] >= b.values[2] ? 0xff : 0;
-	mask.values[3] = a.values[3] >= b.values[3] ? 0xff : 0;
-	mask.values[4] = a.values[4] >= b.values[4] ? 0xff : 0;
-	mask.values[5] = a.values[5] >= b.values[5] ? 0xff : 0;
-	mask.values[6] = a.values[6] >= b.values[6] ? 0xff : 0;
-	mask.values[7] = a.values[7] >= b.values[7] ? 0xff : 0;
-	mask.values[8] = a.values[8] >= b.values[8] ? 0xff : 0;
-	mask.values[9] = a.values[9] >= b.values[9] ? 0xff : 0;
+	mask.values[0]  = a.values[0] >= b.values[0] ? 0xff : 0;
+	mask.values[1]  = a.values[1] >= b.values[1] ? 0xff : 0;
+	mask.values[2]  = a.values[2] >= b.values[2] ? 0xff : 0;
+	mask.values[3]  = a.values[3] >= b.values[3] ? 0xff : 0;
+	mask.values[4]  = a.values[4] >= b.values[4] ? 0xff : 0;
+	mask.values[5]  = a.values[5] >= b.values[5] ? 0xff : 0;
+	mask.values[6]  = a.values[6] >= b.values[6] ? 0xff : 0;
+	mask.values[7]  = a.values[7] >= b.values[7] ? 0xff : 0;
+	mask.values[8]  = a.values[8] >= b.values[8] ? 0xff : 0;
+	mask.values[9]  = a.values[9] >= b.values[9] ? 0xff : 0;
 	mask.values[10] = a.values[10] >= b.values[10] ? 0xff : 0;
 	mask.values[11] = a.values[11] >= b.values[11] ? 0xff : 0;
 	mask.values[12] = a.values[12] >= b.values[12] ? 0xff : 0;
@@ -427,16 +427,16 @@ static inline kore_int8x16_mask kore_int8x16_cmpge(kore_int8x16 a, kore_int8x16 
 
 static inline kore_int8x16_mask kore_int8x16_cmpgt(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16_mask mask;
-	mask.values[0] = a.values[0] > b.values[0] ? 0xff : 0;
-	mask.values[1] = a.values[1] > b.values[1] ? 0xff : 0;
-	mask.values[2] = a.values[2] > b.values[2] ? 0xff : 0;
-	mask.values[3] = a.values[3] > b.values[3] ? 0xff : 0;
-	mask.values[4] = a.values[4] > b.values[4] ? 0xff : 0;
-	mask.values[5] = a.values[5] > b.values[5] ? 0xff : 0;
-	mask.values[6] = a.values[6] > b.values[6] ? 0xff : 0;
-	mask.values[7] = a.values[7] > b.values[7] ? 0xff : 0;
-	mask.values[8] = a.values[8] > b.values[8] ? 0xff : 0;
-	mask.values[9] = a.values[9] > b.values[9] ? 0xff : 0;
+	mask.values[0]  = a.values[0] > b.values[0] ? 0xff : 0;
+	mask.values[1]  = a.values[1] > b.values[1] ? 0xff : 0;
+	mask.values[2]  = a.values[2] > b.values[2] ? 0xff : 0;
+	mask.values[3]  = a.values[3] > b.values[3] ? 0xff : 0;
+	mask.values[4]  = a.values[4] > b.values[4] ? 0xff : 0;
+	mask.values[5]  = a.values[5] > b.values[5] ? 0xff : 0;
+	mask.values[6]  = a.values[6] > b.values[6] ? 0xff : 0;
+	mask.values[7]  = a.values[7] > b.values[7] ? 0xff : 0;
+	mask.values[8]  = a.values[8] > b.values[8] ? 0xff : 0;
+	mask.values[9]  = a.values[9] > b.values[9] ? 0xff : 0;
 	mask.values[10] = a.values[10] > b.values[10] ? 0xff : 0;
 	mask.values[11] = a.values[11] > b.values[11] ? 0xff : 0;
 	mask.values[12] = a.values[12] > b.values[12] ? 0xff : 0;
@@ -448,16 +448,16 @@ static inline kore_int8x16_mask kore_int8x16_cmpgt(kore_int8x16 a, kore_int8x16 
 
 static inline kore_int8x16_mask kore_int8x16_cmple(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16_mask mask;
-	mask.values[0] = a.values[0] <= b.values[0] ? 0xff : 0;
-	mask.values[1] = a.values[1] <= b.values[1] ? 0xff : 0;
-	mask.values[2] = a.values[2] <= b.values[2] ? 0xff : 0;
-	mask.values[3] = a.values[3] <= b.values[3] ? 0xff : 0;
-	mask.values[4] = a.values[4] <= b.values[4] ? 0xff : 0;
-	mask.values[5] = a.values[5] <= b.values[5] ? 0xff : 0;
-	mask.values[6] = a.values[6] <= b.values[6] ? 0xff : 0;
-	mask.values[7] = a.values[7] <= b.values[7] ? 0xff : 0;
-	mask.values[8] = a.values[8] <= b.values[8] ? 0xff : 0;
-	mask.values[9] = a.values[9] <= b.values[9] ? 0xff : 0;
+	mask.values[0]  = a.values[0] <= b.values[0] ? 0xff : 0;
+	mask.values[1]  = a.values[1] <= b.values[1] ? 0xff : 0;
+	mask.values[2]  = a.values[2] <= b.values[2] ? 0xff : 0;
+	mask.values[3]  = a.values[3] <= b.values[3] ? 0xff : 0;
+	mask.values[4]  = a.values[4] <= b.values[4] ? 0xff : 0;
+	mask.values[5]  = a.values[5] <= b.values[5] ? 0xff : 0;
+	mask.values[6]  = a.values[6] <= b.values[6] ? 0xff : 0;
+	mask.values[7]  = a.values[7] <= b.values[7] ? 0xff : 0;
+	mask.values[8]  = a.values[8] <= b.values[8] ? 0xff : 0;
+	mask.values[9]  = a.values[9] <= b.values[9] ? 0xff : 0;
 	mask.values[10] = a.values[10] <= b.values[10] ? 0xff : 0;
 	mask.values[11] = a.values[11] <= b.values[11] ? 0xff : 0;
 	mask.values[12] = a.values[12] <= b.values[12] ? 0xff : 0;
@@ -469,16 +469,16 @@ static inline kore_int8x16_mask kore_int8x16_cmple(kore_int8x16 a, kore_int8x16 
 
 static inline kore_int8x16_mask kore_int8x16_cmplt(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16_mask mask;
-	mask.values[0] = a.values[0] < b.values[0] ? 0xff : 0;
-	mask.values[1] = a.values[1] < b.values[1] ? 0xff : 0;
-	mask.values[2] = a.values[2] < b.values[2] ? 0xff : 0;
-	mask.values[3] = a.values[3] < b.values[3] ? 0xff : 0;
-	mask.values[4] = a.values[4] < b.values[4] ? 0xff : 0;
-	mask.values[5] = a.values[5] < b.values[5] ? 0xff : 0;
-	mask.values[6] = a.values[6] < b.values[6] ? 0xff : 0;
-	mask.values[7] = a.values[7] < b.values[7] ? 0xff : 0;
-	mask.values[8] = a.values[8] < b.values[8] ? 0xff : 0;
-	mask.values[9] = a.values[9] < b.values[9] ? 0xff : 0;
+	mask.values[0]  = a.values[0] < b.values[0] ? 0xff : 0;
+	mask.values[1]  = a.values[1] < b.values[1] ? 0xff : 0;
+	mask.values[2]  = a.values[2] < b.values[2] ? 0xff : 0;
+	mask.values[3]  = a.values[3] < b.values[3] ? 0xff : 0;
+	mask.values[4]  = a.values[4] < b.values[4] ? 0xff : 0;
+	mask.values[5]  = a.values[5] < b.values[5] ? 0xff : 0;
+	mask.values[6]  = a.values[6] < b.values[6] ? 0xff : 0;
+	mask.values[7]  = a.values[7] < b.values[7] ? 0xff : 0;
+	mask.values[8]  = a.values[8] < b.values[8] ? 0xff : 0;
+	mask.values[9]  = a.values[9] < b.values[9] ? 0xff : 0;
 	mask.values[10] = a.values[10] < b.values[10] ? 0xff : 0;
 	mask.values[11] = a.values[11] < b.values[11] ? 0xff : 0;
 	mask.values[12] = a.values[12] < b.values[12] ? 0xff : 0;
@@ -490,16 +490,16 @@ static inline kore_int8x16_mask kore_int8x16_cmplt(kore_int8x16 a, kore_int8x16 
 
 static inline kore_int8x16_mask kore_int8x16_cmpneq(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16_mask mask;
-	mask.values[0] = a.values[0] != b.values[0] ? 0xff : 0;
-	mask.values[1] = a.values[1] != b.values[1] ? 0xff : 0;
-	mask.values[2] = a.values[2] != b.values[2] ? 0xff : 0;
-	mask.values[3] = a.values[3] != b.values[3] ? 0xff : 0;
-	mask.values[4] = a.values[4] != b.values[4] ? 0xff : 0;
-	mask.values[5] = a.values[5] != b.values[5] ? 0xff : 0;
-	mask.values[6] = a.values[6] != b.values[6] ? 0xff : 0;
-	mask.values[7] = a.values[7] != b.values[7] ? 0xff : 0;
-	mask.values[8] = a.values[8] != b.values[8] ? 0xff : 0;
-	mask.values[9] = a.values[9] != b.values[9] ? 0xff : 0;
+	mask.values[0]  = a.values[0] != b.values[0] ? 0xff : 0;
+	mask.values[1]  = a.values[1] != b.values[1] ? 0xff : 0;
+	mask.values[2]  = a.values[2] != b.values[2] ? 0xff : 0;
+	mask.values[3]  = a.values[3] != b.values[3] ? 0xff : 0;
+	mask.values[4]  = a.values[4] != b.values[4] ? 0xff : 0;
+	mask.values[5]  = a.values[5] != b.values[5] ? 0xff : 0;
+	mask.values[6]  = a.values[6] != b.values[6] ? 0xff : 0;
+	mask.values[7]  = a.values[7] != b.values[7] ? 0xff : 0;
+	mask.values[8]  = a.values[8] != b.values[8] ? 0xff : 0;
+	mask.values[9]  = a.values[9] != b.values[9] ? 0xff : 0;
 	mask.values[10] = a.values[10] != b.values[10] ? 0xff : 0;
 	mask.values[11] = a.values[11] != b.values[11] ? 0xff : 0;
 	mask.values[12] = a.values[12] != b.values[12] ? 0xff : 0;
@@ -511,16 +511,16 @@ static inline kore_int8x16_mask kore_int8x16_cmpneq(kore_int8x16 a, kore_int8x16
 
 static inline kore_int8x16 kore_int8x16_sel(kore_int8x16 a, kore_int8x16 b, kore_int8x16_mask mask) {
 	kore_int8x16 value;
-	value.values[0] = mask.values[0] != 0 ? a.values[0] : b.values[0];
-	value.values[1] = mask.values[1] != 0 ? a.values[1] : b.values[1];
-	value.values[2] = mask.values[2] != 0 ? a.values[2] : b.values[2];
-	value.values[3] = mask.values[3] != 0 ? a.values[3] : b.values[3];
-	value.values[4] = mask.values[4] != 0 ? a.values[4] : b.values[4];
-	value.values[5] = mask.values[5] != 0 ? a.values[5] : b.values[5];
-	value.values[6] = mask.values[6] != 0 ? a.values[6] : b.values[6];
-	value.values[7] = mask.values[7] != 0 ? a.values[7] : b.values[7];
-	value.values[8] = mask.values[8] != 0 ? a.values[8] : b.values[8];
-	value.values[9] = mask.values[9] != 0 ? a.values[9] : b.values[9];
+	value.values[0]  = mask.values[0] != 0 ? a.values[0] : b.values[0];
+	value.values[1]  = mask.values[1] != 0 ? a.values[1] : b.values[1];
+	value.values[2]  = mask.values[2] != 0 ? a.values[2] : b.values[2];
+	value.values[3]  = mask.values[3] != 0 ? a.values[3] : b.values[3];
+	value.values[4]  = mask.values[4] != 0 ? a.values[4] : b.values[4];
+	value.values[5]  = mask.values[5] != 0 ? a.values[5] : b.values[5];
+	value.values[6]  = mask.values[6] != 0 ? a.values[6] : b.values[6];
+	value.values[7]  = mask.values[7] != 0 ? a.values[7] : b.values[7];
+	value.values[8]  = mask.values[8] != 0 ? a.values[8] : b.values[8];
+	value.values[9]  = mask.values[9] != 0 ? a.values[9] : b.values[9];
 	value.values[10] = mask.values[10] != 0 ? a.values[10] : b.values[10];
 	value.values[11] = mask.values[11] != 0 ? a.values[11] : b.values[11];
 	value.values[12] = mask.values[12] != 0 ? a.values[12] : b.values[12];
@@ -532,16 +532,16 @@ static inline kore_int8x16 kore_int8x16_sel(kore_int8x16 a, kore_int8x16 b, kore
 
 static inline kore_int8x16 kore_int8x16_or(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16 value;
-	value.values[0] = a.values[0] | b.values[0];
-	value.values[1] = a.values[1] | b.values[1];
-	value.values[2] = a.values[2] | b.values[2];
-	value.values[3] = a.values[3] | b.values[3];
-	value.values[4] = a.values[4] | b.values[4];
-	value.values[5] = a.values[5] | b.values[5];
-	value.values[6] = a.values[6] | b.values[6];
-	value.values[7] = a.values[7] | b.values[7];
-	value.values[8] = a.values[8] | b.values[8];
-	value.values[9] = a.values[9] | b.values[9];
+	value.values[0]  = a.values[0] | b.values[0];
+	value.values[1]  = a.values[1] | b.values[1];
+	value.values[2]  = a.values[2] | b.values[2];
+	value.values[3]  = a.values[3] | b.values[3];
+	value.values[4]  = a.values[4] | b.values[4];
+	value.values[5]  = a.values[5] | b.values[5];
+	value.values[6]  = a.values[6] | b.values[6];
+	value.values[7]  = a.values[7] | b.values[7];
+	value.values[8]  = a.values[8] | b.values[8];
+	value.values[9]  = a.values[9] | b.values[9];
 	value.values[10] = a.values[10] | b.values[10];
 	value.values[11] = a.values[11] | b.values[11];
 	value.values[12] = a.values[12] | b.values[12];
@@ -553,16 +553,16 @@ static inline kore_int8x16 kore_int8x16_or(kore_int8x16 a, kore_int8x16 b) {
 
 static inline kore_int8x16 kore_int8x16_and(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16 value;
-	value.values[0] = a.values[0] & b.values[0];
-	value.values[1] = a.values[1] & b.values[1];
-	value.values[2] = a.values[2] & b.values[2];
-	value.values[3] = a.values[3] & b.values[3];
-	value.values[4] = a.values[4] & b.values[4];
-	value.values[5] = a.values[5] & b.values[5];
-	value.values[6] = a.values[6] & b.values[6];
-	value.values[7] = a.values[7] & b.values[7];
-	value.values[8] = a.values[8] & b.values[8];
-	value.values[9] = a.values[9] & b.values[9];
+	value.values[0]  = a.values[0] & b.values[0];
+	value.values[1]  = a.values[1] & b.values[1];
+	value.values[2]  = a.values[2] & b.values[2];
+	value.values[3]  = a.values[3] & b.values[3];
+	value.values[4]  = a.values[4] & b.values[4];
+	value.values[5]  = a.values[5] & b.values[5];
+	value.values[6]  = a.values[6] & b.values[6];
+	value.values[7]  = a.values[7] & b.values[7];
+	value.values[8]  = a.values[8] & b.values[8];
+	value.values[9]  = a.values[9] & b.values[9];
 	value.values[10] = a.values[10] & b.values[10];
 	value.values[11] = a.values[11] & b.values[11];
 	value.values[12] = a.values[12] & b.values[12];
@@ -574,16 +574,16 @@ static inline kore_int8x16 kore_int8x16_and(kore_int8x16 a, kore_int8x16 b) {
 
 static inline kore_int8x16 kore_int8x16_xor(kore_int8x16 a, kore_int8x16 b) {
 	kore_int8x16 value;
-	value.values[0] = a.values[0] ^ b.values[0];
-	value.values[1] = a.values[1] ^ b.values[1];
-	value.values[2] = a.values[2] ^ b.values[2];
-	value.values[3] = a.values[3] ^ b.values[3];
-	value.values[4] = a.values[4] ^ b.values[4];
-	value.values[5] = a.values[5] ^ b.values[5];
-	value.values[6] = a.values[6] ^ b.values[6];
-	value.values[7] = a.values[7] ^ b.values[7];
-	value.values[8] = a.values[8] ^ b.values[8];
-	value.values[9] = a.values[9] ^ b.values[9];
+	value.values[0]  = a.values[0] ^ b.values[0];
+	value.values[1]  = a.values[1] ^ b.values[1];
+	value.values[2]  = a.values[2] ^ b.values[2];
+	value.values[3]  = a.values[3] ^ b.values[3];
+	value.values[4]  = a.values[4] ^ b.values[4];
+	value.values[5]  = a.values[5] ^ b.values[5];
+	value.values[6]  = a.values[6] ^ b.values[6];
+	value.values[7]  = a.values[7] ^ b.values[7];
+	value.values[8]  = a.values[8] ^ b.values[8];
+	value.values[9]  = a.values[9] ^ b.values[9];
 	value.values[10] = a.values[10] ^ b.values[10];
 	value.values[11] = a.values[11] ^ b.values[11];
 	value.values[12] = a.values[12] ^ b.values[12];
@@ -595,16 +595,16 @@ static inline kore_int8x16 kore_int8x16_xor(kore_int8x16 a, kore_int8x16 b) {
 
 static inline kore_int8x16 kore_int8x16_not(kore_int8x16 t) {
 	kore_int8x16 value;
-	value.values[0] = ~t.values[0];
-	value.values[1] = ~t.values[1];
-	value.values[2] = ~t.values[2];
-	value.values[3] = ~t.values[3];
-	value.values[4] = ~t.values[4];
-	value.values[5] = ~t.values[5];
-	value.values[6] = ~t.values[6];
-	value.values[7] = ~t.values[7];
-	value.values[8] = ~t.values[8];
-	value.values[9] = ~t.values[9];
+	value.values[0]  = ~t.values[0];
+	value.values[1]  = ~t.values[1];
+	value.values[2]  = ~t.values[2];
+	value.values[3]  = ~t.values[3];
+	value.values[4]  = ~t.values[4];
+	value.values[5]  = ~t.values[5];
+	value.values[6]  = ~t.values[6];
+	value.values[7]  = ~t.values[7];
+	value.values[8]  = ~t.values[8];
+	value.values[9]  = ~t.values[9];
 	value.values[10] = ~t.values[10];
 	value.values[11] = ~t.values[11];
 	value.values[12] = ~t.values[12];

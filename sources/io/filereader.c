@@ -35,11 +35,11 @@ static bool memory_seek_callback(kore_file_reader *reader, size_t pos) {
 
 bool kore_file_reader_from_memory(kore_file_reader *reader, void *data, size_t size) {
 	memset(reader, 0, sizeof(kore_file_reader));
-	reader->data = data;
-	reader->size = size;
-	reader->read = memory_read_callback;
-	reader->pos = memory_pos_callback;
-	reader->seek = memory_seek_callback;
+	reader->data  = data;
+	reader->size  = size;
+	reader->read  = memory_read_callback;
+	reader->pos   = memory_pos_callback;
+	reader->seek  = memory_seek_callback;
 	reader->close = memory_close_callback;
 	return true;
 }
@@ -60,7 +60,7 @@ const char *macgetresourcepath(void);
 #define KORE_LINUX
 #endif
 
-static char *fileslocation = NULL;
+static char *fileslocation                                                                    = NULL;
 static bool (*file_reader_callback)(kore_file_reader *reader, const char *filename, int type) = NULL;
 #ifdef KORE_MICROSOFT
 static wchar_t wfilepath[1001];
@@ -226,10 +226,10 @@ bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filena
 	fseek((FILE *)reader->data, 0, SEEK_SET);
 #endif
 
-	reader->read = kore_libc_file_reader_read;
-	reader->seek = kore_libc_file_reader_seek;
+	reader->read  = kore_libc_file_reader_read;
+	reader->seek  = kore_libc_file_reader_seek;
 	reader->close = kore_libc_file_reader_close;
-	reader->pos = kore_libc_file_reader_pos;
+	reader->pos   = kore_libc_file_reader_pos;
 
 	return true;
 }

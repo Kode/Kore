@@ -28,7 +28,7 @@ static DWORD WINAPI ThreadProc(LPVOID arg) {
 }
 
 void kore_thread_init(kore_thread *thread, void (*func)(void *param), void *param) {
-	thread->impl.func = func;
+	thread->impl.func  = func;
 	thread->impl.param = param;
 
 	intptr_t start_index = thread_start_index++;
@@ -36,8 +36,8 @@ void kore_thread_init(kore_thread *thread, void (*func)(void *param), void *para
 		thread_start_index = 0;
 	}
 	starts[start_index].thread = func;
-	starts[start_index].param = param;
-	thread->impl.handle = CreateThread(0, 65536, ThreadProc, (LPVOID)start_index, 0, 0);
+	starts[start_index].param  = param;
+	thread->impl.handle        = CreateThread(0, 65536, ThreadProc, (LPVOID)start_index, 0, 0);
 	assert(thread->impl.handle != NULL);
 }
 
@@ -58,12 +58,12 @@ bool kore_thread_try_to_destroy(kore_thread *thread) {
 
 typedef HRESULT(WINAPI *SetThreadDescriptionType)(HANDLE hThread, PCWSTR lpThreadDescription);
 static SetThreadDescriptionType MySetThreadDescription = NULL;
-static bool set_thread_description_loaded = false;
+static bool set_thread_description_loaded              = false;
 
 void kore_thread_set_name(const char *name) {
 	if (!set_thread_description_loaded) {
-		HMODULE kernel32 = LoadLibraryA("kernel32.dll");
-		MySetThreadDescription = (SetThreadDescriptionType)GetProcAddress(kernel32, "SetThreadDescription");
+		HMODULE kernel32              = LoadLibraryA("kernel32.dll");
+		MySetThreadDescription        = (SetThreadDescriptionType)GetProcAddress(kernel32, "SetThreadDescription");
 		set_thread_description_loaded = true;
 	}
 

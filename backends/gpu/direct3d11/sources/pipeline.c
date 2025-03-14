@@ -8,12 +8,12 @@ void kore_d3d11_render_pipeline_init(kore_d3d11_device *device, kore_d3d11_rende
 	    device->device->lpVtbl->CreateVertexShader(device->device, parameters->vertex.shader.data, parameters->vertex.shader.size, NULL, &pipe->vertex_shader));
 
 	D3D11_INPUT_ELEMENT_DESC input_element_desc = {
-	    .SemanticName = "TEXCOORD",
-	    .SemanticIndex = 0,
-	    .Format = DXGI_FORMAT_R32G32B32_FLOAT,
-	    .InputSlot = 0,
-	    .AlignedByteOffset = 0,
-	    .InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA,
+	    .SemanticName         = "TEXCOORD",
+	    .SemanticIndex        = 0,
+	    .Format               = DXGI_FORMAT_R32G32B32_FLOAT,
+	    .InputSlot            = 0,
+	    .AlignedByteOffset    = 0,
+	    .InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA,
 	    .InstanceDataStepRate = 0,
 	};
 	kore_microsoft_affirm(device->device->lpVtbl->CreateInputLayout(device->device, &input_element_desc, 1, parameters->vertex.shader.data,
@@ -23,22 +23,22 @@ void kore_d3d11_render_pipeline_init(kore_d3d11_device *device, kore_d3d11_rende
 	                                                                &pipe->fragment_shader));
 
 	D3D11_DEPTH_STENCIL_DESC depth_stencil_desc = {
-	    .DepthEnable = FALSE,
+	    .DepthEnable    = FALSE,
 	    .DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO,
 	};
 
 	kore_microsoft_affirm(device->device->lpVtbl->CreateDepthStencilState(device->device, &depth_stencil_desc, &pipe->depth_stencil_state));
 
 	D3D11_RASTERIZER_DESC rasterizer_desc = {
-	    .CullMode = D3D11_CULL_NONE,
-	    .FillMode = D3D11_FILL_SOLID,
+	    .CullMode              = D3D11_CULL_NONE,
+	    .FillMode              = D3D11_FILL_SOLID,
 	    .FrontCounterClockwise = TRUE,
-	    .DepthBias = 0,
-	    .SlopeScaledDepthBias = 0.0f,
-	    .DepthBiasClamp = 0.0f,
-	    .DepthClipEnable = TRUE,
-	    .ScissorEnable = FALSE,
-	    .MultisampleEnable = FALSE,
+	    .DepthBias             = 0,
+	    .SlopeScaledDepthBias  = 0.0f,
+	    .DepthBiasClamp        = 0.0f,
+	    .DepthClipEnable       = TRUE,
+	    .ScissorEnable         = FALSE,
+	    .MultisampleEnable     = FALSE,
 	    .AntialiasedLineEnable = FALSE,
 	};
 

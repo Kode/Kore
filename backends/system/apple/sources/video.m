@@ -15,12 +15,12 @@ extern const char *iphonegetresourcepath(void);
 extern const char *macgetresourcepath(void);
 
 void kore_internal_video_sound_stream_init(kore_internal_video_sound_stream *stream, int channel_count, int frequency) {
-	stream->bufferSize = 1024 * 100;
-	stream->bufferReadPosition = 0;
+	stream->bufferSize          = 1024 * 100;
+	stream->bufferReadPosition  = 0;
 	stream->bufferWritePosition = 0;
-	stream->read = 0;
-	stream->written = 0;
-	stream->buffer = (float *)malloc(stream->bufferSize * sizeof(float));
+	stream->read                = 0;
+	stream->written             = 0;
+	stream->buffer              = (float *)malloc(stream->bufferSize * sizeof(float));
 }
 
 void kore_internal_video_sound_stream_destroy(kore_internal_video_sound_stream *stream) {
@@ -29,7 +29,7 @@ void kore_internal_video_sound_stream_destroy(kore_internal_video_sound_stream *
 
 void kore_internal_video_sound_stream_insert_data(kore_internal_video_sound_stream *stream, float *data, int sample_count) {
 	for (int i = 0; i < sample_count; ++i) {
-		float value = data[i]; // / 32767.0;
+		float value                                   = data[i]; // / 32767.0;
 		stream->buffer[stream->bufferWritePosition++] = value;
 		++stream->written;
 		if (stream->bufferWritePosition >= stream->bufferSize) {
@@ -68,7 +68,7 @@ bool kore_internal_video_sound_stream_ended(kore_internal_video_sound_stream *st
 
 static void load(kore_video *video, double startTime) {
 	video->impl.videoStart = startTime;
-	AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:video->impl.url options:nil];
+	AVURLAsset *asset      = [[AVURLAsset alloc] initWithURL:video->impl.url options:nil];
 	video->impl.videoAsset = asset;
 
 	video->impl.duration = [asset duration].value / [asset duration].timescale;
@@ -79,10 +79,10 @@ static void load(kore_video *video, double startTime) {
 	AVAssetReaderTrackOutput *videoOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:videoTrack outputSettings:videoOutputSettings];
 	[videoOutput setSupportsRandomAccess:YES];
 
-	bool hasAudio = [[asset tracksWithMediaType:AVMediaTypeAudio] count] > 0;
+	bool hasAudio                            = [[asset tracksWithMediaType:AVMediaTypeAudio] count] > 0;
 	AVAssetReaderAudioMixOutput *audioOutput = NULL;
 	if (hasAudio) {
-		AVAssetTrack *audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+		AVAssetTrack *audioTrack          = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
 		NSDictionary *audioOutputSettings = [NSDictionary
 		    dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:kAudioFormatLinearPCM], AVFormatIDKey, [NSNumber numberWithFloat:44100.0], AVSampleRateKey,
 		                                 [NSNumber numberWithInt:32], AVLinearPCMBitDepthKey, [NSNumber numberWithBool:NO], AVLinearPCMIsNonInterleaved,
@@ -95,7 +95,7 @@ static void load(kore_video *video, double startTime) {
 
 	if (startTime > 0) {
 		CMTimeRange timeRange = CMTimeRangeMake(CMTimeMake(startTime * 1000, 1000), kCMTimePositiveInfinity);
-		reader.timeRange = timeRange;
+		reader.timeRange      = timeRange;
 	}
 
 	[reader addOutput:videoOutput];
@@ -103,7 +103,7 @@ static void load(kore_video *video, double startTime) {
 		[reader addOutput:audioOutput];
 	}
 
-	video->impl.assetReader = reader;
+	video->impl.assetReader      = reader;
 	video->impl.videoTrackOutput = videoOutput;
 	if (hasAudio) {
 		video->impl.audioTrackOutput = audioOutput;
@@ -118,13 +118,13 @@ static void load(kore_video *video, double startTime) {
 		video->impl.myHeight = [videoTrack naturalSize].height;
 	int framerate = [videoTrack nominalFrameRate];
 	kore_log(KORE_LOG_LEVEL_INFO, "Framerate: %i\n", framerate);
-	video->impl.next = video->impl.videoStart;
+	video->impl.next      = video->impl.videoStart;
 	video->impl.audioTime = video->impl.videoStart * 44100;
 }
 
 void kore_video_init(kore_video *video, const char *filename) {
-	video->impl.playing = false;
-	video->impl.sound = NULL;
+	video->impl.playing           = false;
+	video->impl.sound             = NULL;
 	video->impl.image_initialized = false;
 	char name[2048];
 #ifdef KORE_IOS
@@ -136,8 +136,8 @@ void kore_video_init(kore_video *video, const char *filename) {
 	strcat(name, KORE_DEBUGDIR);
 	strcat(name, "/");
 	strcat(name, filename);
-	video->impl.url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:name]];
-	video->impl.myWidth = -1;
+	video->impl.url      = [NSURL fileURLWithPath:[NSString stringWithUTF8String:name]];
+	video->impl.myWidth  = -1;
 	video->impl.myHeight = -1;
 	video->impl.finished = false;
 	video->impl.duration = 0;
@@ -170,8 +170,8 @@ void kore_video_play(kore_video *video, bool loop) {
 #endif
 
 	video->impl.playing = true;
-	video->impl.start = kore_time() - video->impl.videoStart;
-	video->impl.loop = loop;
+	video->impl.start   = kore_time() - video->impl.videoStart;
+	video->impl.loop    = loop;
 }
 
 void kore_video_pause(kore_video *video) {
@@ -200,14 +200,14 @@ static void updateImage(kore_video *video) {
 
 	{
 		AVAssetReaderTrackOutput *videoOutput = video->impl.videoTrackOutput;
-		CMSampleBufferRef buffer = [videoOutput copyNextSampleBuffer];
+		CMSampleBufferRef buffer              = [videoOutput copyNextSampleBuffer];
 		if (!buffer) {
 			if (video->impl.loop) {
 				CMTimeRange timeRange = CMTimeRangeMake(CMTimeMake(0, 1000), kCMTimePositiveInfinity);
 				[videoOutput resetForReadingTimeRanges:[NSArray arrayWithObject:[NSValue valueWithCMTimeRange:timeRange]]];
 
 				AVAssetReaderAudioMixOutput *audioOutput = video->impl.audioTrackOutput;
-				CMSampleBufferRef audio_buffer = [audioOutput copyNextSampleBuffer];
+				CMSampleBufferRef audio_buffer           = [audioOutput copyNextSampleBuffer];
 				while (audio_buffer) {
 					audio_buffer = [audioOutput copyNextSampleBuffer];
 				}
@@ -227,8 +227,8 @@ static void updateImage(kore_video *video) {
 		CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
 
 		if (!video->impl.image_initialized) {
-			CGSize size = CVImageBufferGetDisplaySize(pixelBuffer);
-			video->impl.myWidth = size.width;
+			CGSize size          = CVImageBufferGetDisplaySize(pixelBuffer);
+			video->impl.myWidth  = size.width;
 			video->impl.myHeight = size.height;
 			// kore_g4_texture_init(&video->impl.image, kore_video_width(video), kore_video_height(video), KORE_IMAGE_FORMAT_BGRA32); // TODO
 			video->impl.image_initialized = true;
@@ -261,7 +261,7 @@ static void updateImage(kore_video *video) {
 			CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(buffer, NULL, &audioBufferList, sizeof(audioBufferList), NULL, NULL,
 			                                                        kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &blockBufferOut);
 			for (int bufferCount = 0; bufferCount < audioBufferList.mNumberBuffers; ++bufferCount) {
-				float *samples = (float *)audioBufferList.mBuffers[bufferCount].mData;
+				float *samples                          = (float *)audioBufferList.mBuffers[bufferCount].mData;
 				kore_internal_video_sound_stream *sound = (kore_internal_video_sound_stream *)video->impl.sound;
 				if (video->impl.audioTime / 44100.0 > video->impl.next - 0.1) {
 					kore_internal_video_sound_stream_insert_data(sound, samples, (int)numSamplesInBuffer * 2);

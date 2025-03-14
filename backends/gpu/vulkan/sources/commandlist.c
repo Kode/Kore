@@ -23,52 +23,52 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	const VkClearValue clear_value = {
 	    .color =
 	        {
-	            .float32 = {0.0f, 0.0f, 0.0f, 1.0f},
-	        },
+	                .float32 = {0.0f, 0.0f, 0.0f, 1.0f},
+	                },
 	    .depthStencil =
 	        {
-	            .depth = 1.0f,
-	            .stencil = 0,
-	        },
+	                .depth   = 1.0f,
+	                .stencil = 0,
+	                },
 	};
 
 	const VkRenderingAttachmentInfo color_attachment_info = {
-	    .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-	    .pNext = NULL,
-	    .imageView = texture->vulkan.image_view,
-	    .imageLayout = VK_IMAGE_LAYOUT_GENERAL,
-	    .resolveMode = VK_RESOLVE_MODE_NONE,
-	    .resolveImageView = VK_NULL_HANDLE,
+	    .sType              = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+	    .pNext              = NULL,
+	    .imageView          = texture->vulkan.image_view,
+	    .imageLayout        = VK_IMAGE_LAYOUT_GENERAL,
+	    .resolveMode        = VK_RESOLVE_MODE_NONE,
+	    .resolveImageView   = VK_NULL_HANDLE,
 	    .resolveImageLayout = VK_IMAGE_LAYOUT_GENERAL,
-	    .loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-	    .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-	    .clearValue = clear_value,
+	    .loadOp             = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+	    .storeOp            = VK_ATTACHMENT_STORE_OP_STORE,
+	    .clearValue         = clear_value,
 	};
 
 	const VkRect2D render_area = {
 	    .offset =
 	        {
-	            .x = 0,
-	            .y = 0,
-	        },
+	                 .x = 0,
+	                 .y = 0,
+	                 },
 	    .extent =
 	        {
-	            .width = texture->vulkan.width,
-	            .height = texture->vulkan.height,
-	        },
+	                 .width  = texture->vulkan.width,
+	                 .height = texture->vulkan.height,
+	                 },
 	};
 
 	const VkRenderingInfo rendering_info = {
-	    .sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
-	    .pNext = NULL,
-	    .flags = 0,
-	    .renderArea = render_area,
-	    .layerCount = 1,
-	    .viewMask = 0,
+	    .sType                = VK_STRUCTURE_TYPE_RENDERING_INFO,
+	    .pNext                = NULL,
+	    .flags                = 0,
+	    .renderArea           = render_area,
+	    .layerCount           = 1,
+	    .viewMask             = 0,
 	    .colorAttachmentCount = 1,
-	    .pColorAttachments = &color_attachment_info,
-	    .pDepthAttachment = VK_NULL_HANDLE,
-	    .pStencilAttachment = VK_NULL_HANDLE,
+	    .pColorAttachments    = &color_attachment_info,
+	    .pDepthAttachment     = VK_NULL_HANDLE,
+	    .pStencilAttachment   = VK_NULL_HANDLE,
 	};
 
 #ifndef KORE_ANDROID // TODO
@@ -81,14 +81,14 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	VkRect2D scissor = {
 	    .offset =
 	        {
-	            .x = 0,
-	            .y = 0,
-	        },
+	                 .x = 0,
+	                 .y = 0,
+	                 },
 	    .extent =
 	        {
-	            .width = texture->vulkan.width,
-	            .height = texture->vulkan.height,
-	        },
+	                 .width  = texture->vulkan.width,
+	                 .height = texture->vulkan.height,
+	                 },
 	};
 	vkCmdSetScissor(list->vulkan.command_buffer, 0, 1, &scissor);
 }
@@ -173,10 +173,10 @@ void kore_vulkan_command_list_set_stencil_reference(kore_gpu_command_list *list,
 
 void kore_vulkan_command_list_set_name(kore_gpu_command_list *list, const char *name) {
 	const VkDebugMarkerObjectNameInfoEXT name_info = {
-	    .sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT,
-	    .pNext = NULL,
-	    .objectType = VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT,
-	    .object = (uint64_t)list->vulkan.command_buffer,
+	    .sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT,
+	    .pNext       = NULL,
+	    .objectType  = VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT,
+	    .object      = (uint64_t)list->vulkan.command_buffer,
 	    .pObjectName = name,
 	};
 
@@ -185,10 +185,10 @@ void kore_vulkan_command_list_set_name(kore_gpu_command_list *list, const char *
 
 void kore_vulkan_command_list_push_debug_group(kore_gpu_command_list *list, const char *name) {
 	const VkDebugMarkerMarkerInfoEXT marker_info = {
-	    .sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT,
-	    .pNext = NULL,
+	    .sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT,
+	    .pNext       = NULL,
 	    .pMarkerName = name,
-	    .color = {0.0f, 0.0f, 0.0f, 1.0f},
+	    .color       = {0.0f, 0.0f, 0.0f, 1.0f},
 	};
 
 	vulkan_CmdDebugMarkerBeginEXT(list->vulkan.command_buffer, &marker_info);
@@ -200,10 +200,10 @@ void kore_vulkan_command_list_pop_debug_group(kore_gpu_command_list *list) {
 
 void kore_vulkan_command_list_insert_debug_marker(kore_gpu_command_list *list, const char *name) {
 	const VkDebugMarkerMarkerInfoEXT marker_info = {
-	    .sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT,
-	    .pNext = NULL,
+	    .sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT,
+	    .pNext       = NULL,
 	    .pMarkerName = name,
-	    .color = {0.0f, 0.0f, 0.0f, 1.0f},
+	    .color       = {0.0f, 0.0f, 0.0f, 1.0f},
 	};
 
 	vulkan_CmdDebugMarkerInsertEXT(list->vulkan.command_buffer, &marker_info);

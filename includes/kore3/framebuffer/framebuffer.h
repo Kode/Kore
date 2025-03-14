@@ -106,9 +106,9 @@ KORE_FUNC void kore_fb_set_texture_mipmap_filter(kore_fb_mipmap_filter_t filter)
 
 static inline void kore_fb_set_pixel(int x, int y, float red, float green, float blue) {
 	assert(x >= 0 && x < kore_internal_fb_w && y >= 0 && y < kore_internal_fb_h);
-	int r = (int)(red * 255);
-	int g = (int)(green * 255);
-	int b = (int)(blue * 255);
+	int r                                                      = (int)(red * 255);
+	int g                                                      = (int)(green * 255);
+	int b                                                      = (int)(blue * 255);
 	kore_internal_fb_image[y * kore_internal_fb_tex_width + x] = 0xff << 24 | b << 16 | g << 8 | r;
 }
 

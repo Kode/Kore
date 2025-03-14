@@ -43,8 +43,8 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .selector = "#canvas",
 	    .chain =
 	        {
-	            .sType = WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector,
-	        },
+	                .sType = WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector,
+	                },
 	};
 
 	WGPUSurfaceDescriptor surface_descriptor = {
@@ -56,18 +56,18 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	wgpuSurfaceGetCapabilities(device->webgpu.surface, wgpu_adapter, &capabilities);
 
 	WGPUSurfaceConfiguration surface_configuration = {
-	    .device = wgpu_device,
-	    .format = capabilities.formats[0],
-	    .usage = WGPUTextureUsage_RenderAttachment,
-	    .alphaMode = WGPUCompositeAlphaMode_Auto,
-	    .width = kore_window_width(0),
-	    .height = kore_window_height(0),
+	    .device      = wgpu_device,
+	    .format      = capabilities.formats[0],
+	    .usage       = WGPUTextureUsage_RenderAttachment,
+	    .alphaMode   = WGPUCompositeAlphaMode_Auto,
+	    .width       = kore_window_width(0),
+	    .height      = kore_window_height(0),
 	    .presentMode = WGPUPresentMode_Fifo,
 	};
 	wgpuSurfaceConfigure(device->webgpu.surface, &surface_configuration);
 
 	WGPUShaderModuleWGSLDescriptor shader_module_wgsl_descriptor = {
-	    .code = wgsl,
+	    .code        = wgsl,
 	    .chain.sType = WGPUSType_ShaderModuleWGSLDescriptor,
 	};
 
@@ -124,17 +124,17 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	kore_gpu_buffer_usage usage = parameters->usage_flags;
 
 	buffer->webgpu.has_copy_buffer = false;
-	buffer->webgpu.copy_scheduled = false;
+	buffer->webgpu.copy_scheduled  = false;
 
 	if ((usage & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
 		kore_gpu_buffer_usage usage_without_write = usage ^ KORE_GPU_BUFFER_USAGE_CPU_WRITE;
-		buffer->webgpu.has_copy_buffer = usage_without_write != KORE_GPU_BUFFER_USAGE_COPY_SRC && usage_without_write != 0;
+		buffer->webgpu.has_copy_buffer            = usage_without_write != KORE_GPU_BUFFER_USAGE_COPY_SRC && usage_without_write != 0;
 	}
 
 	if (buffer->webgpu.has_copy_buffer) {
 		WGPUBufferDescriptor buffer_descriptor = {
-		    .size = align_pow2(parameters->size, 4),
-		    .usage = WGPUBufferUsage_MapWrite | WGPUBufferUsage_CopySrc,
+		    .size             = align_pow2(parameters->size, 4),
+		    .usage            = WGPUBufferUsage_MapWrite | WGPUBufferUsage_CopySrc,
 		    .mappedAtCreation = true,
 		};
 
@@ -148,8 +148,8 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	}
 
 	WGPUBufferDescriptor buffer_descriptor = {
-	    .size = align_pow2(parameters->size, 4),
-	    .usage = convert_buffer_usage(usage),
+	    .size             = align_pow2(parameters->size, 4),
+	    .usage            = convert_buffer_usage(usage),
 	    .mappedAtCreation = ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) && !buffer->webgpu.has_copy_buffer,
 	};
 
@@ -160,22 +160,22 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 
 void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
 	WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
-	list->webgpu.command_encoder = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
+	list->webgpu.command_encoder                            = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
 }
 
 void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
 	WGPUExtent3D size = {
-	    .width = parameters->width,
-	    .height = parameters->height,
+	    .width              = parameters->width,
+	    .height             = parameters->height,
 	    .depthOrArrayLayers = parameters->depth_or_array_layers,
 	};
 
 	WGPUTextureDescriptor texture_descriptor = {
-	    .sampleCount = 1,
-	    .format = WGPUTextureFormat_BGRA8Unorm,
-	    .usage = WGPUTextureUsage_RenderAttachment,
-	    .size = parameters->width * parameters->height * 4,
-	    .dimension = WGPUTextureDimension_2D,
+	    .sampleCount   = 1,
+	    .format        = WGPUTextureFormat_BGRA8Unorm,
+	    .usage         = WGPUTextureUsage_RenderAttachment,
+	    .size          = parameters->width * parameters->height * 4,
+	    .dimension     = WGPUTextureDimension_2D,
 	    .mipLevelCount = 1,
 	};
 
@@ -198,7 +198,7 @@ kore_gpu_texture_format kore_webgpu_device_framebuffer_format(kore_gpu_device *d
 void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
 	if (scheduled_buffer_uploads_count > 0) {
 		WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
-		WGPUCommandEncoder buffer_upload_encoder = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
+		WGPUCommandEncoder buffer_upload_encoder                = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
 
 		for (uint32_t buffer_index = 0; buffer_index < scheduled_buffer_uploads_count; ++buffer_index) {
 			kore_webgpu_buffer *buffer = scheduled_buffer_uploads[buffer_index];
@@ -206,18 +206,18 @@ void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		}
 
 		WGPUCommandBufferDescriptor command_buffer_descriptor = {0};
-		WGPUCommandBuffer command_buffer = wgpuCommandEncoderFinish(buffer_upload_encoder, &command_buffer_descriptor);
+		WGPUCommandBuffer command_buffer                      = wgpuCommandEncoderFinish(buffer_upload_encoder, &command_buffer_descriptor);
 		wgpuQueueSubmit(device->webgpu.queue, 1, &command_buffer);
 
 		scheduled_buffer_uploads_count = 0;
 	}
 
 	WGPUCommandBufferDescriptor command_buffer_descriptor = {0};
-	WGPUCommandBuffer command_buffer = wgpuCommandEncoderFinish(list->webgpu.command_encoder, &command_buffer_descriptor);
+	WGPUCommandBuffer command_buffer                      = wgpuCommandEncoderFinish(list->webgpu.command_encoder, &command_buffer_descriptor);
 	wgpuQueueSubmit(device->webgpu.queue, 1, &command_buffer);
 
 	WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
-	list->webgpu.command_encoder = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
+	list->webgpu.command_encoder                            = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
 }
 
 void kore_webgpu_device_wait_until_idle(kore_gpu_device *device) {}

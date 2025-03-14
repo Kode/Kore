@@ -20,7 +20,7 @@
 static void xdg_surface_handle_configure(void *data, struct xdg_surface *surface, uint32_t serial) {
 	xdg_surface_ack_configure(surface, serial);
 	struct kore_wl_window *window = data;
-	window->configured = true;
+	window->configured            = true;
 }
 
 void kore_internal_resize(int, int, int);
@@ -31,14 +31,14 @@ static void xdg_toplevel_handle_configure(void *data, struct xdg_toplevel *tople
 	struct kore_wl_window *window = data;
 	if (width > 0 && height > 0) {
 		if (window->decorations.server_side) {
-			window->surface_width = width;
+			window->surface_width  = width;
 			window->surface_height = height;
 		}
 		else {
-			window->surface_width = width - (KORE_WL_DECORATION_WIDTH * 2);
+			window->surface_width  = width - (KORE_WL_DECORATION_WIDTH * 2);
 			window->surface_height = height - KORE_WL_DECORATION_TOP_HEIGHT + KORE_WL_DECORATION_BOTTOM_HEIGHT;
 		}
-		window->buffer_width = window->surface_width * window->preferred_scale / 120;
+		window->buffer_width  = window->surface_width * window->preferred_scale / 120;
 		window->buffer_height = window->surface_height * window->preferred_scale / 120;
 	}
 
@@ -217,7 +217,7 @@ static kore_image close_image = {
 
 void kore_wayland_create_decoration(struct kore_wl_decoration *decoration, struct wl_surface *parent, struct wl_buffer *buffer, bool opaque, int x, int y,
                                     int width, int height) {
-	decoration->surface = wl_compositor_create_surface(wl_ctx.compositor);
+	decoration->surface    = wl_compositor_create_surface(wl_ctx.compositor);
 	decoration->subsurface = wl_subcompositor_get_subsurface(wl_ctx.subcompositor, decoration->surface, parent);
 	wl_subsurface_set_position(decoration->subsurface, x, y);
 	decoration->viewport = wp_viewporter_get_viewport(wl_ctx.viewporter, decoration->surface);
@@ -251,9 +251,9 @@ void kore_wayland_destroy_decoration(struct kore_wl_decoration *decoration) {
 		wl_surface_destroy(decoration->surface);
 	if (decoration->viewport)
 		wp_viewport_destroy(decoration->viewport);
-	decoration->surface = NULL;
+	decoration->surface    = NULL;
 	decoration->subsurface = NULL;
-	decoration->viewport = NULL;
+	decoration->viewport   = NULL;
 }
 
 void kore_wayland_destroy_decorations(struct kore_wl_window *window) {
@@ -266,10 +266,10 @@ void kore_wayland_destroy_decorations(struct kore_wl_window *window) {
 
 void kore_wayland_create_decorations(struct kore_wl_window *window) {
 	if (!window->decorations.dec_buffer) {
-		window->decorations.dec_buffer = kore_wayland_create_shm_buffer(&grey_image);
+		window->decorations.dec_buffer   = kore_wayland_create_shm_buffer(&grey_image);
 		window->decorations.close_buffer = kore_wayland_create_shm_buffer(&close_image);
-		window->decorations.max_buffer = kore_wayland_create_shm_buffer(&grey_image);
-		window->decorations.min_buffer = kore_wayland_create_shm_buffer(&grey_image);
+		window->decorations.max_buffer   = kore_wayland_create_shm_buffer(&grey_image);
+		window->decorations.min_buffer   = kore_wayland_create_shm_buffer(&grey_image);
 	}
 	kore_wayland_create_decoration(&window->decorations.top, window->surface, window->decorations.dec_buffer, true, KORE_WL_DECORATION_TOP_X,
 	                               KORE_WL_DECORATION_TOP_Y, KORE_WL_DECORATION_TOP_WIDTH, KORE_WL_DECORATION_TOP_HEIGHT);
@@ -304,7 +304,7 @@ void xdg_toplevel_decoration_configure(void *data, struct zxdg_toplevel_decorati
 }
 
 void wl_surface_handle_enter(void *data, struct wl_surface *wl_surface, struct wl_output *output) {
-	struct kore_wl_window *window = wl_surface_get_user_data(wl_surface);
+	struct kore_wl_window *window   = wl_surface_get_user_data(wl_surface);
 	struct kore_wl_display *display = wl_output_get_user_data(output);
 
 	if (display && window) {
@@ -348,7 +348,7 @@ static const struct zxdg_toplevel_decoration_v1_listener xdg_toplevel_decoration
 
 static void wp_fractional_scale_v1_handle_preferred_scale(void *data, struct wp_fractional_scale_v1 *fractional_scale, uint32_t scale) {
 	struct kore_wl_window *window = data;
-	window->preferred_scale = scale;
+	window->preferred_scale       = scale;
 }
 
 static const struct wp_fractional_scale_v1_listener wp_fractional_scale_v1_listener = {
@@ -375,10 +375,10 @@ int kore_wayland_window_create(kore_window_parameters *win, kore_framebuffer_par
 		exit(1);
 	}
 	struct kore_wl_window *window = &wl_ctx.windows[window_index];
-	window->window_id = window_index;
-	window->mode = -1;
-	window->preferred_scale = 120;
-	window->surface = wl_compositor_create_surface(wl_ctx.compositor);
+	window->window_id             = window_index;
+	window->mode                  = -1;
+	window->preferred_scale       = 120;
+	window->surface               = wl_compositor_create_surface(wl_ctx.compositor);
 	wl_surface_set_user_data(window->surface, window);
 	wl_surface_add_listener(window->surface, &wl_surface_listener, NULL);
 
@@ -423,10 +423,10 @@ int kore_wayland_window_create(kore_window_parameters *win, kore_framebuffer_par
 
 	kore_wayland_window_set_title(window_index, win->title);
 	kore_wayland_window_change_mode(window_index, win->mode);
-	window->surface_width = (win->width * 120) / window->preferred_scale;
+	window->surface_width  = (win->width * 120) / window->preferred_scale;
 	window->surface_height = (win->height * 120) / window->preferred_scale;
-	window->buffer_width = win->width;
-	window->buffer_height = win->height;
+	window->buffer_width   = win->width;
+	window->buffer_height  = win->height;
 	if (window->viewport) {
 		wp_viewport_set_source(window->viewport, 0, 0, wl_fixed_from_int(window->buffer_width), wl_fixed_from_int(window->buffer_height));
 		wp_viewport_set_destination(window->viewport, window->surface_width, window->surface_height);
@@ -520,7 +520,7 @@ void kore_wayland_window_change_mode(int window_index, kore_window_mode mode) {
 	case KORE_WINDOW_MODE_FULLSCREEN:
 	case KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
 		if (window->mode == KORE_WINDOW_MODE_WINDOW) {
-			window->mode = mode;
+			window->mode                    = mode;
 			struct kore_wl_display *display = &wl_ctx.displays[window->display_index];
 			xdg_toplevel_set_fullscreen(window->toplevel, display->output);
 		}

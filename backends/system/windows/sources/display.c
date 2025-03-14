@@ -17,7 +17,7 @@ typedef struct {
 
 static DisplayData displays[MAXIMUM_DISPLAYS];
 static DEVMODEA original_modes[MAXIMUM_DISPLAYS];
-static int screen_counter = 0;
+static int screen_counter       = 0;
 static bool display_initialized = false;
 
 typedef enum { MDT_EFFECTIVE_DPI = 0, MDT_ANGULAR_DPI = 1, MDT_RAW_DPI = 2, MDT_DEFAULT = MDT_EFFECTIVE_DPI } MONITOR_DPI_TYPE;
@@ -46,19 +46,19 @@ static BOOL CALLBACK EnumerationCallback(HMONITOR monitor, HDC hdc_unused, LPREC
 
 	DisplayData *display = &displays[free_slot];
 	strncpy(display->name, info.szDevice, 31);
-	display->name[31] = 0;
-	display->index = free_slot;
-	display->monitor = monitor;
-	display->primary = (info.dwFlags & MONITORINFOF_PRIMARY) != 0;
+	display->name[31]  = 0;
+	display->index     = free_slot;
+	display->monitor   = monitor;
+	display->primary   = (info.dwFlags & MONITORINFOF_PRIMARY) != 0;
 	display->available = true;
-	display->x = info.rcMonitor.left;
-	display->y = info.rcMonitor.top;
-	display->width = info.rcMonitor.right - info.rcMonitor.left;
-	display->height = info.rcMonitor.bottom - info.rcMonitor.top;
+	display->x         = info.rcMonitor.left;
+	display->y         = info.rcMonitor.top;
+	display->width     = info.rcMonitor.right - info.rcMonitor.left;
+	display->height    = info.rcMonitor.bottom - info.rcMonitor.top;
 
-	HDC hdc = CreateDCA(NULL, display->name, NULL, NULL);
+	HDC hdc      = CreateDCA(NULL, display->name, NULL, NULL);
 	display->ppi = GetDeviceCaps(hdc, LOGPIXELSX);
-	int scale = GetDeviceCaps(hdc, SCALINGFACTORX);
+	int scale    = GetDeviceCaps(hdc, SCALINGFACTORX);
 	DeleteDC(hdc);
 
 	if (MyGetDpiForMonitor != NULL) {
@@ -71,7 +71,7 @@ static BOOL CALLBACK EnumerationCallback(HMONITOR monitor, HDC hdc_unused, LPREC
 	original_modes[free_slot].dmSize = sizeof(DEVMODEA);
 	EnumDisplaySettingsA(display->name, ENUM_CURRENT_SETTINGS, &original_modes[free_slot]);
 	display->frequency = original_modes[free_slot].dmDisplayFrequency;
-	display->bpp = original_modes[free_slot].dmBitsPerPel;
+	display->bpp       = original_modes[free_slot].dmBitsPerPel;
 
 	++screen_counter;
 	return TRUE;
@@ -120,45 +120,45 @@ int kore_primary_display() {
 
 kore_display_mode kore_display_available_mode(int display_index, int mode_index) {
 	DEVMODEA dev_mode = {0};
-	dev_mode.dmSize = sizeof(DEVMODEA);
+	dev_mode.dmSize   = sizeof(DEVMODEA);
 	EnumDisplaySettingsA(displays[display_index].name, mode_index, &dev_mode);
 	kore_display_mode mode;
-	mode.x = displays[display_index].x;
-	mode.y = displays[display_index].y;
-	mode.width = dev_mode.dmPelsWidth;
-	mode.height = dev_mode.dmPelsHeight;
-	mode.frequency = dev_mode.dmDisplayFrequency;
-	mode.bits_per_pixel = dev_mode.dmBitsPerPel;
+	mode.x               = displays[display_index].x;
+	mode.y               = displays[display_index].y;
+	mode.width           = dev_mode.dmPelsWidth;
+	mode.height          = dev_mode.dmPelsHeight;
+	mode.frequency       = dev_mode.dmDisplayFrequency;
+	mode.bits_per_pixel  = dev_mode.dmBitsPerPel;
 	mode.pixels_per_inch = displays[display_index].ppi * mode.width / original_modes[display_index].dmPelsWidth;
 	return mode;
 }
 
 int kore_display_count_available_modes(int display_index) {
 	DEVMODEA dev_mode = {0};
-	dev_mode.dmSize = sizeof(DEVMODEA);
-	int i = 0;
+	dev_mode.dmSize   = sizeof(DEVMODEA);
+	int i             = 0;
 	for (; EnumDisplaySettingsA(displays[display_index].name, i, &dev_mode) != FALSE; ++i)
 		;
 	return i;
 }
 
 bool kore_windows_set_display_mode(int display_index, int width, int height, int bpp, int frequency) {
-	DisplayData *display = &displays[display_index];
+	DisplayData *display  = &displays[display_index];
 	display->mode_changed = true;
-	DEVMODEA mode = {0};
-	mode.dmSize = sizeof(mode);
+	DEVMODEA mode         = {0};
+	mode.dmSize           = sizeof(mode);
 	strcpy((char *)mode.dmDeviceName, display->name);
-	mode.dmPelsWidth = width;
-	mode.dmPelsHeight = height;
-	mode.dmBitsPerPel = bpp;
+	mode.dmPelsWidth        = width;
+	mode.dmPelsHeight       = height;
+	mode.dmBitsPerPel       = bpp;
 	mode.dmDisplayFrequency = frequency;
-	mode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY;
+	mode.dmFields           = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY;
 
 	bool success = ChangeDisplaySettingsA(&mode, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL;
 
 	if (!success) {
 		mode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-		success = ChangeDisplaySettingsA(&mode, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL;
+		success       = ChangeDisplaySettingsA(&mode, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL;
 	}
 
 	return success;
@@ -190,12 +190,12 @@ const char *kore_display_name(int display_index) {
 kore_display_mode kore_display_current_mode(int display_index) {
 	DisplayData *display = &displays[display_index];
 	kore_display_mode mode;
-	mode.x = display->x;
-	mode.y = display->y;
-	mode.width = display->width;
-	mode.height = display->height;
+	mode.x               = display->x;
+	mode.y               = display->y;
+	mode.width           = display->width;
+	mode.height          = display->height;
 	mode.pixels_per_inch = display->ppi;
-	mode.frequency = display->frequency;
-	mode.bits_per_pixel = display->bpp;
+	mode.frequency       = display->frequency;
+	mode.bits_per_pixel  = display->bpp;
 	return mode;
 }

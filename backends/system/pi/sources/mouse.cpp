@@ -7,7 +7,7 @@ using namespace Kore;
 void Mouse::_lock(int windowId, bool truth) {
 	show(!truth);
 	if (truth) {
-		int width = System::windowWidth(windowId);
+		int width  = System::windowWidth(windowId);
 		int height = System::windowHeight(windowId);
 
 		int x, y;

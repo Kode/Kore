@@ -19,11 +19,11 @@ static kore_mixer_stream_channel streamchannels[CHANNEL_COUNT];
 static kore_internal_video_channel videos[CHANNEL_COUNT];
 
 static float sampleLinear(int16_t *data, double position) {
-	int pos1 = (int)position;
-	int pos2 = (int)(position + 1);
+	int pos1      = (int)position;
+	int pos2      = (int)(position + 1);
 	float sample1 = data[pos1] / 32767.0f;
 	float sample2 = data[pos2] / 32767.0f;
-	float a = (float)(position - pos1);
+	float a       = (float)(position - pos1);
 	return sample1 * (1 - a) + sample2 * a;
 }
 
@@ -45,7 +45,7 @@ static float sampleLinear(int16_t *data, double position) {
 
 void kore_mixer_mix(kore_audio_buffer *buffer, uint32_t samples) {
 	for (uint32_t i = 0; i < samples; ++i) {
-		float left_value = 0.0f;
+		float left_value  = 0.0f;
 		float right_value = 0.0f;
 #if 0
 		__m128 sseSamples[4];
@@ -134,11 +134,11 @@ static void kore_mixer_mix_callback(kore_audio_buffer *buffer, uint32_t samples,
 
 void kore_mixer_init(void) {
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
-		channels[i].sound = NULL;
+		channels[i].sound    = NULL;
 		channels[i].position = 0;
 	}
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
-		streamchannels[i].stream = NULL;
+		streamchannels[i].stream   = NULL;
 		streamchannels[i].position = 0;
 	}
 	kore_mutex_init(&mutex);
@@ -160,12 +160,12 @@ kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, fl
 	if (!found || !unique) {
 		for (int i = 0; i < CHANNEL_COUNT; ++i) {
 			if (channels[i].sound == NULL) {
-				channels[i].sound = sound;
+				channels[i].sound    = sound;
 				channels[i].position = 0;
-				channels[i].loop = loop;
-				channels[i].pitch = pitch;
-				channels[i].volume = 1.0f;
-				channel = &channels[i];
+				channels[i].loop     = loop;
+				channels[i].pitch    = pitch;
+				channels[i].volume   = 1.0f;
+				channel              = &channels[i];
 				break;
 			}
 		}
@@ -178,7 +178,7 @@ void kore_mixer_stop_sound(kore_mixer_sound *sound) {
 	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (channels[i].sound == sound) {
-			channels[i].sound = NULL;
+			channels[i].sound    = NULL;
 			channels[i].position = 0;
 			break;
 		}
@@ -191,7 +191,7 @@ void kore_mixer_play_sound_stream(kore_mixer_sound_stream *stream) {
 
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (streamchannels[i].stream == stream) {
-			streamchannels[i].stream = NULL;
+			streamchannels[i].stream   = NULL;
 			streamchannels[i].position = 0;
 			break;
 		}
@@ -199,7 +199,7 @@ void kore_mixer_play_sound_stream(kore_mixer_sound_stream *stream) {
 
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (streamchannels[i].stream == NULL) {
-			streamchannels[i].stream = stream;
+			streamchannels[i].stream   = stream;
 			streamchannels[i].position = 0;
 			break;
 		}
@@ -212,7 +212,7 @@ void kore_mixer_stop_sound_stream(kore_mixer_sound_stream *stream) {
 	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (streamchannels[i].stream == stream) {
-			streamchannels[i].stream = NULL;
+			streamchannels[i].stream   = NULL;
 			streamchannels[i].position = 0;
 			break;
 		}
@@ -224,7 +224,7 @@ void kore_internal_play_video_sound_stream(struct kore_internal_video_sound_stre
 	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (videos[i].stream == NULL) {
-			videos[i].stream = stream;
+			videos[i].stream   = stream;
 			videos[i].position = 0;
 			break;
 		}
@@ -236,7 +236,7 @@ void kore_internal_stop_video_sound_stream(struct kore_internal_video_sound_stre
 	kore_mutex_lock(&mutex);
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		if (videos[i].stream == stream) {
-			videos[i].stream = NULL;
+			videos[i].stream   = NULL;
 			videos[i].position = 0;
 			break;
 		}

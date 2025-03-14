@@ -15,10 +15,10 @@ static int bufferIndex;
 
 kore_mixer_sound_stream *kore_mixer_sound_stream_create(const char *filename, bool looping) {
 	kore_mixer_sound_stream *stream = &streams[nextStream];
-	stream->myLooping = looping;
-	stream->myVolume = 1;
-	stream->rateDecodedHack = false;
-	stream->end = false;
+	stream->myLooping               = looping;
+	stream->myVolume                = 1;
+	stream->rateDecodedHack         = false;
+	stream->end                     = false;
 	kore_file_reader file;
 	kore_file_reader_open(&file, filename, KORE_FILE_TYPE_ASSET);
 	stream->buffer = &buffer[bufferIndex];
@@ -31,12 +31,12 @@ kore_mixer_sound_stream *kore_mixer_sound_stream_create(const char *filename, bo
 	stream->vorbis = stb_vorbis_open_memory(buffer, (int)kore_file_reader_size(&file), NULL, NULL);
 	if (stream->vorbis != NULL) {
 		stb_vorbis_info info = stb_vorbis_get_info(stream->vorbis);
-		stream->chans = info.channels;
-		stream->rate = info.sample_rate;
+		stream->chans        = info.channels;
+		stream->rate         = info.sample_rate;
 	}
 	else {
 		stream->chans = 2;
-		stream->rate = 22050;
+		stream->rate  = 22050;
 	}
 	++nextStream;
 	return stream;
@@ -85,7 +85,7 @@ float kore_mixer_sound_stream_position(kore_mixer_sound_stream *stream) {
 void kore_mixer_sound_stream_reset(kore_mixer_sound_stream *stream) {
 	if (stream->vorbis != NULL)
 		stb_vorbis_seek_start(stream->vorbis);
-	stream->end = false;
+	stream->end             = false;
 	stream->rateDecodedHack = false;
 }
 
@@ -105,7 +105,7 @@ float *kore_mixer_sound_stream_next_frame(kore_mixer_sound_stream *stream) {
 
 	float left, right;
 	float *samples_array[2] = {&left, &right};
-	int read = stb_vorbis_get_samples_float(stream->vorbis, stream->chans, samples_array, 1);
+	int read                = stb_vorbis_get_samples_float(stream->vorbis, stream->chans, samples_array, 1);
 	if (read == 0) {
 		if (kore_mixer_sound_stream_looping(stream)) {
 			stb_vorbis_seek_start(stream->vorbis);

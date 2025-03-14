@@ -160,11 +160,11 @@ static VkCompareOp convert_compare_mode(kore_gpu_compare_function compare) {
 
 static VkShaderModule create_shader_module(kore_vulkan_device *device, const kore_vulkan_shader *shader) {
 	const VkShaderModuleCreateInfo shader_module_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-	    .pNext = NULL,
+	    .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+	    .pNext    = NULL,
 	    .codeSize = shader->size,
-	    .pCode = (const uint32_t *)shader->data,
-	    .flags = 0,
+	    .pCode    = (const uint32_t *)shader->data,
+	    .flags    = 0,
 	};
 
 	VkShaderModule module;
@@ -179,48 +179,48 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	VkDescriptorSetLayoutBinding layoutBindings[18];
 	memset(layoutBindings, 0, sizeof(layoutBindings));
 
-	layoutBindings[0].binding = 0;
-	layoutBindings[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-	layoutBindings[0].descriptorCount = 1;
-	layoutBindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	layoutBindings[0].binding            = 0;
+	layoutBindings[0].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+	layoutBindings[0].descriptorCount    = 1;
+	layoutBindings[0].stageFlags         = VK_SHADER_STAGE_VERTEX_BIT;
 	layoutBindings[0].pImmutableSamplers = NULL;
 
-	layoutBindings[1].binding = 1;
-	layoutBindings[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-	layoutBindings[1].descriptorCount = 1;
-	layoutBindings[1].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	layoutBindings[1].binding            = 1;
+	layoutBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+	layoutBindings[1].descriptorCount    = 1;
+	layoutBindings[1].stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT;
 	layoutBindings[1].pImmutableSamplers = NULL;
 
 	for (int i = 2; i < 18; ++i) {
-		layoutBindings[i].binding = i;
-		layoutBindings[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		layoutBindings[i].descriptorCount = 1;
-		layoutBindings[i].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
+		layoutBindings[i].binding            = i;
+		layoutBindings[i].descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		layoutBindings[i].descriptorCount    = 1;
+		layoutBindings[i].stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
 		layoutBindings[i].pImmutableSamplers = NULL;
 	}
 
 	VkDescriptorSetLayoutCreateInfo descriptor_layout = {0};
-	descriptor_layout.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	descriptor_layout.pNext = NULL;
-	descriptor_layout.bindingCount = 18;
-	descriptor_layout.pBindings = layoutBindings;
+	descriptor_layout.sType                           = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	descriptor_layout.pNext                           = NULL;
+	descriptor_layout.bindingCount                    = 18;
+	descriptor_layout.pBindings                       = layoutBindings;
 
 	VkDescriptorSetLayout descriptor_set_layout;
 	VkResult result = vkCreateDescriptorSetLayout(device->device, &descriptor_layout, NULL, &descriptor_set_layout);
 	assert(result == VK_SUCCESS);
 
 	const VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-	    .pNext = NULL,
+	    .sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+	    .pNext          = NULL,
 	    .setLayoutCount = 1,
-	    .pSetLayouts = &descriptor_set_layout,
+	    .pSetLayouts    = &descriptor_set_layout,
 	};
 
 	result = vkCreatePipelineLayout(device->device, &pipeline_layout_create_info, NULL, &pipeline->pipeline_layout);
 	assert(result == VK_SUCCESS);
 
 	uint32_t attributes_count = 0;
-	uint32_t bindings_count = 0;
+	uint32_t bindings_count   = 0;
 	for (int i = 0; i < parameters->vertex.buffers_count; ++i) {
 		attributes_count += (uint32_t)parameters->vertex.buffers[i].attributes_count;
 		++bindings_count;
@@ -230,12 +230,12 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	VkVertexInputAttributeDescription vi_attrs[256];
 
 	const VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-	    .pNext = NULL,
-	    .vertexBindingDescriptionCount = bindings_count,
-	    .pVertexBindingDescriptions = vi_bindings,
+	    .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+	    .pNext                           = NULL,
+	    .vertexBindingDescriptionCount   = bindings_count,
+	    .pVertexBindingDescriptions      = vi_bindings,
 	    .vertexAttributeDescriptionCount = attributes_count,
-	    .pVertexAttributeDescriptions = vi_attrs,
+	    .pVertexAttributeDescriptions    = vi_attrs,
 	};
 
 	uint32_t attribute_index = 0;
@@ -243,9 +243,9 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 		uint32_t stride = 0;
 		for (uint32_t attribute_index = 0; attribute_index < parameters->vertex.buffers[binding_index].attributes_count; ++attribute_index) {
 			kore_vulkan_vertex_attribute attribute = parameters->vertex.buffers[binding_index].attributes[attribute_index];
-			vi_attrs[attribute_index].binding = binding_index;
-			vi_attrs[attribute_index].location = attribute.shader_location;
-			vi_attrs[attribute_index].offset = (uint32_t)attribute.offset;
+			vi_attrs[attribute_index].binding      = binding_index;
+			vi_attrs[attribute_index].location     = attribute.shader_location;
+			vi_attrs[attribute_index].offset       = (uint32_t)attribute.offset;
 			stride += vertex_attribute_size(attribute.format);
 
 			switch (attribute.format) {
@@ -339,27 +339,27 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 			}
 		}
 
-		vi_bindings[binding_index].binding = binding_index;
-		vi_bindings[binding_index].stride = stride;
+		vi_bindings[binding_index].binding   = binding_index;
+		vi_bindings[binding_index].stride    = stride;
 		vi_bindings[binding_index].inputRate = (parameters->vertex.buffers[binding_index].step_mode == KORE_VULKAN_VERTEX_STEP_MODE_INSTANCE)
 		                                           ? VK_VERTEX_INPUT_RATE_INSTANCE
 		                                           : VK_VERTEX_INPUT_RATE_VERTEX;
 	}
 
 	const VkPipelineInputAssemblyStateCreateInfo input_assembly_state_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+	    .sType    = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
 	    .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 	};
 
 	const VkPipelineRasterizationStateCreateInfo rasterization_state_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-	    .polygonMode = VK_POLYGON_MODE_FILL,
-	    .cullMode = convert_cull_mode(parameters->primitive.cull_mode),
-	    .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
-	    .depthClampEnable = VK_FALSE,
+	    .sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+	    .polygonMode             = VK_POLYGON_MODE_FILL,
+	    .cullMode                = convert_cull_mode(parameters->primitive.cull_mode),
+	    .frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE,
+	    .depthClampEnable        = VK_FALSE,
 	    .rasterizerDiscardEnable = VK_FALSE,
-	    .depthBiasEnable = VK_FALSE,
-	    .lineWidth = 1.0f,
+	    .depthBiasEnable         = VK_FALSE,
+	    .lineWidth               = 1.0f,
 	};
 
 	VkPipelineColorBlendAttachmentState color_blend_attachment_states[8] = {0};
@@ -367,79 +367,81 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	for (size_t target_index = 0; target_index < parameters->fragment.targets_count; ++target_index) {
 		VkPipelineColorBlendAttachmentState color_blend_attachment_state = {
 		    .colorWriteMask = parameters->fragment.targets[target_index].write_mask,
-		    .blendEnable = parameters->fragment.targets[target_index].blend.color.src_factor != KORE_VULKAN_BLEND_FACTOR_ONE ||
+		    .blendEnable    = parameters->fragment.targets[target_index].blend.color.src_factor != KORE_VULKAN_BLEND_FACTOR_ONE ||
 		                   parameters->fragment.targets[target_index].blend.color.dst_factor != KORE_VULKAN_BLEND_FACTOR_ZERO ||
 		                   parameters->fragment.targets[target_index].blend.alpha.src_factor != KORE_VULKAN_BLEND_FACTOR_ONE ||
 		                   parameters->fragment.targets[target_index].blend.alpha.dst_factor != KORE_VULKAN_BLEND_FACTOR_ZERO,
 		    .srcColorBlendFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.color.src_factor),
 		    .dstColorBlendFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.color.dst_factor),
-		    .colorBlendOp = convert_blend_operation(parameters->fragment.targets[target_index].blend.color.operation),
+		    .colorBlendOp        = convert_blend_operation(parameters->fragment.targets[target_index].blend.color.operation),
 		    .srcAlphaBlendFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.alpha.src_factor),
 		    .dstAlphaBlendFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.alpha.dst_factor),
-		    .alphaBlendOp = convert_blend_operation(parameters->fragment.targets[target_index].blend.alpha.operation),
+		    .alphaBlendOp        = convert_blend_operation(parameters->fragment.targets[target_index].blend.alpha.operation),
 		};
 		color_blend_attachment_states[target_index] = color_blend_attachment_state;
 	}
 
 	const VkPipelineColorBlendStateCreateInfo color_blend_state_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+	    .sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
 	    .attachmentCount = (uint32_t)parameters->fragment.targets_count,
-	    .pAttachments = color_blend_attachment_states,
+	    .pAttachments    = color_blend_attachment_states,
 	};
 
 	const VkPipelineViewportStateCreateInfo viewport_state_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+	    .sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
 	    .viewportCount = 1,
-	    .scissorCount = 1,
+	    .scissorCount  = 1,
 	};
 
 	const VkDynamicState dynamic_states[] = {VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
 
 	const VkPipelineDynamicStateCreateInfo dynamic_state_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-	    .pDynamicStates = dynamic_states,
+	    .sType             = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+	    .pDynamicStates    = dynamic_states,
 	    .dynamicStateCount = sizeof(dynamic_states) / sizeof(dynamic_states[0]),
 	};
 
 	const VkPipelineDepthStencilStateCreateInfo depth_stencil_state_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-	    .depthTestEnable = parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS,
-	    .depthWriteEnable = parameters->depth_stencil.depth_write_enabled,
-	    .depthCompareOp = convert_compare_mode(parameters->depth_stencil.depth_compare),
+	    .sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+	    .depthTestEnable       = parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS,
+	    .depthWriteEnable      = parameters->depth_stencil.depth_write_enabled,
+	    .depthCompareOp        = convert_compare_mode(parameters->depth_stencil.depth_compare),
 	    .depthBoundsTestEnable = VK_FALSE,
 	    .back =
 	        {
-	            .failOp = VK_STENCIL_OP_KEEP,
-	            .passOp = VK_STENCIL_OP_KEEP,
-	            .compareOp = VK_COMPARE_OP_ALWAYS,
-	        },
+	               .failOp    = VK_STENCIL_OP_KEEP,
+	               .passOp    = VK_STENCIL_OP_KEEP,
+	               .compareOp = VK_COMPARE_OP_ALWAYS,
+	               },
 	    .stencilTestEnable = VK_FALSE,
 	    .front =
 	        {
-	            .failOp = VK_STENCIL_OP_KEEP,
-	            .passOp = VK_STENCIL_OP_KEEP,
-	            .compareOp = VK_COMPARE_OP_ALWAYS,
-	        },
+	               .failOp    = VK_STENCIL_OP_KEEP,
+	               .passOp    = VK_STENCIL_OP_KEEP,
+	               .compareOp = VK_COMPARE_OP_ALWAYS,
+	               },
 	};
 
 	const VkPipelineMultisampleStateCreateInfo multisample_state_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-	    .pSampleMask = NULL,
+	    .sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+	    .pSampleMask          = NULL,
 	    .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
 	};
 
-	const VkPipelineShaderStageCreateInfo shader_stages[2] = {{
-	                                                              .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-	                                                              .stage = VK_SHADER_STAGE_VERTEX_BIT,
-	                                                              .module = create_shader_module(device, &parameters->vertex.shader),
-	                                                              .pName = "main",
-	                                                          },
-	                                                          {
-	                                                              .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-	                                                              .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-	                                                              .module = create_shader_module(device, &parameters->fragment.shader),
-	                                                              .pName = "main",
-	                                                          }};
+	const VkPipelineShaderStageCreateInfo shader_stages[2] = {
+	    {
+         .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+         .stage  = VK_SHADER_STAGE_VERTEX_BIT,
+         .module = create_shader_module(device,   &parameters->vertex.shader),
+         .pName  = "main",
+	     },
+	    {
+         .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+         .stage  = VK_SHADER_STAGE_FRAGMENT_BIT,
+         .module = create_shader_module(device, &parameters->fragment.shader),
+         .pName  = "main",
+	     }
+    };
 
 	VkFormat color_attachment_formats[8];
 	for (size_t target_index = 0; target_index < parameters->fragment.targets_count; ++target_index) {
@@ -447,27 +449,27 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	}
 
 	const VkPipelineRenderingCreateInfo pipeline_rendering_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO,
-	    .pNext = NULL,
-	    .colorAttachmentCount = (uint32_t)parameters->fragment.targets_count,
+	    .sType                   = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO,
+	    .pNext                   = NULL,
+	    .colorAttachmentCount    = (uint32_t)parameters->fragment.targets_count,
 	    .pColorAttachmentFormats = color_attachment_formats,
 	};
 
 	const VkGraphicsPipelineCreateInfo pipeline_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-	    .pNext = &pipeline_rendering_create_info,
-	    .layout = pipeline->pipeline_layout,
-	    .renderPass = VK_NULL_HANDLE,
-	    .stageCount = 2,
-	    .pVertexInputState = &vertex_input_state_create_info,
+	    .sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+	    .pNext               = &pipeline_rendering_create_info,
+	    .layout              = pipeline->pipeline_layout,
+	    .renderPass          = VK_NULL_HANDLE,
+	    .stageCount          = 2,
+	    .pVertexInputState   = &vertex_input_state_create_info,
 	    .pInputAssemblyState = &input_assembly_state_create_info,
 	    .pRasterizationState = &rasterization_state_create_info,
-	    .pColorBlendState = &color_blend_state_create_info,
-	    .pMultisampleState = &multisample_state_create_info,
-	    .pViewportState = &viewport_state_create_info,
-	    .pDepthStencilState = &depth_stencil_state_create_info,
-	    .pStages = shader_stages,
-	    .pDynamicState = &dynamic_state_create_info,
+	    .pColorBlendState    = &color_blend_state_create_info,
+	    .pMultisampleState   = &multisample_state_create_info,
+	    .pViewportState      = &viewport_state_create_info,
+	    .pDepthStencilState  = &depth_stencil_state_create_info,
+	    .pStages             = shader_stages,
+	    .pDynamicState       = &dynamic_state_create_info,
 	};
 
 	result = vkCreateGraphicsPipelines(device->device, VK_NULL_HANDLE, 1, &pipeline_create_info, NULL, &pipeline->pipeline);

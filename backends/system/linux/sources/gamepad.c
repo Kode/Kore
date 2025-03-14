@@ -37,8 +37,8 @@ static void HIDGamepad_open(struct HIDGamepad *pad) {
 }
 
 static void HIDGamepad_init(struct HIDGamepad *pad, int index) {
-	pad->file_descriptor = -1;
-	pad->connected = false;
+	pad->file_descriptor     = -1;
+	pad->connected           = false;
 	pad->gamepad_dev_name[0] = 0;
 	if (index >= 0 && index < 12) {
 		pad->idx = index;
@@ -52,7 +52,7 @@ static void HIDGamepad_close(struct HIDGamepad *pad) {
 		kore_internal_gamepad_trigger_disconnect(pad->idx);
 		close(pad->file_descriptor);
 		pad->file_descriptor = -1;
-		pad->connected = false;
+		pad->connected       = false;
 	}
 }
 
@@ -132,7 +132,7 @@ static void HIDGamepadUdevHelper_init(struct HIDGamepadUdevHelper *helper) {
 	struct udev_list_entry *entry;
 
 	udev_list_entry_foreach(entry, devices) {
-		const char *path = udev_list_entry_get_name(entry);
+		const char *path        = udev_list_entry_get_name(entry);
 		struct udev_device *dev = udev_device_new_from_syspath(udevPtrNew, path);
 		HIDGamepadUdevHelper_processDevice(helper, dev);
 	}

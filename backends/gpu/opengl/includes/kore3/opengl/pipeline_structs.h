@@ -169,11 +169,11 @@ typedef struct kore_opengl_blend_state {
 } kore_opengl_blend_state;
 
 typedef enum kore_opengl_color_write_flags {
-	KORE_OPENGL_COLOR_WRITE_FLAGS_RED = 0x1,
+	KORE_OPENGL_COLOR_WRITE_FLAGS_RED   = 0x1,
 	KORE_OPENGL_COLOR_WRITE_FLAGS_GREEN = 0x2,
-	KORE_OPENGL_COLOR_WRITE_FLAGS_BLUE = 0x4,
+	KORE_OPENGL_COLOR_WRITE_FLAGS_BLUE  = 0x4,
 	KORE_OPENGL_COLOR_WRITE_FLAGS_ALPHA = 0x8,
-	KORE_OPENGL_COLOR_WRITE_FLAGS_ALL = 0xF
+	KORE_OPENGL_COLOR_WRITE_FLAGS_ALL   = 0xF
 } kore_opengl_color_write_flags;
 
 typedef struct kore_opengl_color_target_state {

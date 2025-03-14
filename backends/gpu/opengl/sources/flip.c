@@ -28,14 +28,14 @@ static uint32_t flip_texture;
 static uint32_t flip_framebuffer;
 static uint32_t flip_vertex_buffer;
 static uint32_t flip_index_buffer;
-static uint32_t flip_width = 0;
+static uint32_t flip_width  = 0;
 static uint32_t flip_height = 0;
 
 static void init_flip(void) {
 	flip_program = glCreateProgram();
 	kore_opengl_check_errors();
 
-	flip_vertex_shader = compile_shader(GL_VERTEX_SHADER, flip_vertex_shader_source);
+	flip_vertex_shader   = compile_shader(GL_VERTEX_SHADER, flip_vertex_shader_source);
 	flip_fragment_shader = compile_shader(GL_FRAGMENT_SHADER, flip_fragment_shader_source);
 
 	glAttachShader(flip_program, flip_vertex_shader);
@@ -107,7 +107,7 @@ static uint32_t flip(uint32_t width, uint32_t height, uint32_t source_texture) {
 
 		kore_opengl_check_errors();
 
-		flip_width = width;
+		flip_width  = width;
 		flip_height = height;
 	}
 	else {

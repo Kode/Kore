@@ -5,7 +5,7 @@ void kore_index_allocator_init(kore_index_allocator *allocator) {
 		allocator->indices[i] = i;
 	}
 	allocator->next_indices_index = 0;
-	allocator->remaining = KORE_INDEX_ALLOCATOR_SIZE;
+	allocator->remaining          = KORE_INDEX_ALLOCATOR_SIZE;
 }
 
 uint32_t kore_index_allocator_allocate(kore_index_allocator *allocator) {

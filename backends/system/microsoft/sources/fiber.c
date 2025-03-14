@@ -15,7 +15,7 @@ void kore_fiber_init_current_thread(kore_fiber *fiber) {
 
 void kore_fiber_init(kore_fiber *fiber, void (*func)(void *param), void *param) {
 #ifndef KORE_WINDOWSAPP
-	fiber->impl.func = func;
+	fiber->impl.func  = func;
 	fiber->impl.param = param;
 	fiber->impl.fiber = CreateFiber(0, fiber_func, fiber);
 #endif

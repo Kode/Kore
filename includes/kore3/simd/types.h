@@ -35,7 +35,7 @@ extern "C" {
 #endif
 
 // SSE Capability check
-#if defined(__SSE__) || _M_IX86_FP == 2 || _M_IX86_FP == 1 || (defined(KORE_WINDOWS) && !defined(__aarch64__)) ||                                              \
+#if defined(__SSE__) || _M_IX86_FP == 2 || _M_IX86_FP == 1 || (defined(KORE_WINDOWS) && !defined(__aarch64__)) || \
     (defined(KORE_WINDOWSAPP) && !defined(__aarch64__)) || (defined(KORE_MACOS) && __x86_64)
 
 #define KORE_SSE
@@ -49,13 +49,13 @@ extern "C" {
 #endif
 
 // No SIMD Capabilities
-#if !defined(KORE_SSE4_2) && !defined(KORE_SSE4_1) && !defined(KORE_SSSE3) && !defined(KORE_SSE3) && !defined(KORE_SSE2) && !defined(KORE_SSE) &&              \
+#if !defined(KORE_SSE4_2) && !defined(KORE_SSE4_1) && !defined(KORE_SSSE3) && !defined(KORE_SSE3) && !defined(KORE_SSE2) && !defined(KORE_SSE) && \
     !defined(KORE_NEON)
 
 #define KORE_NOSIMD
 #endif
 
-#define KORE_SHUFFLE_TABLE(LANE_A1, LANE_A2, LANE_B1, LANE_B2)                                                                                                 \
+#define KORE_SHUFFLE_TABLE(LANE_A1, LANE_A2, LANE_B1, LANE_B2) \
 	((((LANE_B2) & 0x3) << 6) | (((LANE_B1) & 0x3) << 4) | (((LANE_A2) & 0x3) << 2) | (((LANE_A1) & 0x3) << 0))
 
 #if defined(KORE_SSE2)

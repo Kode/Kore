@@ -32,7 +32,7 @@ static void colored_end_tris(bool rectsDone);
 static void colored_end_rects(bool trisDone);
 
 static void colored_init(void) {
-	colored_rect_buffer_index = 0;
+	colored_rect_buffer_index     = 0;
 	colored_triangle_buffer_index = 0;
 	colored_init_shaders();
 	// myPipeline = standardColorPipeline;
@@ -185,7 +185,7 @@ static void colored_draw_rect_buffer(bool trisDone) {
 	}
 
 	kore_g2_constants_type *constants_data = kore_g2_constants_type_buffer_lock(&colored_constants);
-	constants_data->projection = colored_projection_matrix;
+	constants_data->projection             = colored_projection_matrix;
 	kore_g2_constants_type_buffer_unlock(&colored_constants);
 
 	kore_g4_vertex_buffer_unlock(&colored_rect_vertex_buffer, colored_rect_buffer_index * 4);
@@ -198,7 +198,7 @@ static void colored_draw_rect_buffer(bool trisDone) {
 	kore_g4_draw_indexed_vertices_from_to(0, colored_rect_buffer_index * 2 * 3);
 
 	colored_rect_buffer_index = 0;
-	colored_rect_vertices = (kore_g2_colored_vertex_in *)kore_g4_vertex_buffer_lock_all(&colored_rect_vertex_buffer);
+	colored_rect_vertices     = (kore_g2_colored_vertex_in *)kore_g4_vertex_buffer_lock_all(&colored_rect_vertex_buffer);
 }
 
 static void colored_draw_tri_buffer(bool rectsDone) {
@@ -207,7 +207,7 @@ static void colored_draw_tri_buffer(bool rectsDone) {
 	}
 
 	kore_g2_constants_type *constants_data = kore_g2_constants_type_buffer_lock(&colored_constants);
-	constants_data->projection = colored_projection_matrix;
+	constants_data->projection             = colored_projection_matrix;
 	kore_g2_constants_type_buffer_unlock(&colored_constants);
 
 	kore_g4_vertex_buffer_unlock(&colored_triangle_vertex_buffer, colored_triangle_buffer_index * 3);
@@ -220,7 +220,7 @@ static void colored_draw_tri_buffer(bool rectsDone) {
 	kore_g4_draw_indexed_vertices_from_to(0, colored_triangle_buffer_index * 3);
 
 	colored_triangle_buffer_index = 0;
-	colored_triangle_vertices = (kore_g2_colored_vertex_in *)kore_g4_vertex_buffer_lock_all(&colored_triangle_vertex_buffer);
+	colored_triangle_vertices     = (kore_g2_colored_vertex_in *)kore_g4_vertex_buffer_lock_all(&colored_triangle_vertex_buffer);
 }
 
 static void colored_fill_rect(float opacity, uint32_t color, float bottomleftx, float bottomlefty, float topleftx, float toplefty, float toprightx,

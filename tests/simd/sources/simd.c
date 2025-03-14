@@ -200,27 +200,27 @@ int kickstart(int argc, char **argv) {
 		result = kore_float32x4_min(a, b);
 		failed += check_f32("float32x4 min", result, (float[4]){-1.0f, 2.0f, 2.0f, 2.0f}, EPSILON) ? 0 : 1;
 
-		mask = kore_float32x4_cmpeq(a, b);
+		mask   = kore_float32x4_cmpeq(a, b);
 		result = kore_float32x4_sel(a, b, mask);
 		failed += check_f32("float32x4 cmpeq & sel", result, (float[4]){2.0f, 2.0f, 2.0f, 2.0f}, EPSILON) ? 0 : 1;
 
-		mask = kore_float32x4_cmpge(a, b);
+		mask   = kore_float32x4_cmpge(a, b);
 		result = kore_float32x4_sel(a, b, mask);
 		failed += check_f32("float32x4 cmpge & sel", result, (float[4]){2.0f, 2.0f, 3.0f, 4.0f}, EPSILON) ? 0 : 1;
 
-		mask = kore_float32x4_cmpgt(a, b);
+		mask   = kore_float32x4_cmpgt(a, b);
 		result = kore_float32x4_sel(a, b, mask);
 		failed += check_f32("float32x4 cmpgt & sel", result, (float[4]){2.0f, 2.0f, 3.0f, 4.0f}, EPSILON) ? 0 : 1;
 
-		mask = kore_float32x4_cmple(a, b);
+		mask   = kore_float32x4_cmple(a, b);
 		result = kore_float32x4_sel(a, b, mask);
 		failed += check_f32("float32x4 cmple & sel", result, (float[4]){-1.0f, 2.0f, 2.0f, 2.0f}, EPSILON) ? 0 : 1;
 
-		mask = kore_float32x4_cmplt(a, b);
+		mask   = kore_float32x4_cmplt(a, b);
 		result = kore_float32x4_sel(a, b, mask);
 		failed += check_f32("float32x4 cmplt & sel", result, (float[4]){-1.0f, 2.0f, 2.0f, 2.0f}, EPSILON) ? 0 : 1;
 
-		mask = kore_float32x4_cmpneq(a, b);
+		mask   = kore_float32x4_cmpneq(a, b);
 		result = kore_float32x4_sel(a, b, mask);
 		failed += check_f32("float32x4 cmpneq & sel", result, (float[4]){-1.0f, 2.0f, 3.0f, 4.0f}, EPSILON) ? 0 : 1;
 	}
@@ -244,27 +244,27 @@ int kickstart(int argc, char **argv) {
 		result = kore_int8x16_min(a, b);
 		failed += check_i8("int8x16 min", result, (int8_t[16]){-8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 2, 2, 2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int8x16_cmpeq(a, b);
+		mask   = kore_int8x16_cmpeq(a, b);
 		result = kore_int8x16_sel(a, b, mask);
 		failed += check_i8("int8x16 cmpeq & sel", result, (int8_t[16]){2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int8x16_cmpge(a, b);
+		mask   = kore_int8x16_cmpge(a, b);
 		result = kore_int8x16_sel(a, b, mask);
 		failed += check_i8("int8x16 cmpge & sel", result, (int8_t[16]){2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8}) ? 0 : 1;
 
-		mask = kore_int8x16_cmpgt(a, b);
+		mask   = kore_int8x16_cmpgt(a, b);
 		result = kore_int8x16_sel(a, b, mask);
 		failed += check_i8("int8x16 cmpgt & sel", result, (int8_t[16]){2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8}) ? 0 : 1;
 
-		mask = kore_int8x16_cmple(a, b);
+		mask   = kore_int8x16_cmple(a, b);
 		result = kore_int8x16_sel(a, b, mask);
 		failed += check_i8("int8x16 cmple & sel", result, (int8_t[16]){-8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 2, 2, 2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int8x16_cmplt(a, b);
+		mask   = kore_int8x16_cmplt(a, b);
 		result = kore_int8x16_sel(a, b, mask);
 		failed += check_i8("int8x16 cmplt & sel", result, (int8_t[16]){-8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 2, 2, 2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int8x16_cmpneq(a, b);
+		mask   = kore_int8x16_cmpneq(a, b);
 		result = kore_int8x16_sel(a, b, mask);
 		failed += check_i8("int8x16 cmpneq & sel", result, (int8_t[16]){-8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8}) ? 0 : 1;
 
@@ -310,27 +310,27 @@ int kickstart(int argc, char **argv) {
 		result = kore_uint8x16_min(a, b);
 		failed += check_u8("uint8x16 min", result, (uint8_t[16]){1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_uint8x16_cmpeq(a, b);
+		mask   = kore_uint8x16_cmpeq(a, b);
 		result = kore_uint8x16_sel(a, b, mask);
 		failed += check_u8("uint8x16 cmpeq & sel", result, (uint8_t[16]){2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_uint8x16_cmpge(a, b);
+		mask   = kore_uint8x16_cmpge(a, b);
 		result = kore_uint8x16_sel(a, b, mask);
 		failed += check_u8("uint8x16 cmpge & sel", result, (uint8_t[16]){2, 2, 3, 4, 5, 6, 7, 8, 4, 2, 3, 4, 5, 6, 7, 8}) ? 0 : 1;
 
-		mask = kore_uint8x16_cmpgt(a, b);
+		mask   = kore_uint8x16_cmpgt(a, b);
 		result = kore_uint8x16_sel(a, b, mask);
 		failed += check_u8("uint8x16 cmpgt & sel", result, (uint8_t[16]){2, 2, 3, 4, 5, 6, 7, 8, 4, 2, 3, 4, 5, 6, 7, 8}) ? 0 : 1;
 
-		mask = kore_uint8x16_cmple(a, b);
+		mask   = kore_uint8x16_cmple(a, b);
 		result = kore_uint8x16_sel(a, b, mask);
 		failed += check_u8("uint8x16 cmple & sel", result, (uint8_t[16]){1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_uint8x16_cmplt(a, b);
+		mask   = kore_uint8x16_cmplt(a, b);
 		result = kore_uint8x16_sel(a, b, mask);
 		failed += check_u8("uint8x16 cmplt & sel", result, (uint8_t[16]){1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_uint8x16_cmpneq(a, b);
+		mask   = kore_uint8x16_cmpneq(a, b);
 		result = kore_uint8x16_sel(a, b, mask);
 		failed += check_u8("uint8x16 cmpneq & sel", result, (uint8_t[16]){1, 2, 3, 4, 5, 6, 7, 8, 4, 2, 3, 4, 5, 6, 7, 8}) ? 0 : 1;
 
@@ -352,7 +352,7 @@ int kickstart(int argc, char **argv) {
 		              ? 0
 		              : 1;
 
-		result = kore_uint8x16_not(a);
+		result          = kore_uint8x16_not(a);
 		uint8_t chk[16] = {1, 2, 3, 4, 5, 6, 7, 8, 4, 2, 3, 4, 5, 6, 7, 8};
 		for (int i = 0; i < 16; ++i)
 			chk[i] = (uint8_t)(~chk[i]);
@@ -378,27 +378,27 @@ int kickstart(int argc, char **argv) {
 		result = kore_int16x8_min(a, b);
 		failed += check_i16("int16x8 min", result, (int16_t[8]){-4, -3, -2, -1, 1, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int16x8_cmpeq(a, b);
+		mask   = kore_int16x8_cmpeq(a, b);
 		result = kore_int16x8_sel(a, b, mask);
 		failed += check_i16("int16x8 cmpeq & sel", result, (int16_t[8]){2, 2, 2, 2, 2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int16x8_cmpge(a, b);
+		mask   = kore_int16x8_cmpge(a, b);
 		result = kore_int16x8_sel(a, b, mask);
 		failed += check_i16("int16x8 cmpge & sel", result, (int16_t[8]){2, 2, 2, 2, 2, 2, 3, 4}) ? 0 : 1;
 
-		mask = kore_int16x8_cmpgt(a, b);
+		mask   = kore_int16x8_cmpgt(a, b);
 		result = kore_int16x8_sel(a, b, mask);
 		failed += check_i16("int16x8 cmpgt & sel", result, (int16_t[8]){2, 2, 2, 2, 2, 2, 3, 4}) ? 0 : 1;
 
-		mask = kore_int16x8_cmple(a, b);
+		mask   = kore_int16x8_cmple(a, b);
 		result = kore_int16x8_sel(a, b, mask);
 		failed += check_i16("int16x8 cmple & sel", result, (int16_t[8]){-4, -3, -2, -1, 1, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int16x8_cmplt(a, b);
+		mask   = kore_int16x8_cmplt(a, b);
 		result = kore_int16x8_sel(a, b, mask);
 		failed += check_i16("int16x8 cmplt & sel", result, (int16_t[8]){-4, -3, -2, -1, 1, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int16x8_cmpneq(a, b);
+		mask   = kore_int16x8_cmpneq(a, b);
 		result = kore_int16x8_sel(a, b, mask);
 		failed += check_i16("int16x8 cmpneq & sel", result, (int16_t[8]){-4, -3, -2, -1, 1, 2, 3, 4}) ? 0 : 1;
 
@@ -428,11 +428,11 @@ int kickstart(int argc, char **argv) {
 		result = kore_uint16x8_sub(a, b);
 		failed += check_u16("uint16x8 sub", result, (uint16_t[8]){65535, 0, 1, 2, 3, 4, 5, 6}) ? 0 : 1;
 
-		mask = kore_uint16x8_cmpeq(a, b);
+		mask   = kore_uint16x8_cmpeq(a, b);
 		result = kore_uint16x8_sel(a, b, mask);
 		failed += check_u16("uint16x8 cmpeq & sel", result, (uint16_t[8]){2, 2, 2, 2, 2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_uint16x8_cmpneq(a, b);
+		mask   = kore_uint16x8_cmpneq(a, b);
 		result = kore_uint16x8_sel(a, b, mask);
 		failed += check_u16("uint16x8 cmpneq & sel", result, (uint16_t[8]){1, 2, 3, 4, 5, 6, 7, 8}) ? 0 : 1;
 
@@ -445,7 +445,7 @@ int kickstart(int argc, char **argv) {
 		result = kore_uint16x8_xor(a, b);
 		failed += check_u16("uint16x8 xor", result, (uint16_t[8]){1 ^ 2, 0x2 ^ 2, 3 ^ 2, 4 ^ 2, 5 ^ 2, 6 ^ 2, 7 ^ 2, 8 ^ 2}) ? 0 : 1;
 
-		result = kore_uint16x8_not(a);
+		result          = kore_uint16x8_not(a);
 		uint16_t chk[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 		for (int i = 0; i < 8; ++i)
 			chk[i] = (uint16_t)(~chk[i]);
@@ -471,27 +471,27 @@ int kickstart(int argc, char **argv) {
 		result = kore_int32x4_min(a, b);
 		failed += check_i32("int32x4 min", result, (int32_t[4]){-2, -1, 1, 2}) ? 0 : 1;
 
-		mask = kore_int32x4_cmpeq(a, b);
+		mask   = kore_int32x4_cmpeq(a, b);
 		result = kore_int32x4_sel(a, b, mask);
 		failed += check_i32("int32x4 cmpeq & sel", result, (int32_t[4]){2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int32x4_cmpge(a, b);
+		mask   = kore_int32x4_cmpge(a, b);
 		result = kore_int32x4_sel(a, b, mask);
 		failed += check_i32("int32x4 cmpge & sel", result, (int32_t[4]){2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int32x4_cmpgt(a, b);
+		mask   = kore_int32x4_cmpgt(a, b);
 		result = kore_int32x4_sel(a, b, mask);
 		failed += check_i32("int32x4 cmpgt & sel", result, (int32_t[4]){2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_int32x4_cmple(a, b);
+		mask   = kore_int32x4_cmple(a, b);
 		result = kore_int32x4_sel(a, b, mask);
 		failed += check_i32("int32x4 cmple & sel", result, (int32_t[4]){-2, -1, 1, 2}) ? 0 : 1;
 
-		mask = kore_int32x4_cmplt(a, b);
+		mask   = kore_int32x4_cmplt(a, b);
 		result = kore_int32x4_sel(a, b, mask);
 		failed += check_i32("int32x4 cmplt & sel", result, (int32_t[4]){-2, -1, 1, 2}) ? 0 : 1;
 
-		mask = kore_int32x4_cmpneq(a, b);
+		mask   = kore_int32x4_cmpneq(a, b);
 		result = kore_int32x4_sel(a, b, mask);
 		failed += check_i32("int32x4 cmpneq & sel", result, (int32_t[4]){-2, -1, 1, 2}) ? 0 : 1;
 
@@ -521,11 +521,11 @@ int kickstart(int argc, char **argv) {
 		result = kore_uint32x4_sub(a, b);
 		failed += check_u32("uint32x4 sub", result, (uint32_t[4]){4294967295, 0, 1, 2}) ? 0 : 1;
 
-		mask = kore_uint32x4_cmpeq(a, b);
+		mask   = kore_uint32x4_cmpeq(a, b);
 		result = kore_uint32x4_sel(a, b, mask);
 		failed += check_u32("uint32x4 cmpeq & sel", result, (uint32_t[4]){2, 2, 2, 2}) ? 0 : 1;
 
-		mask = kore_uint32x4_cmpneq(a, b);
+		mask   = kore_uint32x4_cmpneq(a, b);
 		result = kore_uint32x4_sel(a, b, mask);
 		failed += check_u32("uint32x4 cmpneq & sel", result, (uint32_t[4]){1, 2, 3, 4}) ? 0 : 1;
 
@@ -538,7 +538,7 @@ int kickstart(int argc, char **argv) {
 		result = kore_uint32x4_xor(a, b);
 		failed += check_u32("uint32x4 xor", result, (uint32_t[4]){1 ^ 2, 0x2 ^ 2, 3 ^ 2, 4 ^ 2}) ? 0 : 1;
 
-		result = kore_uint32x4_not(a);
+		result          = kore_uint32x4_not(a);
 		uint32_t chk[4] = {1, 2, 3, 4};
 		for (int i = 0; i < 4; ++i)
 			chk[i] = (uint32_t)(~chk[i]);

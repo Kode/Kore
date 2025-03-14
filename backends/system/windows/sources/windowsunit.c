@@ -102,16 +102,16 @@ typedef struct tagPOINTER_PEN_INFO {
 } POINTER_PEN_INFO;
 
 #define WM_POINTERUPDATE 0x0245
-#define WM_POINTERDOWN 0x0246
-#define WM_POINTERUP 0x0247
+#define WM_POINTERDOWN   0x0246
+#define WM_POINTERUP     0x0247
 
 #define GET_POINTERID_WPARAM(wParam) (LOWORD(wParam))
 
 enum tagPOINTER_INPUT_TYPE {
-	PT_POINTER = 1,  // Generic pointer
-	PT_TOUCH = 2,    // Touch
-	PT_PEN = 3,      // Pen
-	PT_MOUSE = 4,    // Mouse
+	PT_POINTER  = 1, // Generic pointer
+	PT_TOUCH    = 2, // Touch
+	PT_PEN      = 3, // Pen
+	PT_MOUSE    = 4, // Mouse
 	PT_TOUCHPAD = 5, // Touchpad
 };
 

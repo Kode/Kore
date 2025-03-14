@@ -18,14 +18,14 @@ extern "C" {
 /// </summary>
 KORE_FUNC void kore_color_components(uint32_t color, float *red, float *green, float *blue, float *alpha);
 
-#define KORE_COLOR_BLACK 0xff000000
-#define KORE_COLOR_WHITE 0xffffffff
-#define KORE_COLOR_RED 0xffff0000
-#define KORE_COLOR_BLUE 0xff0000ff
-#define KORE_COLOR_GREEN 0xff00ff00
+#define KORE_COLOR_BLACK   0xff000000
+#define KORE_COLOR_WHITE   0xffffffff
+#define KORE_COLOR_RED     0xffff0000
+#define KORE_COLOR_BLUE    0xff0000ff
+#define KORE_COLOR_GREEN   0xff00ff00
 #define KORE_COLOR_MAGENTA 0xffff00ff
-#define KORE_COLOR_YELLOW 0xffffff00
-#define KORE_COLOR_CYAN 0xff00ffff
+#define KORE_COLOR_YELLOW  0xffffff00
+#define KORE_COLOR_CYAN    0xff00ffff
 
 #ifdef __cplusplus
 }

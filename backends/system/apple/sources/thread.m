@@ -20,7 +20,7 @@ static void *ThreadProc(void *arg) {
 }
 
 void kore_thread_init(kore_thread *t, void (*thread)(void *param), void *param) {
-	t->impl.param = param;
+	t->impl.param  = param;
 	t->impl.thread = thread;
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);

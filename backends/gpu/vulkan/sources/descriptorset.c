@@ -8,17 +8,17 @@
 void kore_vulkan_descriptor_set_set_texture_view(kore_gpu_device *device, kore_vulkan_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                  uint32_t index) {
 	VkDescriptorImageInfo image_info = {
-	    .imageView = texture_view->texture->vulkan.image_view,
+	    .imageView   = texture_view->texture->vulkan.image_view,
 	    .imageLayout = VK_IMAGE_LAYOUT_GENERAL,
 	};
 
 	VkWriteDescriptorSet write = {
-	    .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-	    .dstSet = set->descriptor_set,
-	    .dstBinding = index,
+	    .sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+	    .dstSet          = set->descriptor_set,
+	    .dstBinding      = index,
 	    .descriptorCount = 1,
-	    .descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-	    .pImageInfo = &image_info,
+	    .descriptorType  = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+	    .pImageInfo      = &image_info,
 	};
 
 	vkUpdateDescriptorSets(device->vulkan.device, 1, &write, 0, NULL);
@@ -26,17 +26,17 @@ void kore_vulkan_descriptor_set_set_texture_view(kore_gpu_device *device, kore_v
 
 void kore_vulkan_descriptor_set_set_sampler(kore_gpu_device *device, kore_vulkan_descriptor_set *set, kore_gpu_sampler *sampler, uint32_t index) {
 	VkDescriptorImageInfo image_info = {
-	    .sampler = sampler->vulkan.sampler,
+	    .sampler     = sampler->vulkan.sampler,
 	    .imageLayout = VK_IMAGE_LAYOUT_GENERAL,
 	};
 
 	VkWriteDescriptorSet write = {
-	    .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-	    .dstSet = set->descriptor_set,
-	    .dstBinding = index,
+	    .sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+	    .dstSet          = set->descriptor_set,
+	    .dstBinding      = index,
 	    .descriptorCount = 1,
-	    .descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER,
-	    .pImageInfo = &image_info,
+	    .descriptorType  = VK_DESCRIPTOR_TYPE_SAMPLER,
+	    .pImageInfo      = &image_info,
 	};
 
 	vkUpdateDescriptorSets(device->vulkan.device, 1, &write, 0, NULL);

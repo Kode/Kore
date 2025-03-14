@@ -12,9 +12,9 @@
 
 void kore_metal_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
 	id<MTLDevice> metal_device = MTLCreateSystemDefaultDevice();
-	getMetalLayer().device = metal_device;
-	device->metal.device = (__bridge_retained void *)metal_device;
-	device->metal.library = (__bridge_retained void *)[metal_device newDefaultLibrary];
+	getMetalLayer().device     = metal_device;
+	device->metal.device       = (__bridge_retained void *)metal_device;
+	device->metal.library      = (__bridge_retained void *)[metal_device newDefaultLibrary];
 }
 
 void kore_metal_device_destroy(kore_gpu_device *device) {}
@@ -35,14 +35,14 @@ void kore_metal_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 	}
 #endif
 	id<MTLBuffer> metal_buffer = [metal_device newBufferWithLength:parameters->size options:options];
-	buffer->metal.buffer = (__bridge_retained void *)metal_buffer;
+	buffer->metal.buffer       = (__bridge_retained void *)metal_buffer;
 }
 
 void kore_metal_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
-	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
+	id<MTLDevice> metal_device        = (__bridge id<MTLDevice>)device->metal.device;
 	id<MTLCommandQueue> command_queue = [metal_device newCommandQueue];
-	list->metal.command_queue = (__bridge_retained void *)command_queue;
-	list->metal.command_buffer = (__bridge_retained void *)[command_queue commandBuffer];
+	list->metal.command_queue         = (__bridge_retained void *)command_queue;
+	list->metal.command_buffer        = (__bridge_retained void *)[command_queue commandBuffer];
 }
 
 void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {}
@@ -50,9 +50,9 @@ void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 static kore_gpu_texture framebuffer;
 
 kore_gpu_texture *kore_metal_device_get_framebuffer(kore_gpu_device *device) {
-	CAMetalLayer *metal_layer = getMetalLayer();
+	CAMetalLayer *metal_layer    = getMetalLayer();
 	id<CAMetalDrawable> drawable = [metal_layer nextDrawable];
-	framebuffer.metal.texture = (__bridge_retained void *)drawable.texture;
+	framebuffer.metal.texture    = (__bridge_retained void *)drawable.texture;
 	return &framebuffer;
 }
 
@@ -65,8 +65,8 @@ void kore_metal_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 	[command_buffer commit];
 
 	id<MTLCommandQueue> command_queue = (__bridge id<MTLCommandQueue>)list->metal.command_queue;
-	command_buffer = [command_queue commandBuffer];
-	list->metal.command_buffer = (__bridge_retained void *)[command_queue commandBuffer];
+	command_buffer                    = [command_queue commandBuffer];
+	list->metal.command_buffer        = (__bridge_retained void *)[command_queue commandBuffer];
 }
 
 void kore_metal_device_wait_until_idle(kore_gpu_device *device) {}

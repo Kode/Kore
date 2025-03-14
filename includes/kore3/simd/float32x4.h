@@ -146,7 +146,7 @@ static inline kore_float32x4 kore_float32x4_not(kore_float32x4 t) {
 	return _mm_xor_ps(t, _mm_cmpeq_ps(zeroes, zeroes));
 }
 
-#define kore_float32x4_shuffle_custom(abcd, efgh, left_1, left_2, right_1, right_2)                                                                            \
+#define kore_float32x4_shuffle_custom(abcd, efgh, left_1, left_2, right_1, right_2) \
 	_mm_shuffle_ps((abcd), (efgh), KORE_SHUFFLE_TABLE((left_1), (left_2), (right_1), (right_2)))
 
 static inline kore_float32x4 kore_float32x4_shuffle_aebf(kore_float32x4 abcd, kore_float32x4 efgh) {
@@ -219,9 +219,9 @@ static inline kore_float32x4 kore_float32x4_div(kore_float32x4 a, kore_float32x4
 #if defined(__aarch64__)
 	return vdivq_f32(a, b);
 #else
-	float32x4 inv = vrecpeq_f32(b);
+	float32x4 inv    = vrecpeq_f32(b);
 	float32x4 restep = vrecpsq_f32(b, inv);
-	inv = vmulq_f32(restep, inv);
+	inv              = vmulq_f32(restep, inv);
 	return vmulq_f32(a, inv);
 #endif
 }
@@ -317,10 +317,10 @@ static inline kore_float32x4 kore_float32x4_not(kore_float32x4 t) {
 	return vreinterpretq_f32_u32(vmvnq_u32(tcvt));
 }
 
-#define kore_float32x4_shuffle_custom(abcd, efgh, left_1, left_2, right_1, right_2)                                                                            \
-	(kore_float32x4) {                                                                                                                                         \
-		vgetq_lane_f32((abcd), ((left_1) & 0x3)), vgetq_lane_f32((abcd), ((left_2) & 0x3)), vgetq_lane_f32((efgh), ((right_1) & 0x3)),                         \
-		    vgetq_lane_f32((efgh), ((right_2) & 0x3))                                                                                                          \
+#define kore_float32x4_shuffle_custom(abcd, efgh, left_1, left_2, right_1, right_2)                                                    \
+	(kore_float32x4) {                                                                                                                 \
+		vgetq_lane_f32((abcd), ((left_1) & 0x3)), vgetq_lane_f32((abcd), ((left_2) & 0x3)), vgetq_lane_f32((efgh), ((right_1) & 0x3)), \
+		    vgetq_lane_f32((efgh), ((right_2) & 0x3))                                                                                  \
 	}
 
 static inline kore_float32x4 kore_float32x4_shuffle_aebf(kore_float32x4 abcd, kore_float32x4 efgh) {

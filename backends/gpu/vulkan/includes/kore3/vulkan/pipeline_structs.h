@@ -167,11 +167,11 @@ typedef struct kore_vulkan_blend_state {
 } kore_vulkan_blend_state;
 
 typedef enum kore_vulkan_color_write_flags {
-	KORE_VULKAN_COLOR_WRITE_FLAGS_RED = 0x1,
+	KORE_VULKAN_COLOR_WRITE_FLAGS_RED   = 0x1,
 	KORE_VULKAN_COLOR_WRITE_FLAGS_GREEN = 0x2,
-	KORE_VULKAN_COLOR_WRITE_FLAGS_BLUE = 0x4,
+	KORE_VULKAN_COLOR_WRITE_FLAGS_BLUE  = 0x4,
 	KORE_VULKAN_COLOR_WRITE_FLAGS_ALPHA = 0x8,
-	KORE_VULKAN_COLOR_WRITE_FLAGS_ALL = 0xF
+	KORE_VULKAN_COLOR_WRITE_FLAGS_ALL   = 0xF
 } kore_vulkan_color_write_flags;
 
 typedef struct kore_vulkan_color_target_state {

@@ -167,11 +167,11 @@ typedef struct kore_d3d12_blend_state {
 } kore_d3d12_blend_state;
 
 typedef enum kore_d3d12_color_write_flags {
-	KORE_D3D12_COLOR_WRITE_FLAGS_RED = 0x1,
+	KORE_D3D12_COLOR_WRITE_FLAGS_RED   = 0x1,
 	KORE_D3D12_COLOR_WRITE_FLAGS_GREEN = 0x2,
-	KORE_D3D12_COLOR_WRITE_FLAGS_BLUE = 0x4,
+	KORE_D3D12_COLOR_WRITE_FLAGS_BLUE  = 0x4,
 	KORE_D3D12_COLOR_WRITE_FLAGS_ALPHA = 0x8,
-	KORE_D3D12_COLOR_WRITE_FLAGS_ALL = 0xF
+	KORE_D3D12_COLOR_WRITE_FLAGS_ALL   = 0xF
 } kore_d3d12_color_write_flags;
 
 typedef struct kore_d3d12_color_target_state {

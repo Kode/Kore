@@ -72,9 +72,9 @@ static kore_audio_buffer audio_buffer;
 
 static IMMDeviceEnumerator *deviceEnumerator;
 static IMMDevice *device;
-static IAudioClient *audioClient = NULL;
+static IAudioClient *audioClient        = NULL;
 static IAudioRenderClient *renderClient = NULL;
-static HANDLE bufferEndEvent = 0;
+static HANDLE bufferEndEvent            = 0;
 static UINT32 bufferFrames;
 static WAVEFORMATEX requestedFormat;
 static WAVEFORMATEX *closestFormat;
@@ -113,13 +113,13 @@ static bool initDefaultDevice() {
 
 		format = &requestedFormat;
 		memset(&requestedFormat, 0, sizeof(WAVEFORMATEX));
-		requestedFormat.nChannels = 2;
-		requestedFormat.nSamplesPerSec = sampleRate;
-		requestedFormat.wFormatTag = WAVE_FORMAT_PCM;
-		requestedFormat.wBitsPerSample = sizeof(short) * 8;
-		requestedFormat.nBlockAlign = (requestedFormat.nChannels * requestedFormat.wBitsPerSample) / 8;
+		requestedFormat.nChannels       = 2;
+		requestedFormat.nSamplesPerSec  = sampleRate;
+		requestedFormat.wFormatTag      = WAVE_FORMAT_PCM;
+		requestedFormat.wBitsPerSample  = sizeof(short) * 8;
+		requestedFormat.nBlockAlign     = (requestedFormat.nChannels * requestedFormat.wBitsPerSample) / 8;
 		requestedFormat.nAvgBytesPerSec = requestedFormat.nSamplesPerSec * requestedFormat.nBlockAlign;
-		requestedFormat.cbSize = 0;
+		requestedFormat.cbSize          = 0;
 
 		HRESULT supported = audioClient->lpVtbl->IsFormatSupported(audioClient, AUDCLNT_SHAREMODE_SHARED, format, &closestFormat);
 		if (supported == S_FALSE) {
@@ -139,7 +139,7 @@ static bool initDefaultDevice() {
 		}
 
 		uint32_t old_samples_per_second = samples_per_second;
-		samples_per_second = format->nSamplesPerSec;
+		samples_per_second              = format->nSamplesPerSec;
 		if (samples_per_second != old_samples_per_second) {
 			kore_audio_internal_sample_rate_callback();
 		}
@@ -163,7 +163,7 @@ static bool initDefaultDevice() {
 }
 
 static void submitEmptyBuffer(unsigned frames) {
-	BYTE *buffer = NULL;
+	BYTE *buffer   = NULL;
 	HRESULT result = renderClient->lpVtbl->GetBuffer(renderClient, frames, &buffer);
 	if (FAILED(result)) {
 		return;
@@ -181,29 +181,29 @@ static void restartAudio() {
 }
 
 static void copyS16Sample(int16_t *left, int16_t *right) {
-	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float left_value  = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
 	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
 	audio_buffer.read_location += 1;
 	if (audio_buffer.read_location >= audio_buffer.data_size) {
 		audio_buffer.read_location = 0;
 	}
-	*left = (int16_t)(left_value * 32767);
+	*left  = (int16_t)(left_value * 32767);
 	*right = (int16_t)(right_value * 32767);
 }
 
 static void copyFloatSample(float *left, float *right) {
-	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float left_value  = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
 	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
 	audio_buffer.read_location += 1;
 	if (audio_buffer.read_location >= audio_buffer.data_size) {
 		audio_buffer.read_location = 0;
 	}
-	*left = left_value;
+	*left  = left_value;
 	*right = right_value;
 }
 
 static void submitBuffer(unsigned frames) {
-	BYTE *buffer = NULL;
+	BYTE *buffer   = NULL;
 	HRESULT result = renderClient->lpVtbl->GetBuffer(renderClient, frames, &buffer);
 	if (FAILED(result)) {
 		if (result == AUDCLNT_E_DEVICE_INVALIDATED) {
@@ -267,12 +267,12 @@ void kore_audio_init() {
 	kore_audio_internal_init();
 	initialized = true;
 
-	audio_buffer.read_location = 0;
+	audio_buffer.read_location  = 0;
 	audio_buffer.write_location = 0;
-	audio_buffer.data_size = 128 * 1024;
-	audio_buffer.channel_count = 2;
-	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
-	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.data_size      = 128 * 1024;
+	audio_buffer.channel_count  = 2;
+	audio_buffer.channels[0]    = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1]    = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	kore_windows_co_initialize();
 	kore_microsoft_affirm(CoCreateInstance(&CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL, &IID_IMMDeviceEnumerator, (void **)&deviceEnumerator));
@@ -284,10 +284,10 @@ void kore_audio_init() {
 
 void kore_audio_update() {}
 
-#define SAFE_RELEASE(punk)                                                                                                                                     \
-	if ((punk) != NULL) {                                                                                                                                      \
-		(punk)->Release();                                                                                                                                     \
-		(punk) = NULL;                                                                                                                                         \
+#define SAFE_RELEASE(punk) \
+	if ((punk) != NULL) {  \
+		(punk)->Release(); \
+		(punk) = NULL;     \
 	}
 
 void kore_audio_shutdown() {

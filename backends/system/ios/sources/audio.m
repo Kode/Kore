@@ -29,13 +29,13 @@ static bool initialized;
 static bool soundPlaying;
 static AudioStreamBasicDescription deviceFormat;
 static AudioComponentInstance audioUnit;
-static bool isFloat = false;
+static bool isFloat       = false;
 static bool isInterleaved = true;
 
 static kore_audio_buffer audio_buffer;
 
 static void copySample(void *buffer, void *secondary_buffer) {
-	float left_value = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
+	float left_value  = *(float *)&audio_buffer.channels[0][audio_buffer.read_location];
 	float right_value = *(float *)&audio_buffer.channels[1][audio_buffer.read_location];
 	audio_buffer.read_location += 1;
 	if (audio_buffer.read_location >= audio_buffer.data_size) {
@@ -65,11 +65,11 @@ static void copySample(void *buffer, void *secondary_buffer) {
 	}
 	else {
 		if (isFloat) {
-			*(float *)buffer = left_value;
+			*(float *)buffer           = left_value;
 			*(float *)secondary_buffer = right_value;
 		}
 		else {
-			*(int16_t *)buffer = (int16_t)(left_value * 32767);
+			*(int16_t *)buffer           = (int16_t)(left_value * 32767);
 			*(int16_t *)secondary_buffer = (int16_t)(right_value * 32767);
 		}
 	}
@@ -136,20 +136,20 @@ void kore_audio_init(void) {
 	kore_audio_internal_init();
 	initialized = true;
 
-	audio_buffer.read_location = 0;
+	audio_buffer.read_location  = 0;
 	audio_buffer.write_location = 0;
-	audio_buffer.data_size = 128 * 1024;
-	audio_buffer.channel_count = 2;
-	audio_buffer.channels[0] = (float *)malloc(audio_buffer.data_size * sizeof(float));
-	audio_buffer.channels[1] = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.data_size      = 128 * 1024;
+	audio_buffer.channel_count  = 2;
+	audio_buffer.channels[0]    = (float *)malloc(audio_buffer.data_size * sizeof(float));
+	audio_buffer.channels[1]    = (float *)malloc(audio_buffer.data_size * sizeof(float));
 
 	initialized = false;
 
 	AudioComponentDescription desc;
-	desc.componentType = kAudioUnitType_Output;
-	desc.componentSubType = kAudioUnitSubType_RemoteIO;
-	desc.componentFlags = 0;
-	desc.componentFlagsMask = 0;
+	desc.componentType         = kAudioUnitType_Output;
+	desc.componentSubType      = kAudioUnitSubType_RemoteIO;
+	desc.componentFlags        = 0;
+	desc.componentFlagsMask    = 0;
 	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 
 	AudioComponent comp = AudioComponentFindNext(NULL, &desc);
@@ -198,7 +198,7 @@ void kore_audio_init(void) {
 	}
 
 	AURenderCallbackStruct callbackStruct;
-	callbackStruct.inputProc = renderInput;
+	callbackStruct.inputProc       = renderInput;
 	callbackStruct.inputProcRefCon = NULL;
 	affirm(AudioUnitSetProperty(audioUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, kOutputBus, &callbackStruct, sizeof(callbackStruct)));
 

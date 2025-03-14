@@ -30,19 +30,19 @@ int kore_x11_window_create(kore_window_parameters *win, kore_framebuffer_paramet
 	}
 
 	struct kore_x11_window *window = &x11_ctx.windows[window_index];
-	window->window_index = window_index;
-	window->width = win->width;
-	window->height = win->height;
+	window->window_index           = window_index;
+	window->width                  = win->width;
+	window->height                 = win->height;
 
-	Visual *visual = NULL;
+	Visual *visual                          = NULL;
 	XSetWindowAttributes set_window_attribs = {0};
 
 	set_window_attribs.border_pixel = 0;
 	set_window_attribs.event_mask =
 	    KeyPressMask | KeyReleaseMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | StructureNotifyMask | FocusChangeMask;
-	int screen = DefaultScreen(x11_ctx.display);
-	visual = DefaultVisual(x11_ctx.display, screen);
-	int depth = DefaultDepth(x11_ctx.display, screen);
+	int screen                  = DefaultScreen(x11_ctx.display);
+	visual                      = DefaultVisual(x11_ctx.display, screen);
+	int depth                   = DefaultDepth(x11_ctx.display, screen);
 	set_window_attribs.colormap = xlib.XCreateColormap(x11_ctx.display, RootWindow(x11_ctx.display, screen), visual, AllocNone);
 	window->window = xlib.XCreateWindow(x11_ctx.display, RootWindow(x11_ctx.display, DefaultScreen(x11_ctx.display)), 0, 0, win->width, win->height, 0, depth,
 	                                    InputOutput, visual, CWBorderPixel | CWColormap | CWEventMask, &set_window_attribs);
@@ -57,7 +57,7 @@ int kore_x11_window_create(kore_window_parameters *win, kore_framebuffer_paramet
 	xlib.XSetClassHint(x11_ctx.display, window->window, &classHint);
 
 	xlib.XSetLocaleModifiers("@im=none");
-	window->xInputMethod = xlib.XOpenIM(x11_ctx.display, NULL, NULL, NULL);
+	window->xInputMethod  = xlib.XOpenIM(x11_ctx.display, NULL, NULL, NULL);
 	window->xInputContext = xlib.XCreateIC(window->xInputMethod, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, XNClientWindow, window->window, NULL);
 	xlib.XSetICFocus(window->xInputContext);
 
@@ -96,7 +96,7 @@ void kore_x11_window_destroy(int window_index) {
 }
 
 void kore_x11_window_set_title(int window_index, const char *_title) {
-	const char *title = _title == NULL ? "" : _title;
+	const char *title              = _title == NULL ? "" : _title;
 	struct kore_x11_window *window = &x11_ctx.windows[window_index];
 	xlib.XChangeProperty(x11_ctx.display, window->window, x11_ctx.atoms.NET_WM_NAME, x11_ctx.atoms.UTF8_STRING, 8, PropModeReplace, (unsigned char *)title,
 	                     strlen(title));
@@ -161,7 +161,7 @@ void kore_x11_window_change_mode(int window_index, kore_window_mode mode) {
 	case KORE_WINDOW_MODE_WINDOW:
 		if (window->mode == KORE_WINDOW_MODE_FULLSCREEN) {
 			window->mode = KORE_WINDOW_MODE_WINDOW;
-			fullscreen = false;
+			fullscreen   = false;
 		}
 		else {
 			return;
@@ -171,7 +171,7 @@ void kore_x11_window_change_mode(int window_index, kore_window_mode mode) {
 	case KORE_WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
 		if (window->mode == KORE_WINDOW_MODE_WINDOW) {
 			window->mode = KORE_WINDOW_MODE_FULLSCREEN;
-			fullscreen = true;
+			fullscreen   = true;
 		}
 		else {
 			return;
@@ -181,13 +181,13 @@ void kore_x11_window_change_mode(int window_index, kore_window_mode mode) {
 
 	XEvent xev;
 	memset(&xev, 0, sizeof(xev));
-	xev.type = ClientMessage;
-	xev.xclient.window = window->window;
+	xev.type                 = ClientMessage;
+	xev.xclient.window       = window->window;
 	xev.xclient.message_type = x11_ctx.atoms.NET_WM_STATE;
-	xev.xclient.format = 32;
-	xev.xclient.data.l[0] = fullscreen ? 1 : 0;
-	xev.xclient.data.l[1] = x11_ctx.atoms.NET_WM_STATE_FULLSCREEN;
-	xev.xclient.data.l[2] = 0;
+	xev.xclient.format       = 32;
+	xev.xclient.data.l[0]    = fullscreen ? 1 : 0;
+	xev.xclient.data.l[1]    = x11_ctx.atoms.NET_WM_STATE_FULLSCREEN;
+	xev.xclient.data.l[2]    = 0;
 
 	xlib.XMapWindow(x11_ctx.display, window->window);
 

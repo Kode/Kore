@@ -117,7 +117,7 @@ namespace {
 
 		if (screen_width == 0 || screen_height == 0) {
 			int32_t success = 0;
-			success = graphics_get_display_size(0 /* LCD */, &screen_width, &screen_height);
+			success         = graphics_get_display_size(0 /* LCD */, &screen_width, &screen_height);
 			assert(success >= 0);
 		}
 	}
@@ -148,8 +148,8 @@ int createWindow(const char *title, int x, int y, int width, int height, Kore::W
 	}
 
 	::windowMode = windowMode;
-	::width = width;
-	::height = height;
+	::width      = width;
+	::height     = height;
 	// uint32_t screen_width = 640;
 	// uint32_t screen_height = 480;
 
@@ -192,49 +192,49 @@ int createWindow(const char *title, int x, int y, int width, int height, Kore::W
 	setScreenSize();
 
 	if (windowMode == Kore::WindowModeFullscreen) {
-		dst_rect.x = 0;
-		dst_rect.y = 0;
-		dst_rect.width = screen_width;
+		dst_rect.x      = 0;
+		dst_rect.y      = 0;
+		dst_rect.width  = screen_width;
 		dst_rect.height = screen_height;
-		src_rect.x = 0;
-		src_rect.y = 0;
-		src_rect.width = screen_width << 16;
+		src_rect.x      = 0;
+		src_rect.y      = 0;
+		src_rect.width  = screen_width << 16;
 		src_rect.height = screen_height << 16;
 	}
 	else {
 		dst_rect.x = x;
 		dst_rect.y = y;
 #ifdef KORE_RASPBERRY_PI_SCALING
-		dst_rect.width = screen_width;
+		dst_rect.width  = screen_width;
 		dst_rect.height = screen_height;
 #else
-		dst_rect.width = width;
+		dst_rect.width  = width;
 		dst_rect.height = height;
 #endif
-		src_rect.x = 0;
-		src_rect.y = 0;
-		src_rect.width = width << 16;
+		src_rect.x      = 0;
+		src_rect.y      = 0;
+		src_rect.width  = width << 16;
 		src_rect.height = height << 16;
 	}
 
 	dispman_display = vc_dispmanx_display_open(0 /* LCD */);
-	dispman_update = vc_dispmanx_update_start(0);
+	dispman_update  = vc_dispmanx_update_start(0);
 
 	VC_DISPMANX_ALPHA_T alpha = {};
-	alpha.flags = (DISPMANX_FLAGS_ALPHA_T)(DISPMANX_FLAGS_ALPHA_FROM_SOURCE | DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS);
-	alpha.opacity = 255;
-	alpha.mask = 0;
+	alpha.flags               = (DISPMANX_FLAGS_ALPHA_T)(DISPMANX_FLAGS_ALPHA_FROM_SOURCE | DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS);
+	alpha.opacity             = 255;
+	alpha.mask                = 0;
 
 	dispman_element = vc_dispmanx_element_add(dispman_update, dispman_display, 0 /*layer*/, &dst_rect, 0 /*src*/, &src_rect, DISPMANX_PROTECTION_NONE, &alpha,
 	                                          0 /*clamp*/, (DISPMANX_TRANSFORM_T)0 /*transform*/);
 
 	nativewindow.element = dispman_element;
 	if (windowMode == Kore::WindowModeFullscreen) {
-		nativewindow.width = screen_width;
+		nativewindow.width  = screen_width;
 		nativewindow.height = screen_height;
 	}
 	else {
-		nativewindow.width = width;
+		nativewindow.width  = width;
 		nativewindow.height = height;
 #ifndef KORE_RASPBERRY_PI_SCALING
 		openXWindow(x, y, width, height);
@@ -406,12 +406,12 @@ bool Kore::System::handleMessages() {
 
 			set_bit(inputDevices[i].key_state, event.code, event.value);
 
-#define KEY(linuxkey, korekey, keychar)                                                                                                                        \
-	case linuxkey:                                                                                                                                             \
-		if (event.value == 1)                                                                                                                                  \
-			Kore::Keyboard::the()->_keydown(korekey);                                                                                                          \
-		else if (event.value == 0)                                                                                                                             \
-			Kore::Keyboard::the()->_keyup(korekey);                                                                                                            \
+#define KEY(linuxkey, korekey, keychar)               \
+	case linuxkey:                                    \
+		if (event.value == 1)                         \
+			Kore::Keyboard::the()->_keydown(korekey); \
+		else if (event.value == 0)                    \
+			Kore::Keyboard::the()->_keyup(korekey);   \
 		break;
 			switch (event.code) {
 				KEY(KEY_RIGHT, KeyRight, ' ')
@@ -485,13 +485,13 @@ bool Kore::System::handleMessages() {
 
 				VC_RECT_T dst_rect;
 				VC_RECT_T src_rect;
-				dst_rect.x = event.xconfigure.x;
-				dst_rect.y = event.xconfigure.y;
-				dst_rect.width = width;
+				dst_rect.x      = event.xconfigure.x;
+				dst_rect.y      = event.xconfigure.y;
+				dst_rect.width  = width;
 				dst_rect.height = height;
-				src_rect.x = 0;
-				src_rect.y = 0;
-				src_rect.width = width << 16;
+				src_rect.x      = 0;
+				src_rect.y      = 0;
+				src_rect.width  = width << 16;
 				src_rect.height = height << 16;
 
 				vc_dispmanx_element_change_attributes(update, dispman_element, 0, 0, 255, &dst_rect, &src_rect, 0, (DISPMANX_TRANSFORM_T)0);

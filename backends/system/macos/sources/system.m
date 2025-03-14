@@ -93,8 +93,8 @@ void swapBuffersMac(int windowId) {
 }
 
 static int createWindow(kore_window_parameters *parameters) {
-	int width = parameters->width / [[NSScreen mainScreen] backingScaleFactor];
-	int height = parameters->height / [[NSScreen mainScreen] backingScaleFactor];
+	int width     = parameters->width / [[NSScreen mainScreen] backingScaleFactor];
+	int height    = parameters->height / [[NSScreen mainScreen] backingScaleFactor];
 	int styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable;
 	if ((parameters->window_features & KORE_WINDOW_FEATURE_RESIZEABLE) || (parameters->window_features & KORE_WINDOW_FEATURE_MAXIMIZABLE)) {
 		styleMask |= NSWindowStyleMaskResizable;
@@ -105,7 +105,7 @@ static int createWindow(kore_window_parameters *parameters) {
 
 	view = [[BasicOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
 	[view registerForDraggedTypes:[NSArray arrayWithObjects:NSURLPboardType, nil]];
-	window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height) styleMask:styleMask backing:NSBackingStoreBuffered defer:TRUE];
+	window   = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height) styleMask:styleMask backing:NSBackingStoreBuffered defer:TRUE];
 	delegate = [KoreAppDelegate alloc];
 	[window setDelegate:delegate];
 	[window setTitle:[NSString stringWithCString:parameters->title encoding:NSUTF8StringEncoding]];
@@ -114,7 +114,7 @@ static int createWindow(kore_window_parameters *parameters) {
 	[window center];
 
 	windows[windowCounter].handle = window;
-	windows[windowCounter].view = view;
+	windows[windowCounter].view   = view;
 
 	[window makeKeyAndOrderFront:nil];
 
@@ -149,15 +149,15 @@ void kore_window_change_window_mode(int window_index, kore_window_mode mode) {
 }
 
 void kore_window_set_close_callback(int window, bool (*callback)(void *), void *data) {
-	windows[window].closeCallback = callback;
+	windows[window].closeCallback     = callback;
 	windows[window].closeCallbackData = data;
 }
 
 static void addMenubar(void) {
 	NSString *appName = [[NSProcessInfo processInfo] processName];
 
-	NSMenu *appMenu = [NSMenu new];
-	NSString *quitTitle = [@"Quit " stringByAppendingString:appName];
+	NSMenu *appMenu          = [NSMenu new];
+	NSString *quitTitle      = [@"Quit " stringByAppendingString:appName];
 	NSMenuItem *quitMenuItem = [[NSMenuItem alloc] initWithTitle:quitTitle action:@selector(terminate:) keyEquivalent:@"q"];
 	[appMenu addItem:quitMenuItem];
 
@@ -194,7 +194,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 		frame = &defaultFramebufferOptions;
 	}
 
-	win->width = width;
+	win->width  = width;
 	win->height = height;
 	if (win->title == NULL) {
 		win->title = name;
@@ -209,13 +209,13 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 
 int kore_window_width(int window_index) {
 	NSWindow *window = windows[window_index].handle;
-	float scale = [window backingScaleFactor];
+	float scale      = [window backingScaleFactor];
 	return [[window contentView] frame].size.width * scale;
 }
 
 int kore_window_height(int window_index) {
 	NSWindow *window = windows[window_index].handle;
-	float scale = [window backingScaleFactor];
+	float scale      = [window backingScaleFactor];
 	return [[window contentView] frame].size.height * scale;
 }
 
@@ -230,21 +230,21 @@ void kore_load_url(const char *url) {
 static char language[3];
 
 const char *kore_language(void) {
-	NSString *nsstr = [[NSLocale preferredLanguages] objectAtIndex:0];
+	NSString *nsstr  = [[NSLocale preferredLanguages] objectAtIndex:0];
 	const char *lang = [nsstr UTF8String];
-	language[0] = lang[0];
-	language[1] = lang[1];
-	language[2] = 0;
+	language[0]      = lang[0];
+	language[1]      = lang[1];
+	language[2]      = 0;
 	return language;
 }
 
 void kore_internal_shutdown(void) {}
 
 static const char *getSavePath(void) {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSArray *paths         = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *resolvedPath = [paths objectAtIndex:0];
-	NSString *appName = [NSString stringWithUTF8String:kore_application_name()];
-	resolvedPath = [resolvedPath stringByAppendingPathComponent:appName];
+	NSString *appName      = [NSString stringWithUTF8String:kore_application_name()];
+	resolvedPath           = [resolvedPath stringByAppendingPathComponent:appName];
 
 	NSFileManager *fileMgr = [[NSFileManager alloc] init];
 
@@ -292,7 +292,7 @@ int main(int argc, char **argv) {
 
 - (void)windowDidResize:(NSNotification *)notification {
 	NSWindow *window = [notification object];
-	NSSize size = [[window contentView] frame].size;
+	NSSize size      = [[window contentView] frame].size;
 	[view resize:size];
 	if (windows[0].resizeCallback != NULL) {
 		windows[0].resizeCallback(size.width, size.height, windows[0].resizeCallbackData);

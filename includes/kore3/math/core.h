@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#define KORE_PI 3.141592654
+#define KORE_PI  3.141592654
 #define KORE_TAU 6.283185307
 
 KORE_FUNC float kore_cot(float x);
