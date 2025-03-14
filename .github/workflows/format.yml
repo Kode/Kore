@@ -1,0 +1,34 @@
+name: Format Code
+
+on:
+  push:
+    branches:
+    - v3
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set name
+      run: git config --global user.name "Robbot"
+    - name: Set email
+      run: git config --global user.email "robbot2019@robdangero.us"
+
+    - name: Format the code
+      run: node ./.github/format.js
+    - name: Add
+      run: git add .
+    - name: Commit
+      id: commit
+      continue-on-error: true
+      run: git commit -m "Format the latest code-changes"
+    - name: Push
+      if: steps.commit.outcome == 'success'
+      continue-on-error: true
+      run: git push
