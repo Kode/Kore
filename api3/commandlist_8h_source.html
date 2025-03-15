@@ -152,43 +152,43 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00068" data-start="{" data-end="};">
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="structkore__gpu__render__pass__color__attachment.html">   68</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structkore__gpu__render__pass__color__attachment.html">kore_gpu_render_pass_color_attachment</a> {</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <a class="code hl_struct" href="structkore__gpu__texture__view.html">kore_gpu_texture_view</a> texture;</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    uint32_t depth_slice;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    uint32_t              depth_slice;</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <a class="code hl_struct" href="structkore__gpu__texture__view.html">kore_gpu_texture_view</a> resolve_target;</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <a class="code hl_struct" href="structkore__gpu__color.html">kore_gpu_color</a> clear_value;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    kore_gpu_load_op load_op;</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    kore_gpu_store_op store_op;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <a class="code hl_struct" href="structkore__gpu__color.html">kore_gpu_color</a>        clear_value;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    kore_gpu_load_op      load_op;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    kore_gpu_store_op     store_op;</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>} <a class="code hl_struct" href="structkore__gpu__render__pass__color__attachment.html">kore_gpu_render_pass_color_attachment</a>;</div>
 </div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
 <div class="foldopen" id="foldopen00077" data-start="{" data-end="};">
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="structkore__gpu__render__pass__depth__stencil__attachment.html">   77</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structkore__gpu__render__pass__depth__stencil__attachment.html">kore_gpu_render_pass_depth_stencil_attachment</a> {</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <a class="code hl_struct" href="structkore__gpu__texture.html">kore_gpu_texture</a> *texture;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordtype">float</span> depth_clear_value;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    kore_gpu_load_op depth_load_op;</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordtype">float</span>             depth_clear_value;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    kore_gpu_load_op  depth_load_op;</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    kore_gpu_store_op depth_store_op;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordtype">bool</span> depth_read_only;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    uint32_t stencil_clear_value;</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    kore_gpu_load_op stencil_load_op;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordtype">bool</span>              depth_read_only;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    uint32_t          stencil_clear_value;</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    kore_gpu_load_op  stencil_load_op;</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    kore_gpu_store_op stencil_store_op;</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordtype">bool</span> stencil_read_only;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordtype">bool</span>              stencil_read_only;</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>} <a class="code hl_struct" href="structkore__gpu__render__pass__depth__stencil__attachment.html">kore_gpu_render_pass_depth_stencil_attachment</a>;</div>
 </div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
 <div class="foldopen" id="foldopen00089" data-start="{" data-end="};">
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="structkore__gpu__render__pass__timestamp__writes.html">   89</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structkore__gpu__render__pass__timestamp__writes.html">kore_gpu_render_pass_timestamp_writes</a> {</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keyword">struct </span><a class="code hl_struct" href="structkore__gpu__query__set.html">kore_gpu_query_set</a> *query_set;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    uint32_t beginning_of_pass_write_index;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    uint32_t end_of_pass_write_index;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    uint32_t                   beginning_of_pass_write_index;</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    uint32_t                   end_of_pass_write_index;</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>} <a class="code hl_struct" href="structkore__gpu__render__pass__timestamp__writes.html">kore_gpu_render_pass_timestamp_writes</a>;</div>
 </div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
 <div class="foldopen" id="foldopen00095" data-start="{" data-end="};">
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="structkore__gpu__render__pass__parameters.html">   95</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structkore__gpu__render__pass__parameters.html">kore_gpu_render_pass_parameters</a> {</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <a class="code hl_struct" href="structkore__gpu__render__pass__color__attachment.html">kore_gpu_render_pass_color_attachment</a> color_attachments[8];</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <span class="keywordtype">size_t</span> color_attachments_count;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <a class="code hl_struct" href="structkore__gpu__render__pass__color__attachment.html">kore_gpu_render_pass_color_attachment</a>         color_attachments[8];</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <span class="keywordtype">size_t</span>                                        color_attachments_count;</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <a class="code hl_struct" href="structkore__gpu__render__pass__depth__stencil__attachment.html">kore_gpu_render_pass_depth_stencil_attachment</a> depth_stencil_attachment;</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keyword">struct </span><a class="code hl_struct" href="structkore__gpu__query__set.html">kore_gpu_query_set</a> *occlusion_query_set;</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <a class="code hl_struct" href="structkore__gpu__render__pass__timestamp__writes.html">kore_gpu_render_pass_timestamp_writes</a> timestamp_writes;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keyword">struct </span><a class="code hl_struct" href="structkore__gpu__query__set.html">kore_gpu_query_set</a>                    *occlusion_query_set;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <a class="code hl_struct" href="structkore__gpu__render__pass__timestamp__writes.html">kore_gpu_render_pass_timestamp_writes</a>         timestamp_writes;</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>} <a class="code hl_struct" href="structkore__gpu__render__pass__parameters.html">kore_gpu_render_pass_parameters</a>;</div>
 </div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
@@ -197,20 +197,20 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00105" data-start="{" data-end="};">
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="structkore__gpu__image__copy__texture.html">  105</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structkore__gpu__image__copy__texture.html">kore_gpu_image_copy_texture</a> {</div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    kore_gpu_texture_aspect aspect;</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    uint32_t mip_level;</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    uint32_t origin_x;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    uint32_t origin_y;</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    uint32_t origin_z;</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <a class="code hl_struct" href="structkore__gpu__texture.html">kore_gpu_texture</a> *texture;</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    uint32_t                mip_level;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    uint32_t                origin_x;</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    uint32_t                origin_y;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    uint32_t                origin_z;</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <a class="code hl_struct" href="structkore__gpu__texture.html">kore_gpu_texture</a>       *texture;</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>} <a class="code hl_struct" href="structkore__gpu__image__copy__texture.html">kore_gpu_image_copy_texture</a>;</div>
 </div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
 <div class="foldopen" id="foldopen00114" data-start="{" data-end="};">
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="structkore__gpu__image__copy__buffer.html">  114</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structkore__gpu__image__copy__buffer.html">kore_gpu_image_copy_buffer</a> {</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <a class="code hl_struct" href="structkore__gpu__buffer.html">kore_gpu_buffer</a> *buffer;</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    uint64_t offset;</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    uint32_t bytes_per_row;</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    uint32_t rows_per_image;</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    uint64_t         offset;</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    uint32_t         bytes_per_row;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    uint32_t         rows_per_image;</div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>} <a class="code hl_struct" href="structkore__gpu__image__copy__buffer.html">kore_gpu_image_copy_buffer</a>;</div>
 </div>
 <div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
@@ -265,7 +265,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    uint32_t index_count;</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    uint32_t instance_count;</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    uint32_t first_index;</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    int32_t base_vertex;</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    int32_t  base_vertex;</div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    uint32_t first_instance;</div>
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>} <a class="code hl_struct" href="structkore__gpu__draw__indexed__arguments.html">kore_gpu_draw_indexed_arguments</a>;</div>
 </div>

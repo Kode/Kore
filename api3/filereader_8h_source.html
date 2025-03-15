@@ -110,7 +110,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="foldopen" id="foldopen00031" data-start="{" data-end="};">
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="structkore__file__reader.html">   31</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structkore__file__reader.html">kore_file_reader</a> {</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordtype">void</span> *data; <span class="comment">// A file handle or a more complex structure</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordtype">void</span>  *data; <span class="comment">// A file handle or a more complex structure</span></div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordtype">size_t</span> size;</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordtype">size_t</span> offset; <span class="comment">// Needed by some implementations</span></div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
@@ -169,10 +169,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
 <div class="line"><a id="l00182" name="l00182"></a><span class="lineno"><a class="line" href="filereader_8h.html#a0816d8cbb747f48b59b966f14dacda28">  182</a></span>KORE_FUNC int8_t <a class="code hl_function" href="filereader_8h.html#a0816d8cbb747f48b59b966f14dacda28">kore_read_s8</a>(uint8_t *data);</div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span><span class="keywordtype">void</span> kore_internal_set_files_location(<span class="keywordtype">char</span> *dir);</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span><span class="keywordtype">void</span>  kore_internal_set_files_location(<span class="keywordtype">char</span> *dir);</div>
 <div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="keywordtype">char</span> *kore_internal_get_files_location(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="keywordtype">bool</span> kore_internal_file_reader_callback(<a class="code hl_struct" href="structkore__file__reader.html">kore_file_reader</a> *reader, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename, <span class="keywordtype">int</span> type);</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="keywordtype">bool</span> kore_internal_file_reader_open(<a class="code hl_struct" href="structkore__file__reader.html">kore_file_reader</a> *reader, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename, <span class="keywordtype">int</span> type);</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="keywordtype">bool</span>  kore_internal_file_reader_callback(<a class="code hl_struct" href="structkore__file__reader.html">kore_file_reader</a> *reader, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename, <span class="keywordtype">int</span> type);</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="keywordtype">bool</span>  kore_internal_file_reader_open(<a class="code hl_struct" href="structkore__file__reader.html">kore_file_reader</a> *reader, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename, <span class="keywordtype">int</span> type);</div>
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
 <div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span><span class="preprocessor">#ifdef __cplusplus</span></div>
 <div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>}</div>

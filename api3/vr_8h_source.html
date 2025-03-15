@@ -103,7 +103,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">typedef</span> <span class="keyword">struct </span>kore_vr_pose {</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <a class="code hl_struct" href="structkore__quaternion.html">kore_quaternion</a> orientation;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <a class="code hl_struct" href="structkore__float3.html">kore_float3</a> position;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <a class="code hl_struct" href="structkore__float3.html">kore_float3</a>     position;</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <a class="code hl_struct" href="structkore__matrix4x4.html">kore_matrix4x4</a> eye;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <a class="code hl_struct" href="structkore__matrix4x4.html">kore_matrix4x4</a> projection;</div>
@@ -117,10 +117,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">typedef</span> <span class="keyword">struct </span>kore_vr_pose_state {</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    kore_vr_pose vrPose;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <a class="code hl_struct" href="structkore__float3.html">kore_float3</a> angularVelocity;     <span class="comment">// Angular velocity in radians per second</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <a class="code hl_struct" href="structkore__float3.html">kore_float3</a> linearVelocity;      <span class="comment">// Velocity in meters per second</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <a class="code hl_struct" href="structkore__float3.html">kore_float3</a> angularAcceleration; <span class="comment">// Angular acceleration in radians per second per second</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <a class="code hl_struct" href="structkore__float3.html">kore_float3</a> linearAcceleration;  <span class="comment">// Acceleration in meters per second per second</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <a class="code hl_struct" href="structkore__float3.html">kore_float3</a>  angularVelocity;     <span class="comment">// Angular velocity in radians per second</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <a class="code hl_struct" href="structkore__float3.html">kore_float3</a>  linearVelocity;      <span class="comment">// Velocity in meters per second</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <a class="code hl_struct" href="structkore__float3.html">kore_float3</a>  angularAcceleration; <span class="comment">// Angular acceleration in radians per second per second</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <a class="code hl_struct" href="structkore__float3.html">kore_float3</a>  linearAcceleration;  <span class="comment">// Acceleration in meters per second per second</span></div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    kore_tracked_device_t trackedDevice;</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
@@ -137,16 +137,16 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    kore_vr_pose_state pose;</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>} kore_vr_sensor_state;</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keywordtype">void</span> *kore_vr_init(<span class="keywordtype">void</span> *hinst, <span class="keyword">const</span> <span class="keywordtype">char</span> *title, <span class="keyword">const</span> <span class="keywordtype">char</span> *windowClassName);</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="keywordtype">void</span> kore_vr_begin();</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="keywordtype">void</span> kore_vr_begin_render(<span class="keywordtype">int</span> eye);</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keywordtype">void</span> kore_vr_end_render(<span class="keywordtype">int</span> eye);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keywordtype">void</span>                *kore_vr_init(<span class="keywordtype">void</span> *hinst, <span class="keyword">const</span> <span class="keywordtype">char</span> *title, <span class="keyword">const</span> <span class="keywordtype">char</span> *windowClassName);</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="keywordtype">void</span>                 kore_vr_begin();</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="keywordtype">void</span>                 kore_vr_begin_render(<span class="keywordtype">int</span> eye);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keywordtype">void</span>                 kore_vr_end_render(<span class="keywordtype">int</span> eye);</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>kore_vr_sensor_state kore_vr_get_sensor_state(<span class="keywordtype">int</span> eye);</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>kore_vr_pose_state kore_vr_get_controller(<span class="keywordtype">int</span> index);</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="keywordtype">void</span> kore_vr_warp_swap();</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="keywordtype">void</span> kore_vr_update_tracking_origin(kore_tracking_origin origin);</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keywordtype">void</span> kore_vr_reset_hmd_pose();</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="keywordtype">void</span> kore_vr_ovr_shutdown();</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>kore_vr_pose_state   kore_vr_get_controller(<span class="keywordtype">int</span> index);</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="keywordtype">void</span>                 kore_vr_warp_swap();</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="keywordtype">void</span>                 kore_vr_update_tracking_origin(kore_tracking_origin origin);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keywordtype">void</span>                 kore_vr_reset_hmd_pose();</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="keywordtype">void</span>                 kore_vr_ovr_shutdown();</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="preprocessor">#ifdef __cplusplus</span></div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>}</div>
