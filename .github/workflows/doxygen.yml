@@ -21,7 +21,7 @@ jobs:
     - name: Create icon
       run: convert -resize 55x55 tools/linux_x64/icon.png icon.png
     - name: Create documentation
-      run: doxygen Doxyfile
+      run: doxygen ./.github/Doxyfile
     - name: Clone website
       run: git clone -b gh-pages https://github.com/Kode/Kore.git Kore-pages
     - name: Remove old documentation
