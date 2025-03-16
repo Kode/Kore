@@ -25,7 +25,7 @@
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/device_structs.h>
 #else
-#error("Unknown GPU backend")
+#error ("Unknown GPU backend")
 #endif
 
 /*! \file device.h
@@ -77,12 +77,12 @@ typedef enum kore_gpu_texture_dimension {
 } kore_gpu_texture_dimension;
 
 typedef enum kore_gpu_texture_usage {
-	KONG_G5_TEXTURE_USAGE_COPY_SRC          = 0x01,
-	KONG_G5_TEXTURE_USAGE_COPY_DST          = 0x02,
-	KONG_G5_TEXTURE_USAGE_SAMPLE            = 0x04,
-	KONG_G5_TEXTURE_USAGE_READ_WRITE        = 0x08,
-	KONG_G5_TEXTURE_USAGE_RENDER_ATTACHMENT = 0x10,
-	KONG_G5_TEXTURE_USAGE_FRAMEBUFFER       = 0x20
+	KORE_GPU_TEXTURE_USAGE_COPY_SRC          = 0x01,
+	KORE_GPU_TEXTURE_USAGE_COPY_DST          = 0x02,
+	KORE_GPU_TEXTURE_USAGE_SAMPLE            = 0x04,
+	KORE_GPU_TEXTURE_USAGE_READ_WRITE        = 0x08,
+	KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT = 0x10,
+	KORE_GPU_TEXTURE_USAGE_FRAMEBUFFER       = 0x20
 } kore_gpu_texture_usage;
 
 typedef struct kore_gpu_texture_parameters {

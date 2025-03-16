@@ -172,7 +172,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		kore_gpu_texture_parameters parameters = {};
 		parameters.format                      = KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
 		parameters.dimension                   = KORE_GPU_TEXTURE_DIMENSION_2D;
-		parameters.usage                       = KONG_G5_TEXTURE_USAGE_RENDER_ATTACHMENT;
+		parameters.usage                       = KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
 
 		device->d3d12.framebuffer_textures[i].d3d12.resource_states[0] = D3D12_RESOURCE_STATE_PRESENT;
 	}
@@ -527,7 +527,7 @@ void kore_d3d12_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 	D3D12_CLEAR_VALUE  optimizedClearValue;
 	D3D12_CLEAR_VALUE *optimizedClearValuePointer = NULL;
 
-	if ((parameters->usage & KONG_G5_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
 		if (kore_gpu_texture_format_is_depth(parameters->format)) {
 			desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 			optimizedClearValue.DepthStencil.Depth   = 1.0f;
@@ -546,7 +546,7 @@ void kore_d3d12_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 		optimizedClearValuePointer = &optimizedClearValue;
 	}
 
-	if ((parameters->usage & KONG_G5_TEXTURE_USAGE_READ_WRITE) != 0) {
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_READ_WRITE) != 0) {
 		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	}
 
