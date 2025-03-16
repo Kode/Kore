@@ -25,7 +25,7 @@
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/device_structs.h>
 #else
-#error ("Unknown GPU backend")
+#error("Unknown GPU backend")
 #endif
 
 /*! \file device.h
