@@ -109,7 +109,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#elif defined(KORE_WEBGPU)</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &lt;kore3/webgpu/device_structs.h&gt;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#error(&quot;Unknown GPU backend&quot;)</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#error (&quot;Unknown GPU backend&quot;)</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#ifdef __cplusplus</span></div>
@@ -163,12 +163,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>} kore_gpu_texture_dimension;</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keyword">typedef</span> <span class="keyword">enum</span> kore_gpu_texture_usage {</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    KONG_G5_TEXTURE_USAGE_COPY_SRC          = 0x01,</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    KONG_G5_TEXTURE_USAGE_COPY_DST          = 0x02,</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    KONG_G5_TEXTURE_USAGE_SAMPLE            = 0x04,</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    KONG_G5_TEXTURE_USAGE_READ_WRITE        = 0x08,</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    KONG_G5_TEXTURE_USAGE_RENDER_ATTACHMENT = 0x10,</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    KONG_G5_TEXTURE_USAGE_FRAMEBUFFER       = 0x20</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    KORE_GPU_TEXTURE_USAGE_COPY_SRC          = 0x01,</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    KORE_GPU_TEXTURE_USAGE_COPY_DST          = 0x02,</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    KORE_GPU_TEXTURE_USAGE_SAMPLE            = 0x04,</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    KORE_GPU_TEXTURE_USAGE_READ_WRITE        = 0x08,</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT = 0x10,</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    KORE_GPU_TEXTURE_USAGE_FRAMEBUFFER       = 0x20</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>} kore_gpu_texture_usage;</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
 <div class="foldopen" id="foldopen00088" data-start="{" data-end="};">
