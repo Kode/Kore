@@ -11,7 +11,7 @@ struct kore_gpu_device;
 
 typedef struct kore_metal_buffer {
 	void *buffer;
-    void *locked_data;
+	void *locked_data;
 } kore_metal_buffer;
 
 #ifdef __cplusplus
