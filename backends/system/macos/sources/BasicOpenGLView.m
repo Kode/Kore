@@ -458,18 +458,6 @@ static CAMetalLayer *metalLayer = NULL;
 - (CAMetalLayer *)metalLayer {
 	return (CAMetalLayer *)self.layer;
 }
-
-- (id<MTLDevice>)metalDevice {
-	return device;
-}
-
-- (id<MTLLibrary>)metalLibrary {
-	return library;
-}
-
-- (id<MTLCommandQueue>)metalQueue {
-	return commandQueue;
-}
 #endif
 
 @end

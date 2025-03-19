@@ -7,6 +7,8 @@
 
 #import <MetalKit/MTKView.h>
 
+static id<CAMetalDrawable> drawable = nil;
+
 CAMetalLayer *getMetalLayer(void);
 
 #endif
