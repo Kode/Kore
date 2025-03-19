@@ -44,8 +44,8 @@ void kore_metal_command_list_end_render_pass(kore_gpu_command_list *list) {
 void kore_metal_command_list_present(kore_gpu_command_list *list) {
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 	[command_buffer presentDrawable:drawable];
-    
-    drawable = nil;
+
+	drawable = nil;
 }
 
 void kore_metal_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
@@ -56,17 +56,17 @@ void kore_metal_command_list_set_index_buffer(kore_gpu_command_list *list, kore_
 
 void kore_metal_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_metal_buffer *buffer, uint64_t offset, uint64_t size,
                                                uint64_t stride) {
-	id<MTLBuffer> metal_buffer = (__bridge id<MTLBuffer>)buffer->buffer;
+	id<MTLBuffer>               metal_buffer           = (__bridge id<MTLBuffer>)buffer->buffer;
 	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 
-    [render_command_encoder setVertexBuffer:metal_buffer offset:offset atIndex:slot];
+	[render_command_encoder setVertexBuffer:metal_buffer offset:offset atIndex:slot];
 }
 
 void kore_metal_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_metal_render_pipeline *pipeline) {
-	id<MTLRenderPipelineState> metal_pipeline = (__bridge id<MTLRenderPipelineState>)pipeline->pipeline;
+	id<MTLRenderPipelineState>  metal_pipeline         = (__bridge id<MTLRenderPipelineState>)pipeline->pipeline;
 	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 
-    [render_command_encoder setRenderPipelineState:metal_pipeline];
+	[render_command_encoder setRenderPipelineState:metal_pipeline];
 }
 
 void kore_metal_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {
