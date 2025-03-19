@@ -50,13 +50,13 @@ void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 static kore_gpu_texture framebuffer;
 
 kore_gpu_texture *kore_metal_device_get_framebuffer(kore_gpu_device *device) {
-	CAMetalLayer       *metal_layer = getMetalLayer();
-    
-    if (drawable == nil) {
-        drawable    = [metal_layer nextDrawable];
-    }
+	CAMetalLayer *metal_layer = getMetalLayer();
 
-    framebuffer.metal.texture       = (__bridge_retained void *)drawable.texture;
+	if (drawable == nil) {
+		drawable = [metal_layer nextDrawable];
+	}
+
+	framebuffer.metal.texture = (__bridge_retained void *)drawable.texture;
 	return &framebuffer;
 }
 
