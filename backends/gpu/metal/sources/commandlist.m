@@ -93,8 +93,8 @@ void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, str
 	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 	id<MTLBuffer>               metal_buffer           = (__bridge id<MTLBuffer>)set->argument_buffer.metal.buffer;
 
-	[render_command_encoder setVertexBuffer:metal_buffer offset:0 atIndex:0];
-	[render_command_encoder setFragmentBuffer:metal_buffer offset:0 atIndex:0];
+	[render_command_encoder setVertexBuffer:metal_buffer offset:0 atIndex:1];
+	[render_command_encoder setFragmentBuffer:metal_buffer offset:0 atIndex:1];
 }
 
 void kore_metal_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {}
