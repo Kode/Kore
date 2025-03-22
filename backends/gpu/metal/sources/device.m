@@ -43,6 +43,8 @@ void kore_metal_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 	id<MTLCommandQueue> command_queue = [metal_device newCommandQueue];
 	list->metal.command_queue         = (__bridge_retained void *)command_queue;
 	list->metal.command_buffer        = (__bridge_retained void *)[command_queue commandBuffer];
+	list->metal.render_command_encoder = NULL;
+	list->metal.blit_command_encoder = NULL;
 }
 
 void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
@@ -84,6 +86,8 @@ kore_gpu_texture_format kore_metal_device_framebuffer_format(kore_gpu_device *de
 }
 
 void kore_metal_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
+	kore_metal_command_list_end_blit_pass(list);
+	
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 	[command_buffer commit];
 

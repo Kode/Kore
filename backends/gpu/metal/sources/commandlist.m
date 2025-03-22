@@ -15,7 +15,11 @@
 
 void kore_metal_command_list_destroy(kore_gpu_command_list *list) {}
 
+void kore_metal_command_list_end_blit_pass(kore_gpu_command_list *list);
+
 void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
+	kore_metal_command_list_end_blit_pass(list);
+
 	id<MTLTexture> texture = (__bridge id<MTLTexture>)parameters->color_attachments[0].texture.texture->metal.texture;
 
 	MTLRenderPassDescriptor *render_pass_descriptor        = [MTLRenderPassDescriptor renderPassDescriptor];
@@ -47,6 +51,23 @@ void kore_metal_command_list_present(kore_gpu_command_list *list) {
 	[command_buffer presentDrawable:drawable];
 
 	drawable = nil;
+}
+
+void kore_metal_command_list_begin_blit_pass(kore_gpu_command_list *list) {
+	assert(list->metal.render_command_encoder == NULL);
+
+	if (list->metal.blit_command_encoder == NULL) {
+		id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
+		list->metal.blit_command_encoder  = (__bridge_retained void *)[command_buffer blitCommandEncoder];
+	}
+}
+
+void kore_metal_command_list_end_blit_pass(kore_gpu_command_list *list) {
+	if (list->metal.blit_command_encoder != NULL) {
+		id<MTLBlitCommandEncoder> blit_command_encoder = (__bridge id<MTLBlitCommandEncoder>)list->metal.blit_command_encoder;
+		[blit_command_encoder endEncoding];
+		list->metal.blit_command_encoder = NULL;
+	}
 }
 
 void kore_metal_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
@@ -97,24 +118,61 @@ void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, str
 	[render_command_encoder setFragmentBuffer:metal_buffer offset:0 atIndex:1];
 }
 
-void kore_metal_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {}
-
 void kore_metal_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset, kore_gpu_buffer *destination,
-                                                   uint64_t destination_offset, uint64_t size) {}
+                                                   uint64_t destination_offset, uint64_t size) {
+	kore_metal_command_list_begin_blit_pass(list);
+	
+	id<MTLBlitCommandEncoder> blit_command_encoder = (__bridge id<MTLBlitCommandEncoder>)list->metal.blit_command_encoder;
+	id<MTLBuffer>               source_buffer           = (__bridge id<MTLBuffer>)source->metal.buffer;
+	id<MTLBuffer>               destination_buffer           = (__bridge id<MTLBuffer>)destination->metal.buffer;
+	
+	[blit_command_encoder copyFromBuffer: source_buffer sourceOffset:source_offset toBuffer:destination_buffer destinationOffset:destination_offset size:size];
+}
 
 void kore_metal_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
                                                     const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
-                                                    uint32_t depth_or_array_layers) {}
+                                                    uint32_t depth_or_array_layers) {
+	kore_metal_command_list_begin_blit_pass(list);
+	
+	id<MTLBlitCommandEncoder> blit_command_encoder = (__bridge id<MTLBlitCommandEncoder>)list->metal.blit_command_encoder;
+	id<MTLBuffer>               source_buffer           = (__bridge id<MTLBuffer>)source->buffer->metal.buffer;
+	id<MTLTexture>               destination_texture           = (__bridge id<MTLTexture>)destination->texture->metal.texture;
+	
+	[blit_command_encoder copyFromBuffer: source_buffer sourceOffset: source->offset sourceBytesPerRow: source->bytes_per_row sourceBytesPerImage: source->bytes_per_row * source->rows_per_image sourceSize: MTLSizeMake(width, height, depth_or_array_layers) toTexture: destination_texture destinationSlice: 0 destinationLevel: destination->mip_level destinationOrigin: MTLOriginMake(destination->origin_x, destination->origin_y, destination->origin_z)];
+}
 
 void kore_metal_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                     const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
-                                                    uint32_t depth_or_array_layers) {}
+													uint32_t depth_or_array_layers) {
+	kore_metal_command_list_begin_blit_pass(list);
+	
+	id<MTLBlitCommandEncoder> blit_command_encoder = (__bridge id<MTLBlitCommandEncoder>)list->metal.blit_command_encoder;
+	id<MTLTexture>               source_texture           = (__bridge id<MTLTexture>)source->texture->metal.texture;
+	id<MTLBuffer>               destination_buffer           = (__bridge id<MTLBuffer>)destination->buffer->metal.buffer;
+	
+	[blit_command_encoder copyFromTexture:source_texture sourceSlice: 0 sourceLevel:source->mip_level sourceOrigin:MTLOriginMake(source->origin_x, source->origin_y, source->origin_z) sourceSize: MTLSizeMake(width, height, depth_or_array_layers) toBuffer:destination_buffer destinationOffset:destination->offset destinationBytesPerRow:destination->bytes_per_row destinationBytesPerImage: destination->bytes_per_row * destination->rows_per_image];
+}
 
 void kore_metal_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                      const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
-                                                     uint32_t depth_or_array_layers) {}
+                                                     uint32_t depth_or_array_layers) {
+	kore_metal_command_list_begin_blit_pass(list);
+	
+	id<MTLBlitCommandEncoder> blit_command_encoder = (__bridge id<MTLBlitCommandEncoder>)list->metal.blit_command_encoder;
+	id<MTLTexture>               source_texture           = (__bridge id<MTLTexture>)source->texture->metal.texture;
+	id<MTLTexture>               destination_texture           = (__bridge id<MTLTexture>)destination->texture->metal.texture;
+	
+	[blit_command_encoder copyFromTexture:source_texture sourceSlice: 0 sourceLevel:source->mip_level sourceOrigin:MTLOriginMake(source->origin_x, source->origin_y, source->origin_z) sourceSize: MTLSizeMake(width, height, depth_or_array_layers) toTexture:destination_texture destinationSlice: 0 destinationLevel: destination->mip_level destinationOrigin: MTLOriginMake(destination->origin_x, destination->origin_y, destination->origin_z)];
+}
 
-void kore_metal_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size) {}
+void kore_metal_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size) {
+	kore_metal_command_list_begin_blit_pass(list);
+	
+	id<MTLBlitCommandEncoder> blit_command_encoder = (__bridge id<MTLBlitCommandEncoder>)list->metal.blit_command_encoder;
+	id<MTLBuffer>               metal_buffer           = (__bridge id<MTLBuffer>)buffer->metal.buffer;
+	
+	[blit_command_encoder fillBuffer:metal_buffer range:NSMakeRange(offset, size) value:0];
+}
 
 void kore_metal_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_metal_compute_pipeline *pipeline) {}
 

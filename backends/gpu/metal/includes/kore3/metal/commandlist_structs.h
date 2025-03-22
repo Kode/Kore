@@ -21,6 +21,7 @@ typedef struct kore_metal_command_list {
 	void *command_queue;
 	void *command_buffer;
 	void *render_command_encoder;
+	void *blit_command_encoder;
 	void *index_buffer;
 	bool  sixteen_bit_indices;
 } kore_metal_command_list;
