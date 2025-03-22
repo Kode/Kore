@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 typedef struct kore_metal_sampler {
-	int nothing;
+	void *sampler;
 } kore_metal_sampler;
 
 #ifdef __cplusplus

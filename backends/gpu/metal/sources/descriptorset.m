@@ -12,4 +12,9 @@ void kore_metal_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_
 	[render_command_encoder useResource:metal_buffer usage:MTLResourceUsageRead stages:MTLRenderStageVertex | MTLRenderStageFragment];
 }
 
-void kore_metal_descriptor_set_prepare_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view) {}
+void kore_metal_descriptor_set_prepare_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view) {
+	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
+	id<MTLTexture>               metal_texture           = (__bridge id<MTLTexture>)texture_view->texture->metal.texture;
+
+	[render_command_encoder useResource:metal_texture usage:MTLResourceUsageRead stages:MTLRenderStageVertex | MTLRenderStageFragment];
+}

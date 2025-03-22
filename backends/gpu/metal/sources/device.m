@@ -45,7 +45,26 @@ void kore_metal_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 	list->metal.command_buffer        = (__bridge_retained void *)[command_queue commandBuffer];
 }
 
-void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {}
+void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
+	MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:convert_format(parameters->format)
+																							  width:parameters->width
+																							 height:parameters->height
+																						  mipmapped:NO];
+	descriptor.textureType = MTLTextureType2D;
+	descriptor.width = parameters->width;
+	descriptor.height = parameters->height;
+	descriptor.depth = 1;
+	descriptor.pixelFormat = convert_format(parameters->format);
+	descriptor.arrayLength = 1;
+	descriptor.mipmapLevelCount = 1;
+	
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_READ_WRITE) != 0) {
+		descriptor.usage = MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead;
+	}
+
+	id<MTLDevice>       metal_device  = (__bridge id<MTLDevice>)device->metal.device;
+	texture->metal.texture = (__bridge_retained void *)[metal_device newTextureWithDescriptor:descriptor];
+}
 
 static kore_gpu_texture framebuffer;
 
@@ -84,7 +103,60 @@ void kore_metal_device_create_descriptor_set_buffer(kore_gpu_device *device, uin
 	buffer->metal.buffer       = (__bridge_retained void *)metal_buffer;
 }
 
-void kore_metal_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {}
+static MTLSamplerAddressMode convert_addressing(kore_gpu_address_mode mode) {
+	switch (mode) {
+	case KORE_GPU_ADDRESS_MODE_CLAMP_TO_EDGE:
+		return MTLSamplerAddressModeClampToEdge;
+	case KORE_GPU_ADDRESS_MODE_REPEAT:
+		return MTLSamplerAddressModeRepeat;
+	case KORE_GPU_ADDRESS_MODE_MIRROR_REPEAT:
+		return MTLSamplerAddressModeMirrorRepeat;
+	default:
+		assert(false);
+		return MTLSamplerAddressModeRepeat;
+	}
+}
+
+static MTLSamplerMipFilter convert_mipmap_mode(kore_gpu_mipmap_filter_mode filter) {
+	switch (filter) {
+	case KORE_GPU_MIPMAP_FILTER_MODE_NEAREST:
+		return MTLSamplerMipFilterNearest;
+	case KORE_GPU_MIPMAP_FILTER_MODE_LINEAR:
+		return MTLSamplerMipFilterLinear;
+	default:
+		assert(false);
+		return MTLSamplerMipFilterNearest;
+	}
+}
+
+static MTLSamplerMinMagFilter convert_texture_filter(kore_gpu_filter_mode filter) {
+	switch (filter) {
+	case KORE_GPU_FILTER_MODE_NEAREST:
+		return MTLSamplerMinMagFilterNearest;
+	case KORE_GPU_FILTER_MODE_LINEAR:
+		return MTLSamplerMinMagFilterLinear;
+	default:
+		assert(false);
+		return MTLSamplerMinMagFilterNearest;
+	}
+}
+
+void kore_metal_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {
+	MTLSamplerDescriptor *desc = [[MTLSamplerDescriptor alloc] init];
+	desc.minFilter = convert_texture_filter(parameters->min_filter);
+	desc.magFilter = convert_texture_filter(parameters->mag_filter);
+	desc.sAddressMode = convert_addressing(parameters->address_mode_u);
+	desc.tAddressMode = convert_addressing(parameters->address_mode_v);
+	desc.mipFilter = convert_mipmap_mode(parameters->mipmap_filter);
+	desc.maxAnisotropy = parameters->max_anisotropy;
+	desc.normalizedCoordinates = YES;
+	desc.lodMinClamp = parameters->lod_min_clamp;
+	desc.lodMaxClamp = parameters->lod_max_clamp;
+	desc.supportArgumentBuffers = true;
+
+	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
+	sampler->metal.sampler = (__bridge_retained void *)[metal_device newSamplerStateWithDescriptor:desc];
+}
 
 void kore_metal_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
                                                 uint32_t index_count, kore_gpu_raytracing_volume *volume) {}
@@ -95,7 +167,7 @@ void kore_metal_device_create_raytracing_hierarchy(kore_gpu_device *device, kore
 void kore_metal_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set) {}
 
 uint32_t kore_metal_device_align_texture_row_bytes(kore_gpu_device *device, uint32_t row_bytes) {
-	return 0;
+	return row_bytes;
 }
 
 void kore_metal_device_create_fence(kore_gpu_device *device, kore_gpu_fence *fence) {}
