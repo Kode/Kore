@@ -26,15 +26,17 @@ void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	render_pass_descriptor.colorAttachments[0].texture     = texture;
 	render_pass_descriptor.colorAttachments[0].loadAction  = MTLLoadActionClear;
 	render_pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-	render_pass_descriptor.colorAttachments[0].clearColor  = MTLClearColorMake(parameters->color_attachments[0].clear_value.r, parameters->color_attachments[0].clear_value.g, parameters->color_attachments[0].clear_value.b, parameters->color_attachments[0].clear_value.a);
-	render_pass_descriptor.depthAttachment.clearDepth      = 1;
-	render_pass_descriptor.depthAttachment.loadAction      = MTLLoadActionClear;
-	render_pass_descriptor.depthAttachment.storeAction     = MTLStoreActionStore;
-	render_pass_descriptor.depthAttachment.texture         = nil; // depthTexture;
-	render_pass_descriptor.stencilAttachment.clearStencil  = 0;
-	render_pass_descriptor.stencilAttachment.loadAction    = MTLLoadActionDontCare;
-	render_pass_descriptor.stencilAttachment.storeAction   = MTLStoreActionDontCare;
-	render_pass_descriptor.stencilAttachment.texture       = nil; // depthTexture;
+	render_pass_descriptor.colorAttachments[0].clearColor =
+	    MTLClearColorMake(parameters->color_attachments[0].clear_value.r, parameters->color_attachments[0].clear_value.g,
+	                      parameters->color_attachments[0].clear_value.b, parameters->color_attachments[0].clear_value.a);
+	render_pass_descriptor.depthAttachment.clearDepth     = 1;
+	render_pass_descriptor.depthAttachment.loadAction     = MTLLoadActionClear;
+	render_pass_descriptor.depthAttachment.storeAction    = MTLStoreActionStore;
+	render_pass_descriptor.depthAttachment.texture        = nil; // depthTexture;
+	render_pass_descriptor.stencilAttachment.clearStencil = 0;
+	render_pass_descriptor.stencilAttachment.loadAction   = MTLLoadActionDontCare;
+	render_pass_descriptor.stencilAttachment.storeAction  = MTLStoreActionDontCare;
+	render_pass_descriptor.stencilAttachment.texture      = nil; // depthTexture;
 
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 	list->metal.render_command_encoder  = (__bridge_retained void *)[command_buffer renderCommandEncoderWithDescriptor:render_pass_descriptor];
