@@ -49,23 +49,23 @@ void kore_metal_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 
 void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
 	MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:convert_format(parameters->format)
-																							  width:parameters->width
-																							 height:parameters->height
-																						  mipmapped:NO];
-	descriptor.textureType = MTLTextureType2D;
-	descriptor.width = parameters->width;
-	descriptor.height = parameters->height;
-	descriptor.depth = 1;
-	descriptor.pixelFormat = convert_format(parameters->format);
-	descriptor.arrayLength = 1;
-	descriptor.mipmapLevelCount = 1;
-	
+	                                                                                      width:parameters->width
+	                                                                                     height:parameters->height
+	                                                                                  mipmapped:NO];
+	descriptor.textureType           = MTLTextureType2D;
+	descriptor.width                 = parameters->width;
+	descriptor.height                = parameters->height;
+	descriptor.depth                 = 1;
+	descriptor.pixelFormat           = convert_format(parameters->format);
+	descriptor.arrayLength           = 1;
+	descriptor.mipmapLevelCount      = 1;
+
 	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_READ_WRITE) != 0) {
 		descriptor.usage = MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead;
 	}
 
-	id<MTLDevice>       metal_device  = (__bridge id<MTLDevice>)device->metal.device;
-	texture->metal.texture = (__bridge_retained void *)[metal_device newTextureWithDescriptor:descriptor];
+	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
+	texture->metal.texture     = (__bridge_retained void *)[metal_device newTextureWithDescriptor:descriptor];
 }
 
 static kore_gpu_texture framebuffer;
@@ -146,20 +146,20 @@ static MTLSamplerMinMagFilter convert_texture_filter(kore_gpu_filter_mode filter
 }
 
 void kore_metal_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {
-	MTLSamplerDescriptor *desc = [[MTLSamplerDescriptor alloc] init];
-	desc.minFilter = convert_texture_filter(parameters->min_filter);
-	desc.magFilter = convert_texture_filter(parameters->mag_filter);
-	desc.sAddressMode = convert_addressing(parameters->address_mode_u);
-	desc.tAddressMode = convert_addressing(parameters->address_mode_v);
-	desc.mipFilter = convert_mipmap_mode(parameters->mipmap_filter);
-	desc.maxAnisotropy = parameters->max_anisotropy;
-	desc.normalizedCoordinates = YES;
-	desc.lodMinClamp = parameters->lod_min_clamp;
-	desc.lodMaxClamp = parameters->lod_max_clamp;
+	MTLSamplerDescriptor *desc  = [[MTLSamplerDescriptor alloc] init];
+	desc.minFilter              = convert_texture_filter(parameters->min_filter);
+	desc.magFilter              = convert_texture_filter(parameters->mag_filter);
+	desc.sAddressMode           = convert_addressing(parameters->address_mode_u);
+	desc.tAddressMode           = convert_addressing(parameters->address_mode_v);
+	desc.mipFilter              = convert_mipmap_mode(parameters->mipmap_filter);
+	desc.maxAnisotropy          = parameters->max_anisotropy;
+	desc.normalizedCoordinates  = YES;
+	desc.lodMinClamp            = parameters->lod_min_clamp;
+	desc.lodMaxClamp            = parameters->lod_max_clamp;
 	desc.supportArgumentBuffers = true;
 
 	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
-	sampler->metal.sampler = (__bridge_retained void *)[metal_device newSamplerStateWithDescriptor:desc];
+	sampler->metal.sampler     = (__bridge_retained void *)[metal_device newSamplerStateWithDescriptor:desc];
 }
 
 void kore_metal_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
