@@ -75,8 +75,14 @@ void kore_metal_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 
 void kore_metal_device_wait_until_idle(kore_gpu_device *device) {}
 
-void kore_metal_device_create_descriptor_set(kore_gpu_device *device, uint32_t descriptor_count, uint32_t dynamic_descriptor_count,
-                                             uint32_t bindless_descriptor_count, uint32_t sampler_count, kore_metal_descriptor_set *set) {}
+void kore_metal_device_create_descriptor_set_buffer(kore_gpu_device *device, uint64_t encoded_length, kore_gpu_buffer *buffer) {
+	id<MTLDevice>      metal_device = (__bridge id<MTLDevice>)device->metal.device;
+	
+	MTLResourceOptions options      = MTLResourceCPUCacheModeWriteCombined;
+	options |= MTLResourceStorageModeShared;
+	id<MTLBuffer> metal_buffer = [metal_device newBufferWithLength:encoded_length options:options];
+	buffer->metal.buffer       = (__bridge_retained void *)metal_buffer;
+}
 
 void kore_metal_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {}
 

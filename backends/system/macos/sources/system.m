@@ -55,18 +55,6 @@ static struct HIDManager *hidManager;
 CAMetalLayer *getMetalLayer(void) {
 	return [view metalLayer];
 }
-
-id getMetalDevice(void) {
-	return [view metalDevice];
-}
-
-id getMetalLibrary(void) {
-	return [view metalLibrary];
-}
-
-id getMetalQueue(void) {
-	return [view metalQueue];
-}
 #endif
 
 bool kore_internal_handle_messages(void) {

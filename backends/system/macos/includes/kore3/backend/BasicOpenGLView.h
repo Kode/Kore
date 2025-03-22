@@ -34,9 +34,6 @@ struct kore_g5_render_target;
 
 #ifdef KORE_METAL
 - (CAMetalLayer *)metalLayer;
-- (id<MTLDevice>)metalDevice;
-- (id<MTLLibrary>)metalLibrary;
-- (id<MTLCommandQueue>)metalQueue;
 #else
 - (void)prepareOpenGL;
 - (void)switchBuffers;

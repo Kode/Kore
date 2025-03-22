@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 typedef struct kore_metal_descriptor_set {
-	int nothing;
+	kore_gpu_buffer argument_buffer;
 } kore_metal_descriptor_set;
 
 #ifdef __cplusplus

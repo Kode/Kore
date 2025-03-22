@@ -23,8 +23,7 @@ void kore_metal_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 
 void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture);
 
-void kore_metal_device_create_descriptor_set(kore_gpu_device *device, uint32_t descriptor_count, uint32_t dynamic_descriptor_count,
-                                             uint32_t bindless_descriptor_count, uint32_t sampler_count, kore_metal_descriptor_set *set);
+void kore_metal_device_create_descriptor_set_buffer(kore_gpu_device *device, uint64_t encoded_length, kore_gpu_buffer *buffer);
 
 void kore_metal_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler);
 
