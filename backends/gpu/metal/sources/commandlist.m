@@ -26,7 +26,7 @@ void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	render_pass_descriptor.colorAttachments[0].texture     = texture;
 	render_pass_descriptor.colorAttachments[0].loadAction  = MTLLoadActionClear;
 	render_pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-	render_pass_descriptor.colorAttachments[0].clearColor  = MTLClearColorMake(0.0, 0.0, 0.0, 1.0);
+	render_pass_descriptor.colorAttachments[0].clearColor  = MTLClearColorMake(parameters->color_attachments[0].clear_value.r, parameters->color_attachments[0].clear_value.g, parameters->color_attachments[0].clear_value.b, parameters->color_attachments[0].clear_value.a);
 	render_pass_descriptor.depthAttachment.clearDepth      = 1;
 	render_pass_descriptor.depthAttachment.loadAction      = MTLLoadActionClear;
 	render_pass_descriptor.depthAttachment.storeAction     = MTLStoreActionStore;
