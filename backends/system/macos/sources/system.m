@@ -92,7 +92,7 @@ static int createWindow(kore_window_parameters *parameters) {
 	}
 
 	view = [[BasicOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
-	[view registerForDraggedTypes:[NSArray arrayWithObjects:NSURLPboardType, nil]];
+	[view registerForDraggedTypes:[NSArray arrayWithObjects:NSPasteboardTypeURL, nil]];
 	window   = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height) styleMask:styleMask backing:NSBackingStoreBuffered defer:TRUE];
 	delegate = [KoreAppDelegate alloc];
 	[window setDelegate:delegate];

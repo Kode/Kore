@@ -160,7 +160,7 @@ static bool cmd   = false;
 				if (text != NULL) {
 					NSPasteboard *board = [NSPasteboard generalPasteboard];
 					[board clearContents];
-					[board setString:[NSString stringWithUTF8String:text] forType:NSStringPboardType];
+					[board setString:[NSString stringWithUTF8String:text] forType:NSPasteboardTypeString];
 				}
 			}
 			if (ch == 'c' && [theEvent modifierFlags] & NSEventModifierFlagCommand) {
@@ -168,12 +168,12 @@ static bool cmd   = false;
 				if (text != NULL) {
 					NSPasteboard *board = [NSPasteboard generalPasteboard];
 					[board clearContents];
-					[board setString:[NSString stringWithUTF8String:text] forType:NSStringPboardType];
+					[board setString:[NSString stringWithUTF8String:text] forType:NSPasteboardTypeString];
 				}
 			}
 			if (ch == 'v' && [theEvent modifierFlags] & NSEventModifierFlagCommand) {
 				NSPasteboard *board = [NSPasteboard generalPasteboard];
-				NSString     *data  = [board stringForType:NSStringPboardType];
+				NSString     *data  = [board stringForType:NSPasteboardTypeString];
 				if (data != nil) {
 					char charData[4096];
 					strcpy(charData, [data UTF8String]);
@@ -374,7 +374,7 @@ static bool controlKeyMouseButton = false;
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender {
 	NSPasteboard   *pboard         = [sender draggingPasteboard];
 	NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
-	if ([[pboard types] containsObject:NSURLPboardType]) {
+	if ([[pboard types] containsObject:NSPasteboardTypeURL]) {
 		if (sourceDragMask & NSDragOperationLink) {
 			return NSDragOperationLink;
 		}
@@ -385,7 +385,7 @@ static bool controlKeyMouseButton = false;
 - (BOOL)performDragOperation:(id<NSDraggingInfo>)sender {
 	NSPasteboard *pboard = [sender draggingPasteboard];
 	// NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
-	if ([[pboard types] containsObject:NSURLPboardType]) {
+	if ([[pboard types] containsObject:NSPasteboardTypeURL]) {
 		NSURL   *fileURL  = [NSURL URLFromPasteboard:pboard];
 		wchar_t *filePath = (wchar_t *)[fileURL.path cStringUsingEncoding:NSUTF32LittleEndianStringEncoding];
 		kore_internal_drop_files_callback(filePath);
@@ -465,5 +465,5 @@ static CAMetalLayer *metalLayer = NULL;
 void kore_copy_to_clipboard(const char *text) {
 	NSPasteboard *board = [NSPasteboard generalPasteboard];
 	[board clearContents];
-	[board setString:[NSString stringWithUTF8String:text] forType:NSStringPboardType];
+	[board setString:[NSString stringWithUTF8String:text] forType:NSPasteboardTypeString];
 }
