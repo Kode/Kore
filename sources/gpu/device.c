@@ -53,7 +53,11 @@ void kore_gpu_device_create_texture(kore_gpu_device *device, const kore_gpu_text
 }
 
 kore_gpu_texture *kore_gpu_device_get_framebuffer(kore_gpu_device *device) {
-	return KORE_GPU_CALL1(device_get_framebuffer, device);
+	kore_gpu_texture *texture = KORE_GPU_CALL1(device_get_framebuffer, device);
+#ifdef KORE_GPU_VALIDATION
+	texture->validation_format = kore_gpu_device_framebuffer_format(device);
+#endif
+	return texture;
 }
 
 kore_gpu_texture_format kore_gpu_device_framebuffer_format(kore_gpu_device *device) {

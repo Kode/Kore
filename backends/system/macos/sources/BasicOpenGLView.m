@@ -428,7 +428,7 @@ static CAMetalLayer *metalLayer = NULL;
 
 	// metalLayer.device = device;
 	metalLayer.pixelFormat     = MTLPixelFormatBGRA8Unorm;
-	metalLayer.framebufferOnly = YES;
+	metalLayer.framebufferOnly = NO;
 	// metalLayer.presentsWithTransaction = YES;
 
 	metalLayer.opaque          = YES;

@@ -91,7 +91,7 @@ extern int kore_ios_gl_framebuffer;
 
 	metalLayer.device          = device;
 	metalLayer.pixelFormat     = MTLPixelFormatBGRA8Unorm;
-	metalLayer.framebufferOnly = YES;
+	metalLayer.framebufferOnly = NO;
 	// metalLayer.presentsWithTransaction = YES;
 
 	metalLayer.opaque          = YES;

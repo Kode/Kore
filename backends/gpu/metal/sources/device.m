@@ -61,7 +61,10 @@ void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 	descriptor.mipmapLevelCount      = 1;
 
 	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_READ_WRITE) != 0) {
-		descriptor.usage = MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead;
+		descriptor.usage |= MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead;
+	}
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
+		descriptor.usage |= MTLTextureUsageRenderTarget;
 	}
 
 	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
