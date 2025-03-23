@@ -204,7 +204,7 @@ typedef struct kore_metal_compute_pipeline_parameters {
 } kore_metal_compute_pipeline_parameters;
 
 typedef struct kore_metal_compute_pipeline {
-	int nothing;
+	void *pipeline;
 } kore_metal_compute_pipeline;
 
 typedef struct kore_metal_ray_pipeline_parameters {
