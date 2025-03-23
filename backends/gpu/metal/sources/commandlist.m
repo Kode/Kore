@@ -20,15 +20,21 @@ void kore_metal_command_list_end_blit_pass(kore_gpu_command_list *list);
 void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	kore_metal_command_list_end_blit_pass(list);
 
-	id<MTLTexture> texture = (__bridge id<MTLTexture>)parameters->color_attachments[0].texture.texture->metal.texture;
-
+	id<MTLTexture> textures[8];
+	for (size_t index = 0; index < parameters->color_attachments_count; ++index) {
+		textures[index] = (__bridge id<MTLTexture>)parameters->color_attachments[index].texture.texture->metal.texture;
+	}
+	
 	MTLRenderPassDescriptor *render_pass_descriptor        = [MTLRenderPassDescriptor renderPassDescriptor];
-	render_pass_descriptor.colorAttachments[0].texture     = texture;
-	render_pass_descriptor.colorAttachments[0].loadAction  = MTLLoadActionClear;
-	render_pass_descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-	render_pass_descriptor.colorAttachments[0].clearColor =
-	    MTLClearColorMake(parameters->color_attachments[0].clear_value.r, parameters->color_attachments[0].clear_value.g,
-	                      parameters->color_attachments[0].clear_value.b, parameters->color_attachments[0].clear_value.a);
+	
+	for (size_t index = 0; index < parameters->color_attachments_count; ++index) {
+		render_pass_descriptor.colorAttachments[index].texture     = textures[index];
+		render_pass_descriptor.colorAttachments[index].loadAction  = MTLLoadActionClear;
+		render_pass_descriptor.colorAttachments[index].storeAction = MTLStoreActionStore;
+		render_pass_descriptor.colorAttachments[index].clearColor =
+		MTLClearColorMake(parameters->color_attachments[index].clear_value.r, parameters->color_attachments[index].clear_value.g,
+						  parameters->color_attachments[index].clear_value.b, parameters->color_attachments[index].clear_value.a);
+	}
 	render_pass_descriptor.depthAttachment.clearDepth     = 1;
 	render_pass_descriptor.depthAttachment.loadAction     = MTLLoadActionClear;
 	render_pass_descriptor.depthAttachment.storeAction    = MTLStoreActionStore;
