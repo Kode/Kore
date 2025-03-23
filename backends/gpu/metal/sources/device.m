@@ -52,13 +52,33 @@ void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 	                                                                                      width:parameters->width
 	                                                                                     height:parameters->height
 	                                                                                  mipmapped:NO];
-	descriptor.textureType           = MTLTextureType2D;
-	descriptor.width                 = parameters->width;
-	descriptor.height                = parameters->height;
-	descriptor.depth                 = 1;
+	switch (parameters->dimension) {
+		case KORE_GPU_TEXTURE_DIMENSION_1D:
+			descriptor.textureType           = parameters->depth_or_array_layers > 1 ? MTLTextureType1DArray : MTLTextureType1D;
+			descriptor.width                 = parameters->width;
+			assert(parameters->height == 1);
+			descriptor.height                = 1;
+			descriptor.depth                 = 1;
+			descriptor.arrayLength           = parameters->depth_or_array_layers;
+			break;
+		case KORE_GPU_TEXTURE_DIMENSION_2D:
+			descriptor.textureType           = parameters->depth_or_array_layers > 1 ? MTLTextureType2DArray : MTLTextureType2D;
+			descriptor.width                 = parameters->width;
+			descriptor.height                = parameters->height;
+			descriptor.depth                 = 1;
+			descriptor.arrayLength           = parameters->depth_or_array_layers;
+			break;
+		case KORE_GPU_TEXTURE_DIMENSION_3D:
+			descriptor.textureType           = MTLTextureType3D;
+			descriptor.width                 = parameters->width;
+			descriptor.height                = parameters->height;
+			descriptor.depth                 = parameters->depth_or_array_layers;
+			descriptor.arrayLength           = 1;
+			break;
+	}
+
 	descriptor.pixelFormat           = convert_format(parameters->format);
-	descriptor.arrayLength           = 1;
-	descriptor.mipmapLevelCount      = 1;
+	descriptor.mipmapLevelCount      = parameters->mip_level_count;
 
 	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_READ_WRITE) != 0) {
 		descriptor.usage |= MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead;
@@ -69,6 +89,7 @@ void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 
 	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
 	texture->metal.texture     = (__bridge_retained void *)[metal_device newTextureWithDescriptor:descriptor];
+	texture->metal.dimension = parameters->dimension;
 }
 
 static kore_gpu_texture framebuffer;

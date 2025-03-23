@@ -176,15 +176,42 @@ void kore_metal_command_list_copy_buffer_to_texture(kore_gpu_command_list *list,
 	id<MTLBuffer>             source_buffer        = (__bridge id<MTLBuffer>)source->buffer->metal.buffer;
 	id<MTLTexture>            destination_texture  = (__bridge id<MTLTexture>)destination->texture->metal.texture;
 
-	[blit_command_encoder copyFromBuffer:source_buffer
-	                        sourceOffset:source->offset
-	                   sourceBytesPerRow:source->bytes_per_row
-	                 sourceBytesPerImage:source->bytes_per_row * source->rows_per_image
-	                          sourceSize:MTLSizeMake(width, height, depth_or_array_layers)
-	                           toTexture:destination_texture
-	                    destinationSlice:0
-	                    destinationLevel:destination->mip_level
-	                   destinationOrigin:MTLOriginMake(destination->origin_x, destination->origin_y, destination->origin_z)];
+	switch (destination->texture->metal.dimension) {
+		case KORE_GPU_TEXTURE_DIMENSION_1D:
+			assert(height == 1);
+			[blit_command_encoder copyFromBuffer:source_buffer
+									sourceOffset:source->offset
+							   sourceBytesPerRow:source->bytes_per_row
+							 sourceBytesPerImage:source->bytes_per_row
+									  sourceSize:MTLSizeMake(width, 1, 1)
+									   toTexture:destination_texture
+								destinationSlice:destination->origin_y
+								destinationLevel:destination->mip_level
+							   destinationOrigin:MTLOriginMake(destination->origin_x, 0, 0)];
+			break;
+		case KORE_GPU_TEXTURE_DIMENSION_2D:
+			[blit_command_encoder copyFromBuffer:source_buffer
+									sourceOffset:source->offset
+							   sourceBytesPerRow:source->bytes_per_row
+							 sourceBytesPerImage:source->bytes_per_row * source->rows_per_image
+									  sourceSize:MTLSizeMake(width, height, 1)
+									   toTexture:destination_texture
+								destinationSlice:destination->origin_z
+								destinationLevel:destination->mip_level
+							   destinationOrigin:MTLOriginMake(destination->origin_x, destination->origin_y, 0)];
+			break;
+		case KORE_GPU_TEXTURE_DIMENSION_3D:
+			[blit_command_encoder copyFromBuffer:source_buffer
+									sourceOffset:source->offset
+							   sourceBytesPerRow:source->bytes_per_row
+							 sourceBytesPerImage:source->bytes_per_row * source->rows_per_image * depth_or_array_layers
+									  sourceSize:MTLSizeMake(width, height, depth_or_array_layers)
+									   toTexture:destination_texture
+								destinationSlice:0
+								destinationLevel:destination->mip_level
+							   destinationOrigin:MTLOriginMake(destination->origin_x, destination->origin_y, destination->origin_z)];
+			break;
+	}
 }
 
 void kore_metal_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,

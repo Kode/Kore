@@ -7,6 +7,7 @@ extern "C" {
 
 typedef struct kore_metal_texture {
 	void *texture;
+	uint8_t dimension;
 } kore_metal_texture;
 
 #ifdef __cplusplus
