@@ -19,19 +19,19 @@ void kore_metal_command_list_end_blit_pass(kore_gpu_command_list *list);
 
 static MTLLoadAction convert_load_op(kore_gpu_load_op op) {
 	switch (op) {
-		case KORE_GPU_LOAD_OP_LOAD:
-			return MTLLoadActionLoad;
-		case KORE_GPU_LOAD_OP_CLEAR:
-			return MTLLoadActionClear;
+	case KORE_GPU_LOAD_OP_LOAD:
+		return MTLLoadActionLoad;
+	case KORE_GPU_LOAD_OP_CLEAR:
+		return MTLLoadActionClear;
 	}
 }
 
 static MTLStoreAction convert_store_op(kore_gpu_store_op op) {
 	switch (op) {
-		case KORE_GPU_STORE_OP_STORE:
-			return MTLStoreActionStore;
-		case KORE_GPU_STORE_OP_DISCARD:
-			return MTLStoreActionDontCare;
+	case KORE_GPU_STORE_OP_STORE:
+		return MTLStoreActionStore;
+	case KORE_GPU_STORE_OP_DISCARD:
+		return MTLStoreActionDontCare;
 	}
 }
 
@@ -53,7 +53,7 @@ void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 		    MTLClearColorMake(parameters->color_attachments[index].clear_value.r, parameters->color_attachments[index].clear_value.g,
 		                      parameters->color_attachments[index].clear_value.b, parameters->color_attachments[index].clear_value.a);
 	}
-	
+
 	id<MTLTexture> depth_texture = nil;
 	if (parameters->depth_stencil_attachment.texture != NULL) {
 		depth_texture = (__bridge id<MTLTexture>)parameters->depth_stencil_attachment.texture->metal.texture;
