@@ -141,13 +141,14 @@ void kore_metal_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t 
 	                                 baseInstance:first_instance];
 }
 
-void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, struct kore_metal_descriptor_set *set, kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes, uint32_t dynamic_count) {
+void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, struct kore_metal_descriptor_set *set, kore_gpu_buffer **dynamic_buffers,
+                                                uint32_t *dynamic_offsets, uint32_t *dynamic_sizes, uint32_t dynamic_count) {
 	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 	id<MTLBuffer>               metal_buffer           = (__bridge id<MTLBuffer>)set->argument_buffer.metal.buffer;
 
 	[render_command_encoder setVertexBuffer:metal_buffer offset:0 atIndex:1];
 	[render_command_encoder setFragmentBuffer:metal_buffer offset:0 atIndex:1];
-	
+
 	for (uint32_t dynamic_index = 0; dynamic_index < dynamic_count; ++dynamic_index) {
 		id<MTLBuffer> dynamic_buffer = (__bridge id<MTLBuffer>)dynamic_buffers[dynamic_index]->metal.buffer;
 
