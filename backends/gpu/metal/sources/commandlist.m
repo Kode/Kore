@@ -42,16 +42,16 @@ void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	for (size_t index = 0; index < parameters->color_attachments_count; ++index) {
 		textures[index] = (__bridge id<MTLTexture>)parameters->color_attachments[index].texture.texture->metal.texture;
 	}
-	
-	MTLRenderPassDescriptor *render_pass_descriptor        = [MTLRenderPassDescriptor renderPassDescriptor];
-	
+
+	MTLRenderPassDescriptor *render_pass_descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
+
 	for (size_t index = 0; index < parameters->color_attachments_count; ++index) {
 		render_pass_descriptor.colorAttachments[index].texture     = textures[index];
 		render_pass_descriptor.colorAttachments[index].loadAction  = convert_load_op(parameters->color_attachments[index].load_op);
 		render_pass_descriptor.colorAttachments[index].storeAction = convert_store_op(parameters->color_attachments[index].store_op);
 		render_pass_descriptor.colorAttachments[index].clearColor =
-		MTLClearColorMake(parameters->color_attachments[index].clear_value.r, parameters->color_attachments[index].clear_value.g,
-						  parameters->color_attachments[index].clear_value.b, parameters->color_attachments[index].clear_value.a);
+		    MTLClearColorMake(parameters->color_attachments[index].clear_value.r, parameters->color_attachments[index].clear_value.g,
+		                      parameters->color_attachments[index].clear_value.b, parameters->color_attachments[index].clear_value.a);
 	}
 	
 	id<MTLTexture> depth_texture = nil;
