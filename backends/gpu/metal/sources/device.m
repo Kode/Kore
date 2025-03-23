@@ -39,13 +39,13 @@ void kore_metal_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 }
 
 void kore_metal_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
-	id<MTLDevice>       metal_device   = (__bridge id<MTLDevice>)device->metal.device;
-	id<MTLCommandQueue> command_queue  = [metal_device newCommandQueue];
-	list->metal.command_queue          = (__bridge_retained void *)command_queue;
-	list->metal.command_buffer         = (__bridge_retained void *)[command_queue commandBuffer];
-	list->metal.render_command_encoder = NULL;
+	id<MTLDevice>       metal_device    = (__bridge id<MTLDevice>)device->metal.device;
+	id<MTLCommandQueue> command_queue   = [metal_device newCommandQueue];
+	list->metal.command_queue           = (__bridge_retained void *)command_queue;
+	list->metal.command_buffer          = (__bridge_retained void *)[command_queue commandBuffer];
+	list->metal.render_command_encoder  = NULL;
 	list->metal.compute_command_encoder = NULL;
-	list->metal.blit_command_encoder   = NULL;
+	list->metal.blit_command_encoder    = NULL;
 }
 
 void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {

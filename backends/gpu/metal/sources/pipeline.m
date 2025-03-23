@@ -285,10 +285,10 @@ void kore_metal_render_pipeline_destroy(kore_metal_render_pipeline *pipe) {}
 void kore_metal_compute_pipeline_init(kore_metal_device *device, kore_metal_compute_pipeline *pipe, const kore_metal_compute_pipeline_parameters *parameters) {
 	id<MTLLibrary> library = (__bridge id<MTLLibrary>)device->library;
 
-	id compute_function   = [library newFunctionWithName:[NSString stringWithCString:parameters->shader.function_name encoding:NSUTF8StringEncoding]];
-	
-	NSError                     *errors       = nil;
-	id<MTLDevice>                metal_device = (__bridge id<MTLDevice>)device->device;
+	id compute_function = [library newFunctionWithName:[NSString stringWithCString:parameters->shader.function_name encoding:NSUTF8StringEncoding]];
+
+	NSError      *errors       = nil;
+	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->device;
 
 	pipe->pipeline = (__bridge_retained void *)[metal_device newComputePipelineStateWithFunction:compute_function error:&errors];
 }

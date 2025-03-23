@@ -16,5 +16,7 @@ void kore_metal_descriptor_set_prepare_texture(kore_gpu_command_list *list, cons
 	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 	id<MTLTexture>              metal_texture          = (__bridge id<MTLTexture>)texture_view->texture->metal.texture;
 
-	[render_command_encoder useResource:metal_texture usage:writable ? MTLResourceUsageWrite : MTLResourceUsageRead stages:MTLRenderStageVertex | MTLRenderStageFragment];
+	[render_command_encoder useResource:metal_texture
+	                              usage:writable ? MTLResourceUsageWrite : MTLResourceUsageRead
+	                             stages:MTLRenderStageVertex | MTLRenderStageFragment];
 }

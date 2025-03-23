@@ -90,7 +90,7 @@ void kore_metal_command_list_present(kore_gpu_command_list *list) {
 
 static void kore_metal_command_list_begin_blit_pass(kore_gpu_command_list *list) {
 	assert(list->metal.render_command_encoder == NULL);
-	
+
 	kore_metal_command_list_end_compute_pass(list);
 
 	if (list->metal.blit_command_encoder == NULL) {
@@ -109,12 +109,12 @@ static void kore_metal_command_list_end_blit_pass(kore_gpu_command_list *list) {
 
 static void kore_metal_command_list_begin_compute_pass(kore_gpu_command_list *list) {
 	assert(list->metal.render_command_encoder == NULL);
-	
+
 	kore_metal_command_list_end_blit_pass(list);
 
 	if (list->metal.compute_command_encoder == NULL) {
 		id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
-		list->metal.compute_command_encoder    = (__bridge_retained void *)[command_buffer computeCommandEncoder];
+		list->metal.compute_command_encoder = (__bridge_retained void *)[command_buffer computeCommandEncoder];
 	}
 }
 
@@ -170,26 +170,26 @@ void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, str
                                                 uint32_t *dynamic_offsets, uint32_t *dynamic_sizes, uint32_t dynamic_count) {
 	if (list->metal.render_command_encoder == NULL) {
 		id<MTLComputeCommandEncoder> compute_command_encoder = (__bridge id<MTLComputeCommandEncoder>)list->metal.compute_command_encoder;
-		id<MTLBuffer>               metal_buffer           = (__bridge id<MTLBuffer>)set->argument_buffer.metal.buffer;
-		
+		id<MTLBuffer>                metal_buffer            = (__bridge id<MTLBuffer>)set->argument_buffer.metal.buffer;
+
 		[compute_command_encoder setBuffer:metal_buffer offset:0 atIndex:1];
-		
+
 		for (uint32_t dynamic_index = 0; dynamic_index < dynamic_count; ++dynamic_index) {
 			id<MTLBuffer> dynamic_buffer = (__bridge id<MTLBuffer>)dynamic_buffers[dynamic_index]->metal.buffer;
-			
+
 			[compute_command_encoder setBuffer:dynamic_buffer offset:dynamic_offsets[dynamic_index] atIndex:dynamic_index + 2];
 		}
 	}
 	else {
 		id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 		id<MTLBuffer>               metal_buffer           = (__bridge id<MTLBuffer>)set->argument_buffer.metal.buffer;
-		
+
 		[render_command_encoder setVertexBuffer:metal_buffer offset:0 atIndex:1];
 		[render_command_encoder setFragmentBuffer:metal_buffer offset:0 atIndex:1];
-		
+
 		for (uint32_t dynamic_index = 0; dynamic_index < dynamic_count; ++dynamic_index) {
 			id<MTLBuffer> dynamic_buffer = (__bridge id<MTLBuffer>)dynamic_buffers[dynamic_index]->metal.buffer;
-			
+
 			[render_command_encoder setVertexBuffer:dynamic_buffer offset:dynamic_offsets[dynamic_index] atIndex:dynamic_index + 2];
 			[render_command_encoder setFragmentBuffer:dynamic_buffer offset:dynamic_offsets[dynamic_index] atIndex:dynamic_index + 2];
 		}
@@ -305,8 +305,8 @@ void kore_metal_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_
 
 void kore_metal_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_metal_compute_pipeline *pipeline) {
 	kore_metal_command_list_begin_compute_pass(list);
-	
-	id<MTLComputePipelineState>  metal_pipeline         = (__bridge id<MTLComputePipelineState>)pipeline->pipeline;
+
+	id<MTLComputePipelineState>  metal_pipeline          = (__bridge id<MTLComputePipelineState>)pipeline->pipeline;
 	id<MTLComputeCommandEncoder> compute_command_encoder = (__bridge id<MTLComputeCommandEncoder>)list->metal.compute_command_encoder;
 
 	[compute_command_encoder setComputePipelineState:metal_pipeline];
@@ -314,9 +314,10 @@ void kore_metal_command_list_set_compute_pipeline(kore_gpu_command_list *list, k
 
 void kore_metal_command_list_compute(kore_gpu_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z) {
 	kore_metal_command_list_begin_compute_pass(list);
-	
+
 	id<MTLComputeCommandEncoder> compute_command_encoder = (__bridge id<MTLComputeCommandEncoder>)list->metal.compute_command_encoder;
-	[compute_command_encoder dispatchThreadgroups:MTLSizeMake(workgroup_count_x, workgroup_count_y, workgroup_count_z) threadsPerThreadgroup:MTLSizeMake(16, 16, 1)];
+	[compute_command_encoder dispatchThreadgroups:MTLSizeMake(workgroup_count_x, workgroup_count_y, workgroup_count_z)
+	                        threadsPerThreadgroup:MTLSizeMake(16, 16, 1)];
 }
 
 void kore_metal_command_list_prepare_raytracing_volume(kore_gpu_command_list *list, kore_gpu_raytracing_volume *volume) {}
