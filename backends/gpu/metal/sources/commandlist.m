@@ -17,6 +17,24 @@ void kore_metal_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_metal_command_list_end_blit_pass(kore_gpu_command_list *list);
 
+static MTLLoadAction convert_load_op(kore_gpu_load_op op) {
+	switch (op) {
+		case KORE_GPU_LOAD_OP_LOAD:
+			return MTLLoadActionLoad;
+		case KORE_GPU_LOAD_OP_CLEAR:
+			return MTLLoadActionClear;
+	}
+}
+
+static MTLStoreAction convert_store_op(kore_gpu_store_op op) {
+	switch (op) {
+		case KORE_GPU_STORE_OP_STORE:
+			return MTLStoreActionStore;
+		case KORE_GPU_STORE_OP_DISCARD:
+			return MTLStoreActionDontCare;
+	}
+}
+
 void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	kore_metal_command_list_end_blit_pass(list);
 
@@ -29,20 +47,25 @@ void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	
 	for (size_t index = 0; index < parameters->color_attachments_count; ++index) {
 		render_pass_descriptor.colorAttachments[index].texture     = textures[index];
-		render_pass_descriptor.colorAttachments[index].loadAction  = MTLLoadActionClear;
-		render_pass_descriptor.colorAttachments[index].storeAction = MTLStoreActionStore;
+		render_pass_descriptor.colorAttachments[index].loadAction  = convert_load_op(parameters->color_attachments[index].load_op);
+		render_pass_descriptor.colorAttachments[index].storeAction = convert_store_op(parameters->color_attachments[index].store_op);
 		render_pass_descriptor.colorAttachments[index].clearColor =
 		MTLClearColorMake(parameters->color_attachments[index].clear_value.r, parameters->color_attachments[index].clear_value.g,
 						  parameters->color_attachments[index].clear_value.b, parameters->color_attachments[index].clear_value.a);
 	}
-	render_pass_descriptor.depthAttachment.clearDepth     = 1;
-	render_pass_descriptor.depthAttachment.loadAction     = MTLLoadActionClear;
-	render_pass_descriptor.depthAttachment.storeAction    = MTLStoreActionStore;
-	render_pass_descriptor.depthAttachment.texture        = nil; // depthTexture;
-	render_pass_descriptor.stencilAttachment.clearStencil = 0;
-	render_pass_descriptor.stencilAttachment.loadAction   = MTLLoadActionDontCare;
-	render_pass_descriptor.stencilAttachment.storeAction  = MTLStoreActionDontCare;
-	render_pass_descriptor.stencilAttachment.texture      = nil; // depthTexture;
+	
+	id<MTLTexture> depth_texture = nil;
+	if (parameters->depth_stencil_attachment.texture != NULL) {
+		depth_texture = (__bridge id<MTLTexture>)parameters->depth_stencil_attachment.texture->metal.texture;
+	}
+	render_pass_descriptor.depthAttachment.clearDepth     = parameters->depth_stencil_attachment.depth_clear_value;
+	render_pass_descriptor.depthAttachment.loadAction     = convert_load_op(parameters->depth_stencil_attachment.depth_load_op);
+	render_pass_descriptor.depthAttachment.storeAction    = convert_store_op(parameters->depth_stencil_attachment.depth_store_op);
+	render_pass_descriptor.depthAttachment.texture        = depth_texture;
+	render_pass_descriptor.stencilAttachment.clearStencil = parameters->depth_stencil_attachment.stencil_clear_value;
+	render_pass_descriptor.stencilAttachment.loadAction   = convert_load_op(parameters->depth_stencil_attachment.stencil_load_op);
+	render_pass_descriptor.stencilAttachment.storeAction  = convert_store_op(parameters->depth_stencil_attachment.stencil_store_op);
+	render_pass_descriptor.stencilAttachment.texture      = depth_texture;
 
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 	list->metal.render_command_encoder  = (__bridge_retained void *)[command_buffer renderCommandEncoderWithDescriptor:render_pass_descriptor];
