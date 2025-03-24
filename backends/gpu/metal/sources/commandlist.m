@@ -320,6 +320,18 @@ void kore_metal_command_list_compute(kore_gpu_command_list *list, uint32_t workg
 	                        threadsPerThreadgroup:MTLSizeMake(16, 16, 1)];
 }
 
+void kore_metal_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {
+	if (list->metal.render_command_encoder != NULL) {
+		id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
+		[render_command_encoder setVertexBytes:data length:data_size atIndex:table_index];
+		[render_command_encoder setFragmentBytes:data length:data_size atIndex:table_index];
+	}
+	else if (list->metal.compute_command_encoder != NULL) {
+		id<MTLComputeCommandEncoder> compute_command_encoder = (__bridge id<MTLComputeCommandEncoder>)list->metal.compute_command_encoder;
+		[compute_command_encoder setBytes:data length:data_size atIndex:table_index];
+	}
+}
+
 void kore_metal_command_list_prepare_raytracing_volume(kore_gpu_command_list *list, kore_gpu_raytracing_volume *volume) {}
 
 void kore_metal_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list *list, kore_gpu_raytracing_hierarchy *hierarchy) {}
