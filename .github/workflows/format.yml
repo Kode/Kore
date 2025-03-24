@@ -1,9 +1,8 @@
 name: Format Code
 
 on:
-  push:
-    branches:
-    - v3
+  schedule:
+  - v3 '0 5 * * *'
 
 jobs:
   build:
@@ -13,6 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
+        ref: v3
         fetch-depth: 0
 
     - name: Set name
