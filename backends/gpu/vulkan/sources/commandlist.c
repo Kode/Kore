@@ -75,22 +75,9 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	vkCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
 #endif
 
-	VkViewport viewport = {.x = 0, .y = 0, .width = (float)texture->vulkan.width, .height = (float)texture->vulkan.height, .minDepth = 0.1f, .maxDepth = 1.0f};
-	vkCmdSetViewport(list->vulkan.command_buffer, 0, 1, &viewport);
+	kore_vulkan_command_list_set_viewport(list, 0, 0, (float)texture->vulkan.width, (float)texture->vulkan.height, 0.1f, 1.0f);
 
-	VkRect2D scissor = {
-	    .offset =
-	        {
-	            .x = 0,
-	            .y = 0,
-	        },
-	    .extent =
-	        {
-	            .width  = texture->vulkan.width,
-	            .height = texture->vulkan.height,
-	        },
-	};
-	vkCmdSetScissor(list->vulkan.command_buffer, 0, 1, &scissor);
+	kore_vulkan_command_list_set_scissor_rect(list, 0, 0, texture->vulkan.width, texture->vulkan.height);
 }
 
 void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
@@ -163,9 +150,27 @@ void kore_vulkan_command_list_set_ray_pipeline(kore_gpu_command_list *list, kore
 
 void kore_vulkan_command_list_trace_rays(kore_gpu_command_list *list, uint32_t width, uint32_t height, uint32_t depth) {}
 
-void kore_vulkan_command_list_set_viewport(kore_gpu_command_list *list, float x, float y, float width, float height, float min_depth, float max_depth) {}
+void kore_vulkan_command_list_set_viewport(kore_gpu_command_list *list, float x, float y, float width, float height, float min_depth, float max_depth) {
+	// The coordinate system is upside down compared to other APIs, -height for the viewport (supported via VK_KHR_MAINTENANCE1) is an easy fix.
+	VkViewport viewport = {.x = x, .y = y + height, .width = width, .height = -height, .minDepth = min_depth, .maxDepth = max_depth};
+	vkCmdSetViewport(list->vulkan.command_buffer, 0, 1, &viewport);
+}
 
-void kore_vulkan_command_list_set_scissor_rect(kore_gpu_command_list *list, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {}
+void kore_vulkan_command_list_set_scissor_rect(kore_gpu_command_list *list, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+	VkRect2D scissor = {
+	    .offset =
+	        {
+	            .x = 0,
+	            .y = 0,
+	        },
+	    .extent =
+	        {
+	            .width  = width,
+	            .height = height,
+	        },
+	};
+	vkCmdSetScissor(list->vulkan.command_buffer, 0, 1, &scissor);
+}
 
 void kore_vulkan_command_list_set_blend_constant(kore_gpu_command_list *list, kore_gpu_color color) {}
 
