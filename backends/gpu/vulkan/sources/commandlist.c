@@ -172,41 +172,37 @@ void kore_vulkan_command_list_set_blend_constant(kore_gpu_command_list *list, ko
 void kore_vulkan_command_list_set_stencil_reference(kore_gpu_command_list *list, uint32_t reference) {}
 
 void kore_vulkan_command_list_set_name(kore_gpu_command_list *list, const char *name) {
-	const VkDebugMarkerObjectNameInfoEXT name_info = {
-	    .sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT,
-	    .pNext       = NULL,
-	    .objectType  = VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT,
-	    .object      = (uint64_t)list->vulkan.command_buffer,
-	    .pObjectName = name,
+	VkDebugUtilsObjectNameInfoEXT name_info = {
+	    .sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+	    .objectType   = VK_OBJECT_TYPE_COMMAND_BUFFER,
+	    .objectHandle = (uint64_t)list->vulkan.command_buffer,
+	    .pObjectName  = name,
 	};
-
-	vulkan_DebugMarkerSetObjectNameEXT(list->vulkan.device, &name_info);
+	vkSetDebugUtilsObjectName(list->vulkan.device, &name_info);
 }
 
 void kore_vulkan_command_list_push_debug_group(kore_gpu_command_list *list, const char *name) {
-	const VkDebugMarkerMarkerInfoEXT marker_info = {
-	    .sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT,
-	    .pNext       = NULL,
-	    .pMarkerName = name,
-	    .color       = {0.0f, 0.0f, 0.0f, 1.0f},
+	const VkDebugUtilsLabelEXT label_info = {
+	    .sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+	    .pNext      = NULL,
+	    .pLabelName = name,
+	    .color      = {0.0f, 0.0f, 1.0f, 1.0f},
 	};
-
-	vulkan_CmdDebugMarkerBeginEXT(list->vulkan.command_buffer, &marker_info);
+	vkCmdBeginDebugUtilsLabel(list->vulkan.command_buffer, &label_info);
 }
 
 void kore_vulkan_command_list_pop_debug_group(kore_gpu_command_list *list) {
-	vulkan_CmdDebugMarkerEndEXT(list->vulkan.command_buffer);
+	vkCmdEndDebugUtilsLabel(list->vulkan.command_buffer);
 }
 
 void kore_vulkan_command_list_insert_debug_marker(kore_gpu_command_list *list, const char *name) {
-	const VkDebugMarkerMarkerInfoEXT marker_info = {
-	    .sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT,
-	    .pNext       = NULL,
-	    .pMarkerName = name,
-	    .color       = {0.0f, 0.0f, 0.0f, 1.0f},
+	const VkDebugUtilsLabelEXT label_info = {
+	    .sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+	    .pNext      = NULL,
+	    .pLabelName = name,
+	    .color      = {0.0f, 0.0f, 1.0f, 1.0f},
 	};
-
-	vulkan_CmdDebugMarkerInsertEXT(list->vulkan.command_buffer, &marker_info);
+	vkCmdInsertDebugUtilsLabel(list->vulkan.command_buffer, &label_info);
 }
 
 void kore_vulkan_command_list_begin_occlusion_query(kore_gpu_command_list *list, uint32_t query_index) {}

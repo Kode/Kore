@@ -204,24 +204,31 @@ static void load_extension_functions(void) {
 		}                                                                                            \
 	}
 
-	if (validation) {
-		GET_VULKAN_FUNCTION(CreateDebugUtilsMessengerEXT);
+#define GET_VULKAN_FUNCTION2(entrypoint, ext)                                                             \
+	{                                                                                                     \
+		vk##entrypoint = (PFN_vk##entrypoint##ext)vkGetInstanceProcAddr(instance, "vk" #entrypoint #ext); \
+		if (vk##entrypoint == NULL) {                                                                     \
+			kore_error_message("vkGetInstanceProcAddr failed to find vk" #entrypoint);                    \
+		}                                                                                                 \
 	}
 
-	GET_VULKAN_FUNCTION(GetPhysicalDeviceSurfaceCapabilitiesKHR);
-	GET_VULKAN_FUNCTION(GetPhysicalDeviceSurfaceFormatsKHR);
-	GET_VULKAN_FUNCTION(GetPhysicalDeviceSurfacePresentModesKHR);
-	GET_VULKAN_FUNCTION(GetPhysicalDeviceSurfaceSupportKHR);
-	GET_VULKAN_FUNCTION(CreateSwapchainKHR);
-	GET_VULKAN_FUNCTION(DestroySwapchainKHR);
-	GET_VULKAN_FUNCTION(DestroySurfaceKHR);
-	GET_VULKAN_FUNCTION(GetSwapchainImagesKHR);
-	GET_VULKAN_FUNCTION(AcquireNextImageKHR);
-	GET_VULKAN_FUNCTION(QueuePresentKHR);
-	GET_VULKAN_FUNCTION(DebugMarkerSetObjectNameEXT);
-	GET_VULKAN_FUNCTION(CmdDebugMarkerBeginEXT);
-	GET_VULKAN_FUNCTION(CmdDebugMarkerEndEXT);
-	GET_VULKAN_FUNCTION(CmdDebugMarkerInsertEXT);
+	GET_VULKAN_FUNCTION2(CmdBeginDebugUtilsLabel, EXT);
+	GET_VULKAN_FUNCTION2(CmdEndDebugUtilsLabel, EXT);
+	GET_VULKAN_FUNCTION2(CmdInsertDebugUtilsLabel, EXT);
+	GET_VULKAN_FUNCTION2(SetDebugUtilsObjectName, EXT);
+	GET_VULKAN_FUNCTION2(CreateDebugUtilsMessenger, EXT);
+	GET_VULKAN_FUNCTION2(DestroyDebugUtilsMessenger, EXT);
+
+	GET_VULKAN_FUNCTION2(GetPhysicalDeviceSurfaceCapabilities, KHR);
+	GET_VULKAN_FUNCTION2(GetPhysicalDeviceSurfaceFormats, KHR);
+	GET_VULKAN_FUNCTION2(GetPhysicalDeviceSurfacePresentModes, KHR);
+	GET_VULKAN_FUNCTION2(GetPhysicalDeviceSurfaceSupport, KHR);
+	GET_VULKAN_FUNCTION2(CreateSwapchain, KHR);
+	GET_VULKAN_FUNCTION2(DestroySwapchain, KHR);
+	GET_VULKAN_FUNCTION2(DestroySurface, KHR);
+	GET_VULKAN_FUNCTION2(GetSwapchainImages, KHR);
+	GET_VULKAN_FUNCTION2(AcquireNextImage, KHR);
+	GET_VULKAN_FUNCTION2(QueuePresent, KHR);
 
 #undef GET_VULKAN_FUNCTION
 }
@@ -328,7 +335,7 @@ static VkSurfaceFormatKHR find_surface_format(VkSurfaceKHR surface) {
 	VkSurfaceFormatKHR surface_formats[256];
 
 	uint32_t formats_count = sizeof(surface_formats) / sizeof(surface_formats[0]);
-	VkResult result        = vulkan_GetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formats_count, surface_formats);
+	VkResult result        = vkGetPhysicalDeviceSurfaceFormats(gpu, surface, &formats_count, surface_formats);
 	assert(result == VK_SUCCESS);
 
 	// If the format list includes just one entry of VK_FORMAT_UNDEFINED,
@@ -382,12 +389,12 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 	framebuffer_format        = format.format;
 
 	VkSurfaceCapabilitiesKHR surface_capabilities = {0};
-	result                                        = vulkan_GetPhysicalDeviceSurfaceCapabilitiesKHR(gpu, surface, &surface_capabilities);
+	result                                        = vkGetPhysicalDeviceSurfaceCapabilities(gpu, surface, &surface_capabilities);
 	assert(result == VK_SUCCESS);
 
 	VkPresentModeKHR present_modes[32];
 	uint32_t         present_mode_count = sizeof(present_modes) / sizeof(present_modes[0]);
-	result                              = vulkan_GetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &present_mode_count, present_modes);
+	result                              = vkGetPhysicalDeviceSurfacePresentModes(gpu, surface, &present_mode_count, present_modes);
 	assert(result == VK_SUCCESS);
 
 	VkExtent2D swapchain_extent;
@@ -440,12 +447,12 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 	    .clipped               = true,
 	};
 
-	result = vulkan_CreateSwapchainKHR(device->vulkan.device, &swapchain_info, NULL, &swapchain);
+	result = vkCreateSwapchain(device->vulkan.device, &swapchain_info, NULL, &swapchain);
 	assert(result == VK_SUCCESS);
 
 	VkImage images[4];
 	framebuffer_count = sizeof(images) / sizeof(images[0]);
-	result            = vulkan_GetSwapchainImagesKHR(device->vulkan.device, swapchain, &framebuffer_count, images);
+	result            = vkGetSwapchainImages(device->vulkan.device, swapchain, &framebuffer_count, images);
 	assert(result == VK_SUCCESS);
 
 	for (uint32_t i = 0; i < framebuffer_count; ++i) {
@@ -549,10 +556,6 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	        .name = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
 	    },
 	    {
-	        .name     = VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
-	        .optional = true,
-	    },
-	    {
 	        .name     = VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 	        .optional = true,
 	    },
@@ -635,10 +638,6 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 	extension_request device_extensions[] = {
 	    {
-	        .name     = VK_EXT_DEBUG_MARKER_EXTENSION_NAME,
-	        .optional = true,
-	    },
-	    {
 	        .name = VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 	    },
 	    {
@@ -696,7 +695,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 		    .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
 		};
 
-		result = vulkan_CreateDebugUtilsMessengerEXT(instance, &create_info, NULL, &debug_utils_messenger);
+		result = vkCreateDebugUtilsMessenger(instance, &create_info, NULL, &debug_utils_messenger);
 		assert(result == VK_SUCCESS);
 	}
 #endif
@@ -788,15 +787,13 @@ void kore_vulkan_device_destroy(kore_gpu_device *device) {
 }
 
 void kore_vulkan_device_set_name(kore_gpu_device *device, const char *name) {
-	const VkDebugMarkerObjectNameInfoEXT name_info = {
-	    .sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT,
-	    .pNext       = NULL,
-	    .objectType  = VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT,
-	    .object      = (uint64_t)device->vulkan.device,
-	    .pObjectName = name,
+	VkDebugUtilsObjectNameInfoEXT name_info = {
+	    .sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+	    .objectType   = VK_OBJECT_TYPE_DEVICE,
+	    .objectHandle = (uint64_t)device->vulkan.device,
+	    .pObjectName  = name,
 	};
-
-	vulkan_DebugMarkerSetObjectNameEXT(device->vulkan.device, &name_info);
+	vkSetDebugUtilsObjectName(device->vulkan.device, &name_info);
 }
 
 static bool memory_type_from_properties(kore_gpu_device *device, uint32_t type_bits, VkFlags requirements_mask, uint32_t *type_index) {
@@ -992,8 +989,8 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 }
 
 kore_gpu_texture *kore_vulkan_device_get_framebuffer(kore_gpu_device *device) {
-	VkResult result = vulkan_AcquireNextImageKHR(device->vulkan.device, swapchain, UINT64_MAX, *get_next_framebuffer_available_semaphore(), VK_NULL_HANDLE,
-	                                             &framebuffer_index);
+	VkResult result =
+	    vkAcquireNextImage(device->vulkan.device, swapchain, UINT64_MAX, *get_next_framebuffer_available_semaphore(), VK_NULL_HANDLE, &framebuffer_index);
 	assert(result == VK_SUCCESS);
 
 	return &framebuffers[framebuffer_index];
@@ -1073,7 +1070,7 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		    .waitSemaphoreCount = 0,
 		};
 
-		result = vulkan_QueuePresentKHR(device->vulkan.queue, &present_info);
+		result = vkQueuePresent(device->vulkan.queue, &present_info);
 		if (result == VK_ERROR_SURFACE_LOST_KHR) {
 			kore_error_message("Surface lost");
 		}
