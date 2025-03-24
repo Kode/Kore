@@ -104,46 +104,53 @@ static VkSemaphore *get_framebuffer_available_semaphore(void) {
 	return &framebuffer_availables[framebuffer_available_index];
 }
 
-static bool check_extensions(const char **extensions, int extensions_count, VkExtensionProperties *extension_properties, int extension_properties_count) {
-	for (int extension_index = 0; extension_index < extensions_count; ++extension_index) {
-		bool found = false;
+typedef struct extension_request {
+	const char *name;
+	bool        optional;
+	bool        found;
+} extension_request;
 
-		for (int extension_property_index = 0; extension_property_index < extension_properties_count; ++extension_property_index) {
-			if (strcmp(extensions[extension_index], extension_properties[extension_property_index].extensionName) == 0) {
-				found = true;
+static void check_extensions(extension_request *requests, uint32_t requests_count, VkExtensionProperties *extension_properties,
+                             uint32_t extension_properties_count) {
+	for (uint32_t request_index = 0; request_index < requests_count; ++request_index) {
+		for (uint32_t extension_property_index = 0; extension_property_index < extension_properties_count; ++extension_property_index) {
+			if (strcmp(requests[request_index].name, extension_properties[extension_property_index].extensionName) == 0) {
+				requests[request_index].found = true;
 				break;
 			}
 		}
 
-		if (!found) {
-			kore_log(KORE_LOG_LEVEL_WARNING, "Failed to find extension %s", extensions[extension_index]);
-			return false;
+		if (!requests[request_index].found) {
+			if (requests[request_index].optional) {
+				kore_log(KORE_LOG_LEVEL_WARNING, "Extension %s not found.", requests[request_index].name);
+			}
+			else {
+				kore_error_message("Required extension %s not found.", requests[request_index].name);
+			}
 		}
 	}
-
-	return true;
 }
 
 static VkExtensionProperties instance_extension_properties[256];
 
-static bool check_instance_extensions(const char **instance_extensions, int instance_extensions_count) {
+static void check_instance_extensions(extension_request *requests, uint32_t requests_count) {
 	uint32_t instance_extension_properties_count = sizeof(instance_extension_properties) / sizeof(instance_extension_properties[0]);
 
 	VkResult result = vkEnumerateInstanceExtensionProperties(NULL, &instance_extension_properties_count, instance_extension_properties);
 	assert(result == VK_SUCCESS);
 
-	return check_extensions(instance_extensions, instance_extensions_count, instance_extension_properties, instance_extension_properties_count);
+	check_extensions(requests, requests_count, instance_extension_properties, instance_extension_properties_count);
 }
 
 static VkExtensionProperties device_extension_properties[256];
 
-static bool check_device_extensions(const char **device_extensions, int device_extensions_count) {
+static void check_device_extensions(extension_request *requests, uint32_t requests_count) {
 	uint32_t device_extension_properties_count = sizeof(device_extension_properties) / sizeof(device_extension_properties[0]);
 
 	VkResult result = vkEnumerateDeviceExtensionProperties(gpu, NULL, &device_extension_properties_count, device_extension_properties);
 	assert(result == VK_SUCCESS);
 
-	return check_extensions(device_extensions, device_extensions_count, device_extension_properties, device_extension_properties_count);
+	check_extensions(requests, requests_count, device_extension_properties, device_extension_properties_count);
 }
 
 static bool check_layers(const char **layers, int layers_count, VkLayerProperties *layer_properties, int layer_properties_count) {
@@ -534,20 +541,33 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 		--instance_layers_count; // Remove VK_LAYER_KHRONOS_validation
 	}
 
-	const char *instance_extensions[64];
-	int         instance_extensions_count = 0;
-
-	instance_extensions[instance_extensions_count++] = VK_KHR_SURFACE_EXTENSION_NAME;
-	instance_extensions[instance_extensions_count++] = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME;
-	instance_extensions[instance_extensions_count++] = VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
+	extension_request instance_extensions[] = {
+	    {
+	        .name = VK_KHR_SURFACE_EXTENSION_NAME,
+	    },
+	    {
+	        .name = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
+	    },
+	    {
+	        .name     = VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
+	        .optional = true,
+	    },
+	    {
+	        .name     = VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
+	        .optional = true,
+	    },
 #ifdef KORE_WINDOWS
-	instance_extensions[instance_extensions_count++] = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
+	    {
+	        .name = VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+	    },
 #endif
+	};
 
-	check_instance_extensions(instance_extensions, instance_extensions_count);
+	check_instance_extensions(instance_extensions, KORE_ARRAY_SIZE(instance_extensions));
 
-	if (validation) {
-		instance_extensions[instance_extensions_count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
+	const char *instance_extension_names[KORE_ARRAY_SIZE(instance_extensions)];
+	for (uint32_t index = 0; index < KORE_ARRAY_SIZE(instance_extensions); ++index) {
+		instance_extension_names[index] = instance_extensions[index].name;
 	}
 
 	const VkApplicationInfo application_info = {
@@ -568,8 +588,8 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .enabledLayerCount   = instance_layers_count,
 	    .ppEnabledLayerNames = (const char *const *)instance_layers,
 
-	    .enabledExtensionCount   = instance_extensions_count,
-	    .ppEnabledExtensionNames = (const char *const *)instance_extensions,
+	    .enabledExtensionCount   = KORE_ARRAY_SIZE(instance_extension_names),
+	    .ppEnabledExtensionNames = instance_extension_names,
 	};
 
 #ifndef KORE_ANDROID
@@ -582,13 +602,14 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 #else
 	VkResult result = vkCreateInstance(&instance_create_info, NULL, &instance);
 #endif
-	if (result == VK_ERROR_INCOMPATIBLE_DRIVER) {
+	switch (result) {
+	case VK_ERROR_INCOMPATIBLE_DRIVER:
 		kore_error_message("Vulkan driver is incompatible");
-	}
-	else if (result == VK_ERROR_EXTENSION_NOT_PRESENT) {
+	case VK_ERROR_EXTENSION_NOT_PRESENT:
 		kore_error_message("Vulkan extension not found");
 	}
-	else if (result != VK_SUCCESS) {
+
+	if (result != VK_SUCCESS) {
 		kore_error_message("Can not create Vulkan instance");
 	}
 
@@ -608,36 +629,57 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	}
 #endif
 
-	const char *device_extensions[64];
-	int         device_extensions_count = 0;
-
-	device_extensions[device_extensions_count++] = VK_EXT_DEBUG_MARKER_EXTENSION_NAME;
-	device_extensions[device_extensions_count++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
-	// Allows negative viewport height to flip viewport
-	device_extensions[device_extensions_count++] = VK_KHR_MAINTENANCE1_EXTENSION_NAME;
-
-#ifdef KORE_VKRT
-	device_extensions[device_extensions_count++] = VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME;
-	device_extensions[device_extensions_count++] = VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME;
-	device_extensions[device_extensions_count++] = VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME;
-	device_extensions[device_extensions_count++] = VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME;
-	device_extensions[device_extensions_count++] = VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME;
-	device_extensions[device_extensions_count++] = VK_KHR_SPIRV_1_4_EXTENSION_NAME;
-	device_extensions[device_extensions_count++] = VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME;
-#endif
-
 #ifndef VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME // For Dave's Debian
 #define VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME "VK_KHR_format_feature_flags2"
 #endif
 
-	device_extensions[device_extensions_count++] = VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME;
+	extension_request device_extensions[] = {
+	    {
+	        .name     = VK_EXT_DEBUG_MARKER_EXTENSION_NAME,
+	        .optional = true,
+	    },
+	    {
+	        .name = VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+	    },
+	    {
+	        // Allows negative viewport height to flip viewport
+	        .name = VK_KHR_MAINTENANCE1_EXTENSION_NAME,
+	    },
+	    {
+	        .name     = VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME,
+	        .optional = true,
+	    },
+#ifdef KORE_VKRT
+	    {
+	        .name = VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
+	    },
+	    {
+	        .name = VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME,
+	    },
+	    {
+	        .name = VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
+	    },
+	    {
+	        .name = VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME,
+	    },
+	    {
+	        .name = VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
+	    },
+	    {
+	        .name = VK_KHR_SPIRV_1_4_EXTENSION_NAME,
+	    },
+	    {
+	        .name = VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME,
+	    },
+#endif
+	};
 
-	if (!check_device_extensions(device_extensions, device_extensions_count)) {
-		device_extensions_count -= 1; // remove VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME
+	check_device_extensions(device_extensions, KORE_ARRAY_SIZE(device_extensions));
 
-		if (!check_device_extensions(device_extensions, device_extensions_count)) {
-			kore_error_message("Missing device extensions");
-		}
+	const char *device_extension_names[KORE_ARRAY_SIZE(device_extensions)];
+
+	for (uint32_t index = 0; index < KORE_ARRAY_SIZE(device_extensions); ++index) {
+		device_extension_names[index] = device_extensions[index].name;
 	}
 
 	load_extension_functions();
@@ -706,8 +748,8 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .enabledLayerCount   = device_layers_count,
 	    .ppEnabledLayerNames = (const char *const *)device_layers,
 
-	    .enabledExtensionCount   = device_extensions_count,
-	    .ppEnabledExtensionNames = (const char *const *)device_extensions,
+	    .enabledExtensionCount   = KORE_ARRAY_SIZE(device_extension_names),
+	    .ppEnabledExtensionNames = device_extension_names,
 
 #ifdef KORE_VKRT
 	    .pNext = &buffer_device_address,

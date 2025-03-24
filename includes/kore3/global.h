@@ -91,6 +91,8 @@
 #define KORE_64
 #endif
 
+#define KORE_ARRAY_SIZE(name) (sizeof(name) / sizeof(name[0]))
+
 #ifdef __cplusplus
 extern "C" {
 #endif
