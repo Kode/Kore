@@ -7,7 +7,6 @@
 #include <kinc/backend/graphics4/vertexbuffer.h>
 #include <kinc/color.h>
 #include <kinc/graphics4/compute.h>
-#include <kinc/graphics4/constantbuffer.h>
 #include <kinc/graphics4/indexbuffer.h>
 #include <kinc/graphics4/pipeline.h>
 #include <kinc/graphics4/rendertarget.h>

@@ -2,7 +2,6 @@
 
 #include "G4.c.h"
 #include "compute.c.h"
-#include "constantbuffer.c.h"
 #include "indexbuffer.c.h"
 #include "pipeline.c.h"
 #include "rendertarget.c.h"
