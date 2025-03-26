@@ -59,14 +59,5 @@ var searchData=
   ['kinc_5fvector3_56',['kinc_vector3',['../structkinc__vector3.html',1,'']]],
   ['kinc_5fvector4_57',['kinc_vector4',['../structkinc__vector4.html',1,'']]],
   ['kinc_5fvideo_58',['kinc_video',['../structkinc__video.html',1,'']]],
-  ['kinc_5fwindow_5foptions_59',['kinc_window_options',['../structkinc__window__options.html',1,'']]],
-  ['kope_5ffloat2_60',['kope_float2',['../structkope__float2.html',1,'']]],
-  ['kope_5ffloat3_61',['kope_float3',['../structkope__float3.html',1,'']]],
-  ['kope_5ffloat4_62',['kope_float4',['../structkope__float4.html',1,'']]],
-  ['kope_5fint2_63',['kope_int2',['../structkope__int2.html',1,'']]],
-  ['kope_5fint3_64',['kope_int3',['../structkope__int3.html',1,'']]],
-  ['kope_5fint4_65',['kope_int4',['../structkope__int4.html',1,'']]],
-  ['kope_5fuint2_66',['kope_uint2',['../structkope__uint2.html',1,'']]],
-  ['kope_5fuint3_67',['kope_uint3',['../structkope__uint3.html',1,'']]],
-  ['kope_5fuint4_68',['kope_uint4',['../structkope__uint4.html',1,'']]]
+  ['kinc_5fwindow_5foptions_59',['kinc_window_options',['../structkinc__window__options.html',1,'']]]
 ];
