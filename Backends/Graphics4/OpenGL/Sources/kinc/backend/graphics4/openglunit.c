@@ -8,7 +8,6 @@ static int kinc_internal_opengl_max_vertex_attribute_arrays = 0;
 #include "ShaderStorageBufferImpl.c.h"
 #include "VrInterface.c.h"
 #include "compute.c.h"
-#include "constantbuffer.c.h"
 #include "indexbuffer.c.h"
 #include "pipeline.c.h"
 #include "rendertarget.c.h"

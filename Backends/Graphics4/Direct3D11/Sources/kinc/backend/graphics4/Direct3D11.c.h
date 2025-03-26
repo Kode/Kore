@@ -8,7 +8,6 @@
 #include <kinc/graphics4/shader.h>
 #include <kinc/graphics4/texturearray.h>
 
-#include <kinc/graphics4/constantbuffer.h>
 #include <kinc/graphics4/graphics.h>
 #include <kinc/graphics4/indexbuffer.h>
 #include <kinc/graphics4/rendertarget.h>
