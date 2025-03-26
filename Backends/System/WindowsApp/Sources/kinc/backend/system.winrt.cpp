@@ -160,10 +160,6 @@ bool kinc_internal_handle_messages(void) {
 //	return vec2i(mouseX, mouseY);
 //}
 
-#ifdef KINC_KONG
-extern "C" void kong_init(void);
-#endif
-
 #undef CreateWindow
 
 int kinc_init(const char *name, int width, int height, struct kinc_window_options *win, struct kinc_framebuffer_options *frame) {
@@ -183,10 +179,6 @@ int kinc_init(const char *name, int width, int height, struct kinc_window_option
 
 	kinc_g4_internal_init();
 	kinc_g4_internal_init_window(0, frame->depth_bits, frame->stencil_bits, true);
-
-#ifdef KINC_KONG
-	kong_init();
-#endif
 
 	return 0;
 }

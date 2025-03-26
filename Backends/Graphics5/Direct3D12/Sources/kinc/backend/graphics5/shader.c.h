@@ -3,16 +3,13 @@
 #include <kinc/math/core.h>
 
 void kinc_g5_shader_init(kinc_g5_shader_t *shader, const void *_data, size_t length, kinc_g5_shader_type_t type) {
-#ifndef KINC_KONG
 	memset(shader->impl.constants, 0, sizeof(shader->impl.constants));
 	memset(shader->impl.attributes, 0, sizeof(shader->impl.attributes));
 	memset(shader->impl.textures, 0, sizeof(shader->impl.textures));
-#endif
 
 	unsigned index = 0;
 	uint8_t *data = (uint8_t *)_data;
 
-#ifndef KINC_KONG
 	int attributesCount = data[index++];
 	for (int i = 0; i < attributesCount; ++i) {
 		char name[64];
@@ -59,7 +56,6 @@ void kinc_g5_shader_init(kinc_g5_shader_t *shader, const void *_data, size_t len
 		shader->impl.constants[i] = constant;
 		shader->impl.constantsSize = constant.offset + constant.size;
 	}
-#endif
 
 	shader->impl.length = (int)length - index;
 	shader->impl.data = (uint8_t *)malloc(shader->impl.length);

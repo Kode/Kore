@@ -427,9 +427,7 @@ int kinc_window_create(kinc_window_options_t *win, kinc_framebuffer_options_t *f
 #ifdef KINC_OCULUS
 	vsync = false;
 #endif
-#ifndef KOPE
 	kinc_g4_internal_init_window(windowId, frame->depth_bits, frame->stencil_bits, vsync);
-#endif
 
 	if (win->visible) {
 		kinc_window_show(windowId);

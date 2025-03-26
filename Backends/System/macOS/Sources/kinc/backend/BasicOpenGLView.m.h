@@ -424,18 +424,6 @@ static CAMetalLayer *metalLayer = NULL;
 - (id)initWithFrame:(NSRect)frameRect {
 	self = [super initWithFrame:frameRect];
 
-#ifdef KOPE
-	metalLayer = (CAMetalLayer *)self.layer;
-
-	// metalLayer.device = device;
-	metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
-	metalLayer.framebufferOnly = YES;
-	// metalLayer.presentsWithTransaction = YES;
-
-	metalLayer.opaque = YES;
-	metalLayer.backgroundColor = nil;
-
-#else
 	device = MTLCreateSystemDefaultDevice();
 	commandQueue = [device newCommandQueue];
 	library = [device newDefaultLibrary];
@@ -449,7 +437,6 @@ static CAMetalLayer *metalLayer = NULL;
 
 	metalLayer.opaque = YES;
 	metalLayer.backgroundColor = nil;
-#endif
 
 	return self;
 }

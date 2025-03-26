@@ -174,10 +174,6 @@ static void addMenubar(void) {
 	[NSApp setMainMenu:menubar];
 }
 
-#ifdef KINC_KONG
-void kong_init(void);
-#endif
-
 int kinc_init(const char *name, int width, int height, kinc_window_options_t *win, kinc_framebuffer_options_t *frame) {
 	@autoreleasepool {
 		myapp = [KincApplication sharedApplication];

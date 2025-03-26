@@ -20,7 +20,6 @@ void kinc_g4_compute_shader_init(kinc_g4_compute_shader *shader, void *_data, in
 	unsigned index = 0;
 	uint8_t *data = (uint8_t *)_data;
 
-#ifndef KINC_KONG
 	memset(&shader->impl.attributes, 0, sizeof(shader->impl.attributes));
 	int attributesCount = data[index++];
 	for (int i = 0; i < attributesCount; ++i) {
@@ -71,7 +70,6 @@ void kinc_g4_compute_shader_init(kinc_g4_compute_shader *shader, void *_data, in
 		shader->impl.constants[i] = constant;
 		shader->impl.constantsSize = constant.offset + constant.size;
 	}
-#endif
 
 	shader->impl.length = (int)(length - index);
 	shader->impl.data = (uint8_t *)malloc(shader->impl.length);
@@ -86,7 +84,6 @@ void kinc_g4_compute_shader_init(kinc_g4_compute_shader *shader, void *_data, in
 		return;
 	}
 
-#ifndef KINC_KONG
 	D3D11_BUFFER_DESC desc;
 	desc.ByteWidth = getMultipleOf16(shader->impl.constantsSize);
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -95,7 +92,6 @@ void kinc_g4_compute_shader_init(kinc_g4_compute_shader *shader, void *_data, in
 	desc.MiscFlags = 0;
 	desc.StructureByteStride = 0;
 	kinc_microsoft_affirm(dx_ctx.device->lpVtbl->CreateBuffer(dx_ctx.device, &desc, NULL, &shader->impl.constantBuffer));
-#endif
 }
 
 void kinc_g4_compute_shader_destroy(kinc_g4_compute_shader *shader) {}
@@ -118,7 +114,6 @@ static kinc_internal_hash_index_t *compute_findTextureUnit(kinc_internal_hash_in
 	return NULL;
 }
 
-#ifndef KINC_KONG
 kinc_g4_constant_location_t kinc_g4_compute_shader_get_constant_location(kinc_g4_compute_shader *shader, const char *name) {
 	kinc_g4_constant_location_t location = {0};
 
@@ -185,14 +180,11 @@ kinc_g4_texture_unit_t kinc_g4_compute_shader_get_texture_unit(kinc_g4_compute_s
 	}
 	return unit;
 }
-#endif
 
 void kinc_g4_set_compute_shader(kinc_g4_compute_shader *shader) {
 	dx_ctx.context->lpVtbl->CSSetShader(dx_ctx.context, (ID3D11ComputeShader *)shader->impl.shader, NULL, 0);
-#ifndef KINC_KONG
 	dx_ctx.context->lpVtbl->UpdateSubresource(dx_ctx.context, (ID3D11Resource *)shader->impl.constantBuffer, 0, NULL, computeConstants, 0, 0);
 	dx_ctx.context->lpVtbl->CSSetConstantBuffers(dx_ctx.context, 0, 1, &shader->impl.constantBuffer);
-#endif
 }
 
 void kinc_g4_compute(int x, int y, int z) {

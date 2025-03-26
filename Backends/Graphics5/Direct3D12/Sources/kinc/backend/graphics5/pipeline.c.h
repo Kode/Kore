@@ -37,13 +37,9 @@ void kinc_g5_internal_setConstants(kinc_g5_command_list_t *commandList, kinc_g5_
 	commandList->impl._commandList->SetGraphicsRootSignature(globalRootSignature);
 #endif
 
-#ifndef KINC_KONG
 	if (pipeline->impl.textures > 0) {
-#endif
 		kinc_g5_internal_set_textures(commandList);
-#ifndef KINC_KONG
 	}
-#endif
 }
 
 void kinc_g5_internal_set_compute_constants(kinc_g5_command_list_t *commandList) {
@@ -98,8 +94,6 @@ void kinc_g5_pipeline_destroy(kinc_g5_pipeline_t *pipe) {
 
 // context->IASetInputLayout(inputLayout);
 //}
-
-#ifndef KINC_KONG
 
 #define MAX_SHADER_THING 32
 
@@ -200,8 +194,6 @@ kinc_g5_texture_unit_t kinc_g5_pipeline_get_texture_unit(kinc_g5_pipeline_t *pip
 	}
 	return unit;
 }
-
-#endif
 
 static D3D12_BLEND convert_blend_factor(kinc_g5_blending_factor_t factor) {
 	switch (factor) {
@@ -339,11 +331,7 @@ void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipe) {
 	for (int stream = 0; pipe->inputLayout[stream] != NULL; ++stream) {
 		for (int i = 0; i < pipe->inputLayout[stream]->size; ++i) {
 			vertexDesc[curAttr].SemanticName = "TEXCOORD";
-#ifdef KINC_KONG
-			vertexDesc[curAttr].SemanticIndex = i;
-#else
 			vertexDesc[curAttr].SemanticIndex = findAttribute(pipe->vertexShader, pipe->inputLayout[stream]->elements[i].name).attribute;
-#endif
 			vertexDesc[curAttr].InputSlot = stream;
 			vertexDesc[curAttr].AlignedByteOffset = (i == 0) ? 0 : D3D12_APPEND_ALIGNED_ELEMENT;
 			vertexDesc[curAttr].InputSlotClass =
@@ -472,15 +460,11 @@ void kinc_g5_pipeline_compile(kinc_g5_pipeline_t *pipe) {
 	if (hr != S_OK) {
 		kinc_log(KINC_LOG_LEVEL_WARNING, "Could not create root signature.");
 	}
-#ifndef KINC_KONG
 	pipe->impl.vertexConstantsSize = pipe->vertexShader->impl.constantsSize;
 	pipe->impl.fragmentConstantsSize = pipe->fragmentShader->impl.constantsSize;
 #endif
-#endif
 
-#ifndef KINC_KONG
 	pipe->impl.textures = pipe->fragmentShader->impl.texturesCount;
-#endif
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {0};
 	psoDesc.VS.BytecodeLength = pipe->vertexShader->impl.length;

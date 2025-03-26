@@ -12,7 +12,6 @@ void kinc_g4_shader_init(kinc_g4_shader_t *shader, const void *_data, size_t len
 	uint8_t *data = (uint8_t *)_data;
 	shader->impl.type = (int)type;
 
-#ifndef KINC_KONG
 	memset(&shader->impl.attributes, 0, sizeof(shader->impl.attributes));
 	int attributesCount = data[index++];
 	for (int i = 0; i < attributesCount; ++i) {
@@ -63,7 +62,6 @@ void kinc_g4_shader_init(kinc_g4_shader_t *shader, const void *_data, size_t len
 		shader->impl.constants[i] = constant;
 		shader->impl.constantsSize = constant.offset + constant.size;
 	}
-#endif
 
 	shader->impl.length = (int)(length - index);
 	shader->impl.data = (uint8_t *)malloc(shader->impl.length);

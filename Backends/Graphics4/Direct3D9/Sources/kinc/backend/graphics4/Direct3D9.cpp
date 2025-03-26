@@ -493,8 +493,6 @@ void kinc_g4_set_blend_constant(float r, float g, float b, float a) {
 	device->SetRenderState(D3DRS_BLENDFACTOR, D3DCOLOR_RGBA((int)(r * 255), (int)(g * 255), (int)(b * 255), (int)(a * 255)));
 }
 
-#ifndef KINC_KONG
-
 void kinc_g4_set_bool(kinc_g4_constant_location_t position, bool value) {
 	if (position.impl.shaderType == -1)
 		return;
@@ -711,8 +709,6 @@ void kinc_g4_set_matrix3(kinc_g4_constant_location_t location, kinc_matrix3x3_t 
 		device->SetPixelShaderConstantF(location.impl.reg.regindex, floats, 3);
 }
 
-#endif
-
 void kinc_g4_set_vertex_buffers(kinc_g4_vertex_buffer_t **buffers, int count) {
 	for (int i = 0; i < count; ++i) {
 		kinc_internal_g4_vertex_buffer_set(buffers[i], i);
@@ -723,19 +719,11 @@ void kinc_g4_set_index_buffer(kinc_g4_index_buffer_t *buffer) {
 	kinc_internal_g4_index_buffer_set(buffer);
 }
 
-#ifdef KINC_KONG
-void kinc_internal_texture_set(kinc_g4_texture_t *texture, uint32_t unit);
-
-void kinc_g4_set_texture(uint32_t unit, struct kinc_g4_texture *texture) {
-	kinc_internal_texture_set(texture, unit);
-}
-#else
 void kinc_internal_texture_set(kinc_g4_texture_t *texture, kinc_g4_texture_unit_t unit);
 
 void kinc_g4_set_texture(kinc_g4_texture_unit_t unit, struct kinc_g4_texture *texture) {
 	kinc_internal_texture_set(texture, unit);
 }
-#endif
 
 void kinc_g4_set_image_texture(kinc_g4_texture_unit_t unit, struct kinc_g4_texture *texture) {}
 

@@ -613,7 +613,6 @@ static bool find_layer(VkLayerProperties *layers, int layer_count, const char *w
 }
 
 void kinc_g5_internal_init() {
-#ifndef KOPE
 	VkResult err;
 	uint32_t instance_layer_count = 0;
 
@@ -1037,7 +1036,6 @@ void kinc_g5_internal_init() {
 
 	err = vkCreateSemaphore(vk_ctx.device, &semInfo, NULL, &relay_semaphore);
 	assert(!err);
-#endif
 }
 
 void kinc_g5_internal_destroy() {}
@@ -1110,11 +1108,9 @@ void kinc_g5_internal_init_window(int window_index, int depthBufferBits, int ste
 void kinc_g5_internal_destroy_window(int window_index) {
 	struct vk_window *window = &vk_ctx.windows[window_index];
 	VkSwapchainKHR swapchain = cleanup_swapchain(window_index);
-#ifndef KOPE
 	destroy_render_target_pass(window);
 	vk.fpDestroySwapchainKHR(vk_ctx.device, swapchain, NULL);
 	vk.fpDestroySurfaceKHR(vk_ctx.instance, window->surface, NULL);
-#endif
 }
 
 bool kinc_window_vsynced(int window) {

@@ -28,13 +28,12 @@ typedef struct kinc_g4_compute_internal_shader_constant {
 } kinc_g4_compute_internal_shader_constant;
 
 typedef struct kinc_g4_compute_shader_impl {
-#ifndef KINC_KONG
 	kinc_g4_compute_internal_shader_constant constants[64];
 	int constantsSize;
 	kinc_internal_hash_index_t attributes[64];
 	kinc_internal_hash_index_t textures[64];
 	struct ID3D11Buffer *constantBuffer;
-#endif
+
 	void *shader;
 	uint8_t *data;
 	int length;

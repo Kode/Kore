@@ -33,14 +33,12 @@ kinc_g5_command_list_t commandList;
 uint64_t frameNumber = 0;
 bool waitAfterNextDraw = false;
 
-#ifndef KINC_KONG
 static kinc_g5_constant_buffer_t vertexConstantBuffer;
 static kinc_g5_constant_buffer_t fragmentConstantBuffer;
 static kinc_g5_constant_buffer_t computeConstantBuffer;
 #define constantBufferSize 4096
 #define constantBufferMultiply 100
 static int constantBufferIndex = 0;
-#endif
 
 void kinc_g4_internal_init(void) {
 	kinc_g5_internal_init();
@@ -112,11 +110,9 @@ typedef struct render_state {
 	kinc_g5_texture_unit_t depth_render_target_units[MAX_TEXTURES];
 	int depth_render_target_count;
 
-#ifndef KINC_KONG
 	uint8_t vertex_constant_data[constantBufferSize];
 	uint8_t fragment_constant_data[constantBufferSize];
 	uint8_t compute_constant_data[constantBufferSize];
-#endif
 } render_state;
 
 static render_state current_state;
@@ -141,11 +137,10 @@ void kinc_g4_internal_init_window(int window, int depthBufferBits, int stencilBu
 		kinc_g5_render_target_init_framebuffer(&windows[window].framebuffers[i], kinc_window_width(window), kinc_window_height(window),
 		                                       KINC_G5_RENDER_TARGET_FORMAT_32BIT, depthBufferBits, 0);
 	}
-#ifndef KINC_KONG
+
 	kinc_g5_constant_buffer_init(&vertexConstantBuffer, constantBufferSize * constantBufferMultiply);
 	kinc_g5_constant_buffer_init(&fragmentConstantBuffer, constantBufferSize * constantBufferMultiply);
 	kinc_g5_constant_buffer_init(&computeConstantBuffer, constantBufferSize * constantBufferMultiply);
-#endif
 
 	// to support doing work after kinc_g4_end and before kinc_g4_begin
 	kinc_g5_command_list_begin(&commandList);
@@ -168,7 +163,6 @@ void kinc_g4_on_g5_internal_set_samplers(int count, kinc_g5_texture_unit_t *text
 }
 
 static void startDraw(bool compute) {
-#ifndef KINC_KONG
 	if ((constantBufferIndex + 1) >= constantBufferMultiply || waitAfterNextDraw) {
 		memcpy(current_state.vertex_constant_data, vertexConstantBuffer.data, constantBufferSize);
 		memcpy(current_state.fragment_constant_data, fragmentConstantBuffer.data, constantBufferSize);
@@ -177,13 +171,11 @@ static void startDraw(bool compute) {
 	kinc_g5_constant_buffer_unlock(&vertexConstantBuffer);
 	kinc_g5_constant_buffer_unlock(&fragmentConstantBuffer);
 	kinc_g5_constant_buffer_unlock(&computeConstantBuffer);
-#endif
 
 	kinc_g4_on_g5_internal_set_samplers(current_state.texture_count, current_state.texture_units);
 	kinc_g4_on_g5_internal_set_samplers(current_state.render_target_count, current_state.render_target_units);
 	kinc_g4_on_g5_internal_set_samplers(current_state.depth_render_target_count, current_state.depth_render_target_units);
 
-#ifndef KINC_KONG
 	if (compute) {
 		kinc_g5_command_list_set_compute_constant_buffer(&commandList, &computeConstantBuffer, constantBufferIndex * constantBufferSize, constantBufferSize);
 	}
@@ -191,18 +183,12 @@ static void startDraw(bool compute) {
 		kinc_g5_command_list_set_vertex_constant_buffer(&commandList, &vertexConstantBuffer, constantBufferIndex * constantBufferSize, constantBufferSize);
 		kinc_g5_command_list_set_fragment_constant_buffer(&commandList, &fragmentConstantBuffer, constantBufferIndex * constantBufferSize, constantBufferSize);
 	}
-#endif
 }
 
 static void endDraw(bool compute) {
-#ifndef KINC_KONG
 	++constantBufferIndex;
-#endif
-	if (
-#ifndef KINC_KONG
-	    constantBufferIndex >= constantBufferMultiply ||
-#endif
-	    waitAfterNextDraw) {
+
+	if (constantBufferIndex >= constantBufferMultiply || waitAfterNextDraw) {
 		kinc_g5_command_list_end(&commandList);
 		kinc_g5_command_list_execute(&commandList);
 		kinc_g5_command_list_wait_for_execution_to_finish(&commandList);
@@ -257,12 +243,10 @@ static void endDraw(bool compute) {
 			kinc_g5_command_list_set_texture_from_render_target_depth(&commandList, current_state.depth_render_target_units[i],
 			                                                          current_state.depth_render_targets[i]);
 		}
-#ifndef KINC_KONG
+
 		constantBufferIndex = 0;
-#endif
 		waitAfterNextDraw = false;
 
-#ifndef KINC_KONG
 		kinc_g5_constant_buffer_lock(&vertexConstantBuffer, 0, constantBufferSize);
 		kinc_g5_constant_buffer_lock(&fragmentConstantBuffer, 0, constantBufferSize);
 		kinc_g5_constant_buffer_lock(&computeConstantBuffer, 0, constantBufferSize);
@@ -270,14 +254,11 @@ static void endDraw(bool compute) {
 		memcpy(vertexConstantBuffer.data, current_state.vertex_constant_data, constantBufferSize);
 		memcpy(fragmentConstantBuffer.data, current_state.fragment_constant_data, constantBufferSize);
 		memcpy(computeConstantBuffer.data, current_state.compute_constant_data, constantBufferSize);
-#endif
 	}
 	else {
-#ifndef KINC_KONG
 		kinc_g5_constant_buffer_lock(&vertexConstantBuffer, constantBufferIndex * constantBufferSize, constantBufferSize);
 		kinc_g5_constant_buffer_lock(&fragmentConstantBuffer, constantBufferIndex * constantBufferSize, constantBufferSize);
 		kinc_g5_constant_buffer_lock(&computeConstantBuffer, constantBufferIndex * constantBufferSize, constantBufferSize);
-#endif
 	}
 }
 
@@ -416,11 +397,9 @@ void kinc_g4_disable_scissor(void) {
 }
 
 void kinc_g4_end(int window) {
-#ifndef KINC_KONG
 	kinc_g5_constant_buffer_unlock(&vertexConstantBuffer);
 	kinc_g5_constant_buffer_unlock(&fragmentConstantBuffer);
 	kinc_g5_constant_buffer_unlock(&computeConstantBuffer);
-#endif
 
 	kinc_g5_command_list_render_target_to_framebuffer_barrier(&commandList, &windows[current_window].framebuffers[windows[current_window].currentBuffer]);
 	kinc_g5_command_list_end(&commandList);
@@ -447,8 +426,6 @@ void kinc_g4_flush(void) {
 }
 
 void kinc_g4_set_stencil_reference_value(int value) {}
-
-#ifndef KINC_KONG
 
 void kinc_g4_set_int(kinc_g4_constant_location_t location, int value) {
 	if (location.impl._location.impl.vertexOffset >= 0)
@@ -566,8 +543,6 @@ void kinc_g4_set_matrix3(kinc_g4_constant_location_t location, kinc_matrix3x3_t 
 	if (location.impl._location.impl.computeOffset >= 0)
 		kinc_g5_constant_buffer_set_matrix3(&computeConstantBuffer, location.impl._location.impl.computeOffset, value);
 }
-
-#endif
 
 void kinc_g4_set_texture_addressing(kinc_g4_texture_unit_t unit, kinc_g4_texture_direction_t dir, kinc_g4_texture_addressing_t addressing) {
 	for (int i = 0; i < KINC_G5_SHADER_TYPE_COUNT; ++i) {
@@ -720,38 +695,6 @@ void kinc_g4_set_index_buffer(kinc_g4_index_buffer_t *buffer) {
 	kinc_g5_command_list_set_index_buffer(&commandList, g5_index_buffer);
 }
 
-#ifdef KINC_KONG
-void kinc_g4_set_texture(uint32_t unit, kinc_g4_texture_t *texture) {
-	if (!texture->impl._uploaded) {
-		kinc_g5_command_list_upload_texture(&commandList, &texture->impl._texture);
-		texture->impl._uploaded = true;
-	}
-
-	assert(KINC_G4_SHADER_TYPE_COUNT == KINC_G5_SHADER_TYPE_COUNT);
-	kinc_g5_texture_unit_t g5_unit = {0};
-	for (int i = 0; i < KINC_G5_SHADER_TYPE_COUNT; ++i) {
-		g5_unit.stages[i] = unit;
-	}
-
-	bool found = false;
-	for (int i = 0; i < current_state.texture_count; ++i) {
-		if (kinc_g5_texture_unit_equals(&current_state.texture_units[i], &g5_unit)) {
-			current_state.textures[i] = &texture->impl._texture;
-			current_state.texture_units[i] = g5_unit;
-			found = true;
-			break;
-		}
-	}
-	if (!found) {
-		assert(current_state.texture_count < MAX_TEXTURES);
-		current_state.textures[current_state.texture_count] = &texture->impl._texture;
-		current_state.texture_units[current_state.texture_count] = g5_unit;
-		current_state.texture_count += 1;
-	}
-
-	kinc_g5_command_list_set_texture(&commandList, g5_unit, &texture->impl._texture);
-}
-#else
 void kinc_g4_set_texture(kinc_g4_texture_unit_t unit, kinc_g4_texture_t *texture) {
 	if (!texture->impl._uploaded) {
 		kinc_g5_command_list_upload_texture(&commandList, &texture->impl._texture);
@@ -780,7 +723,6 @@ void kinc_g4_set_texture(kinc_g4_texture_unit_t unit, kinc_g4_texture_t *texture
 
 	kinc_g5_command_list_set_texture(&commandList, g5_unit, &texture->impl._texture);
 }
-#endif
 
 void kinc_g4_set_image_texture(kinc_g4_texture_unit_t unit, kinc_g4_texture_t *texture) {
 	assert(KINC_G4_SHADER_TYPE_COUNT == KINC_G5_SHADER_TYPE_COUNT);
@@ -863,38 +805,6 @@ bool kinc_g4_render_targets_inverted_y(void) {
 	return kinc_g5_render_targets_inverted_y();
 }
 
-#ifdef KINC_KONG
-void kinc_g4_render_target_use_color_as_texture(kinc_g4_render_target_t *render_target, uint32_t unit) {
-	if (render_target->impl.state != KINC_INTERNAL_RENDER_TARGET_STATE_TEXTURE) {
-		kinc_g5_command_list_render_target_to_texture_barrier(&commandList, &render_target->impl._renderTarget);
-		render_target->impl.state = KINC_INTERNAL_RENDER_TARGET_STATE_TEXTURE;
-	}
-
-	assert(KINC_G4_SHADER_TYPE_COUNT == KINC_G5_SHADER_TYPE_COUNT);
-	kinc_g5_texture_unit_t g5_unit = {0};
-	for (int i = 0; i < KINC_G5_SHADER_TYPE_COUNT; ++i) {
-		g5_unit.stages[i] = unit;
-	}
-
-	bool found = false;
-	for (int i = 0; i < current_state.render_target_count; ++i) {
-		if (kinc_g5_texture_unit_equals(&current_state.render_target_units[i], &g5_unit)) {
-			current_state.render_targets[i] = &render_target->impl._renderTarget;
-			current_state.render_target_units[i] = g5_unit;
-			found = true;
-			break;
-		}
-	}
-	if (!found) {
-		assert(current_state.render_target_count < MAX_TEXTURES);
-		current_state.render_targets[current_state.render_target_count] = &render_target->impl._renderTarget;
-		current_state.render_target_units[current_state.render_target_count] = g5_unit;
-		current_state.render_target_count += 1;
-	}
-
-	kinc_g5_command_list_set_texture_from_render_target(&commandList, g5_unit, &render_target->impl._renderTarget);
-}
-#else
 void kinc_g4_render_target_use_color_as_texture(kinc_g4_render_target_t *render_target, kinc_g4_texture_unit_t unit) {
 	if (render_target->impl.state != KINC_INTERNAL_RENDER_TARGET_STATE_TEXTURE) {
 		kinc_g5_command_list_render_target_to_texture_barrier(&commandList, &render_target->impl._renderTarget);
@@ -923,7 +833,6 @@ void kinc_g4_render_target_use_color_as_texture(kinc_g4_render_target_t *render_
 
 	kinc_g5_command_list_set_texture_from_render_target(&commandList, g5_unit, &render_target->impl._renderTarget);
 }
-#endif
 
 void kinc_g4_render_target_use_depth_as_texture(kinc_g4_render_target_t *render_target, kinc_g4_texture_unit_t unit) {
 	if (render_target->impl.state != KINC_INTERNAL_RENDER_TARGET_STATE_TEXTURE) {
@@ -953,12 +862,6 @@ void kinc_g4_render_target_use_depth_as_texture(kinc_g4_render_target_t *render_
 
 	kinc_g5_command_list_set_texture_from_render_target_depth(&commandList, g5_unit, &render_target->impl._renderTarget);
 }
-
-#ifdef KINC_KONG
-void kinc_g4_set_constant_buffer(uint32_t id, struct kinc_g4_constant_buffer *buffer) {
-	kinc_g5_command_list_set_vertex_constant_buffer(&commandList, &buffer->impl.buffer, 0, kinc_g5_constant_buffer_size(&buffer->impl.buffer));
-}
-#endif
 
 void kinc_g4_set_compute_shader(kinc_g4_compute_shader *shader) {
 	kinc_g5_compute_shader *g5_shader = &shader->impl.shader;

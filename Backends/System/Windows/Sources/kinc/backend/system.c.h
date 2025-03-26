@@ -1360,10 +1360,6 @@ static void init_crash_handler() {
 	}
 }
 
-#ifdef KINC_KONG
-void kong_init(void);
-#endif
-
 int kinc_init(const char *name, int width, int height, kinc_window_options_t *win, kinc_framebuffer_options_t *frame) {
 	init_crash_handler();
 
@@ -1414,10 +1410,6 @@ int kinc_init(const char *name, int width, int height, kinc_window_options_t *wi
 	int window = kinc_window_create(win, frame);
 	loadXInput();
 	initializeDirectInput();
-
-#if defined(KINC_KONG) && !defined(KOPE)
-	kong_init();
-#endif
 
 	return window;
 }

@@ -9,7 +9,6 @@ const excludes = [
 	'Backends/Graphics5/Direct3D12/pix',
 	'Backends/System/Android/Sources/Android',
 	'Backends/System/Linux/Sources/kinc/backend/wayland',
-	'Sources/kope/util/offalloc',
 	'Tests/Shader/Sources/stb_image_write.h'
 ];
 

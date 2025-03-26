@@ -35,21 +35,7 @@ const lz4x = true;
 
 project.addFile('Sources/kinc/**');
 
-if (Options.kong) {
-	if (!Options.kope) {
-		project.addKongDir('KongShaders');
-	}
-}
-else {
-	project.addFile('GLSLShaders/**');
-}
-
-if (Options.kope) {
-	project.addDefine('KOPE');
-	project.addFile('Sources/kope/**', {nocompile: true});
-	project.addFile('Sources/kope/**/*unit.c*');
-	project.addFile('Sources/kope/**/*unit.m');
-}
+project.addFile('Shaders/**');
 
 if (lz4x) {
 	addKincDefine('LZ4X');
@@ -61,11 +47,6 @@ function addBackend(name) {
 	project.addFile('Backends/' + name + '/Sources/kinc/**');
 	project.addFile('Backends/' + name + '/Sources/GL/**');
 	project.addFile('Backends/' + name + '/Sources/Android/**');
-	if (Options.kope) {
-		project.addFile('Backends/' + name + '/Sources/kope/**', {nocompile: true});
-		project.addFile('Backends/' + name + '/Sources/kope/**/*unit.c*');
-		project.addFile('Backends/' + name + '/Sources/kope/**/*unit.m');
-	}
 	project.addIncludeDir('Backends/' + name + '/Sources');
 }
 
@@ -188,7 +169,7 @@ if (platform === Platform.Windows) {
 	}
 
 	if (Options.pix) {
-		project.addDefine('KOPE_PIX');
+		addKincDefine('PIX');
 		project.addIncludeDir('Backends/Graphics5/Direct3D12/pix/Include');
 		project.addLib('Backends/Graphics5/Direct3D12/pix/bin/x64/WinPixEventRuntime');
 	}
@@ -313,12 +294,7 @@ else if (platform === Platform.Android) {
 	project.addLib('log');
 	project.addLib('android');
 	project.addLib('EGL');
-	if (Options.kong) {
-		project.addLib('GLESv3');
-	}
-	else {
-		project.addLib('GLESv2');
-	}
+	project.addLib('GLESv2');
 	project.addLib('OpenSLES');
 	project.addLib('OpenMAXAL');
 }
@@ -339,9 +315,6 @@ else if (platform === Platform.Emscripten) {
 		project.addExclude('Backends/Graphics4/OpenGL/Sources/GL/**');
 		addKincDefine('OPENGL');
 		addKincDefine('OPENGL_ES');
-		if (Options.kong) {
-			project.addLib('USE_WEBGL2=1');
-		}
 	}
 	else {
 		throw new Error('Graphics API ' + graphics + ' is not available for Emscripten.');
