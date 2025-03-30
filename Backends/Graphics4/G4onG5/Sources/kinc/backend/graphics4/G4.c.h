@@ -58,8 +58,10 @@ static struct {
 	int currentBuffer;
 	kinc_g5_render_target_t framebuffers[bufferCount];
 
+	bool render_targets_initialized;
 	kinc_g4_render_target_t *current_render_targets[renderTargetCount];
 	int current_render_target_count;
+	int depth_buffer_bits;
 
 	bool resized;
 } windows[16] = {0};
@@ -130,12 +132,11 @@ void kinc_g4_on_g5_internal_restore_render_target(void) {
 void kinc_g4_internal_init_window(int window, int depthBufferBits, int stencilBufferBits, bool vsync) {
 	kinc_g5_internal_init_window(window, depthBufferBits, stencilBufferBits, vsync);
 
+	windows[window].render_targets_initialized = false;
+	windows[window].depth_buffer_bits = depthBufferBits;
+
 	kinc_g5_command_list_init(&commandList);
 	windows[window].currentBuffer = -1;
-	for (int i = 0; i < bufferCount; ++i) {
-		kinc_g5_render_target_init_framebuffer(&windows[window].framebuffers[i], kinc_window_width(window), kinc_window_height(window),
-		                                       KINC_G5_RENDER_TARGET_FORMAT_32BIT, depthBufferBits, 0);
-	}
 
 	kinc_g5_constant_buffer_init(&vertexConstantBuffer, constantBufferSize * constantBufferMultiply);
 	kinc_g5_constant_buffer_init(&fragmentConstantBuffer, constantBufferSize * constantBufferMultiply);
@@ -310,6 +311,15 @@ void kinc_g4_clear(unsigned flags, unsigned color, float depth, int stencil) {
 bool first_run = true;
 
 void kinc_g4_begin(int window) {
+	if (!windows[window].render_targets_initialized) {
+		for (int i = 0; i < bufferCount; ++i) {
+			kinc_g5_render_target_init_framebuffer(&windows[window].framebuffers[i], kinc_window_width(window), kinc_window_height(window),
+			                                       KINC_G5_RENDER_TARGET_FORMAT_32BIT, windows[window].depth_buffer_bits, 0);
+		}
+
+		windows[window].render_targets_initialized = true;
+	}
+
 	// to support doing work after kinc_g4_end and before kinc_g4_begin
 	kinc_g5_command_list_end(&commandList);
 	kinc_g5_command_list_execute(&commandList);
