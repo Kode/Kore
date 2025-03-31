@@ -147,7 +147,7 @@ KINC_FUNC void kinc_window_set_title(int window, const char *title);
 /// <summary>
 /// Sets a resize callback that's called whenever the window is resized.
 /// </summary>
-KINC_FUNC void kinc_window_set_resize_callback(int window, void (*callback)(int x, int y, void *data), void *data);
+KINC_FUNC void kinc_window_set_resize_callback(int window, void (*callback)(int width, int height, void *data), void *data);
 
 /// <summary>
 /// Sets a PPI callback that's called whenever the window moves to a display that uses a different PPI-setting.

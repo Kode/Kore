@@ -526,17 +526,6 @@ void kinc_g5_begin(kinc_g5_render_target_t *renderTarget, int windowId) {
 
 	window->current_backbuffer = (window->current_backbuffer + 1) % KINC_INTERNAL_D3D12_SWAP_CHAIN_COUNT;
 
-	if (window->new_width != window->width || window->new_height != window->height) {
-#ifndef KINC_DIRECT3D_HAS_NO_SWAPCHAIN
-		kinc_microsoft_affirm(
-		    window->swapChain->ResizeBuffers(KINC_INTERNAL_D3D12_SWAP_CHAIN_COUNT, window->new_width, window->new_height, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
-#endif
-		setupSwapChain(window);
-		window->width = window->new_width;
-		window->height = window->new_height;
-		window->current_backbuffer = 0;
-	}
-
 	const UINT64 fenceValue = window->current_fence_value;
 	commandQueue->Signal(window->frame_fences[window->current_backbuffer], fenceValue);
 	window->fence_values[window->current_backbuffer] = fenceValue;
@@ -548,6 +537,16 @@ void kinc_g5_begin(kinc_g5_render_target_t *renderTarget, int windowId) {
 
 	waitForFence(window->frame_fences[window->current_backbuffer], window->fence_values[window->current_backbuffer],
 	             window->frame_fence_events[window->current_backbuffer]);
+
+	if (window->new_width != window->width || window->new_height != window->height) {
+#ifndef KINC_DIRECT3D_HAS_NO_SWAPCHAIN
+		kinc_microsoft_affirm(window->swapChain->ResizeBuffers(0, window->new_width, window->new_height, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
+#endif
+		setupSwapChain(window);
+		window->width = window->new_width;
+		window->height = window->new_height;
+		window->current_backbuffer = 0;
+	}
 
 	// static const float clearColor[] = {0.042f, 0.042f, 0.042f, 1};
 
