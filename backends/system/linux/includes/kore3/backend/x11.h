@@ -1,5 +1,5 @@
-#ifndef KORE_LINUX_X11_BACKEND
-#define KORE_LINUX_X11_BACKEND
+#ifndef KORE_LINUX_X11_HEADER
+#define KORE_LINUX_X11_HEADER
 
 #include <kore3/display.h>
 #include <kore3/log.h>

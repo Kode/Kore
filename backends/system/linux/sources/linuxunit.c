@@ -36,6 +36,12 @@ static void load_lib(void **lib, const char *name) {
 #include "window-x11.c"
 #endif
 
+static bool wayland = false;
+
+bool kore_linux_wayland(void) {
+	return wayland;
+}
+
 struct linux_procs procs = {0};
 
 void kore_linux_init_procs() {
@@ -44,6 +50,8 @@ void kore_linux_init_procs() {
 	}
 #ifndef KORE_NO_WAYLAND
 	if (kore_wayland_init()) {
+		wayland = true;
+		
 		procs.handle_messages = kore_wayland_handle_messages;
 		procs.shutdown        = kore_wayland_shutdown;
 
