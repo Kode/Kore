@@ -1125,7 +1125,9 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	vkBeginCommandBuffer(list->vulkan.command_buffer, &begin_info);
 }
 
-void kore_vulkan_device_wait_until_idle(kore_gpu_device *device) {}
+void kore_vulkan_device_wait_until_idle(kore_gpu_device *device) {
+	vkDeviceWaitIdle(device->vulkan.device);
+}
 
 void kore_vulkan_device_create_descriptor_set(kore_gpu_device *device, VkDescriptorSetLayout *descriptor_set_layout, kore_vulkan_descriptor_set *set) {
 	VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
