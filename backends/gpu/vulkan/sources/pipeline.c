@@ -443,7 +443,7 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 
 	VkFormat color_attachment_formats[8];
 	for (size_t target_index = 0; target_index < parameters->fragment.targets_count; ++target_index) {
-		color_attachment_formats[target_index] = convert_format(parameters->fragment.targets[target_index].format);
+		color_attachment_formats[target_index] = convert_to_vulkan_format(parameters->fragment.targets[target_index].format);
 	}
 
 	const VkPipelineRenderingCreateInfo pipeline_rendering_create_info = {

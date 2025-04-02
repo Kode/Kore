@@ -78,6 +78,6 @@ static PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessenger = NULL;
 static PFN_vkAcquireNextImageKHR vkAcquireNextImage = NULL;
 static PFN_vkQueuePresentKHR     vkQueuePresent     = NULL;
 
-static VkFormat convert_format(kore_gpu_texture_format format);
+static VkFormat convert_to_vulkan_format(kore_gpu_texture_format format);
 
 #endif

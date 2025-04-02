@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <string.h>
 
-static VkFormat convert_format(kore_gpu_texture_format format) {
+static VkFormat convert_to_vulkan_format(kore_gpu_texture_format format) {
 	switch (format) {
 	case KORE_GPU_TEXTURE_FORMAT_R8_UNORM:
 		return VK_FORMAT_R8_UNORM;

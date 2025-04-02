@@ -495,10 +495,12 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 		result = vkCreateImageView(device->vulkan.device, &color_attachment_view, NULL, &view);
 		assert(result == VK_SUCCESS);
 
-		framebuffers[i].vulkan.image      = images[i];
-		framebuffers[i].vulkan.image_view = view;
-		framebuffers[i].vulkan.width      = window_width;
-		framebuffers[i].vulkan.height     = window_height;
+		framebuffers[i].vulkan.image        = images[i];
+		framebuffers[i].vulkan.image_view   = view;
+		framebuffers[i].vulkan.image_layout = VK_IMAGE_LAYOUT_UNDEFINED;
+		framebuffers[i].vulkan.width        = window_width;
+		framebuffers[i].vulkan.height       = window_height;
+		framebuffers[i].vulkan.format       = convert_from_vulkan_format(framebuffer_format);
 	}
 }
 
@@ -931,7 +933,7 @@ void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 }
 
 void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
-	VkFormat format = convert_format(parameters->format);
+	VkFormat format = convert_to_vulkan_format(parameters->format);
 
 	VkFormatProperties format_properties;
 	vkGetPhysicalDeviceFormatProperties(gpu, format, &format_properties);
@@ -940,6 +942,7 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	texture->vulkan.width  = parameters->width;
 	texture->vulkan.height = parameters->height;
+	texture->vulkan.format = parameters->format;
 
 	VkImageCreateInfo image_create_info = {
 	    .sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -955,7 +958,7 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	    .tiling        = VK_IMAGE_TILING_OPTIMAL,
 	    .usage         = VK_IMAGE_USAGE_SAMPLED_BIT,
 	    .flags         = 0,
-	    .initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED,
+	    .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
 	};
 
 	VkMemoryAllocateInfo memory_allocate_info = {
@@ -967,6 +970,8 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	VkResult result = vkCreateImage(device->vulkan.device, &image_create_info, NULL, &texture->vulkan.image);
 	assert(result == VK_SUCCESS);
+
+	texture->vulkan.image_layout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 	VkMemoryRequirements memory_requirements;
 	vkGetImageMemoryRequirements(device->vulkan.device, texture->vulkan.image, &memory_requirements);
@@ -1038,13 +1043,13 @@ kore_gpu_texture_format kore_vulkan_device_framebuffer_format(kore_gpu_device *d
 }
 
 void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
-	if (list->vulkan.presenting) {
+	if (list->vulkan.presenting && framebuffers[framebuffer_index].vulkan.image_layout != VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
 		VkImageMemoryBarrier barrier = {
 		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 		    .pNext         = NULL,
 		    .srcAccessMask = 0,
 		    .dstAccessMask = 0,
-		    .oldLayout     = VK_IMAGE_LAYOUT_UNDEFINED,
+		    .oldLayout     = framebuffers[framebuffer_index].vulkan.image_layout,
 		    .newLayout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
 		    .image         = framebuffers[framebuffer_index].vulkan.image,
 		    .subresourceRange =
@@ -1061,6 +1066,8 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 		vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
 		                     &barrier);
+
+		framebuffers[framebuffer_index].vulkan.image_layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 	}
 
 	vkEndCommandBuffer(list->vulkan.command_buffer);

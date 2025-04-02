@@ -18,7 +18,34 @@ void kore_vulkan_command_list_destroy(kore_gpu_command_list *list) {
 }
 
 void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
-	const kore_gpu_texture *texture = parameters->color_attachments[0].texture.texture;
+	kore_gpu_texture *texture = parameters->color_attachments[0].texture.texture;
+
+	if (texture->vulkan.image_layout != VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+		VkImageMemoryBarrier barrier = {
+		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		    .pNext         = NULL,
+		    .srcAccessMask = 0,
+		    .dstAccessMask = 0,
+		    .oldLayout     = texture->vulkan.image_layout,
+		    .newLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		    .image         = texture->vulkan.image,
+		    .subresourceRange =
+		        {
+		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+		            .baseMipLevel   = 0,
+		            .levelCount     = 1,
+		            .baseArrayLayer = 0,
+		            .layerCount     = 1,
+		        },
+		    .srcAccessMask = 0,
+		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
+		};
+
+		vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
+		                     &barrier);
+
+		texture->vulkan.image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	}
 
 	const VkClearValue clear_value = {
 	    .color =
@@ -125,9 +152,46 @@ void kore_vulkan_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
                                                      const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {}
 
+static uint32_t bytes_per_pixel(kore_gpu_texture_format format) {
+	switch (format) {
+	case KORE_GPU_TEXTURE_FORMAT_R8_UNORM:
+		return 1u;
+	}
+
+	assert(false);
+	return 0u;
+}
+
 void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                      const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {
+	if (source->texture->vulkan.image_layout != VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+		VkImageMemoryBarrier barrier = {
+		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		    .pNext         = NULL,
+		    .srcAccessMask = 0,
+		    .dstAccessMask = 0,
+		    .oldLayout     = source->texture->vulkan.image_layout,
+		    .newLayout     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		    .image         = source->texture->vulkan.image,
+		    .subresourceRange =
+		        {
+		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+		            .baseMipLevel   = 0,
+		            .levelCount     = 1,
+		            .baseArrayLayer = 0,
+		            .layerCount     = 1,
+		        },
+		    .srcAccessMask = 0,
+		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
+		};
+
+		vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
+		                     &barrier);
+
+		source->texture->vulkan.image_layout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	}
+
 	VkImageAspectFlags aspect_mask;
 	switch (source->aspect) {
 	case KORE_GPU_IMAGE_COPY_ASPECT_ALL:
@@ -143,7 +207,7 @@ void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
 
 	VkBufferImageCopy region = {
 	    .bufferOffset      = destination->offset,
-	    .bufferRowLength   = destination->bytes_per_row,
+	    .bufferRowLength   = destination->bytes_per_row / bytes_per_pixel(source->texture->vulkan.format),
 	    .bufferImageHeight = destination->rows_per_image,
 	    .imageSubresource =
 	        {
@@ -165,7 +229,8 @@ void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
 	            .depth  = 1,
 	        },
 	};
-	vkCmdCopyImageToBuffer(list->vulkan.command_buffer, source->texture->vulkan.image, VK_IMAGE_LAYOUT_GENERAL, destination->buffer->vulkan.buffer, 1, &region);
+	vkCmdCopyImageToBuffer(list->vulkan.command_buffer, source->texture->vulkan.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, destination->buffer->vulkan.buffer,
+	                       1, &region);
 }
 
 void kore_vulkan_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
