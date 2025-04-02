@@ -27,7 +27,7 @@ jobs:
     - name: Commit
       id: commit
       continue-on-error: true
-      run: git commit -m "Format the latest code-changes"
+      run: git commit -m "Format C"
     - name: Push
       if: steps.commit.outcome == 'success'
       continue-on-error: true
