@@ -11,9 +11,6 @@
 
 #ifdef KORE_LINUX
 #include <kore3/backend/linux.h>
-
-#include <vulkan/vulkan_wayland.h>
-#include <vulkan/vulkan_xlib.h>
 #endif
 
 #include <kore3/error.h>

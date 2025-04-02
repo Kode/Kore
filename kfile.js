@@ -435,6 +435,8 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 		addBackend('gpu/vulkan');
 		project.addLib('vulkan');
 		addKoreDefine('VULKAN');
+		project.addDefine('VK_USE_PLATFORM_WAYLAND_KHR');
+		project.addDefine('VK_USE_PLATFORM_XLIB_KHR');
 	}
 	else if (graphics === GraphicsApi.OpenGL || (platform === Platform.FreeBSD && graphics === GraphicsApi.Default)) {
 		addBackend('gpu/opengl');
