@@ -450,7 +450,7 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 	    .imageColorSpace       = format.colorSpace,
 	    .imageExtent.width     = swapchain_extent.width,
 	    .imageExtent.height    = swapchain_extent.height,
-	    .imageUsage            = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+	    .imageUsage            = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 	    .preTransform          = (surface_capabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) ? VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR
 	                                                                                                                : surface_capabilities.currentTransform,
 	    .compositeAlpha        = composite_alpha,
