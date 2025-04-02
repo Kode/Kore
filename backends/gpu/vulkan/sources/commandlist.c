@@ -152,16 +152,6 @@ void kore_vulkan_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
                                                      const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {}
 
-static uint32_t bytes_per_pixel(kore_gpu_texture_format format) {
-	switch (format) {
-	case KORE_GPU_TEXTURE_FORMAT_R8_UNORM:
-		return 1u;
-	}
-
-	assert(false);
-	return 0u;
-}
-
 void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                      const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {
