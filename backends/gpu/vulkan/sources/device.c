@@ -9,6 +9,10 @@
 #include <kore3/backend/windows.h>
 #endif
 
+#ifdef KORE_LINUX
+#include <kore3/backend/linux.h>
+#endif
+
 #include <kore3/error.h>
 #include <kore3/log.h>
 #include <kore3/system.h>
@@ -233,6 +237,19 @@ static void load_extension_functions(void) {
 #undef GET_VULKAN_FUNCTION
 }
 
+static bool presentation_support(VkPhysicalDevice gpu, uint32_t queue_index) {
+#if defined(KORE_WINDOWS)
+	return vkGetPhysicalDeviceWin32PresentationSupportKHR(gpu, queue_index);
+#elif defined(KORE_LINUX)
+	if (kore_linux_wayland()) {
+		return kore_wayland_vulkan_get_physical_device_presentation_support(current_gpu, queue_index);
+	}
+	else {
+		return kore_x11_vulkan_get_physical_device_presentation_support(current_gpu, queue_index);
+	}
+#endif
+}
+
 void find_gpu(void) {
 	VkPhysicalDevice physical_devices[64];
 	uint32_t         gpu_count = sizeof(physical_devices) / sizeof(physical_devices[0]);
@@ -257,11 +274,9 @@ void find_gpu(void) {
 		bool can_render  = false;
 
 		for (uint32_t queue_index = 0; queue_index < queue_count; ++queue_index) {
-#ifdef KORE_WINDOWS
-			if (vkGetPhysicalDeviceWin32PresentationSupportKHR(current_gpu, queue_index)) {
+			if (presentation_support(current_gpu, queue_index)) {
 				can_present = true;
 			}
-#endif
 
 			if ((queue_props[queue_index].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0) {
 				can_render = true;
@@ -318,14 +333,11 @@ uint32_t find_graphics_queue_family(void) {
 
 	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_family_count, queue_family_props);
 
-#ifdef KORE_WINDOWS
 	for (uint32_t queue_family_index = 0; queue_family_index < queue_family_count; ++queue_family_index) {
-		if ((queue_family_props[queue_family_index].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0 &&
-		    vkGetPhysicalDeviceWin32PresentationSupportKHR(gpu, queue_family_index)) {
+		if ((queue_family_props[queue_family_index].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0 && presentation_support(gpu, queue_family_index)) {
 			return queue_family_index;
 		}
 	}
-#endif
 
 	kore_error_message("Graphics or present queue not found");
 	return 0;
@@ -356,30 +368,34 @@ static VkSurfaceFormatKHR find_surface_format(VkSurfaceKHR surface) {
 	}
 }
 
-static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_family_index) {
-#ifdef KORE_WINDOWS
-	HWND window_handle = kore_windows_window_handle(0);
-#endif
-	uint32_t window_width  = kore_window_width(0);
-	uint32_t window_height = kore_window_height(0);
-	bool     vsync         = true; // kore_window_vsynced(0); // TODO
-
-#ifdef KORE_WINDOWS
+static VkResult create_surface(VkInstance instance, int window_index, VkSurfaceKHR *surface) {
+#if defined(KORE_WINDOWS)
 	const VkWin32SurfaceCreateInfoKHR surface_create_info = {
 	    .sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
 	    .pNext     = NULL,
 	    .flags     = 0,
 	    .hinstance = GetModuleHandle(NULL),
-	    .hwnd      = window_handle,
+	    .hwnd      = kore_windows_window_handle(0),
 	};
+	return vkCreateWin32SurfaceKHR(instance, &surface_create_info, NULL, surface);
+#elif defined(KORE_LINUX)
+	if (kore_linux_wayland()) {
+		return kinc_wayland_vulkan_create_surface(instance, window_index, surface);
+	}
+	else {
+		return kinc_x11_vulkan_create_surface(instance, window_index, surface);
+	}
 #endif
+}
+
+static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_family_index) {
+	uint32_t window_width  = kore_window_width(0);
+	uint32_t window_height = kore_window_height(0);
+	bool     vsync         = true; // kore_window_vsynced(0); // TODO
 
 	VkSurfaceKHR surface = {0};
-	VkResult     result  = VK_SUCCESS;
 
-#ifdef KORE_WINDOWS
-	result = vkCreateWin32SurfaceKHR(instance, &surface_create_info, NULL, &surface);
-#endif
+	VkResult result = create_surface(instance, 0, &surface);
 
 	VkBool32 surface_supported = false;
 	result                     = vkGetPhysicalDeviceSurfaceSupportKHR(gpu, graphics_queue_family_index, surface, &surface_supported);
@@ -559,9 +575,18 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	        .name     = VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 	        .optional = true,
 	    },
-#ifdef KORE_WINDOWS
+#if defined(KORE_WINDOWS)
 	    {
 	        .name = VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+	    },
+#elif defined(KORE_LINUX)
+	    {
+	        .name     = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME,
+	        .optional = true,
+	    },
+	    {
+	        .name     = VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
+	        .optional = true,
 	    },
 #endif
 	};
@@ -823,6 +848,9 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	}
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_INDIRECT) != 0) {
 		usage |= VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
+	}
+	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0) {
+		usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 	}
 #ifdef KORE_VKRT
 	usage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
@@ -1209,7 +1237,7 @@ void kore_vulkan_device_create_raytracing_hierarchy(kore_gpu_device *device, kor
 void kore_vulkan_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set) {}
 
 uint32_t kore_vulkan_device_align_texture_row_bytes(kore_gpu_device *device, uint32_t row_bytes) {
-	return 0;
+	return row_bytes;
 }
 
 void kore_vulkan_device_create_fence(kore_gpu_device *device, kore_gpu_fence *fence) {}
