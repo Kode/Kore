@@ -242,10 +242,10 @@ static bool presentation_support(VkPhysicalDevice gpu, uint32_t queue_index) {
 	return vkGetPhysicalDeviceWin32PresentationSupportKHR(gpu, queue_index);
 #elif defined(KORE_LINUX)
 	if (kore_linux_wayland()) {
-		return kore_wayland_vulkan_get_physical_device_presentation_support(current_gpu, queue_index);
+		return kore_wayland_vulkan_get_physical_device_presentation_support(gpu, queue_index);
 	}
 	else {
-		return kore_x11_vulkan_get_physical_device_presentation_support(current_gpu, queue_index);
+		return kore_x11_vulkan_get_physical_device_presentation_support(gpu, queue_index);
 	}
 #endif
 }
@@ -380,10 +380,10 @@ static VkResult create_surface(VkInstance instance, int window_index, VkSurfaceK
 	return vkCreateWin32SurfaceKHR(instance, &surface_create_info, NULL, surface);
 #elif defined(KORE_LINUX)
 	if (kore_linux_wayland()) {
-		return kinc_wayland_vulkan_create_surface(instance, window_index, surface);
+		return kore_wayland_vulkan_create_surface(instance, window_index, surface);
 	}
 	else {
-		return kinc_x11_vulkan_create_surface(instance, window_index, surface);
+		return kore_x11_vulkan_create_surface(instance, window_index, surface);
 	}
 #endif
 }

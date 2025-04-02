@@ -54,7 +54,7 @@ static bool isWindows10OrGreater(void) {
 
 void kore_d3d11_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
 	D3D_FEATURE_LEVEL feature_levels[] = {
-#ifdef KINC_WINDOWSAPP
+#ifdef KORE_WINDOWSAPP
 	    D3D_FEATURE_LEVEL_11_1,
 #endif
 	    D3D_FEATURE_LEVEL_11_0,
