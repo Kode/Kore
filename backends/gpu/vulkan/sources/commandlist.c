@@ -127,7 +127,46 @@ void kore_vulkan_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
 
 void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                      const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
-                                                     uint32_t depth_or_array_layers) {}
+                                                     uint32_t depth_or_array_layers) {
+	VkImageAspectFlags aspect_mask;
+	switch (source->aspect) {
+	case KORE_GPU_IMAGE_COPY_ASPECT_ALL:
+		aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+		break;
+	case KORE_GPU_IMAGE_COPY_ASPECT_DEPTH_ONLY:
+		aspect_mask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		break;
+	case KORE_GPU_IMAGE_COPY_ASPECT_STENCIL_ONLY:
+		aspect_mask = VK_IMAGE_ASPECT_STENCIL_BIT;
+		break;
+	}
+
+	VkBufferImageCopy region = {
+	    .bufferOffset      = destination->offset,
+	    .bufferRowLength   = destination->bytes_per_row,
+	    .bufferImageHeight = destination->rows_per_image,
+	    .imageSubresource =
+	        {
+	            .aspectMask     = aspect_mask,
+	            .mipLevel       = source->mip_level,
+	            .baseArrayLayer = source->origin_z,
+	            .layerCount     = depth_or_array_layers,
+	        },
+	    .imageOffset =
+	        {
+	            .x = source->origin_x,
+	            .y = source->origin_y,
+	            .z = 0,
+	        },
+	    .imageExtent =
+	        {
+	            .width  = width,
+	            .height = height,
+	            .depth  = 1,
+	        },
+	};
+	vkCmdCopyImageToBuffer(list->vulkan.command_buffer, source->texture->vulkan.image, VK_IMAGE_LAYOUT_GENERAL, destination->buffer->vulkan.buffer, 1, &region);
+}
 
 void kore_vulkan_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                       const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
