@@ -1035,6 +1035,10 @@ kore_gpu_texture_format kore_vulkan_device_framebuffer_format(kore_gpu_device *d
 		return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
 	case VK_FORMAT_B8G8R8A8_UNORM:
 		return KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM;
+	case VK_FORMAT_B8G8R8A8_SRGB:
+		return KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM_SRGB;
+	case VK_FORMAT_R8G8B8A8_SRGB:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM_SRGB;
 	default:
 		assert(false);
 	}
