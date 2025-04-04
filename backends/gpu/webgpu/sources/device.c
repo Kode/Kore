@@ -220,7 +220,19 @@ void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	list->webgpu.command_encoder                            = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
 }
 
-void kore_webgpu_device_wait_until_idle(kore_gpu_device *device) {}
+static bool work_done = false;
+
+static void work_done_callback(WGPUQueueWorkDoneStatus status, void *userdata) {
+	work_done = true;
+}
+
+void kore_webgpu_device_wait_until_idle(kore_gpu_device *device) {
+	work_done = false;
+	wgpuQueueOnSubmittedWorkDone(device->webgpu.queue, work_done_callback, NULL);
+	while (!work_done) {
+		emscripten_sleep(0);
+	}
+}
 
 void kore_webgpu_device_create_descriptor_set(kore_gpu_device *device, uint32_t descriptor_count, uint32_t dynamic_descriptor_count,
                                               uint32_t bindless_descriptor_count, uint32_t sampler_count, kore_webgpu_descriptor_set *set) {}
@@ -236,7 +248,7 @@ void kore_webgpu_device_create_raytracing_hierarchy(kore_gpu_device *device, kor
 void kore_webgpu_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set) {}
 
 uint32_t kore_webgpu_device_align_texture_row_bytes(kore_gpu_device *device, uint32_t row_bytes) {
-	return 0;
+	return row_bytes;
 }
 
 void kore_webgpu_device_create_fence(kore_gpu_device *device, kore_gpu_fence *fence) {}
