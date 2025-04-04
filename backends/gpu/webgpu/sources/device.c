@@ -58,7 +58,7 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	WGPUSurfaceConfiguration surface_configuration = {
 	    .device      = wgpu_device,
 	    .format      = capabilities.formats[0],
-	    .usage       = WGPUTextureUsage_RenderAttachment,
+	    .usage       = WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_CopySrc,
 	    .alphaMode   = WGPUCompositeAlphaMode_Auto,
 	    .width       = kore_window_width(0),
 	    .height      = kore_window_height(0),
@@ -248,7 +248,7 @@ void kore_webgpu_device_create_raytracing_hierarchy(kore_gpu_device *device, kor
 void kore_webgpu_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set) {}
 
 uint32_t kore_webgpu_device_align_texture_row_bytes(kore_gpu_device *device, uint32_t row_bytes) {
-	return row_bytes;
+	return (uint32_t)align_pow2((int)row_bytes, 256);
 }
 
 void kore_webgpu_device_create_fence(kore_gpu_device *device, kore_gpu_fence *fence) {}

@@ -91,9 +91,51 @@ void kore_webgpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
                                                      const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {}
 
+static WGPUTextureAspect convert_texture_aspect(kore_gpu_texture_aspect aspect) {
+	switch (aspect) {
+	case KORE_GPU_IMAGE_COPY_ASPECT_ALL:
+		return WGPUTextureAspect_All;
+	case KORE_GPU_IMAGE_COPY_ASPECT_DEPTH_ONLY:
+		return WGPUTextureAspect_DepthOnly;
+	case KORE_GPU_IMAGE_COPY_ASPECT_STENCIL_ONLY:
+		return WGPUTextureAspect_StencilOnly;
+	}
+
+	assert(false);
+	return WGPUTextureAspect_All;
+}
+
 void kore_webgpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                      const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
-                                                     uint32_t depth_or_array_layers) {}
+                                                     uint32_t depth_or_array_layers) {
+	WGPUImageCopyTexture copy_texture = {
+		.texture = source->texture->webgpu.texture,
+		.mipLevel = source->mip_level,
+		.origin = {
+			.x = source->origin_x,
+			.y = source->origin_y,
+			.z = source->origin_z,
+		},
+		.aspect = convert_texture_aspect(source->aspect),
+	};
+
+	WGPUImageCopyBuffer copy_buffer = {
+		.layout = {
+			.offset = destination->offset,
+			.bytesPerRow = destination->bytes_per_row,
+			.rowsPerImage = destination->rows_per_image,
+		},
+		.buffer = destination->buffer->webgpu.buffer,
+	};
+
+	WGPUExtent3D size = {
+		.width = width,
+		.height = height,
+		.depthOrArrayLayers = depth_or_array_layers,
+	};
+
+	wgpuCommandEncoderCopyTextureToBuffer(list->webgpu.command_encoder, &copy_texture, &copy_buffer, &size);
+}
 
 void kore_webgpu_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                       const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
