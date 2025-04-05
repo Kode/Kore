@@ -61,6 +61,16 @@ typedef enum kore_gpu_texture_format {
 
 uint32_t kore_gpu_texture_format_byte_size(kore_gpu_texture_format format);
 
+typedef enum kore_gpu_texture_format_type {
+	KORE_GPU_TEXTURE_FORMAT_TYPE_FLOAT,
+	KORE_GPU_TEXTURE_FORMAT_TYPE_UINT,
+	KORE_GPU_TEXTURE_FORMAT_TYPE_INT,
+	KORE_GPU_TEXTURE_FORMAT_TYPE_UNORM,
+	KORE_GPU_TEXTURE_FORMAT_TYPE_SNORM
+} kore_gpu_texture_format_type;
+
+kore_gpu_texture_format_type kore_gpu_texture_format_get_type(kore_gpu_texture_format format);
+
 bool kore_gpu_texture_format_is_depth(kore_gpu_texture_format format);
 
 #ifdef __cplusplus

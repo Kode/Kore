@@ -17,6 +17,30 @@ void kore_vulkan_command_list_destroy(kore_gpu_command_list *list) {
 	vkFreeCommandBuffers(list->vulkan.device, list->vulkan.command_pool, 1, &list->vulkan.command_buffer);
 }
 
+VkAttachmentLoadOp convert_load_op(kore_gpu_load_op op) {
+	switch (op) {
+	case KORE_GPU_LOAD_OP_LOAD:
+		return VK_ATTACHMENT_LOAD_OP_LOAD;
+	case KORE_GPU_LOAD_OP_CLEAR:
+		return VK_ATTACHMENT_LOAD_OP_CLEAR;
+	}
+
+	assert(false);
+	return VK_ATTACHMENT_LOAD_OP_CLEAR;
+}
+
+VkAttachmentStoreOp convert_store_op(kore_gpu_store_op op) {
+	switch (op) {
+	case KORE_GPU_STORE_OP_STORE:
+		return VK_ATTACHMENT_STORE_OP_STORE;
+	case KORE_GPU_STORE_OP_DISCARD:
+		return VK_ATTACHMENT_STORE_OP_NONE;
+	}
+
+	assert(false);
+	return VK_ATTACHMENT_STORE_OP_STORE;
+}
+
 void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	kore_gpu_texture *texture = parameters->color_attachments[0].texture.texture;
 
@@ -47,28 +71,43 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 		texture->vulkan.image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 	}
 
-	const VkClearValue clear_value = {
-	    .color =
-	        {
-	            .float32 = {0.0f, 0.0f, 0.0f, 1.0f},
-	        },
-	    .depthStencil =
-	        {
-	            .depth   = 1.0f,
-	            .stencil = 0,
-	        },
-	};
+	VkClearValue clear_value;
+
+	switch (kore_gpu_texture_format_get_type(texture->vulkan.format)) {
+	case KORE_GPU_TEXTURE_FORMAT_TYPE_FLOAT:
+	case KORE_GPU_TEXTURE_FORMAT_TYPE_UNORM:
+	case KORE_GPU_TEXTURE_FORMAT_TYPE_SNORM:
+		clear_value.color.float32[0] = parameters->color_attachments[0].clear_value.r;
+		clear_value.color.float32[1] = parameters->color_attachments[0].clear_value.g;
+		clear_value.color.float32[2] = parameters->color_attachments[0].clear_value.b;
+		clear_value.color.float32[3] = parameters->color_attachments[0].clear_value.a;
+		break;
+	case KORE_GPU_TEXTURE_FORMAT_TYPE_INT:
+		clear_value.color.int32[0] = (int32_t)(parameters->color_attachments[0].clear_value.r * 255 - 128);
+		clear_value.color.int32[1] = (int32_t)(parameters->color_attachments[0].clear_value.g * 255 - 128);
+		clear_value.color.int32[2] = (int32_t)(parameters->color_attachments[0].clear_value.b * 255 - 128);
+		clear_value.color.int32[3] = (int32_t)(parameters->color_attachments[0].clear_value.a * 255 - 128);
+		break;
+	case KORE_GPU_TEXTURE_FORMAT_TYPE_UINT:
+		clear_value.color.uint32[0] = (uint32_t)(parameters->color_attachments[0].clear_value.r * 255);
+		clear_value.color.uint32[1] = (uint32_t)(parameters->color_attachments[0].clear_value.g * 255);
+		clear_value.color.uint32[2] = (uint32_t)(parameters->color_attachments[0].clear_value.b * 255);
+		clear_value.color.uint32[3] = (uint32_t)(parameters->color_attachments[0].clear_value.a * 255);
+		break;
+	default:
+		assert(false);
+	}
 
 	const VkRenderingAttachmentInfo color_attachment_info = {
 	    .sType              = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
 	    .pNext              = NULL,
 	    .imageView          = texture->vulkan.image_view,
-	    .imageLayout        = VK_IMAGE_LAYOUT_GENERAL,
+	    .imageLayout        = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 	    .resolveMode        = VK_RESOLVE_MODE_NONE,
 	    .resolveImageView   = VK_NULL_HANDLE,
 	    .resolveImageLayout = VK_IMAGE_LAYOUT_GENERAL,
-	    .loadOp             = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-	    .storeOp            = VK_ATTACHMENT_STORE_OP_STORE,
+	    .loadOp             = convert_load_op(parameters->color_attachments[0].load_op),
+	    .storeOp            = convert_store_op(parameters->color_attachments[0].store_op),
 	    .clearValue         = clear_value,
 	};
 
