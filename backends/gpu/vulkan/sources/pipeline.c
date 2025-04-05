@@ -175,48 +175,16 @@ static VkShaderModule create_shader_module(kore_vulkan_device *device, const kor
 }
 
 void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_render_pipeline *pipeline,
-                                      const kore_vulkan_render_pipeline_parameters *parameters) {
-	VkDescriptorSetLayoutBinding layoutBindings[18];
-	memset(layoutBindings, 0, sizeof(layoutBindings));
-
-	layoutBindings[0].binding            = 0;
-	layoutBindings[0].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-	layoutBindings[0].descriptorCount    = 1;
-	layoutBindings[0].stageFlags         = VK_SHADER_STAGE_VERTEX_BIT;
-	layoutBindings[0].pImmutableSamplers = NULL;
-
-	layoutBindings[1].binding            = 1;
-	layoutBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-	layoutBindings[1].descriptorCount    = 1;
-	layoutBindings[1].stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT;
-	layoutBindings[1].pImmutableSamplers = NULL;
-
-	for (int i = 2; i < 18; ++i) {
-		layoutBindings[i].binding            = i;
-		layoutBindings[i].descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		layoutBindings[i].descriptorCount    = 1;
-		layoutBindings[i].stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
-		layoutBindings[i].pImmutableSamplers = NULL;
-	}
-
-	VkDescriptorSetLayoutCreateInfo descriptor_layout = {0};
-	descriptor_layout.sType                           = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	descriptor_layout.pNext                           = NULL;
-	descriptor_layout.bindingCount                    = 18;
-	descriptor_layout.pBindings                       = layoutBindings;
-
-	VkDescriptorSetLayout descriptor_set_layout;
-	VkResult              result = vkCreateDescriptorSetLayout(device->device, &descriptor_layout, NULL, &descriptor_set_layout);
-	assert(result == VK_SUCCESS);
-
+                                      const kore_vulkan_render_pipeline_parameters *parameters, const VkDescriptorSetLayout *descriptor_set_layouts,
+                                      uint32_t descriptor_set_layouts_count) {
 	const VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
 	    .sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 	    .pNext          = NULL,
-	    .setLayoutCount = 1,
-	    .pSetLayouts    = &descriptor_set_layout,
+	    .setLayoutCount = descriptor_set_layouts_count,
+	    .pSetLayouts    = descriptor_set_layouts,
 	};
 
-	result = vkCreatePipelineLayout(device->device, &pipeline_layout_create_info, NULL, &pipeline->pipeline_layout);
+	VkResult result = vkCreatePipelineLayout(device->device, &pipeline_layout_create_info, NULL, &pipeline->pipeline_layout);
 	assert(result == VK_SUCCESS);
 
 	uint32_t attributes_count = 0;

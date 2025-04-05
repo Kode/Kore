@@ -4,11 +4,14 @@
 #include "device_structs.h"
 #include "pipeline_structs.h"
 
+#include "vulkanmini.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_render_pipeline *pipe, const kore_vulkan_render_pipeline_parameters *parameters);
+void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_render_pipeline *pipe, const kore_vulkan_render_pipeline_parameters *parameters,
+                                      const VkDescriptorSetLayout *descriptor_set_layouts, uint32_t descriptor_set_layouts_count);
 
 void kore_vulkan_render_pipeline_destroy(kore_vulkan_render_pipeline *pipe);
 

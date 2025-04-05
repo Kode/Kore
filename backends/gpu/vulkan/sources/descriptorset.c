@@ -5,6 +5,25 @@
 
 #include <kore3/util/align.h>
 
+void kore_vulkan_descriptor_set_set_buffer_view(kore_gpu_device *device, kore_vulkan_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index) {
+	VkDescriptorBufferInfo buffer_info = {
+	    .buffer = buffer->vulkan.buffer,
+	    .offset = 0,
+	    .range  = buffer->vulkan.size,
+	};
+
+	VkWriteDescriptorSet write = {
+	    .sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+	    .dstSet          = set->descriptor_set,
+	    .dstBinding      = index,
+	    .descriptorCount = 1,
+	    .descriptorType  = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	    .pBufferInfo     = &buffer_info,
+	};
+
+	vkUpdateDescriptorSets(device->vulkan.device, 1, &write, 0, NULL);
+}
+
 void kore_vulkan_descriptor_set_set_texture_view(kore_gpu_device *device, kore_vulkan_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                  uint32_t index) {
 	VkDescriptorImageInfo image_info = {
@@ -42,6 +61,6 @@ void kore_vulkan_descriptor_set_set_sampler(kore_gpu_device *device, kore_vulkan
 	vkUpdateDescriptorSets(device->vulkan.device, 1, &write, 0, NULL);
 }
 
-void kore_vulkan_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer) {}
+void kore_vulkan_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {}
 
 void kore_vulkan_descriptor_set_prepare_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view) {}

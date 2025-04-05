@@ -858,6 +858,10 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	usage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
 #endif
 
+	if (usage == 0) {
+		usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+	}
+
 	const VkBufferCreateInfo create_info = {
 	    .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
 	    .pNext = NULL,
