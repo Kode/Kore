@@ -110,6 +110,8 @@ kore_gpu_texture_format kore_metal_device_framebuffer_format(kore_gpu_device *de
 	return KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM;
 }
 
+static void *last_running_command_buffer = NULL;
+
 void kore_metal_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
 	kore_metal_command_list_end_compute_pass(list);
 	kore_metal_command_list_end_blit_pass(list);
@@ -117,12 +119,20 @@ void kore_metal_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 	[command_buffer commit];
 
+	last_running_command_buffer = (__bridge_retained void *)command_buffer;
+	
 	id<MTLCommandQueue> command_queue = (__bridge id<MTLCommandQueue>)list->metal.command_queue;
 	command_buffer                    = [command_queue commandBuffer];
 	list->metal.command_buffer        = (__bridge_retained void *)[command_queue commandBuffer];
 }
 
-void kore_metal_device_wait_until_idle(kore_gpu_device *device) {}
+void kore_metal_device_wait_until_idle(kore_gpu_device *device) {
+	if (last_running_command_buffer != NULL) {
+		id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)last_running_command_buffer;
+		[command_buffer waitUntilCompleted];
+		last_running_command_buffer = NULL;
+	}
+}
 
 void kore_metal_device_create_descriptor_set_buffer(kore_gpu_device *device, uint64_t encoded_length, kore_gpu_buffer *buffer) {
 	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
