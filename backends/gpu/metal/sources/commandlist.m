@@ -303,7 +303,15 @@ void kore_metal_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_
 	[blit_command_encoder fillBuffer:metal_buffer range:NSMakeRange(offset, size) value:0];
 }
 
-void kore_metal_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_metal_compute_pipeline *pipeline) {
+static uint32_t threads_per_threadsgroup_x = 0;
+static uint32_t threads_per_threadsgroup_y = 0;
+static uint32_t threads_per_threadsgroup_z = 0;
+
+void kore_metal_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_metal_compute_pipeline *pipeline, uint32_t threads_x, uint32_t threads_y, uint32_t threads_z) {
+	threads_per_threadsgroup_x = threads_x;
+	threads_per_threadsgroup_y = threads_y;
+	threads_per_threadsgroup_z = threads_z;
+	
 	kore_metal_command_list_begin_compute_pass(list);
 
 	id<MTLComputePipelineState>  metal_pipeline          = (__bridge id<MTLComputePipelineState>)pipeline->pipeline;
@@ -317,7 +325,7 @@ void kore_metal_command_list_compute(kore_gpu_command_list *list, uint32_t workg
 
 	id<MTLComputeCommandEncoder> compute_command_encoder = (__bridge id<MTLComputeCommandEncoder>)list->metal.compute_command_encoder;
 	[compute_command_encoder dispatchThreadgroups:MTLSizeMake(workgroup_count_x, workgroup_count_y, workgroup_count_z)
-	                        threadsPerThreadgroup:MTLSizeMake(16, 16, 1)];
+	                        threadsPerThreadgroup:MTLSizeMake(threads_per_threadsgroup_x, threads_per_threadsgroup_y, threads_per_threadsgroup_z)];
 }
 
 void kore_metal_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {

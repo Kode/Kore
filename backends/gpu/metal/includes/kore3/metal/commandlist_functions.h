@@ -61,7 +61,7 @@ void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, str
 
 void kore_metal_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size);
 
-void kore_metal_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_metal_compute_pipeline *pipeline);
+void kore_metal_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_metal_compute_pipeline *pipeline, uint32_t threads_x, uint32_t threads_y, uint32_t threads_z);
 
 void kore_metal_command_list_compute(kore_gpu_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z);
 
