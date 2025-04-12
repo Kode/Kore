@@ -983,7 +983,7 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	texture->vulkan.device_size = memory_allocate_info.allocationSize = memory_requirements.size;
 
 	bool memory_type_found =
-	    memory_type_from_properties(device, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memory_allocate_info.memoryTypeIndex);
+	    memory_type_from_properties(device, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memory_allocate_info.memoryTypeIndex);
 	assert(memory_type_found);
 
 	result = vkAllocateMemory(device->vulkan.device, &memory_allocate_info, NULL, &texture->vulkan.device_memory);
@@ -991,17 +991,6 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	result = vkBindImageMemory(device->vulkan.device, texture->vulkan.image, texture->vulkan.device_memory, 0);
 	assert(result == VK_SUCCESS);
-
-	VkImageSubresource subresource = {
-	    .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-	    .mipLevel   = 0,
-	    .arrayLayer = 0,
-	};
-
-	VkSubresourceLayout layout;
-	vkGetImageSubresourceLayout(device->vulkan.device, texture->vulkan.image, &subresource, &layout);
-
-	texture->vulkan.row_pitch = layout.rowPitch;
 
 	VkImageViewCreateInfo view_create_info = {
 	    .sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
@@ -1013,7 +1002,7 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	    .components.g                    = VK_COMPONENT_SWIZZLE_G,
 	    .components.b                    = VK_COMPONENT_SWIZZLE_B,
 	    .components.a                    = VK_COMPONENT_SWIZZLE_A,
-	    .subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+	    .subresourceRange.aspectMask     = kore_gpu_texture_format_is_depth(parameters->format) ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT,
 	    .subresourceRange.baseMipLevel   = 0,
 	    .subresourceRange.levelCount     = 1,
 	    .subresourceRange.baseArrayLayer = 0,
