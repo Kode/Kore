@@ -724,7 +724,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 #ifdef KORE_VKRT
 	const VkPhysicalDeviceRayTracingPipelineFeaturesKHR raytracing_pipeline = {
 	    .sType              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
-	    .pNext              = dynamic_rendering,
+	    .pNext              = &dynamic_rendering,
 	    .rayTracingPipeline = VK_TRUE,
 	};
 
@@ -925,6 +925,19 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	texture->vulkan.format = parameters->format;
 
 	VkImageUsageFlags usage = 0;
+
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_COPY_SRC) != 0) {
+		usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+	}
+
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_COPY_DST) != 0) {
+		usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+	}
+
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_SAMPLE) != 0) {
+		usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+	}
+
 	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
 		if (kore_gpu_texture_format_is_depth(parameters->format)) {
 			usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
