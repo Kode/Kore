@@ -15,7 +15,6 @@ typedef struct kore_vulkan_texture {
 	VkDeviceSize   device_size;
 
 	VkImage       image;
-	VkImageView   image_view;
 	VkImageLayout image_layout;
 
 	kore_gpu_texture_format format;

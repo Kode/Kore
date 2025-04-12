@@ -26,8 +26,36 @@ void kore_vulkan_descriptor_set_set_buffer_view(kore_gpu_device *device, kore_vu
 
 void kore_vulkan_descriptor_set_set_texture_view(kore_gpu_device *device, kore_vulkan_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                  uint32_t index) {
+	VkImageViewCreateInfo view_create_info = {
+	    .sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+	    .pNext    = NULL,
+	    .image    = texture_view->texture->vulkan.image,
+	    .viewType = VK_IMAGE_VIEW_TYPE_2D,
+	    .format   = texture_view->texture->vulkan.format,
+	    .components =
+	        {
+	            .r = VK_COMPONENT_SWIZZLE_R,
+	            .g = VK_COMPONENT_SWIZZLE_G,
+	            .b = VK_COMPONENT_SWIZZLE_B,
+	            .a = VK_COMPONENT_SWIZZLE_A,
+	        },
+	    .subresourceRange =
+	        {
+	            .aspectMask   = kore_gpu_texture_format_is_depth(texture_view->texture->vulkan.format) ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT,
+	            .baseMipLevel = 0,
+	            .levelCount   = 1,
+	            .baseArrayLayer = 0,
+	            .layerCount     = 1,
+	        },
+	    .flags = 0,
+	};
+
+	VkImageView image_view;
+	VkResult    result = vkCreateImageView(device->vulkan.device, &view_create_info, NULL, &image_view);
+	assert(result == VK_SUCCESS);
+
 	VkDescriptorImageInfo image_info = {
-	    .imageView   = texture_view->texture->vulkan.image_view,
+	    .imageView   = image_view,
 	    .imageLayout = VK_IMAGE_LAYOUT_GENERAL,
 	};
 

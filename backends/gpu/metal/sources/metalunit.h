@@ -13,6 +13,8 @@ CAMetalLayer *getMetalLayer(void);
 
 static MTLPixelFormat convert_format(kore_gpu_texture_format format) {
 	switch (format) {
+	case KORE_GPU_TEXTURE_FORMAT_UNDEFINED:
+		return MTLPixelFormatInvalid;
 	case KORE_GPU_TEXTURE_FORMAT_R8_UNORM:
 		return MTLPixelFormatR8Unorm;
 	case KORE_GPU_TEXTURE_FORMAT_R8_SNORM:

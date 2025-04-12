@@ -41,6 +41,57 @@ VkAttachmentStoreOp convert_store_op(kore_gpu_store_op op) {
 	return VK_ATTACHMENT_STORE_OP_STORE;
 }
 
+VkClearValue convert_color_clear_value(kore_gpu_texture_format format, kore_gpu_color color) {
+	switch (kore_gpu_texture_format_get_type(format)) {
+	case KORE_GPU_TEXTURE_FORMAT_TYPE_FLOAT:
+	case KORE_GPU_TEXTURE_FORMAT_TYPE_UNORM:
+	case KORE_GPU_TEXTURE_FORMAT_TYPE_SNORM:
+		return (VkClearValue){
+		    .color.float32 =
+		        {
+		            color.r,
+		            color.g,
+		            color.b,
+		            color.a,
+		        },
+		};
+	case KORE_GPU_TEXTURE_FORMAT_TYPE_INT:
+		return (VkClearValue){
+		    .color.int32 =
+		        {
+		            (int32_t)(color.r * 255 - 128),
+		            (int32_t)(color.g * 255 - 128),
+		            (int32_t)(color.b * 255 - 128),
+		            (int32_t)(color.a * 255 - 128),
+		        },
+		};
+	case KORE_GPU_TEXTURE_FORMAT_TYPE_UINT:
+		return (VkClearValue){
+		    .color.uint32 =
+		        {
+		            (uint32_t)(color.r * 255),
+		            (uint32_t)(color.g * 255),
+		            (uint32_t)(color.b * 255),
+		            (uint32_t)(color.a * 255),
+		        },
+		};
+	}
+
+	assert(false);
+	return (VkClearValue){0};
+}
+
+VkClearValue convert_depth_clear_value(float value) {
+	VkClearValue clear_value = {
+	    .depthStencil =
+	        {
+	            .depth   = value,
+	            .stencil = 0,
+	        },
+	};
+	return clear_value;
+}
+
 void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	kore_gpu_texture *texture = parameters->color_attachments[0].texture.texture;
 
@@ -71,45 +122,91 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 		texture->vulkan.image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 	}
 
-	VkClearValue clear_value;
+	VkImageViewCreateInfo view_create_info = {
+	    .sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+	    .pNext    = NULL,
+	    .image    = texture->vulkan.image,
+	    .viewType = VK_IMAGE_VIEW_TYPE_2D,
+	    .format   = convert_to_vulkan_format(texture->vulkan.format),
+	    .components =
+	        {
+	            .r = VK_COMPONENT_SWIZZLE_R,
+	            .g = VK_COMPONENT_SWIZZLE_G,
+	            .b = VK_COMPONENT_SWIZZLE_B,
+	            .a = VK_COMPONENT_SWIZZLE_A,
+	        },
+	    .subresourceRange =
+	        {
+	            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+	            .baseMipLevel   = 0,
+	            .levelCount     = 1,
+	            .baseArrayLayer = 0,
+	            .layerCount     = 1,
+	        },
+	    .flags = 0,
+	};
 
-	switch (kore_gpu_texture_format_get_type(texture->vulkan.format)) {
-	case KORE_GPU_TEXTURE_FORMAT_TYPE_FLOAT:
-	case KORE_GPU_TEXTURE_FORMAT_TYPE_UNORM:
-	case KORE_GPU_TEXTURE_FORMAT_TYPE_SNORM:
-		clear_value.color.float32[0] = parameters->color_attachments[0].clear_value.r;
-		clear_value.color.float32[1] = parameters->color_attachments[0].clear_value.g;
-		clear_value.color.float32[2] = parameters->color_attachments[0].clear_value.b;
-		clear_value.color.float32[3] = parameters->color_attachments[0].clear_value.a;
-		break;
-	case KORE_GPU_TEXTURE_FORMAT_TYPE_INT:
-		clear_value.color.int32[0] = (int32_t)(parameters->color_attachments[0].clear_value.r * 255 - 128);
-		clear_value.color.int32[1] = (int32_t)(parameters->color_attachments[0].clear_value.g * 255 - 128);
-		clear_value.color.int32[2] = (int32_t)(parameters->color_attachments[0].clear_value.b * 255 - 128);
-		clear_value.color.int32[3] = (int32_t)(parameters->color_attachments[0].clear_value.a * 255 - 128);
-		break;
-	case KORE_GPU_TEXTURE_FORMAT_TYPE_UINT:
-		clear_value.color.uint32[0] = (uint32_t)(parameters->color_attachments[0].clear_value.r * 255);
-		clear_value.color.uint32[1] = (uint32_t)(parameters->color_attachments[0].clear_value.g * 255);
-		clear_value.color.uint32[2] = (uint32_t)(parameters->color_attachments[0].clear_value.b * 255);
-		clear_value.color.uint32[3] = (uint32_t)(parameters->color_attachments[0].clear_value.a * 255);
-		break;
-	default:
-		assert(false);
-	}
+	VkImageView image_view;
+	VkResult    result = vkCreateImageView(list->vulkan.device, &view_create_info, NULL, &image_view);
+	assert(result == VK_SUCCESS);
 
 	const VkRenderingAttachmentInfo color_attachment_info = {
 	    .sType              = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
 	    .pNext              = NULL,
-	    .imageView          = texture->vulkan.image_view,
+	    .imageView          = image_view,
 	    .imageLayout        = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 	    .resolveMode        = VK_RESOLVE_MODE_NONE,
 	    .resolveImageView   = VK_NULL_HANDLE,
 	    .resolveImageLayout = VK_IMAGE_LAYOUT_GENERAL,
 	    .loadOp             = convert_load_op(parameters->color_attachments[0].load_op),
 	    .storeOp            = convert_store_op(parameters->color_attachments[0].store_op),
-	    .clearValue         = clear_value,
+	    .clearValue         = convert_color_clear_value(texture->vulkan.format, parameters->color_attachments[0].clear_value),
 	};
+
+	VkRenderingAttachmentInfo depth_attachment_info;
+
+	if (parameters->depth_stencil_attachment.texture != NULL) {
+		VkImageViewCreateInfo depth_view_create_info = {
+		    .sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+		    .pNext    = NULL,
+		    .image    = parameters->depth_stencil_attachment.texture->vulkan.image,
+		    .viewType = VK_IMAGE_VIEW_TYPE_2D,
+		    .format   = convert_to_vulkan_format(parameters->depth_stencil_attachment.texture->vulkan.format),
+		    .components =
+		        {
+		            .r = VK_COMPONENT_SWIZZLE_R,
+		            .g = VK_COMPONENT_SWIZZLE_G,
+		            .b = VK_COMPONENT_SWIZZLE_B,
+		            .a = VK_COMPONENT_SWIZZLE_A,
+		        },
+		    .subresourceRange =
+		        {
+		            .aspectMask     = VK_IMAGE_ASPECT_DEPTH_BIT,
+		            .baseMipLevel   = 0,
+		            .levelCount     = 1,
+		            .baseArrayLayer = 0,
+		            .layerCount     = 1,
+		        },
+		    .flags = 0,
+		};
+
+		VkImageView depth_image_view;
+		VkResult    result = vkCreateImageView(list->vulkan.device, &depth_view_create_info, NULL, &depth_image_view);
+		assert(result == VK_SUCCESS);
+
+		depth_attachment_info = (VkRenderingAttachmentInfo){
+		    .sType              = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+		    .pNext              = NULL,
+		    .imageView          = depth_image_view,
+		    .imageLayout        = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
+		    .resolveMode        = VK_RESOLVE_MODE_NONE,
+		    .resolveImageView   = VK_NULL_HANDLE,
+		    .resolveImageLayout = VK_IMAGE_LAYOUT_GENERAL,
+		    .loadOp             = convert_load_op(parameters->depth_stencil_attachment.depth_load_op),
+		    .storeOp            = convert_store_op(parameters->depth_stencil_attachment.depth_store_op),
+		    .clearValue         = convert_depth_clear_value(parameters->depth_stencil_attachment.depth_clear_value),
+		};
+	}
 
 	const VkRect2D render_area = {
 	    .offset =
@@ -133,7 +230,7 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	    .viewMask             = 0,
 	    .colorAttachmentCount = 1,
 	    .pColorAttachments    = &color_attachment_info,
-	    .pDepthAttachment     = VK_NULL_HANDLE,
+	    .pDepthAttachment     = parameters->depth_stencil_attachment.texture == NULL ? VK_NULL_HANDLE : &depth_attachment_info,
 	    .pStencilAttachment   = VK_NULL_HANDLE,
 	};
 
@@ -242,7 +339,7 @@ void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
 
 	VkBufferImageCopy region = {
 	    .bufferOffset      = destination->offset,
-	    .bufferRowLength   = destination->bytes_per_row / bytes_per_pixel(source->texture->vulkan.format),
+	    .bufferRowLength   = destination->bytes_per_row / kore_gpu_texture_format_byte_size(source->texture->vulkan.format),
 	    .bufferImageHeight = destination->rows_per_image,
 	    .imageSubresource =
 	        {

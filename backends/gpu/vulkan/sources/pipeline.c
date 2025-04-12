@@ -419,6 +419,7 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	    .pNext                   = NULL,
 	    .colorAttachmentCount    = (uint32_t)parameters->fragment.targets_count,
 	    .pColorAttachmentFormats = color_attachment_formats,
+	    .depthAttachmentFormat   = convert_to_vulkan_format(parameters->depth_stencil.format),
 	};
 
 	const VkGraphicsPipelineCreateInfo pipeline_create_info = {

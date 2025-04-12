@@ -472,31 +472,7 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 	assert(result == VK_SUCCESS);
 
 	for (uint32_t i = 0; i < framebuffer_count; ++i) {
-		VkImageView view;
-
-		const VkImageViewCreateInfo color_attachment_view = {
-		    .sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-		    .pNext                           = NULL,
-		    .format                          = format.format,
-		    .components.r                    = VK_COMPONENT_SWIZZLE_R,
-		    .components.g                    = VK_COMPONENT_SWIZZLE_G,
-		    .components.b                    = VK_COMPONENT_SWIZZLE_B,
-		    .components.a                    = VK_COMPONENT_SWIZZLE_A,
-		    .subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-		    .subresourceRange.baseMipLevel   = 0,
-		    .subresourceRange.levelCount     = 1,
-		    .subresourceRange.baseArrayLayer = 0,
-		    .subresourceRange.layerCount     = 1,
-		    .viewType                        = VK_IMAGE_VIEW_TYPE_2D,
-		    .flags                           = 0,
-		    .image                           = images[i],
-		};
-
-		result = vkCreateImageView(device->vulkan.device, &color_attachment_view, NULL, &view);
-		assert(result == VK_SUCCESS);
-
 		framebuffers[i].vulkan.image        = images[i];
-		framebuffers[i].vulkan.image_view   = view;
 		framebuffers[i].vulkan.image_layout = VK_IMAGE_LAYOUT_UNDEFINED;
 		framebuffers[i].vulkan.width        = window_width;
 		framebuffers[i].vulkan.height       = window_height;
@@ -948,6 +924,16 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	texture->vulkan.height = parameters->height;
 	texture->vulkan.format = parameters->format;
 
+	VkImageUsageFlags usage = 0;
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
+		if (kore_gpu_texture_format_is_depth(parameters->format)) {
+			usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+		}
+		else {
+			usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+		}
+	}
+
 	VkImageCreateInfo image_create_info = {
 	    .sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 	    .pNext         = NULL,
@@ -960,7 +946,7 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	    .arrayLayers   = 1,
 	    .samples       = VK_SAMPLE_COUNT_1_BIT,
 	    .tiling        = VK_IMAGE_TILING_OPTIMAL,
-	    .usage         = VK_IMAGE_USAGE_SAMPLED_BIT,
+	    .usage         = usage,
 	    .flags         = 0,
 	    .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
 	};
@@ -990,27 +976,6 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	assert(result == VK_SUCCESS);
 
 	result = vkBindImageMemory(device->vulkan.device, texture->vulkan.image, texture->vulkan.device_memory, 0);
-	assert(result == VK_SUCCESS);
-
-	VkImageViewCreateInfo view_create_info = {
-	    .sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-	    .pNext                           = NULL,
-	    .image                           = texture->vulkan.image,
-	    .viewType                        = VK_IMAGE_VIEW_TYPE_2D,
-	    .format                          = format,
-	    .components.r                    = VK_COMPONENT_SWIZZLE_R,
-	    .components.g                    = VK_COMPONENT_SWIZZLE_G,
-	    .components.b                    = VK_COMPONENT_SWIZZLE_B,
-	    .components.a                    = VK_COMPONENT_SWIZZLE_A,
-	    .subresourceRange.aspectMask     = kore_gpu_texture_format_is_depth(parameters->format) ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT,
-	    .subresourceRange.baseMipLevel   = 0,
-	    .subresourceRange.levelCount     = 1,
-	    .subresourceRange.baseArrayLayer = 0,
-	    .subresourceRange.layerCount     = 1,
-	    .flags                           = 0,
-	};
-
-	result = vkCreateImageView(device->vulkan.device, &view_create_info, NULL, &texture->vulkan.image_view);
 	assert(result == VK_SUCCESS);
 }
 

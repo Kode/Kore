@@ -19,7 +19,7 @@
 
 #include <nvapi.h>
 
-static void __stdcall myValidationMessageCallback(void *pUserData, NVAPI_D3D12_RAYTRACING_VALIDATION_MESSAGE_SEVERITY severity, const char *messageCode,
+static void __stdcall nvidia_raytracing_validation_message_callback(void *pUserData, NVAPI_D3D12_RAYTRACING_VALIDATION_MESSAGE_SEVERITY severity, const char *messageCode,
                                                   const char *message, const char *messageDetails) {
 	const char *severityString = "unknown";
 	switch (severity) {
@@ -100,7 +100,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	NvAPI_Initialize();
 	NvAPI_D3D12_EnableRaytracingValidation(device->d3d12.device, NVAPI_D3D12_RAYTRACING_VALIDATION_FLAG_NONE);
 	void *handle = nullptr;
-	NvAPI_D3D12_RegisterRaytracingValidationMessageCallback(device->d3d12.device, &myValidationMessageCallback, nullptr, &handle);
+	NvAPI_D3D12_RegisterRaytracingValidationMessageCallback(device->d3d12.device, &nvidia_raytracing_validation_message_callback, nullptr, &handle);
 #endif
 
 	{
@@ -396,6 +396,8 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 
 static DXGI_FORMAT convert_texture_format(kore_gpu_texture_format format) {
 	switch (format) {
+	case KORE_GPU_TEXTURE_FORMAT_UNDEFINED:
+		return DXGI_FORMAT_UNKNOWN;
 	case KORE_GPU_TEXTURE_FORMAT_R8_UNORM:
 		return DXGI_FORMAT_R8_UNORM;
 	case KORE_GPU_TEXTURE_FORMAT_R8_SNORM:
