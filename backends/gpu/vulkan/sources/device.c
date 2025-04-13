@@ -827,17 +827,17 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_INDIRECT) != 0) {
 		usage |= VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
 	}
-	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0) {
-		usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-	}
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_COPY_SRC) != 0) {
 		usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+	}
+	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_COPY_DST) != 0) {
+		usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 	}
 #ifdef KORE_VKRT
 	usage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
 #endif
 
-	if (usage == 0) {
+	if (usage == 0 || usage == KORE_GPU_BUFFER_USAGE_COPY_SRC) {
 		usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
 	}
 
@@ -862,8 +862,14 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	    .allocationSize  = memory_requirements.size,
 	};
 
-	bool memory_type_found =
-	    memory_type_from_properties(device, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memory_allocate_info.memoryTypeIndex);
+	bool host_visible = false;
+	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0 || (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
+		host_visible = true;
+	}
+
+	bool memory_type_found = memory_type_from_properties(device, memory_requirements.memoryTypeBits,
+	                                                     host_visible ? VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+	                                                     &memory_allocate_info.memoryTypeIndex);
 	assert(memory_type_found);
 
 #ifdef KORE_VKRT

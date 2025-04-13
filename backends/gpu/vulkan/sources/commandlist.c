@@ -268,7 +268,7 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 }
 
 void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
-	if (list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
+	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
 #ifndef KORE_ANDROID // TODO
 		vkCmdEndRendering(list->vulkan.command_buffer);
 #endif
