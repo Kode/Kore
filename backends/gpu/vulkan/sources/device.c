@@ -882,9 +882,10 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 }
 
 void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
-	list->vulkan.device       = device->vulkan.device;
-	list->vulkan.command_pool = device->vulkan.command_pool;
-	list->vulkan.presenting   = false;
+	list->vulkan.device             = device->vulkan.device;
+	list->vulkan.command_pool       = device->vulkan.command_pool;
+	list->vulkan.presenting         = false;
+	list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_NONE;
 
 	const VkFenceCreateInfo fence_create_info = {
 	    .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,

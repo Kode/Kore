@@ -92,7 +92,24 @@ VkClearValue convert_depth_clear_value(float value) {
 	return clear_value;
 }
 
-void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
+static void pause_render_pass(kore_gpu_command_list *list) {
+	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
+#ifndef KORE_ANDROID // TODO
+		vkCmdEndRendering(list->vulkan.command_buffer);
+#endif
+		list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_PAUSED;
+	}
+}
+
+static void resume_render_pass(kore_gpu_command_list *list) {
+	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_NONE || list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
+		return;
+	}
+
+	bool paused = list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_PAUSED;
+
+	const kore_gpu_render_pass_parameters *parameters = &list->vulkan.current_render_pass;
+
 	kore_gpu_texture *texture = parameters->color_attachments[0].texture.texture;
 
 	if (texture->vulkan.image_layout != VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
@@ -158,7 +175,7 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	    .resolveMode        = VK_RESOLVE_MODE_NONE,
 	    .resolveImageView   = VK_NULL_HANDLE,
 	    .resolveImageLayout = VK_IMAGE_LAYOUT_GENERAL,
-	    .loadOp             = convert_load_op(parameters->color_attachments[0].load_op),
+	    .loadOp             = paused ? KORE_GPU_LOAD_OP_LOAD : convert_load_op(parameters->color_attachments[0].load_op),
 	    .storeOp            = convert_store_op(parameters->color_attachments[0].store_op),
 	    .clearValue         = convert_color_clear_value(texture->vulkan.format, parameters->color_attachments[0].clear_value),
 	};
@@ -202,7 +219,7 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 		    .resolveMode        = VK_RESOLVE_MODE_NONE,
 		    .resolveImageView   = VK_NULL_HANDLE,
 		    .resolveImageLayout = VK_IMAGE_LAYOUT_GENERAL,
-		    .loadOp             = convert_load_op(parameters->depth_stencil_attachment.depth_load_op),
+		    .loadOp             = paused ? KORE_GPU_LOAD_OP_LOAD : convert_load_op(parameters->depth_stencil_attachment.depth_load_op),
 		    .storeOp            = convert_store_op(parameters->depth_stencil_attachment.depth_store_op),
 		    .clearValue         = convert_depth_clear_value(parameters->depth_stencil_attachment.depth_clear_value),
 		};
@@ -241,12 +258,22 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	kore_vulkan_command_list_set_viewport(list, 0, 0, (float)texture->vulkan.width, (float)texture->vulkan.height, 0.1f, 1.0f);
 
 	kore_vulkan_command_list_set_scissor_rect(list, 0, 0, texture->vulkan.width, texture->vulkan.height);
+
+	list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE;
+}
+
+void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
+	list->vulkan.current_render_pass = *parameters;
+	list->vulkan.render_pass_status  = KORE_VULKAN_RENDER_PASS_STATUS_SET;
 }
 
 void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
+	if (list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
 #ifndef KORE_ANDROID // TODO
-	vkCmdEndRendering(list->vulkan.command_buffer);
+		vkCmdEndRendering(list->vulkan.command_buffer);
 #endif
+	}
+	list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_NONE;
 }
 
 void kore_vulkan_command_list_present(kore_gpu_command_list *list) {
@@ -276,11 +303,13 @@ void kore_vulkan_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_
 
 void kore_vulkan_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
                                            int32_t base_vertex, uint32_t first_instance) {
+	resume_render_pass(list);
 	vkCmdDrawIndexed(list->vulkan.command_buffer, index_count, instance_count, first_index, base_vertex, first_instance);
 }
 
 void kore_vulkan_command_list_set_descriptor_set(kore_gpu_command_list *list, uint32_t set_index, kore_vulkan_descriptor_set *set,
                                                  kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {
+	pause_render_pass(list);
 	vkCmdBindDescriptorSets(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, current_render_pipeline->pipeline_layout, set_index, 1,
 	                        &set->descriptor_set, 0, NULL);
 }

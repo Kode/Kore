@@ -9,22 +9,6 @@
 #include "buffer.h"
 #include "texture.h"
 
-#if defined(KORE_DIRECT3D11)
-#include <kore3/direct3d11/commandlist_structs.h>
-#elif defined(KORE_DIRECT3D12)
-#include <kore3/direct3d12/commandlist_structs.h>
-#elif defined(KORE_METAL)
-#include <kore3/metal/commandlist_structs.h>
-#elif defined(KORE_OPENGL)
-#include <kore3/opengl/commandlist_structs.h>
-#elif defined(KORE_VULKAN)
-#include <kore3/vulkan/commandlist_structs.h>
-#elif defined(KORE_WEBGPU)
-#include <kore3/webgpu/commandlist_structs.h>
-#else
-#error("Unknown GPU backend")
-#endif
-
 #include <kore3/math/vector.h>
 
 #include <stddef.h>
@@ -33,26 +17,6 @@
 /*! \file commandlist.h
     \brief The command list is used to send commands to the GPU.
 */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-struct kore_gpu_query_set;
-
-typedef struct kore_gpu_command_list {
-	KORE_GPU_IMPL(command_list);
-} kore_gpu_command_list;
-
-KORE_FUNC void kore_gpu_command_list_destroy(kore_gpu_command_list *list);
-
-KORE_FUNC void kore_gpu_command_list_set_name(kore_gpu_command_list *list, const char *name);
-
-KORE_FUNC void kore_gpu_command_list_push_debug_group(kore_gpu_command_list *list, const char *name);
-
-KORE_FUNC void kore_gpu_command_list_pop_debug_group(kore_gpu_command_list *list);
-
-KORE_FUNC void kore_gpu_command_list_insert_debug_marker(kore_gpu_command_list *list, const char *name);
 
 typedef enum kore_gpu_load_op { KORE_GPU_LOAD_OP_LOAD, KORE_GPU_LOAD_OP_CLEAR } kore_gpu_load_op;
 
@@ -86,6 +50,8 @@ typedef struct kore_gpu_render_pass_depth_stencil_attachment {
 	bool              stencil_read_only;
 } kore_gpu_render_pass_depth_stencil_attachment;
 
+struct kore_gpu_query_set;
+
 typedef struct kore_gpu_render_pass_timestamp_writes {
 	struct kore_gpu_query_set *query_set;
 	uint32_t                   beginning_of_pass_write_index;
@@ -99,8 +65,6 @@ typedef struct kore_gpu_render_pass_parameters {
 	struct kore_gpu_query_set                    *occlusion_query_set;
 	kore_gpu_render_pass_timestamp_writes         timestamp_writes;
 } kore_gpu_render_pass_parameters;
-
-KORE_FUNC void kore_gpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters);
 
 typedef struct kore_gpu_image_copy_texture {
 	kore_gpu_texture_aspect aspect;
@@ -118,36 +82,7 @@ typedef struct kore_gpu_image_copy_buffer {
 	uint32_t         rows_per_image;
 } kore_gpu_image_copy_buffer;
 
-KORE_FUNC void kore_gpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset,
-                                                           kore_gpu_buffer *destination, uint64_t destination_offset, uint64_t size);
-
-KORE_FUNC void kore_gpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
-                                                            const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
-                                                            uint32_t depth_or_array_layers);
-
-KORE_FUNC void kore_gpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
-                                                            const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
-                                                            uint32_t depth_or_array_layers);
-
-KORE_FUNC void kore_gpu_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
-                                                             const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
-                                                             uint32_t depth_or_array_layers);
-
-KORE_FUNC void kore_gpu_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size);
-
-KORE_FUNC void kore_gpu_command_list_resolve_query_set(kore_gpu_command_list *list, struct kore_gpu_query_set *query_set, uint32_t first_query,
-                                                       uint32_t query_count, kore_gpu_buffer *destination, uint64_t destination_offset);
-
 typedef enum kore_gpu_index_format { KORE_GPU_INDEX_FORMAT_UINT16, KORE_GPU_INDEX_FORMAT_UINT32 } kore_gpu_index_format;
-
-KORE_FUNC void kore_gpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                                      uint64_t size);
-
-KORE_FUNC void kore_gpu_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,
-                                          uint32_t first_instance);
-
-KORE_FUNC void kore_gpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
-                                                  int32_t base_vertex, uint32_t first_instance);
 
 typedef struct kore_gpu_draw_arguments {
 #ifdef KORE_DIRECT3D12
@@ -175,6 +110,71 @@ typedef struct kore_gpu_compute_arguments {
 	uint32_t workgroup_count_y;
 	uint32_t workgroup_count_z;
 } kore_gpu_compute_arguments;
+
+#if defined(KORE_DIRECT3D11)
+#include <kore3/direct3d11/commandlist_structs.h>
+#elif defined(KORE_DIRECT3D12)
+#include <kore3/direct3d12/commandlist_structs.h>
+#elif defined(KORE_METAL)
+#include <kore3/metal/commandlist_structs.h>
+#elif defined(KORE_OPENGL)
+#include <kore3/opengl/commandlist_structs.h>
+#elif defined(KORE_VULKAN)
+#include <kore3/vulkan/commandlist_structs.h>
+#elif defined(KORE_WEBGPU)
+#include <kore3/webgpu/commandlist_structs.h>
+#else
+#error ("Unknown GPU backend")
+#endif
+
+typedef struct kore_gpu_command_list {
+	KORE_GPU_IMPL(command_list);
+} kore_gpu_command_list;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+KORE_FUNC void kore_gpu_command_list_destroy(kore_gpu_command_list *list);
+
+KORE_FUNC void kore_gpu_command_list_set_name(kore_gpu_command_list *list, const char *name);
+
+KORE_FUNC void kore_gpu_command_list_push_debug_group(kore_gpu_command_list *list, const char *name);
+
+KORE_FUNC void kore_gpu_command_list_pop_debug_group(kore_gpu_command_list *list);
+
+KORE_FUNC void kore_gpu_command_list_insert_debug_marker(kore_gpu_command_list *list, const char *name);
+
+KORE_FUNC void kore_gpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters);
+
+KORE_FUNC void kore_gpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset,
+                                                           kore_gpu_buffer *destination, uint64_t destination_offset, uint64_t size);
+
+KORE_FUNC void kore_gpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
+                                                            const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
+                                                            uint32_t depth_or_array_layers);
+
+KORE_FUNC void kore_gpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
+                                                            const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
+                                                            uint32_t depth_or_array_layers);
+
+KORE_FUNC void kore_gpu_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
+                                                             const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
+                                                             uint32_t depth_or_array_layers);
+
+KORE_FUNC void kore_gpu_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size);
+
+KORE_FUNC void kore_gpu_command_list_resolve_query_set(kore_gpu_command_list *list, struct kore_gpu_query_set *query_set, uint32_t first_query,
+                                                       uint32_t query_count, kore_gpu_buffer *destination, uint64_t destination_offset);
+
+KORE_FUNC void kore_gpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
+                                                      uint64_t size);
+
+KORE_FUNC void kore_gpu_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,
+                                          uint32_t first_instance);
+
+KORE_FUNC void kore_gpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
+                                                  int32_t base_vertex, uint32_t first_instance);
 
 KORE_FUNC void kore_gpu_command_list_draw_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset,
                                                    uint32_t max_draw_count, kore_gpu_buffer *count_buffer, uint64_t count_offset);
