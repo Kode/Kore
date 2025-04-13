@@ -5,7 +5,8 @@
 
 #include <kore3/util/align.h>
 
-void kore_vulkan_descriptor_set_set_buffer_view(kore_gpu_device *device, kore_vulkan_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index) {
+void kore_vulkan_descriptor_set_set_uniform_buffer_descriptor(kore_gpu_device *device, kore_vulkan_descriptor_set *set, kore_gpu_buffer *buffer,
+                                                              uint32_t index) {
 	VkDescriptorBufferInfo buffer_info = {
 	    .buffer = buffer->vulkan.buffer,
 	    .offset = 0,
@@ -24,8 +25,28 @@ void kore_vulkan_descriptor_set_set_buffer_view(kore_gpu_device *device, kore_vu
 	vkUpdateDescriptorSets(device->vulkan.device, 1, &write, 0, NULL);
 }
 
-void kore_vulkan_descriptor_set_set_texture_view(kore_gpu_device *device, kore_vulkan_descriptor_set *set, const kore_gpu_texture_view *texture_view,
-                                                 uint32_t index) {
+void kore_vulkan_descriptor_set_set_dynamic_uniform_buffer_descriptor(kore_gpu_device *device, kore_vulkan_descriptor_set *set, kore_gpu_buffer *buffer,
+                                                                      uint32_t range, uint32_t index) {
+	VkDescriptorBufferInfo buffer_info = {
+	    .buffer = buffer->vulkan.buffer,
+	    .offset = 0,
+	    .range  = range,
+	};
+
+	VkWriteDescriptorSet write = {
+	    .sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+	    .dstSet          = set->descriptor_set,
+	    .dstBinding      = index,
+	    .descriptorCount = 1,
+	    .descriptorType  = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+	    .pBufferInfo     = &buffer_info,
+	};
+
+	vkUpdateDescriptorSets(device->vulkan.device, 1, &write, 0, NULL);
+}
+
+void kore_vulkan_descriptor_set_set_texture_descriptor(kore_gpu_device *device, kore_vulkan_descriptor_set *set, const kore_gpu_texture_view *texture_view,
+                                                       uint32_t index) {
 	VkImageViewCreateInfo view_create_info = {
 	    .sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 	    .pNext    = NULL,

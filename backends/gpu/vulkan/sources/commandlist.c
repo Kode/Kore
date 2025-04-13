@@ -308,10 +308,10 @@ void kore_vulkan_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t
 }
 
 void kore_vulkan_command_list_set_descriptor_set(kore_gpu_command_list *list, uint32_t set_index, kore_vulkan_descriptor_set *set,
-                                                 kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {
+                                                 uint32_t dynamic_offsets_count, uint32_t *dynamic_offsets) {
 	pause_render_pass(list);
 	vkCmdBindDescriptorSets(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, current_render_pipeline->pipeline_layout, set_index, 1,
-	                        &set->descriptor_set, 0, NULL);
+	                        &set->descriptor_set, dynamic_offsets_count, dynamic_offsets);
 }
 
 void kore_vulkan_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {}

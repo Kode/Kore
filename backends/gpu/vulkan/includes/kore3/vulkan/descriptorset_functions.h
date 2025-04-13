@@ -11,9 +11,12 @@
 extern "C" {
 #endif
 
-void kore_vulkan_descriptor_set_set_buffer_view(kore_gpu_device *device, kore_vulkan_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index);
-void kore_vulkan_descriptor_set_set_texture_view(kore_gpu_device *device, kore_vulkan_descriptor_set *set, const kore_gpu_texture_view *texture_view,
-                                                 uint32_t index);
+void kore_vulkan_descriptor_set_set_uniform_buffer_descriptor(kore_gpu_device *device, kore_vulkan_descriptor_set *set, kore_gpu_buffer *buffer,
+                                                              uint32_t index);
+void kore_vulkan_descriptor_set_set_dynamic_uniform_buffer_descriptor(kore_gpu_device *device, kore_vulkan_descriptor_set *set, kore_gpu_buffer *buffer,
+                                                                      uint32_t range, uint32_t index);
+void kore_vulkan_descriptor_set_set_texture_descriptor(kore_gpu_device *device, kore_vulkan_descriptor_set *set, const kore_gpu_texture_view *texture_view,
+                                                       uint32_t index);
 void kore_vulkan_descriptor_set_set_texture_array_view_srv(kore_gpu_device *device, kore_vulkan_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                            uint32_t index);
 void kore_vulkan_descriptor_set_set_texture_cube_view_srv(kore_gpu_device *device, kore_vulkan_descriptor_set *set, const kore_gpu_texture_view *texture_view,
