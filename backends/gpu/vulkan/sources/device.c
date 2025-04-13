@@ -482,34 +482,10 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 
 static void create_descriptor_pool(kore_gpu_device *device) {
 	VkDescriptorPoolSize pool_sizes[] = {
-	    {
-	        .type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-	        .descriptorCount = 128,
-	    },
-	    {
-	        .type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
-	        .descriptorCount = 128,
-	    },
-	    {
-	        .type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-	        .descriptorCount = 128,
-	    },
-	    {
-	        .type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
-	        .descriptorCount = 128,
-	    },
-	    {
-	        .type            = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-	        .descriptorCount = 128,
-	    },
-	    {
-	        .type            = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-	        .descriptorCount = 128,
-	    },
-	    {
-	        .type            = VK_DESCRIPTOR_TYPE_SAMPLER,
-	        .descriptorCount = 128,
-	    },
+	    {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 128}, {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 128},
+	    {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 128}, {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 128},
+	    {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 128},  {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 128},
+	    {VK_DESCRIPTOR_TYPE_SAMPLER, 128},
 	};
 
 	VkDescriptorPoolCreateInfo pool_create_info = {
@@ -923,6 +899,8 @@ void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 }
 
 void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
+	texture->vulkan.device = device->vulkan.device;
+
 	VkFormat format = convert_to_vulkan_format(parameters->format);
 
 	VkFormatProperties format_properties;
@@ -962,9 +940,7 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	    .pNext         = NULL,
 	    .imageType     = VK_IMAGE_TYPE_2D,
 	    .format        = format,
-	    .extent.width  = parameters->width,
-	    .extent.height = parameters->height,
-	    .extent.depth  = 1,
+	    .extent        = {parameters->width, parameters->height, 1},
 	    .mipLevels     = 1,
 	    .arrayLayers   = 1,
 	    .samples       = VK_SAMPLE_COUNT_1_BIT,
@@ -1182,6 +1158,8 @@ static VkCompareOp convert_compare_function(kore_gpu_compare_function func) {
 }
 
 void kore_vulkan_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {
+	sampler->vulkan.device = device->vulkan.device;
+
 	VkSamplerCreateInfo sampler_create_info = {
 	    .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
 	    .pNext = NULL,

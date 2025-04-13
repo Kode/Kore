@@ -48,18 +48,12 @@ void kore_vulkan_descriptor_set_set_dynamic_uniform_buffer_descriptor(kore_gpu_d
 void kore_vulkan_descriptor_set_set_texture_descriptor(kore_gpu_device *device, kore_vulkan_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                        uint32_t index) {
 	VkImageViewCreateInfo view_create_info = {
-	    .sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-	    .pNext    = NULL,
-	    .image    = texture_view->texture->vulkan.image,
-	    .viewType = VK_IMAGE_VIEW_TYPE_2D,
-	    .format   = convert_to_vulkan_format(texture_view->texture->vulkan.format),
-	    .components =
-	        {
-	            .r = VK_COMPONENT_SWIZZLE_R,
-	            .g = VK_COMPONENT_SWIZZLE_G,
-	            .b = VK_COMPONENT_SWIZZLE_B,
-	            .a = VK_COMPONENT_SWIZZLE_A,
-	        },
+	    .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+	    .pNext      = NULL,
+	    .image      = texture_view->texture->vulkan.image,
+	    .viewType   = VK_IMAGE_VIEW_TYPE_2D,
+	    .format     = convert_to_vulkan_format(texture_view->texture->vulkan.format),
+	    .components = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A},
 	    .subresourceRange =
 	        {
 	            .aspectMask   = kore_gpu_texture_format_is_depth(texture_view->texture->vulkan.format) ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT,

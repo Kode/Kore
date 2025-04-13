@@ -396,18 +396,20 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	    .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
 	};
 
-	const VkPipelineShaderStageCreateInfo shader_stages[2] = {{
-	                                                              .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-	                                                              .stage  = VK_SHADER_STAGE_VERTEX_BIT,
-	                                                              .module = create_shader_module(device, &parameters->vertex.shader),
-	                                                              .pName  = "main",
-	                                                          },
-	                                                          {
-	                                                              .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-	                                                              .stage  = VK_SHADER_STAGE_FRAGMENT_BIT,
-	                                                              .module = create_shader_module(device, &parameters->fragment.shader),
-	                                                              .pName  = "main",
-	                                                          }};
+	const VkPipelineShaderStageCreateInfo shader_stages[2] = {
+	    {
+	        .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+	        .stage  = VK_SHADER_STAGE_VERTEX_BIT,
+	        .module = create_shader_module(device, &parameters->vertex.shader),
+	        .pName  = "main",
+	    },
+	    {
+	        .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+	        .stage  = VK_SHADER_STAGE_FRAGMENT_BIT,
+	        .module = create_shader_module(device, &parameters->fragment.shader),
+	        .pName  = "main",
+	    },
+	};
 
 	VkFormat color_attachment_formats[8];
 	for (size_t target_index = 0; target_index < parameters->fragment.targets_count; ++target_index) {

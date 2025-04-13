@@ -7,6 +7,7 @@ extern "C" {
 
 typedef struct kore_vulkan_sampler {
 	VkSampler sampler;
+	VkDevice  device;
 } kore_vulkan_sampler;
 
 #ifdef __cplusplus

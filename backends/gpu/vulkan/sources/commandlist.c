@@ -47,33 +47,15 @@ VkClearValue convert_color_clear_value(kore_gpu_texture_format format, kore_gpu_
 	case KORE_GPU_TEXTURE_FORMAT_TYPE_UNORM:
 	case KORE_GPU_TEXTURE_FORMAT_TYPE_SNORM:
 		return (VkClearValue){
-		    .color.float32 =
-		        {
-		            color.r,
-		            color.g,
-		            color.b,
-		            color.a,
-		        },
+		    .color.float32 = {color.r, color.g, color.b, color.a},
 		};
 	case KORE_GPU_TEXTURE_FORMAT_TYPE_INT:
 		return (VkClearValue){
-		    .color.int32 =
-		        {
-		            (int32_t)(color.r * 255 - 128),
-		            (int32_t)(color.g * 255 - 128),
-		            (int32_t)(color.b * 255 - 128),
-		            (int32_t)(color.a * 255 - 128),
-		        },
+		    .color.int32 = {(int32_t)(color.r * 255 - 128), (int32_t)(color.g * 255 - 128), (int32_t)(color.b * 255 - 128), (int32_t)(color.a * 255 - 128)},
 		};
 	case KORE_GPU_TEXTURE_FORMAT_TYPE_UINT:
 		return (VkClearValue){
-		    .color.uint32 =
-		        {
-		            (uint32_t)(color.r * 255),
-		            (uint32_t)(color.g * 255),
-		            (uint32_t)(color.b * 255),
-		            (uint32_t)(color.a * 255),
-		        },
+		    .color.uint32 = {(uint32_t)(color.r * 255), (uint32_t)(color.g * 255), (uint32_t)(color.b * 255), (uint32_t)(color.a * 255)},
 		};
 	}
 
@@ -140,18 +122,12 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 	}
 
 	VkImageViewCreateInfo view_create_info = {
-	    .sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-	    .pNext    = NULL,
-	    .image    = texture->vulkan.image,
-	    .viewType = VK_IMAGE_VIEW_TYPE_2D,
-	    .format   = convert_to_vulkan_format(texture->vulkan.format),
-	    .components =
-	        {
-	            .r = VK_COMPONENT_SWIZZLE_R,
-	            .g = VK_COMPONENT_SWIZZLE_G,
-	            .b = VK_COMPONENT_SWIZZLE_B,
-	            .a = VK_COMPONENT_SWIZZLE_A,
-	        },
+	    .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+	    .pNext      = NULL,
+	    .image      = texture->vulkan.image,
+	    .viewType   = VK_IMAGE_VIEW_TYPE_2D,
+	    .format     = convert_to_vulkan_format(texture->vulkan.format),
+	    .components = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A},
 	    .subresourceRange =
 	        {
 	            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -184,18 +160,12 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 
 	if (parameters->depth_stencil_attachment.texture != NULL) {
 		VkImageViewCreateInfo depth_view_create_info = {
-		    .sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-		    .pNext    = NULL,
-		    .image    = parameters->depth_stencil_attachment.texture->vulkan.image,
-		    .viewType = VK_IMAGE_VIEW_TYPE_2D,
-		    .format   = convert_to_vulkan_format(parameters->depth_stencil_attachment.texture->vulkan.format),
-		    .components =
-		        {
-		            .r = VK_COMPONENT_SWIZZLE_R,
-		            .g = VK_COMPONENT_SWIZZLE_G,
-		            .b = VK_COMPONENT_SWIZZLE_B,
-		            .a = VK_COMPONENT_SWIZZLE_A,
-		        },
+		    .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+		    .pNext      = NULL,
+		    .image      = parameters->depth_stencil_attachment.texture->vulkan.image,
+		    .viewType   = VK_IMAGE_VIEW_TYPE_2D,
+		    .format     = convert_to_vulkan_format(parameters->depth_stencil_attachment.texture->vulkan.format),
+		    .components = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A},
 		    .subresourceRange =
 		        {
 		            .aspectMask     = VK_IMAGE_ASPECT_DEPTH_BIT,
@@ -226,16 +196,8 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 	}
 
 	const VkRect2D render_area = {
-	    .offset =
-	        {
-	            .x = 0,
-	            .y = 0,
-	        },
-	    .extent =
-	        {
-	            .width  = texture->vulkan.width,
-	            .height = texture->vulkan.height,
-	        },
+	    .offset = {0, 0},
+	    .extent = {texture->vulkan.width, texture->vulkan.height},
 	};
 
 	const VkRenderingInfo rendering_info = {
@@ -380,18 +342,8 @@ void kore_vulkan_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
 	            .baseArrayLayer = destination->origin_z,
 	            .layerCount     = depth_or_array_layers,
 	        },
-	    .imageOffset =
-	        {
-	            .x = destination->origin_x,
-	            .y = destination->origin_y,
-	            .z = 0,
-	        },
-	    .imageExtent =
-	        {
-	            .width  = width,
-	            .height = height,
-	            .depth  = 1,
-	        },
+	    .imageOffset = {destination->origin_x, destination->origin_y, 0},
+	    .imageExtent = {width, height, 1},
 	};
 	vkCmdCopyBufferToImage(list->vulkan.command_buffer, source->buffer->vulkan.buffer, destination->texture->vulkan.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 	                       1, &region);
@@ -451,18 +403,8 @@ void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
 	            .baseArrayLayer = source->origin_z,
 	            .layerCount     = depth_or_array_layers,
 	        },
-	    .imageOffset =
-	        {
-	            .x = source->origin_x,
-	            .y = source->origin_y,
-	            .z = 0,
-	        },
-	    .imageExtent =
-	        {
-	            .width  = width,
-	            .height = height,
-	            .depth  = 1,
-	        },
+	    .imageOffset = {source->origin_x, source->origin_y, 0},
+	    .imageExtent = {width, height, 1},
 	};
 	vkCmdCopyImageToBuffer(list->vulkan.command_buffer, source->texture->vulkan.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, destination->buffer->vulkan.buffer,
 	                       1, &region);
@@ -559,12 +501,7 @@ void kore_vulkan_command_list_copy_texture_to_texture(kore_gpu_command_list *lis
 	            .baseArrayLayer = source->origin_z,
 	            .layerCount     = depth_or_array_layers,
 	        },
-	    .srcOffset =
-	        {
-	            .x = source->origin_x,
-	            .y = source->origin_y,
-	            .z = 0,
-	        },
+	    .srcOffset = {source->origin_x, source->origin_y, 0},
 	    .dstSubresource =
 	        {
 	            .aspectMask     = dst_aspect_mask,
@@ -572,18 +509,8 @@ void kore_vulkan_command_list_copy_texture_to_texture(kore_gpu_command_list *lis
 	            .baseArrayLayer = destination->origin_z,
 	            .layerCount     = depth_or_array_layers,
 	        },
-	    .dstOffset =
-	        {
-	            .x = destination->origin_x,
-	            .y = destination->origin_y,
-	            .z = 0,
-	        },
-	    .extent =
-	        {
-	            .width  = width,
-	            .height = height,
-	            .depth  = 1,
-	        },
+	    .dstOffset = {destination->origin_x, destination->origin_y, 0},
+	    .extent    = {width, height, 1},
 	};
 
 	vkCmdCopyImage(list->vulkan.command_buffer, source->texture->vulkan.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, destination->texture->vulkan.image,
@@ -609,22 +536,21 @@ void kore_vulkan_command_list_trace_rays(kore_gpu_command_list *list, uint32_t w
 
 void kore_vulkan_command_list_set_viewport(kore_gpu_command_list *list, float x, float y, float width, float height, float min_depth, float max_depth) {
 	// The coordinate system is upside down compared to other APIs, -height for the viewport (supported via VK_KHR_MAINTENANCE1) is an easy fix.
-	VkViewport viewport = {.x = x, .y = y + height, .width = width, .height = -height, .minDepth = min_depth, .maxDepth = max_depth};
+	VkViewport viewport = {
+	    .x        = x,
+	    .y        = y + height,
+	    .width    = width,
+	    .height   = -height,
+	    .minDepth = min_depth,
+	    .maxDepth = max_depth,
+	};
 	vkCmdSetViewport(list->vulkan.command_buffer, 0, 1, &viewport);
 }
 
 void kore_vulkan_command_list_set_scissor_rect(kore_gpu_command_list *list, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 	VkRect2D scissor = {
-	    .offset =
-	        {
-	            .x = 0,
-	            .y = 0,
-	        },
-	    .extent =
-	        {
-	            .width  = width,
-	            .height = height,
-	        },
+	    .offset = {0, 0},
+	    .extent = {width, height},
 	};
 	vkCmdSetScissor(list->vulkan.command_buffer, 0, 1, &scissor);
 }
@@ -634,7 +560,7 @@ void kore_vulkan_command_list_set_blend_constant(kore_gpu_command_list *list, ko
 void kore_vulkan_command_list_set_stencil_reference(kore_gpu_command_list *list, uint32_t reference) {}
 
 void kore_vulkan_command_list_set_name(kore_gpu_command_list *list, const char *name) {
-	VkDebugUtilsObjectNameInfoEXT name_info = {
+	const VkDebugUtilsObjectNameInfoEXT name_info = {
 	    .sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
 	    .objectType   = VK_OBJECT_TYPE_COMMAND_BUFFER,
 	    .objectHandle = (uint64_t)list->vulkan.command_buffer,

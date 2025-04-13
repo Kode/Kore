@@ -18,6 +18,8 @@ typedef struct kore_vulkan_texture {
 	VkImageLayout image_layout;
 
 	kore_gpu_texture_format format;
+
+	VkDevice device;
 } kore_vulkan_texture;
 
 #ifdef __cplusplus
