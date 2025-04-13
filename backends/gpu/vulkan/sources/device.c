@@ -830,6 +830,9 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0) {
 		usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 	}
+	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_COPY_SRC) != 0) {
+		usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+	}
 #ifdef KORE_VKRT
 	usage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
 #endif
