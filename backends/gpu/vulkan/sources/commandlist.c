@@ -92,17 +92,49 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 
 	const kore_gpu_render_pass_parameters *parameters = &list->vulkan.current_render_pass;
 
-	kore_gpu_texture *texture = parameters->color_attachments[0].texture.texture;
+	kore_gpu_texture *textures[8];
 
-	if (texture->vulkan.image_layout != VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
-		VkImageMemoryBarrier barrier = {
-		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		    .pNext         = NULL,
-		    .srcAccessMask = 0,
-		    .dstAccessMask = 0,
-		    .oldLayout     = texture->vulkan.image_layout,
-		    .newLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		    .image         = texture->vulkan.image,
+	for (size_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
+		textures[attachment_index] = parameters->color_attachments[attachment_index].texture.texture;
+
+		if (textures[attachment_index]->vulkan.image_layout != VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+			VkImageMemoryBarrier barrier = {
+			    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+			    .pNext         = NULL,
+			    .srcAccessMask = 0,
+			    .dstAccessMask = 0,
+			    .oldLayout     = textures[attachment_index]->vulkan.image_layout,
+			    .newLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+			    .image         = textures[attachment_index]->vulkan.image,
+			    .subresourceRange =
+			        {
+			            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+			            .baseMipLevel   = 0,
+			            .levelCount     = 1,
+			            .baseArrayLayer = 0,
+			            .layerCount     = 1,
+			        },
+			    .srcAccessMask = 0,
+			    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
+			};
+
+			vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
+			                     &barrier);
+
+			textures[attachment_index]->vulkan.image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		}
+	}
+
+	VkImageView image_views[8];
+
+	for (size_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
+		VkImageViewCreateInfo view_create_info = {
+		    .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+		    .pNext      = NULL,
+		    .image      = textures[attachment_index]->vulkan.image,
+		    .viewType   = VK_IMAGE_VIEW_TYPE_2D,
+		    .format     = convert_to_vulkan_format(textures[attachment_index]->vulkan.format),
+		    .components = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A},
 		    .subresourceRange =
 		        {
 		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -111,50 +143,29 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		            .baseArrayLayer = 0,
 		            .layerCount     = 1,
 		        },
-		    .srcAccessMask = 0,
-		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
+		    .flags = 0,
 		};
 
-		vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
-		                     &barrier);
-
-		texture->vulkan.image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		VkResult result = vkCreateImageView(list->vulkan.device, &view_create_info, NULL, &image_views[attachment_index]);
+		assert(result == VK_SUCCESS);
 	}
 
-	VkImageViewCreateInfo view_create_info = {
-	    .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-	    .pNext      = NULL,
-	    .image      = texture->vulkan.image,
-	    .viewType   = VK_IMAGE_VIEW_TYPE_2D,
-	    .format     = convert_to_vulkan_format(texture->vulkan.format),
-	    .components = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A},
-	    .subresourceRange =
-	        {
-	            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-	            .baseMipLevel   = 0,
-	            .levelCount     = 1,
-	            .baseArrayLayer = 0,
-	            .layerCount     = 1,
-	        },
-	    .flags = 0,
-	};
+	VkRenderingAttachmentInfo color_attachment_infos[8];
 
-	VkImageView image_view;
-	VkResult    result = vkCreateImageView(list->vulkan.device, &view_create_info, NULL, &image_view);
-	assert(result == VK_SUCCESS);
-
-	const VkRenderingAttachmentInfo color_attachment_info = {
-	    .sType              = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-	    .pNext              = NULL,
-	    .imageView          = image_view,
-	    .imageLayout        = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-	    .resolveMode        = VK_RESOLVE_MODE_NONE,
-	    .resolveImageView   = VK_NULL_HANDLE,
-	    .resolveImageLayout = VK_IMAGE_LAYOUT_GENERAL,
-	    .loadOp             = paused ? KORE_GPU_LOAD_OP_LOAD : convert_load_op(parameters->color_attachments[0].load_op),
-	    .storeOp            = convert_store_op(parameters->color_attachments[0].store_op),
-	    .clearValue         = convert_color_clear_value(texture->vulkan.format, parameters->color_attachments[0].clear_value),
-	};
+	for (size_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
+		color_attachment_infos[attachment_index] = (VkRenderingAttachmentInfo){
+		    .sType              = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+		    .pNext              = NULL,
+		    .imageView          = image_views[attachment_index],
+		    .imageLayout        = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		    .resolveMode        = VK_RESOLVE_MODE_NONE,
+		    .resolveImageView   = VK_NULL_HANDLE,
+		    .resolveImageLayout = VK_IMAGE_LAYOUT_GENERAL,
+		    .loadOp             = paused ? KORE_GPU_LOAD_OP_LOAD : convert_load_op(parameters->color_attachments[attachment_index].load_op),
+		    .storeOp            = convert_store_op(parameters->color_attachments[attachment_index].store_op),
+		    .clearValue = convert_color_clear_value(textures[attachment_index]->vulkan.format, parameters->color_attachments[attachment_index].clear_value),
+		};
+	}
 
 	VkRenderingAttachmentInfo depth_attachment_info;
 
@@ -195,10 +206,23 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		};
 	}
 
-	const VkRect2D render_area = {
-	    .offset = {0, 0},
-	    .extent = {texture->vulkan.width, texture->vulkan.height},
-	};
+	VkRect2D render_area = {.offset = {0, 0}};
+
+	for (size_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
+		render_area.extent.width =
+		    textures[attachment_index]->vulkan.width > render_area.extent.width ? textures[attachment_index]->vulkan.width : render_area.extent.width;
+		render_area.extent.height =
+		    textures[attachment_index]->vulkan.height > render_area.extent.height ? textures[attachment_index]->vulkan.height : render_area.extent.height;
+	}
+
+	if (parameters->depth_stencil_attachment.texture != NULL) {
+		render_area.extent.width  = parameters->depth_stencil_attachment.texture->vulkan.width > render_area.extent.width
+		                                ? parameters->depth_stencil_attachment.texture->vulkan.width
+		                                : render_area.extent.width;
+		render_area.extent.height = parameters->depth_stencil_attachment.texture->vulkan.height > render_area.extent.height
+		                                ? parameters->depth_stencil_attachment.texture->vulkan.height
+		                                : render_area.extent.height;
+	}
 
 	const VkRenderingInfo rendering_info = {
 	    .sType                = VK_STRUCTURE_TYPE_RENDERING_INFO,
@@ -207,8 +231,8 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 	    .renderArea           = render_area,
 	    .layerCount           = 1,
 	    .viewMask             = 0,
-	    .colorAttachmentCount = 1,
-	    .pColorAttachments    = &color_attachment_info,
+	    .colorAttachmentCount = (uint32_t)parameters->color_attachments_count,
+	    .pColorAttachments    = color_attachment_infos,
 	    .pDepthAttachment     = parameters->depth_stencil_attachment.texture == NULL ? VK_NULL_HANDLE : &depth_attachment_info,
 	    .pStencilAttachment   = VK_NULL_HANDLE,
 	};
@@ -217,9 +241,9 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 	vkCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
 #endif
 
-	kore_vulkan_command_list_set_viewport(list, 0, 0, (float)texture->vulkan.width, (float)texture->vulkan.height, 0.1f, 1.0f);
+	kore_vulkan_command_list_set_viewport(list, 0, 0, (float)render_area.extent.width, (float)render_area.extent.height, 0.1f, 1.0f);
 
-	kore_vulkan_command_list_set_scissor_rect(list, 0, 0, texture->vulkan.width, texture->vulkan.height);
+	kore_vulkan_command_list_set_scissor_rect(list, 0, 0, render_area.extent.width, render_area.extent.height);
 
 	list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE;
 }
