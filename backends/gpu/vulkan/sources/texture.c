@@ -14,8 +14,21 @@ void kore_vulkan_texture_set_name(kore_gpu_texture *texture, const char *name) {
 	vkSetDebugUtilsObjectName(texture->vulkan.device, &name_info);
 }
 
-uint32_t kore_vulkan_texture_image_layout_index(kore_gpu_texture *texture, uint32_t mip_level, uint32_t array_layer) {
+static uint32_t kore_vulkan_texture_image_layout_index(kore_gpu_texture *texture, uint32_t mip_level, uint32_t array_layer) {
 	return mip_level + (array_layer * texture->vulkan.mip_level_count);
+}
+
+static VkAccessFlags get_access_mask(VkImageLayout layout) {
+	switch (layout) {
+	case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
+		return VK_ACCESS_TRANSFER_READ_BIT;
+	case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
+		VK_ACCESS_TRANSFER_WRITE_BIT;
+	case VK_IMAGE_LAYOUT_GENERAL:
+		return VK_ACCESS_MEMORY_READ_BIT;
+	default:
+		return 0;
+	}
 }
 
 void kore_vulkan_texture_transition(kore_gpu_command_list *list, kore_gpu_texture *texture, VkImageLayout layout, uint32_t base_array_layer,
@@ -26,8 +39,8 @@ void kore_vulkan_texture_transition(kore_gpu_command_list *list, kore_gpu_textur
 				VkImageMemoryBarrier barrier = {
 				    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 				    .pNext         = NULL,
-				    .srcAccessMask = 0,
-				    .dstAccessMask = 0,
+				    .srcAccessMask = get_access_mask(texture->vulkan.image_layouts[kore_vulkan_texture_image_layout_index(texture, mip_level, array_layer)]),
+				    .dstAccessMask = get_access_mask(layout),
 				    .oldLayout     = texture->vulkan.image_layouts[kore_vulkan_texture_image_layout_index(texture, mip_level, array_layer)],
 				    .newLayout     = layout,
 				    .image         = texture->vulkan.image,
@@ -39,8 +52,6 @@ void kore_vulkan_texture_transition(kore_gpu_command_list *list, kore_gpu_textur
 				            .baseArrayLayer = array_layer,
 				            .layerCount     = 1,
 				        },
-				    .srcAccessMask = 0,
-				    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
 				};
 
 				vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL,
