@@ -10,19 +10,21 @@
 extern "C" {
 #endif
 
-void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_render_pipeline *pipe, const kore_vulkan_render_pipeline_parameters *parameters,
-                                      const VkDescriptorSetLayout *descriptor_set_layouts, uint32_t descriptor_set_layouts_count);
+void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_render_pipeline *pipeline,
+                                      const kore_vulkan_render_pipeline_parameters *parameters, const VkDescriptorSetLayout *descriptor_set_layouts,
+                                      uint32_t descriptor_set_layouts_count);
 
-void kore_vulkan_render_pipeline_destroy(kore_vulkan_render_pipeline *pipe);
+void kore_vulkan_render_pipeline_destroy(kore_vulkan_render_pipeline *pipeline);
 
-void kore_vulkan_compute_pipeline_init(kore_vulkan_device *device, kore_vulkan_compute_pipeline *pipe,
-                                       const kore_vulkan_compute_pipeline_parameters *parameters);
+void kore_vulkan_compute_pipeline_init(kore_vulkan_device *device, kore_vulkan_compute_pipeline *pipeline,
+                                       const kore_vulkan_compute_pipeline_parameters *parameters, const VkDescriptorSetLayout *descriptor_set_layouts,
+                                       uint32_t descriptor_set_layouts_count);
 
-void kore_vulkan_compute_pipeline_destroy(kore_vulkan_compute_pipeline *pipe);
+void kore_vulkan_compute_pipeline_destroy(kore_vulkan_compute_pipeline *pipeline);
 
-void kore_vulkan_ray_pipeline_init(kore_gpu_device *device, kore_vulkan_ray_pipeline *pipe, const kore_vulkan_ray_pipeline_parameters *parameters);
+void kore_vulkan_ray_pipeline_init(kore_gpu_device *device, kore_vulkan_ray_pipeline *pipeline, const kore_vulkan_ray_pipeline_parameters *parameters);
 
-void kore_vulkan_ray_pipeline_destroy(kore_vulkan_ray_pipeline *pipe);
+void kore_vulkan_ray_pipeline_destroy(kore_vulkan_ray_pipeline *pipeline);
 
 #ifdef __cplusplus
 }

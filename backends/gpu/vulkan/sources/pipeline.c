@@ -448,13 +448,42 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	vkDestroyShaderModule(device->device, shader_stages[1].module, NULL);
 }
 
-void kore_vulkan_render_pipeline_destroy(kore_vulkan_render_pipeline *pipe) {}
+void kore_vulkan_render_pipeline_destroy(kore_vulkan_render_pipeline *pipeline) {}
 
-void kore_vulkan_compute_pipeline_init(kore_vulkan_device *device, kore_vulkan_compute_pipeline *pipe,
-                                       const kore_vulkan_compute_pipeline_parameters *parameters) {}
+void kore_vulkan_compute_pipeline_init(kore_vulkan_device *device, kore_vulkan_compute_pipeline *pipeline,
+                                       const kore_vulkan_compute_pipeline_parameters *parameters, const VkDescriptorSetLayout *descriptor_set_layouts,
+                                       uint32_t descriptor_set_layouts_count) {
+	const VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
+	    .sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+	    .pNext          = NULL,
+	    .setLayoutCount = descriptor_set_layouts_count,
+	    .pSetLayouts    = descriptor_set_layouts,
+	};
 
-void kore_vulkan_compute_pipeline_destroy(kore_vulkan_compute_pipeline *pipe) {}
+	VkResult result = vkCreatePipelineLayout(device->device, &pipeline_layout_create_info, NULL, &pipeline->pipeline_layout);
+	assert(result == VK_SUCCESS);
 
-void kore_vulkan_ray_pipeline_init(kore_gpu_device *device, kore_vulkan_ray_pipeline *pipe, const kore_vulkan_ray_pipeline_parameters *parameters) {}
+	const VkComputePipelineCreateInfo pipeline_create_info = {
+	    .sType  = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+	    .pNext  = NULL,
+	    .layout = pipeline->pipeline_layout,
+	    .stage =
+	        {
+	            .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+	            .stage  = VK_SHADER_STAGE_COMPUTE_BIT,
+	            .module = create_shader_module(device, &parameters->shader),
+	            .pName  = "main",
+	        },
+	};
 
-void kore_vulkan_ray_pipeline_destroy(kore_vulkan_ray_pipeline *pipe) {}
+	result = vkCreateComputePipelines(device->device, VK_NULL_HANDLE, 1, &pipeline_create_info, NULL, &pipeline->pipeline);
+	assert(result == VK_SUCCESS);
+
+	vkDestroyShaderModule(device->device, pipeline_create_info.stage.module, NULL);
+}
+
+void kore_vulkan_compute_pipeline_destroy(kore_vulkan_compute_pipeline *pipeline) {}
+
+void kore_vulkan_ray_pipeline_init(kore_gpu_device *device, kore_vulkan_ray_pipeline *pipeline, const kore_vulkan_ray_pipeline_parameters *parameters) {}
+
+void kore_vulkan_ray_pipeline_destroy(kore_vulkan_ray_pipeline *pipeline) {}

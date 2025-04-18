@@ -926,6 +926,10 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 		usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
 	}
 
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_READ_WRITE) != 0) {
+		usage |= VK_IMAGE_USAGE_STORAGE_BIT;
+	}
+
 	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
 		if (kore_gpu_texture_format_is_depth(parameters->format)) {
 			usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;

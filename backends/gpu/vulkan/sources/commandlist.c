@@ -277,11 +277,13 @@ void kore_vulkan_command_list_set_vertex_buffer(kore_gpu_command_list *list, uin
 	vkCmdBindVertexBuffers(list->vulkan.command_buffer, slot, 1, &buffer->buffer, &offset);
 }
 
-static kore_vulkan_render_pipeline *current_render_pipeline = NULL;
+static kore_vulkan_render_pipeline  *current_render_pipeline  = NULL;
+static kore_vulkan_compute_pipeline *current_compute_pipeline = NULL;
 
 void kore_vulkan_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_vulkan_render_pipeline *pipeline) {
 	vkCmdBindPipeline(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-	current_render_pipeline = pipeline;
+	current_render_pipeline  = pipeline;
+	current_compute_pipeline = NULL;
 }
 
 void kore_vulkan_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,
@@ -296,8 +298,18 @@ void kore_vulkan_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t
 void kore_vulkan_command_list_set_descriptor_set(kore_gpu_command_list *list, uint32_t set_index, kore_vulkan_descriptor_set *set,
                                                  uint32_t dynamic_offsets_count, uint32_t *dynamic_offsets) {
 	pause_render_pass(list);
-	vkCmdBindDescriptorSets(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, current_render_pipeline->pipeline_layout, set_index, 1,
-	                        &set->descriptor_set, dynamic_offsets_count, dynamic_offsets);
+
+	if (current_render_pipeline != NULL) {
+		vkCmdBindDescriptorSets(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, current_render_pipeline->pipeline_layout, set_index, 1,
+		                        &set->descriptor_set, dynamic_offsets_count, dynamic_offsets);
+	}
+	else if (current_compute_pipeline != NULL) {
+		vkCmdBindDescriptorSets(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, current_compute_pipeline->pipeline_layout, set_index, 1,
+		                        &set->descriptor_set, dynamic_offsets_count, dynamic_offsets);
+	}
+	else {
+		assert(false);
+	}
 }
 
 void kore_vulkan_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {}
@@ -543,9 +555,15 @@ void kore_vulkan_command_list_copy_texture_to_texture(kore_gpu_command_list *lis
 
 void kore_vulkan_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size) {}
 
-void kore_vulkan_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_vulkan_compute_pipeline *pipeline) {}
+void kore_vulkan_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_vulkan_compute_pipeline *pipeline) {
+	vkCmdBindPipeline(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
+	current_compute_pipeline = pipeline;
+	current_render_pipeline  = NULL;
+}
 
-void kore_vulkan_command_list_compute(kore_gpu_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z) {}
+void kore_vulkan_command_list_compute(kore_gpu_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z) {
+	vkCmdDispatch(list->vulkan.command_buffer, workgroup_count_x, workgroup_count_y, workgroup_count_z);
+}
 
 void kore_vulkan_command_list_prepare_raytracing_volume(kore_gpu_command_list *list, kore_gpu_raytracing_volume *volume) {}
 

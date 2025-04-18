@@ -206,7 +206,8 @@ typedef struct kore_vulkan_compute_pipeline_parameters {
 } kore_vulkan_compute_pipeline_parameters;
 
 typedef struct kore_vulkan_compute_pipeline {
-	int nothing;
+	VkPipelineLayout pipeline_layout;
+	VkPipeline       pipeline;
 } kore_vulkan_compute_pipeline;
 
 typedef struct kore_vulkan_ray_pipeline_parameters {
