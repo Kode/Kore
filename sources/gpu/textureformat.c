@@ -4,6 +4,9 @@
 
 uint32_t kore_gpu_texture_format_byte_size(kore_gpu_texture_format format) {
 	switch (format) {
+	case KORE_GPU_TEXTURE_FORMAT_UNDEFINED:
+		assert(false);
+		return 0u;
 	case KORE_GPU_TEXTURE_FORMAT_R8_UNORM:
 	case KORE_GPU_TEXTURE_FORMAT_R8_SNORM:
 	case KORE_GPU_TEXTURE_FORMAT_R8_UINT:
@@ -63,6 +66,9 @@ uint32_t kore_gpu_texture_format_byte_size(kore_gpu_texture_format format) {
 
 kore_gpu_texture_format_type kore_gpu_texture_format_get_type(kore_gpu_texture_format format) {
 	switch (format) {
+	case KORE_GPU_TEXTURE_FORMAT_UNDEFINED:
+		assert(false);
+		return KORE_GPU_TEXTURE_FORMAT_TYPE_UNORM;
 	case KORE_GPU_TEXTURE_FORMAT_R8_UNORM:
 		return KORE_GPU_TEXTURE_FORMAT_TYPE_UNORM;
 	case KORE_GPU_TEXTURE_FORMAT_R8_SNORM:
@@ -152,7 +158,7 @@ kore_gpu_texture_format_type kore_gpu_texture_format_get_type(kore_gpu_texture_f
 	}
 
 	assert(false);
-	return 4;
+	return KORE_GPU_TEXTURE_FORMAT_TYPE_UNORM;
 }
 
 bool kore_gpu_texture_format_is_depth(kore_gpu_texture_format format) {
