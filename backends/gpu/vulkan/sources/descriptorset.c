@@ -139,10 +139,10 @@ void kore_vulkan_descriptor_set_set_sampled_image_array_descriptor(kore_gpu_devi
 	    .subresourceRange =
 	        {
 	            .aspectMask   = kore_gpu_texture_format_is_depth(texture_view->texture->vulkan.format) ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT,
-	            .baseMipLevel = 0,
-	            .levelCount   = 1,
-	            .baseArrayLayer = 0,
-	            .layerCount     = 1,
+	            .baseMipLevel = texture_view->base_mip_level,
+	            .levelCount   = texture_view->mip_level_count,
+	            .baseArrayLayer = texture_view->base_array_layer,
+	            .layerCount     = texture_view->array_layer_count,
 	        },
 	    .flags = 0,
 	};
