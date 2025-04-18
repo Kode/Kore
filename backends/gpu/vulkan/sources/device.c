@@ -472,11 +472,14 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 	assert(result == VK_SUCCESS);
 
 	for (uint32_t i = 0; i < framebuffer_count; ++i) {
-		framebuffers[i].vulkan.image        = images[i];
-		framebuffers[i].vulkan.image_layout = VK_IMAGE_LAYOUT_UNDEFINED;
-		framebuffers[i].vulkan.width        = window_width;
-		framebuffers[i].vulkan.height       = window_height;
-		framebuffers[i].vulkan.format       = convert_from_vulkan_format(framebuffer_format);
+		framebuffers[i].vulkan.image = images[i];
+		for (uint32_t image_layout_index = 0;
+		     image_layout_index < sizeof(framebuffers[i].vulkan.image_layouts) / sizeof(framebuffers[i].vulkan.image_layouts[0]); ++image_layout_index) {
+			framebuffers[i].vulkan.image_layouts[image_layout_index] = VK_IMAGE_LAYOUT_UNDEFINED;
+		}
+		framebuffers[i].vulkan.width  = window_width;
+		framebuffers[i].vulkan.height = window_height;
+		framebuffers[i].vulkan.format = convert_from_vulkan_format(framebuffer_format);
 	}
 }
 
@@ -908,9 +911,10 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	assert((format_properties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) != 0);
 
-	texture->vulkan.width  = parameters->width;
-	texture->vulkan.height = parameters->height;
-	texture->vulkan.format = parameters->format;
+	texture->vulkan.width           = parameters->width;
+	texture->vulkan.height          = parameters->height;
+	texture->vulkan.format          = parameters->format;
+	texture->vulkan.mip_level_count = parameters->mip_level_count;
 
 	VkImageUsageFlags usage = 0;
 
@@ -964,7 +968,10 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	VkResult result = vkCreateImage(device->vulkan.device, &image_create_info, NULL, &texture->vulkan.image);
 	assert(result == VK_SUCCESS);
 
-	texture->vulkan.image_layout = VK_IMAGE_LAYOUT_UNDEFINED;
+	for (uint32_t image_layout_index = 0; image_layout_index < sizeof(texture->vulkan.image_layouts) / sizeof(texture->vulkan.image_layouts[0]);
+	     ++image_layout_index) {
+		texture->vulkan.image_layouts[image_layout_index] = VK_IMAGE_LAYOUT_UNDEFINED;
+	}
 
 	VkMemoryRequirements memory_requirements;
 	vkGetImageMemoryRequirements(device->vulkan.device, texture->vulkan.image, &memory_requirements);
@@ -995,32 +1002,7 @@ kore_gpu_texture_format kore_vulkan_device_framebuffer_format(kore_gpu_device *d
 }
 
 void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
-	if (list->vulkan.presenting && framebuffers[framebuffer_index].vulkan.image_layout != VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
-		VkImageMemoryBarrier barrier = {
-		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		    .pNext         = NULL,
-		    .srcAccessMask = 0,
-		    .dstAccessMask = 0,
-		    .oldLayout     = framebuffers[framebuffer_index].vulkan.image_layout,
-		    .newLayout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-		    .image         = framebuffers[framebuffer_index].vulkan.image,
-		    .subresourceRange =
-		        {
-		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-		            .baseMipLevel   = 0,
-		            .levelCount     = 1,
-		            .baseArrayLayer = 0,
-		            .layerCount     = 1,
-		        },
-		    .srcAccessMask = 0,
-		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-		};
-
-		vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
-		                     &barrier);
-
-		framebuffers[framebuffer_index].vulkan.image_layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-	}
+	kore_vulkan_texture_transition(list, &framebuffers[framebuffer_index], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
 
 	vkEndCommandBuffer(list->vulkan.command_buffer);
 

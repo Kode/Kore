@@ -189,30 +189,6 @@ void kore_vulkan_descriptor_set_set_sampler(kore_gpu_device *device, kore_vulkan
 void kore_vulkan_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {}
 
 void kore_vulkan_descriptor_set_prepare_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view, bool writable) {
-	if (texture_view->texture->vulkan.image_layout != VK_IMAGE_LAYOUT_GENERAL) {
-		VkImageMemoryBarrier barrier = {
-		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		    .pNext         = NULL,
-		    .srcAccessMask = 0,
-		    .dstAccessMask = 0,
-		    .oldLayout     = texture_view->texture->vulkan.image_layout,
-		    .newLayout     = VK_IMAGE_LAYOUT_GENERAL,
-		    .image         = texture_view->texture->vulkan.image,
-		    .subresourceRange =
-		        {
-		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-		            .baseMipLevel   = 0,
-		            .levelCount     = 1,
-		            .baseArrayLayer = 0,
-		            .layerCount     = 1,
-		        },
-		    .srcAccessMask = 0,
-		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-		};
-
-		vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
-		                     &barrier);
-
-		texture_view->texture->vulkan.image_layout = VK_IMAGE_LAYOUT_GENERAL;
-	}
+	kore_vulkan_texture_transition(list, texture_view->texture, VK_IMAGE_LAYOUT_GENERAL, texture_view->base_array_layer, texture_view->array_layer_count,
+	                               texture_view->base_mip_level, texture_view->mip_level_count);
 }

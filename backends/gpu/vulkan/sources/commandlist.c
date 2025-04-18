@@ -96,33 +96,7 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 
 	for (size_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
 		textures[attachment_index] = parameters->color_attachments[attachment_index].texture.texture;
-
-		if (textures[attachment_index]->vulkan.image_layout != VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
-			VkImageMemoryBarrier barrier = {
-			    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-			    .pNext         = NULL,
-			    .srcAccessMask = 0,
-			    .dstAccessMask = 0,
-			    .oldLayout     = textures[attachment_index]->vulkan.image_layout,
-			    .newLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-			    .image         = textures[attachment_index]->vulkan.image,
-			    .subresourceRange =
-			        {
-			            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-			            .baseMipLevel   = 0,
-			            .levelCount     = 1,
-			            .baseArrayLayer = 0,
-			            .layerCount     = 1,
-			        },
-			    .srcAccessMask = 0,
-			    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-			};
-
-			vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
-			                     &barrier);
-
-			textures[attachment_index]->vulkan.image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		}
+		kore_vulkan_texture_transition(list, textures[attachment_index], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, 0, 1, 0, 1);
 	}
 
 	VkImageView image_views[8];
@@ -327,32 +301,8 @@ void kore_vulkan_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list,
 void kore_vulkan_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
                                                      const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {
-	if (destination->texture->vulkan.image_layout != VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-		VkImageMemoryBarrier barrier = {
-		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		    .pNext         = NULL,
-		    .srcAccessMask = 0,
-		    .dstAccessMask = 0,
-		    .oldLayout     = destination->texture->vulkan.image_layout,
-		    .newLayout     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		    .image         = destination->texture->vulkan.image,
-		    .subresourceRange =
-		        {
-		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-		            .baseMipLevel   = 0,
-		            .levelCount     = 1,
-		            .baseArrayLayer = 0,
-		            .layerCount     = 1,
-		        },
-		    .srcAccessMask = 0,
-		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-		};
-
-		vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
-		                     &barrier);
-
-		destination->texture->vulkan.image_layout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	}
+	kore_vulkan_texture_transition(list, destination->texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, destination->origin_z, depth_or_array_layers,
+	                               destination->mip_level, 1);
 
 	VkImageAspectFlags aspect_mask;
 	switch (destination->aspect) {
@@ -388,32 +338,7 @@ void kore_vulkan_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
 void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                      const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {
-	if (source->texture->vulkan.image_layout != VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
-		VkImageMemoryBarrier barrier = {
-		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		    .pNext         = NULL,
-		    .srcAccessMask = 0,
-		    .dstAccessMask = 0,
-		    .oldLayout     = source->texture->vulkan.image_layout,
-		    .newLayout     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-		    .image         = source->texture->vulkan.image,
-		    .subresourceRange =
-		        {
-		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-		            .baseMipLevel   = 0,
-		            .levelCount     = 1,
-		            .baseArrayLayer = 0,
-		            .layerCount     = 1,
-		        },
-		    .srcAccessMask = 0,
-		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-		};
-
-		vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
-		                     &barrier);
-
-		source->texture->vulkan.image_layout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-	}
+	kore_vulkan_texture_transition(list, source->texture, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, source->origin_z, depth_or_array_layers, source->mip_level, 1);
 
 	VkImageAspectFlags aspect_mask;
 	switch (source->aspect) {
@@ -449,59 +374,9 @@ void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
 void kore_vulkan_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                       const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                       uint32_t depth_or_array_layers) {
-	if (source->texture->vulkan.image_layout != VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
-		VkImageMemoryBarrier barrier = {
-		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		    .pNext         = NULL,
-		    .srcAccessMask = 0,
-		    .dstAccessMask = 0,
-		    .oldLayout     = source->texture->vulkan.image_layout,
-		    .newLayout     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-		    .image         = source->texture->vulkan.image,
-		    .subresourceRange =
-		        {
-		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-		            .baseMipLevel   = 0,
-		            .levelCount     = 1,
-		            .baseArrayLayer = 0,
-		            .layerCount     = 1,
-		        },
-		    .srcAccessMask = 0,
-		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-		};
-
-		vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
-		                     &barrier);
-
-		source->texture->vulkan.image_layout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-	}
-
-	if (destination->texture->vulkan.image_layout != VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-		VkImageMemoryBarrier barrier = {
-		    .sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		    .pNext         = NULL,
-		    .srcAccessMask = 0,
-		    .dstAccessMask = 0,
-		    .oldLayout     = destination->texture->vulkan.image_layout,
-		    .newLayout     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		    .image         = destination->texture->vulkan.image,
-		    .subresourceRange =
-		        {
-		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-		            .baseMipLevel   = 0,
-		            .levelCount     = 1,
-		            .baseArrayLayer = 0,
-		            .layerCount     = 1,
-		        },
-		    .srcAccessMask = 0,
-		    .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-		};
-
-		vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1,
-		                     &barrier);
-
-		destination->texture->vulkan.image_layout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	}
+	kore_vulkan_texture_transition(list, source->texture, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, source->origin_z, depth_or_array_layers, source->mip_level, 1);
+	kore_vulkan_texture_transition(list, destination->texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, destination->origin_z, depth_or_array_layers,
+	                               destination->mip_level, 1);
 
 	VkImageAspectFlags src_aspect_mask;
 	switch (source->aspect) {

@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-uint32_t kore_d3d12_texture_resource_state_index(kore_gpu_texture *texture, uint32_t mip_level, uint32_t array_layer);
-
 void kore_d3d12_texture_set_name(kore_gpu_texture *texture, const char *name);
+
+uint32_t kore_d3d12_texture_resource_state_index(kore_gpu_texture *texture, uint32_t mip_level, uint32_t array_layer);
 
 #ifdef __cplusplus
 }
