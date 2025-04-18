@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 typedef struct kore_webgpu_descriptor_set {
-	int nothing;
+	WGPUBindGroup bind_group;
 } kore_webgpu_descriptor_set;
 
 #ifdef __cplusplus

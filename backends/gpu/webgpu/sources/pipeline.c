@@ -70,7 +70,8 @@ static WGPUVertexFormat convert_vertex_format(kore_webgpu_vertex_format format) 
 	}
 }
 
-void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters) {
+void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters, const WGPUBindGroupLayout *bind_group_layouts,
+	uint32_t bind_group_layouts_count) {
 	WGPUColorTargetState color_target_state = {
 	    .format    = WGPUTextureFormat_BGRA8Unorm,
 	    .writeMask = WGPUColorWriteMask_All,
@@ -93,8 +94,8 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 	color_target_state.blend = &blend_state;
 
 	WGPUPipelineLayoutDescriptor pipeline_layout_descriptor = {
-	    .bindGroupLayoutCount = 0,
-	    .bindGroupLayouts     = NULL,
+	    .bindGroupLayoutCount = bind_group_layouts_count,
+	    .bindGroupLayouts     = bind_group_layouts,
 	};
 
 	WGPUVertexAttribute attributes[8];

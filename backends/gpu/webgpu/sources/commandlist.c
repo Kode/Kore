@@ -79,8 +79,10 @@ void kore_webgpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t
 	wgpuRenderPassEncoderDrawIndexed(list->webgpu.render_pass_encoder, index_count, instance_count, first_index, base_vertex, first_instance);
 }
 
-void kore_webgpu_command_list_set_descriptor_table(kore_gpu_command_list *list, uint32_t table_index, kore_webgpu_descriptor_set *set,
-                                                   kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {}
+void kore_webgpu_command_list_set_bind_group(kore_gpu_command_list *list, uint32_t index, kore_webgpu_descriptor_set *set,
+                                                   kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {
+	wgpuRenderPassEncoderSetBindGroup(list->webgpu.render_pass_encoder, index, set->bind_group, 0, NULL);
+}
 
 void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {}
 

@@ -8,7 +8,8 @@
 extern "C" {
 #endif
 
-void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters);
+void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters, const WGPUBindGroupLayout *bind_group_layouts,
+	uint32_t bind_group_layouts_count);
 
 void kore_webgpu_render_pipeline_destroy(kore_webgpu_render_pipeline *pipe);
 
