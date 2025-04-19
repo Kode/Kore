@@ -126,12 +126,15 @@ static WGPUBufferUsage convert_buffer_usage(kore_gpu_buffer_usage usage) {
 void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
 	kore_gpu_buffer_usage usage = parameters->usage_flags;
 
+	buffer->webgpu.write = false;
 	buffer->webgpu.has_copy_buffer = false;
 	buffer->webgpu.copy_scheduled  = false;
 
 	if ((usage & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
 		kore_gpu_buffer_usage usage_without_write = usage ^ KORE_GPU_BUFFER_USAGE_CPU_WRITE;
 		buffer->webgpu.has_copy_buffer            = usage_without_write != KORE_GPU_BUFFER_USAGE_COPY_SRC && usage_without_write != 0;
+
+		buffer->webgpu.write = true;
 	}
 
 	if (buffer->webgpu.has_copy_buffer) {

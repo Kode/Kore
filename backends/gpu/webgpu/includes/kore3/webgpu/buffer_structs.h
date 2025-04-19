@@ -26,6 +26,8 @@ typedef struct kore_webgpu_buffer {
 	WGPUBuffer copy_buffer;
 	bool       has_copy_buffer;
 	bool       copy_scheduled;
+
+	bool write;
 } kore_webgpu_buffer;
 
 #ifdef __cplusplus
