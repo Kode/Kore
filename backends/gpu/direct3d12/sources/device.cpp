@@ -260,11 +260,11 @@ void kore_d3d12_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 	D3D12_RESOURCE_DESC desc = {};
 	desc.Dimension           = D3D12_RESOURCE_DIMENSION_BUFFER;
 	desc.Alignment           = 0;
-	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME) != 0 || (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_READ_WRITE) != 0) {
-		desc.Width = parameters->size;
+	if ((parameters->usage_flags & KORE_D3D12_BUFFER_USAGE_CBV) != 0) {
+		desc.Width = align_pow2((int)parameters->size, 256); // 256 required for CBVs
 	}
 	else {
-		desc.Width = align_pow2((int)parameters->size, 256); // 256 required for CBVs
+		desc.Width = parameters->size;
 	}
 	desc.Height             = 1;
 	desc.DepthOrArraySize   = 1;
@@ -277,7 +277,7 @@ void kore_d3d12_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 
 	buffer->d3d12.size = parameters->size;
 
-	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_READ_WRITE) != 0) {
+	if ((parameters->usage_flags & KORE_D3D12_BUFFER_USAGE_UAV) != 0) {
 		buffer->d3d12.resource_state = D3D12_RESOURCE_STATE_COMMON;
 		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	}
@@ -802,12 +802,12 @@ void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gp
 
 	kore_gpu_buffer_parameters scratch_params;
 	scratch_params.size        = prebuild_info.ScratchDataSizeInBytes;
-	scratch_params.usage_flags = KORE_GPU_BUFFER_USAGE_READ_WRITE;
+	scratch_params.usage_flags = KORE_D3D12_BUFFER_USAGE_UAV;
 	kore_gpu_device_create_buffer(device, &scratch_params, &volume->d3d12.scratch_buffer); // TODO: delete later
 
 	kore_gpu_buffer_parameters as_params;
 	as_params.size        = prebuild_info.ResultDataMaxSizeInBytes;
-	as_params.usage_flags = KORE_GPU_BUFFER_USAGE_READ_WRITE | KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
+	as_params.usage_flags = KORE_D3D12_BUFFER_USAGE_UAV | KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
 	kore_gpu_device_create_buffer(device, &as_params, &volume->d3d12.acceleration_structure);
 }
 
@@ -860,18 +860,18 @@ void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore
 
 	kore_gpu_buffer_parameters scratch_params;
 	scratch_params.size        = prebuild_info.ScratchDataSizeInBytes;
-	scratch_params.usage_flags = KORE_GPU_BUFFER_USAGE_READ_WRITE;
+	scratch_params.usage_flags = KORE_D3D12_BUFFER_USAGE_UAV;
 	kore_gpu_device_create_buffer(device, &scratch_params, &hierarchy->d3d12.scratch_buffer); // TODO: delete later
 
 	kore_gpu_buffer_parameters update_scratch_params;
 	update_scratch_params.size =
 	    prebuild_info.UpdateScratchDataSizeInBytes > 0 ? prebuild_info.UpdateScratchDataSizeInBytes : prebuild_info.ScratchDataSizeInBytes;
-	update_scratch_params.usage_flags = KORE_GPU_BUFFER_USAGE_READ_WRITE;
+	update_scratch_params.usage_flags = KORE_D3D12_BUFFER_USAGE_UAV;
 	kore_gpu_device_create_buffer(device, &update_scratch_params, &hierarchy->d3d12.update_scratch_buffer);
 
 	kore_gpu_buffer_parameters as_params;
 	as_params.size        = prebuild_info.ResultDataMaxSizeInBytes;
-	as_params.usage_flags = KORE_GPU_BUFFER_USAGE_READ_WRITE | KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
+	as_params.usage_flags = KORE_D3D12_BUFFER_USAGE_UAV | KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
 	kore_gpu_device_create_buffer(device, &as_params, &hierarchy->d3d12.acceleration_structure);
 }
 

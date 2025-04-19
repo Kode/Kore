@@ -50,17 +50,16 @@ KORE_FUNC void kore_gpu_device_destroy(kore_gpu_device *device);
 
 KORE_FUNC void kore_gpu_device_set_name(kore_gpu_device *device, const char *name);
 
+// sixteen bits for us, sixteen bits for the backend
 typedef enum kore_gpu_buffer_usage {
 	KORE_GPU_BUFFER_USAGE_CPU_READ          = 0x0001,
 	KORE_GPU_BUFFER_USAGE_CPU_WRITE         = 0x0002,
 	KORE_GPU_BUFFER_USAGE_COPY_SRC          = 0x0004,
 	KORE_GPU_BUFFER_USAGE_COPY_DST          = 0x0008,
 	KORE_GPU_BUFFER_USAGE_INDEX             = 0x0010,
-	KORE_GPU_BUFFER_USAGE_VERTEX            = 0x0020,
-	KORE_GPU_BUFFER_USAGE_READ_WRITE        = 0x0040,
-	KORE_GPU_BUFFER_USAGE_INDIRECT          = 0x0080,
-	KORE_GPU_BUFFER_USAGE_QUERY_RESOLVE     = 0x0100,
-	KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME = 0x0200
+	KORE_GPU_BUFFER_USAGE_INDIRECT          = 0x0020,
+	KORE_GPU_BUFFER_USAGE_QUERY_RESOLVE     = 0x0040,
+	KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME = 0x0080,
 } kore_gpu_buffer_usage;
 
 typedef struct kore_gpu_buffer_parameters {
