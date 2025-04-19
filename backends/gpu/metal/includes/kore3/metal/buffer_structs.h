@@ -9,6 +9,10 @@ extern "C" {
 
 struct kore_gpu_device;
 
+typedef enum kore_metal_buffer_usage {
+	KORE_METAL_BUFFER_USAGE_VERTEX = 0x00010000,
+} kore_metal_buffer_usage;
+
 typedef struct kore_metal_buffer {
 	void *buffer;
 	void *locked_data;

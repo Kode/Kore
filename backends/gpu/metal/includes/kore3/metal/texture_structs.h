@@ -5,6 +5,12 @@
 extern "C" {
 #endif
 
+typedef enum kore_metal_texture_usage {
+	KORE_METAL_TEXTURE_USAGE_SAMPLE      = 0x00010000,
+	KORE_METAL_TEXTURE_USAGE_READ_WRITE  = 0x00020000,
+	KORE_METAL_TEXTURE_USAGE_FRAMEBUFFER = 0x00040000,
+} kore_metal_texture_usage;
+
 typedef struct kore_metal_texture {
 	void   *texture;
 	uint8_t dimension;
