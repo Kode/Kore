@@ -13,6 +13,30 @@
 
 #include <assert.h>
 
+static WGPULoadOp convert_load_op(kore_gpu_load_op op) {
+	switch (op) {
+	case KORE_GPU_LOAD_OP_LOAD:
+		return WGPULoadOp_Load;
+	case KORE_GPU_LOAD_OP_CLEAR:
+		return WGPULoadOp_Clear;
+	}
+
+	assert(false);
+	return WGPULoadOp_Load;
+}
+
+static WGPUStoreOp conver_store_op(kore_gpu_store_op op) {
+	switch (op) {
+	case KORE_GPU_STORE_OP_STORE:
+		return WGPUStoreOp_Store;
+	case KORE_GPU_STORE_OP_DISCARD:
+		return WGPUStoreOp_Discard;
+	}
+
+	assert(false);
+	return WGPUStoreOp_Store;
+}
+
 void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
@@ -26,9 +50,9 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
 
 	WGPURenderPassColorAttachment color_attachment = {
 	    .view       = texture_view,
-	    .loadOp     = WGPULoadOp_Clear,
-	    .storeOp    = WGPUStoreOp_Store,
-	    .clearValue = {0, 0, 0, 1},
+	    .loadOp     = convert_load_op(parameters->color_attachments[0].load_op),
+	    .storeOp    = conver_store_op(parameters->color_attachments[0].store_op),
+	    .clearValue = {parameters->color_attachments[0].clear_value.r, parameters->color_attachments[0].clear_value.g, parameters->color_attachments[0].clear_value.b, parameters->color_attachments[0].clear_value.a},
 	    .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
 	};
 
