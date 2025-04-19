@@ -104,6 +104,9 @@ static WGPUBufferUsage convert_buffer_usage(kore_gpu_buffer_usage usage) {
 	if ((usage & KORE_WEBGPU_BUFFER_USAGE_VERTEX) != 0) {
 		wgpu_usage |= WGPUBufferUsage_Vertex;
 	}
+	if ((usage & KORE_WEBGPU_BUFFER_USAGE_UNIFORM) != 0) {
+		wgpu_usage |= WGPUBufferUsage_Uniform;
+	}
 	if ((usage & KORE_WEBGPU_BUFFER_USAGE_STORAGE) != 0) {
 		wgpu_usage |= WGPUBufferUsage_Storage;
 	}
