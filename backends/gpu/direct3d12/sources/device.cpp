@@ -19,8 +19,8 @@
 
 #include <nvapi.h>
 
-static void __stdcall nvidia_raytracing_validation_message_callback(void *pUserData, NVAPI_D3D12_RAYTRACING_VALIDATION_MESSAGE_SEVERITY severity, const char *messageCode,
-                                                  const char *message, const char *messageDetails) {
+static void __stdcall nvidia_raytracing_validation_message_callback(void *pUserData, NVAPI_D3D12_RAYTRACING_VALIDATION_MESSAGE_SEVERITY severity,
+                                                                    const char *messageCode, const char *message, const char *messageDetails) {
 	const char *severityString = "unknown";
 	switch (severity) {
 	case NVAPI_D3D12_RAYTRACING_VALIDATION_MESSAGE_SEVERITY_ERROR:
@@ -754,14 +754,15 @@ void kore_d3d12_device_create_sampler(kore_gpu_device *device, const kore_gpu_sa
 	D3D12_SAMPLER_DESC desc = {};
 	desc.Filter =
 	    parameters->max_anisotropy > 1 ? D3D12_FILTER_ANISOTROPIC : convert_filter(parameters->min_filter, parameters->mag_filter, parameters->mipmap_filter);
-	desc.AddressU       = convert_address_mode(parameters->address_mode_u);
-	desc.AddressV       = convert_address_mode(parameters->address_mode_v);
-	desc.AddressW       = convert_address_mode(parameters->address_mode_w);
-	desc.MinLOD         = parameters->lod_min_clamp;
-	desc.MaxLOD         = parameters->lod_max_clamp;
-	desc.MipLODBias     = 0.0f;
-	desc.MaxAnisotropy  = parameters->max_anisotropy;
-	desc.ComparisonFunc = convert_compare_function(parameters->compare);
+	desc.AddressU      = convert_address_mode(parameters->address_mode_u);
+	desc.AddressV      = convert_address_mode(parameters->address_mode_v);
+	desc.AddressW      = convert_address_mode(parameters->address_mode_w);
+	desc.MinLOD        = parameters->lod_min_clamp;
+	desc.MaxLOD        = parameters->lod_max_clamp;
+	desc.MipLODBias    = 0.0f;
+	desc.MaxAnisotropy = parameters->max_anisotropy;
+	desc.ComparisonFunc =
+	    parameters->compare == KORE_GPU_COMPARE_FUNCTION_UNDEFINED ? D3D12_COMPARISON_FUNC_ALWAYS : convert_compare_function(parameters->compare);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle = device->d3d12.all_samplers->GetCPUDescriptorHandleForHeapStart();
 	descriptor_handle.ptr += sampler->d3d12.sampler_index * device->d3d12.sampler_increment;
