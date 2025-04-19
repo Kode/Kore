@@ -182,7 +182,7 @@ void kore_d3d11_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_INDEX) != 0) {
 		buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	}
-	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_VERTEX) != 0) {
+	else if ((parameters->usage_flags & KORE_D3D11_BUFFER_USAGE_VERTEX) != 0) {
 		buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	}
 	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0) {
