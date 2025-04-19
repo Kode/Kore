@@ -101,10 +101,10 @@ static WGPUBufferUsage convert_buffer_usage(kore_gpu_buffer_usage usage) {
 	if ((usage & KORE_GPU_BUFFER_USAGE_INDEX) != 0) {
 		wgpu_usage |= WGPUBufferUsage_Index;
 	}
-	if ((usage & KORE_GPU_BUFFER_USAGE_VERTEX) != 0) {
+	if ((usage & KORE_WEBGPU_BUFFER_USAGE_VERTEX) != 0) {
 		wgpu_usage |= WGPUBufferUsage_Vertex;
 	}
-	if ((usage & KORE_GPU_BUFFER_USAGE_READ_WRITE) != 0) {
+	if ((usage & KORE_WEBGPU_BUFFER_USAGE_STORAGE) != 0) {
 		wgpu_usage |= WGPUBufferUsage_Storage;
 	}
 	if ((usage & KORE_GPU_BUFFER_USAGE_INDIRECT) != 0) {
