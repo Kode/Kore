@@ -167,17 +167,15 @@ void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 }
 
 void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
-	WGPUExtent3D size = {
-	    .width              = parameters->width,
-	    .height             = parameters->height,
-	    .depthOrArrayLayers = parameters->depth_or_array_layers,
-	};
-
 	WGPUTextureDescriptor texture_descriptor = {
 	    .sampleCount   = 1,
 	    .format        = WGPUTextureFormat_BGRA8Unorm,
 	    .usage         = WGPUTextureUsage_RenderAttachment,
-	    .size          = parameters->width * parameters->height * 4,
+	    .size          = {
+			.width              = parameters->width,
+	    	.height             = parameters->height,
+	    	.depthOrArrayLayers = parameters->depth_or_array_layers,
+		},
 	    .dimension     = WGPUTextureDimension_2D,
 	    .mipLevelCount = 1,
 	};
