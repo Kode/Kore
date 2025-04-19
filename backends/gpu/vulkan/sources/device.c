@@ -1122,6 +1122,9 @@ static VkFilter convert_mipmap_filter(kore_gpu_mipmap_filter_mode filter) {
 
 static VkCompareOp convert_compare_function(kore_gpu_compare_function func) {
 	switch (func) {
+	case KORE_GPU_COMPARE_FUNCTION_UNDEFINED:
+		assert(false);
+		return VK_COMPARE_OP_NEVER;
 	case KORE_GPU_COMPARE_FUNCTION_NEVER:
 		return VK_COMPARE_OP_NEVER;
 	case KORE_GPU_COMPARE_FUNCTION_LESS:
@@ -1140,7 +1143,8 @@ static VkCompareOp convert_compare_function(kore_gpu_compare_function func) {
 		return VK_COMPARE_OP_ALWAYS;
 	}
 
-	return VK_COMPARE_OP_ALWAYS;
+	assert(false);
+	return VK_COMPARE_OP_NEVER;
 }
 
 void kore_vulkan_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {
@@ -1160,8 +1164,8 @@ void kore_vulkan_device_create_sampler(kore_gpu_device *device, const kore_gpu_s
 	    .magFilter = convert_filter(parameters->mag_filter),
 	    .minFilter = convert_filter(parameters->min_filter),
 
-	    .compareEnable = parameters->compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS,
-	    .compareOp     = convert_compare_function(parameters->compare),
+	    .compareEnable = parameters->compare != KORE_GPU_COMPARE_FUNCTION_UNDEFINED,
+	    .compareOp     = parameters->compare != KORE_GPU_COMPARE_FUNCTION_UNDEFINED ? convert_compare_function(parameters->compare) : 0,
 
 	    .anisotropyEnable = parameters->max_anisotropy > 1,
 	    .maxAnisotropy    = parameters->max_anisotropy,

@@ -6,6 +6,9 @@
 
 static D3D12_COMPARISON_FUNC convert_compare_function(kore_gpu_compare_function fun) {
 	switch (fun) {
+	case KORE_GPU_COMPARE_FUNCTION_UNDEFINED:
+		assert(false);
+		return D3D12_COMPARISON_FUNC_NEVER;
 	case KORE_GPU_COMPARE_FUNCTION_NEVER:
 		return D3D12_COMPARISON_FUNC_NEVER;
 	case KORE_GPU_COMPARE_FUNCTION_LESS:
@@ -22,10 +25,10 @@ static D3D12_COMPARISON_FUNC convert_compare_function(kore_gpu_compare_function 
 		return D3D12_COMPARISON_FUNC_GREATER_EQUAL;
 	case KORE_GPU_COMPARE_FUNCTION_ALWAYS:
 		return D3D12_COMPARISON_FUNC_ALWAYS;
-	default:
-		assert(false);
-		return D3D12_COMPARISON_FUNC_ALWAYS;
 	}
+
+	assert(false);
+	return D3D12_COMPARISON_FUNC_NEVER;
 }
 
 static D3D12_FILTER convert_filter(kore_gpu_filter_mode minification, kore_gpu_filter_mode magnification, kore_gpu_mipmap_filter_mode mipmap) {

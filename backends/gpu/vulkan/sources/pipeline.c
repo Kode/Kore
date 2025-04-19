@@ -137,6 +137,9 @@ static VkBlendOp convert_blend_operation(kore_vulkan_blend_operation operation) 
 
 static VkCompareOp convert_compare_mode(kore_gpu_compare_function compare) {
 	switch (compare) {
+	case KORE_GPU_COMPARE_FUNCTION_UNDEFINED:
+		assert(false);
+		return VK_COMPARE_OP_NEVER;
 	case KORE_GPU_COMPARE_FUNCTION_NEVER:
 		return VK_COMPARE_OP_NEVER;
 	case KORE_GPU_COMPARE_FUNCTION_LESS:
@@ -155,7 +158,8 @@ static VkCompareOp convert_compare_mode(kore_gpu_compare_function compare) {
 		return VK_COMPARE_OP_ALWAYS;
 	}
 
-	return VK_COMPARE_OP_ALWAYS;
+	assert(false);
+	return VK_COMPARE_OP_NEVER;
 }
 
 static VkShaderModule create_shader_module(kore_vulkan_device *device, const kore_vulkan_shader *shader) {
@@ -371,7 +375,7 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 
 	const VkPipelineDepthStencilStateCreateInfo depth_stencil_state_create_info = {
 	    .sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-	    .depthTestEnable       = parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS,
+	    .depthTestEnable       = parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS && parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_UNDEFINED,
 	    .depthWriteEnable      = parameters->depth_stencil.depth_write_enabled,
 	    .depthCompareOp        = convert_compare_mode(parameters->depth_stencil.depth_compare),
 	    .depthBoundsTestEnable = VK_FALSE,

@@ -130,6 +130,10 @@ static void set_blend_state(D3D12_BLEND_DESC *desc, const kore_d3d12_color_targe
 	desc->RenderTarget[target].RenderTargetWriteMask = (UINT8)target_state->write_mask;
 }
 
+static bool compare_is_active(kore_gpu_compare_function func) {
+	return func != KORE_GPU_COMPARE_FUNCTION_ALWAYS && func != KORE_GPU_COMPARE_FUNCTION_UNDEFINED;
+}
+
 void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_render_pipeline *pipe, const kore_d3d12_render_pipeline_parameters *parameters) {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {0};
 
@@ -266,15 +270,15 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 
 	desc.DSVFormat = convert_texture_format(parameters->depth_stencil.format);
 
-	desc.DepthStencilState.DepthEnable    = parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS;
+	desc.DepthStencilState.DepthEnable    = compare_is_active(parameters->depth_stencil.depth_compare);
 	desc.DepthStencilState.DepthWriteMask = parameters->depth_stencil.depth_write_enabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
 	desc.DepthStencilState.DepthFunc      = convert_compare_function(parameters->depth_stencil.depth_compare);
 
-	desc.DepthStencilState.StencilEnable = parameters->depth_stencil.stencil_front.compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS ||
+	desc.DepthStencilState.StencilEnable = compare_is_active(parameters->depth_stencil.stencil_front.compare) ||
 	                                       parameters->depth_stencil.stencil_front.pass_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
 	                                       parameters->depth_stencil.stencil_front.fail_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
 	                                       parameters->depth_stencil.stencil_front.depth_fail_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
-	                                       parameters->depth_stencil.stencil_back.compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS ||
+	                                       compare_is_active(parameters->depth_stencil.stencil_back.compare) ||
 	                                       parameters->depth_stencil.stencil_back.pass_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
 	                                       parameters->depth_stencil.stencil_back.fail_op != KORE_D3D12_STENCIL_OPERATION_KEEP ||
 	                                       parameters->depth_stencil.stencil_back.depth_fail_op != KORE_D3D12_STENCIL_OPERATION_KEEP;
