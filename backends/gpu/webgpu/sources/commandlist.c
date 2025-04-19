@@ -137,7 +137,9 @@ void kore_webgpu_command_list_set_bind_group(kore_gpu_command_list *list, uint32
 void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {}
 
 void kore_webgpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset, kore_gpu_buffer *destination,
-                                                    uint64_t destination_offset, uint64_t size) {}
+                                                    uint64_t destination_offset, uint64_t size) {
+	wgpuCommandEncoderCopyBufferToBuffer(list->webgpu.command_encoder, source->webgpu.has_copy_buffer ? source->webgpu.copy_buffer : source->webgpu.buffer, source_offset, destination->webgpu.buffer, destination_offset, size);
+}
 
 static WGPUTextureAspect convert_texture_aspect(kore_gpu_texture_aspect aspect) {
 	switch (aspect) {
@@ -162,7 +164,7 @@ void kore_webgpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
 			.bytesPerRow = source->bytes_per_row,
 			.rowsPerImage = source->rows_per_image,
 		},
-		.buffer = source->buffer->webgpu.buffer,
+		.buffer = source->buffer->webgpu.has_copy_buffer ? source->buffer->webgpu.copy_buffer : source->buffer->webgpu.buffer,
 	};
 
 	WGPUImageCopyTexture copy_texture = {
