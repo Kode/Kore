@@ -11,6 +11,8 @@
 extern "C" {
 #endif
 
+void kore_webgpu_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer);
+
 #ifdef __cplusplus
 }
 #endif
