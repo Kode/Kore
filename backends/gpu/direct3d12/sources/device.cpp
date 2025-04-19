@@ -548,7 +548,7 @@ void kore_d3d12_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 		optimizedClearValuePointer = &optimizedClearValue;
 	}
 
-	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_READ_WRITE) != 0) {
+	if ((parameters->usage & KORE_D3D12_TEXTURE_USAGE_UAV) != 0) {
 		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	}
 

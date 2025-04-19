@@ -75,13 +75,11 @@ typedef enum kore_gpu_texture_dimension {
 	KORE_GPU_TEXTURE_DIMENSION_3D
 } kore_gpu_texture_dimension;
 
+// sixteen bits for us, sixteen bits for the backend
 typedef enum kore_gpu_texture_usage {
-	KORE_GPU_TEXTURE_USAGE_COPY_SRC          = 0x01,
-	KORE_GPU_TEXTURE_USAGE_COPY_DST          = 0x02,
-	KORE_GPU_TEXTURE_USAGE_SAMPLE            = 0x04,
-	KORE_GPU_TEXTURE_USAGE_READ_WRITE        = 0x08,
-	KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT = 0x10,
-	KORE_GPU_TEXTURE_USAGE_FRAMEBUFFER       = 0x20
+	KORE_GPU_TEXTURE_USAGE_COPY_SRC          = 0x0001,
+	KORE_GPU_TEXTURE_USAGE_COPY_DST          = 0x0002,
+	KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT = 0x0004,
 } kore_gpu_texture_usage;
 
 typedef struct kore_gpu_texture_parameters {
