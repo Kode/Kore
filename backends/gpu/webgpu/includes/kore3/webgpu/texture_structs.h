@@ -16,6 +16,7 @@ typedef enum kore_webgpu_texture_usage {
 
 typedef struct kore_webgpu_texture {
 	WGPUTexture texture;
+	kore_gpu_texture_format format;
 } kore_webgpu_texture;
 
 #ifdef __cplusplus

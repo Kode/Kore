@@ -169,7 +169,7 @@ void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
 	WGPUTextureDescriptor texture_descriptor = {
 	    .sampleCount   = 1,
-	    .format        = WGPUTextureFormat_BGRA8Unorm,
+	    .format        = convert_format(parameters->format),
 	    .usage         = WGPUTextureUsage_RenderAttachment,
 	    .size          = {
 			.width              = parameters->width,
@@ -181,6 +181,7 @@ void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	};
 
 	texture->webgpu.texture = wgpuDeviceCreateTexture(device->webgpu.device, &texture_descriptor);
+	texture->webgpu.format  = parameters->format;
 }
 
 static kore_gpu_texture framebuffer;
@@ -189,6 +190,7 @@ kore_gpu_texture *kore_webgpu_device_get_framebuffer(kore_gpu_device *device) {
 	WGPUSurfaceTexture surface_texture;
 	wgpuSurfaceGetCurrentTexture(device->webgpu.surface, &surface_texture);
 	framebuffer.webgpu.texture = surface_texture.texture;
+	framebuffer.webgpu.format  = kore_webgpu_device_framebuffer_format(device);
 	return &framebuffer;
 }
 

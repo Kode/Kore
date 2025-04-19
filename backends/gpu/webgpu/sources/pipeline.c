@@ -68,12 +68,36 @@ static WGPUVertexFormat convert_vertex_format(kore_webgpu_vertex_format format) 
 	case KORE_WEBGPU_VERTEX_FORMAT_UNORM10_10_10_2:
 		return WGPUVertexFormat_Unorm10_10_10_2;
 	}
+
+	assert(false);
+	return WGPUVertexFormat_Float32;
+}
+
+static WGPUCompareFunction convert_compare(kore_gpu_compare_function func) {
+	switch (func) {
+	case KORE_GPU_COMPARE_FUNCTION_NEVER:
+		return WGPUCompareFunction_Never;
+	case KORE_GPU_COMPARE_FUNCTION_LESS:
+		return WGPUCompareFunction_Less;
+	case KORE_GPU_COMPARE_FUNCTION_EQUAL:
+		return WGPUCompareFunction_Equal;
+	case KORE_GPU_COMPARE_FUNCTION_LESS_EQUAL:
+		return WGPUCompareFunction_LessEqual;
+	case KORE_GPU_COMPARE_FUNCTION_GREATER:
+		return WGPUCompareFunction_Greater;
+	case KORE_GPU_COMPARE_FUNCTION_NOT_EQUAL:
+		return WGPUCompareFunction_NotEqual;
+	case KORE_GPU_COMPARE_FUNCTION_GREATER_EQUAL:
+		return WGPUCompareFunction_GreaterEqual;
+	case KORE_GPU_COMPARE_FUNCTION_ALWAYS:
+		return WGPUCompareFunction_Always;
+	}
 }
 
 void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters, const WGPUBindGroupLayout *bind_group_layouts,
 	uint32_t bind_group_layouts_count) {
 	WGPUColorTargetState color_target_state = {
-	    .format    = WGPUTextureFormat_BGRA8Unorm,
+	    .format    = convert_format(parameters->fragment.targets[0].format),
 	    .writeMask = WGPUColorWriteMask_All,
 	};
 
@@ -143,15 +167,35 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 	    .alphaToCoverageEnabled = false,
 	};
 
-	WGPURenderPipelineDescriptor render_pipeline_descriptor = {
-	    .layout      = wgpuDeviceCreatePipelineLayout(device->device, &pipeline_layout_descriptor),
-	    .fragment    = &fragment_state,
-	    .vertex      = vertex_state,
-	    .multisample = multisample_state,
-	    .primitive   = primitive_state,
-	};
+	if (parameters->depth_stencil.format != KORE_GPU_TEXTURE_FORMAT_UNDEFINED) {
+		WGPUDepthStencilState depth_stencil_state = {
+			.format = convert_format(parameters->depth_stencil.format),
+			.depthWriteEnabled = parameters->depth_stencil.depth_write_enabled,
+			.depthCompare = convert_compare(parameters->depth_stencil.depth_compare),
+		};
+	
+		WGPURenderPipelineDescriptor render_pipeline_descriptor = {
+			.layout       = wgpuDeviceCreatePipelineLayout(device->device, &pipeline_layout_descriptor),
+			.fragment     = &fragment_state,
+			.vertex       = vertex_state,
+			.multisample  = multisample_state,
+			.primitive    = primitive_state,
+			.depthStencil = &depth_stencil_state,
+		};
 
-	pipe->render_pipeline = wgpuDeviceCreateRenderPipeline(device->device, &render_pipeline_descriptor);
+		pipe->render_pipeline = wgpuDeviceCreateRenderPipeline(device->device, &render_pipeline_descriptor);
+	}
+	else {
+		WGPURenderPipelineDescriptor render_pipeline_descriptor = {
+			.layout      = wgpuDeviceCreatePipelineLayout(device->device, &pipeline_layout_descriptor),
+			.fragment    = &fragment_state,
+			.vertex      = vertex_state,
+			.multisample = multisample_state,
+			.primitive   = primitive_state,
+		};
+
+		pipe->render_pipeline = wgpuDeviceCreateRenderPipeline(device->device, &render_pipeline_descriptor);
+	}
 }
 
 void kore_webgpu_render_pipeline_destroy(kore_webgpu_render_pipeline *pipe) {}

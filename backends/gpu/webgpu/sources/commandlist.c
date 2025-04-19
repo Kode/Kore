@@ -25,7 +25,7 @@ static WGPULoadOp convert_load_op(kore_gpu_load_op op) {
 	return WGPULoadOp_Load;
 }
 
-static WGPUStoreOp conver_store_op(kore_gpu_store_op op) {
+static WGPUStoreOp convert_store_op(kore_gpu_store_op op) {
 	switch (op) {
 	case KORE_GPU_STORE_OP_STORE:
 		return WGPUStoreOp_Store;
@@ -41,7 +41,7 @@ void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	WGPUTextureViewDescriptor texture_view_descriptor = {
-	    .format          = WGPUTextureFormat_BGRA8Unorm,
+	    .format          = convert_format(parameters->color_attachments[0].texture.texture->webgpu.format),
 	    .dimension       = WGPUTextureViewDimension_2D,
 	    .arrayLayerCount = 1,
 	    .mipLevelCount   = 1,
@@ -51,17 +51,43 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	WGPURenderPassColorAttachment color_attachment = {
 	    .view       = texture_view,
 	    .loadOp     = convert_load_op(parameters->color_attachments[0].load_op),
-	    .storeOp    = conver_store_op(parameters->color_attachments[0].store_op),
+	    .storeOp    = convert_store_op(parameters->color_attachments[0].store_op),
 	    .clearValue = {parameters->color_attachments[0].clear_value.r, parameters->color_attachments[0].clear_value.g, parameters->color_attachments[0].clear_value.b, parameters->color_attachments[0].clear_value.a},
 	    .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
 	};
 
-	WGPURenderPassDescriptor render_pass_descriptor = {
-	    .colorAttachmentCount = 1,
-	    .colorAttachments     = &color_attachment,
-	};
+	if (parameters->depth_stencil_attachment.texture != NULL) {
+		WGPUTextureViewDescriptor depth_view_descriptor = {
+			.format          = convert_format(parameters->depth_stencil_attachment.texture->webgpu.format),
+			.dimension       = WGPUTextureViewDimension_2D,
+			.arrayLayerCount = 1,
+			.mipLevelCount   = 1,
+		};
+		WGPUTextureView depth_view = wgpuTextureCreateView(parameters->depth_stencil_attachment.texture->webgpu.texture, &depth_view_descriptor);
 
-	list->webgpu.render_pass_encoder = wgpuCommandEncoderBeginRenderPass(list->webgpu.command_encoder, &render_pass_descriptor);
+		WGPURenderPassDepthStencilAttachment depth_attachment = (WGPURenderPassDepthStencilAttachment){
+			.view = depth_view,
+			.depthLoadOp = convert_load_op(parameters->depth_stencil_attachment.depth_load_op),
+			.depthStoreOp = convert_store_op(parameters->depth_stencil_attachment.depth_store_op),
+			.depthClearValue = parameters->depth_stencil_attachment.depth_clear_value,
+		};
+
+		WGPURenderPassDescriptor render_pass_descriptor = {
+			.colorAttachmentCount   = 1,
+			.colorAttachments       = &color_attachment,
+			.depthStencilAttachment = &depth_attachment,
+		};
+
+		list->webgpu.render_pass_encoder = wgpuCommandEncoderBeginRenderPass(list->webgpu.command_encoder, &render_pass_descriptor);
+	}
+	else {	
+		WGPURenderPassDescriptor render_pass_descriptor = {
+			.colorAttachmentCount = 1,
+			.colorAttachments     = &color_attachment,
+		};
+
+		list->webgpu.render_pass_encoder = wgpuCommandEncoderBeginRenderPass(list->webgpu.command_encoder, &render_pass_descriptor);
+	}
 }
 
 void kore_webgpu_command_list_end_render_pass(kore_gpu_command_list *list) {
