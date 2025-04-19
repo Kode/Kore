@@ -7,6 +7,12 @@
 extern "C" {
 #endif
 
+// add-ons to kore_gpu_texture_usage, top 16 bits only
+typedef enum kore_vulkan_texture_usage {
+	KORE_VULKAN_TEXTURE_USAGE_SAMPLED = 0x00010000,
+	KORE_VULKAN_TEXTURE_USAGE_STORAGE = 0x00020000,
+} kore_vulkan_texture_usage;
+
 typedef struct kore_vulkan_texture {
 	uint32_t width;
 	uint32_t height;

@@ -797,7 +797,7 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	buffer->vulkan.size = parameters->size;
 
 	VkBufferUsageFlags usage = 0;
-	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_VERTEX) != 0) {
+	if ((parameters->usage_flags & KORE_VULKAN_BUFFER_USAGE_VERTEX) != 0) {
 		usage |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 	}
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_INDEX) != 0) {
@@ -926,11 +926,11 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 		usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 	}
 
-	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_SAMPLE) != 0) {
+	if ((parameters->usage & KORE_VULKAN_TEXTURE_USAGE_SAMPLED) != 0) {
 		usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
 	}
 
-	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_READ_WRITE) != 0) {
+	if ((parameters->usage & KORE_VULKAN_TEXTURE_USAGE_STORAGE) != 0) {
 		usage |= VK_IMAGE_USAGE_STORAGE_BIT;
 	}
 
