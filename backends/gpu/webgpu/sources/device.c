@@ -167,10 +167,32 @@ void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 }
 
 void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
+	WGPUTextureUsageFlags usage = 0;
+
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_COPY_SRC) != 0) {
+		usage |= WGPUTextureUsage_CopySrc;
+	}
+
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_COPY_DST) != 0) {
+		usage |= WGPUTextureUsage_CopyDst;
+	}
+
+	if ((parameters->usage & KORE_WEBGPU_TEXTURE_USAGE_SAMPLED) != 0) {
+		usage |= WGPUTextureUsage_TextureBinding;
+	}
+
+	if ((parameters->usage & KORE_WEBGPU_TEXTURE_USAGE_STORAGE) != 0) {
+		usage |= WGPUTextureUsage_StorageBinding;
+	}
+
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
+		usage |= WGPUTextureUsage_RenderAttachment;
+	}
+
 	WGPUTextureDescriptor texture_descriptor = {
 	    .sampleCount   = 1,
-	    .format        = convert_format(parameters->format),
-	    .usage         = WGPUTextureUsage_RenderAttachment,
+	    .format        = kore_webgpu_convert_texture_format(parameters->format),
+	    .usage         = usage,
 	    .size          = {
 			.width              = parameters->width,
 	    	.height             = parameters->height,
@@ -241,7 +263,59 @@ void kore_webgpu_device_create_descriptor_set(kore_gpu_device *device, WGPUBindG
 	set->bind_group = bind_group;
 }
 
-void kore_webgpu_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {}
+static WGPUAddressMode convert_address_mode(kore_gpu_address_mode mode) {
+	switch (mode) {
+	case KORE_GPU_ADDRESS_MODE_CLAMP_TO_EDGE:
+		return WGPUAddressMode_ClampToEdge;
+	case KORE_GPU_ADDRESS_MODE_REPEAT:
+		return WGPUAddressMode_Repeat;
+	case KORE_GPU_ADDRESS_MODE_MIRROR_REPEAT:
+		return WGPUAddressMode_MirrorRepeat;
+	}
+
+	assert(false);
+	return WGPUAddressMode_Repeat;
+}
+
+static WGPUFilterMode convert_filter_mode(kore_gpu_filter_mode mode) {
+	switch (mode) {
+	case KORE_GPU_FILTER_MODE_NEAREST:
+		return WGPUFilterMode_Nearest;
+	case KORE_GPU_FILTER_MODE_LINEAR:
+		return WGPUFilterMode_Linear;
+	}
+
+	assert(false);
+	return WGPUFilterMode_Nearest;
+}
+
+static WGPUMipmapFilterMode convert_mipmap_filter_mode(kore_gpu_mipmap_filter_mode mode) {
+	switch (mode) {
+	case KORE_GPU_MIPMAP_FILTER_MODE_NEAREST:
+		return WGPUMipmapFilterMode_Nearest;
+	case KORE_GPU_MIPMAP_FILTER_MODE_LINEAR:
+		return WGPUMipmapFilterMode_Linear;
+	}
+
+	assert(false);
+	return WGPUMipmapFilterMode_Nearest;
+}
+
+void kore_webgpu_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {
+	WGPUSamplerDescriptor sampler_descriptor = {
+		.addressModeU = convert_address_mode(parameters->address_mode_u),
+    	.addressModeV = convert_address_mode(parameters->address_mode_v),
+    	.addressModeW = convert_address_mode(parameters->address_mode_w),
+    	.magFilter = convert_filter_mode(parameters->mag_filter),
+    	.minFilter = convert_filter_mode(parameters->min_filter),
+    	.mipmapFilter = convert_mipmap_filter_mode(parameters->mipmap_filter),
+    	.lodMinClamp = parameters->lod_min_clamp,
+    	.lodMaxClamp = parameters->lod_max_clamp,
+    	.compare = convert_compare(parameters->compare),
+    	.maxAnisotropy = parameters->max_anisotropy,
+	};
+	sampler->webgpu.sampler = wgpuDeviceCreateSampler(device->webgpu.device, &sampler_descriptor);
+}
 
 void kore_webgpu_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
                                                  uint32_t index_count, kore_gpu_raytracing_volume *volume) {}

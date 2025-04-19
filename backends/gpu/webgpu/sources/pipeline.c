@@ -73,31 +73,10 @@ static WGPUVertexFormat convert_vertex_format(kore_webgpu_vertex_format format) 
 	return WGPUVertexFormat_Float32;
 }
 
-static WGPUCompareFunction convert_compare(kore_gpu_compare_function func) {
-	switch (func) {
-	case KORE_GPU_COMPARE_FUNCTION_NEVER:
-		return WGPUCompareFunction_Never;
-	case KORE_GPU_COMPARE_FUNCTION_LESS:
-		return WGPUCompareFunction_Less;
-	case KORE_GPU_COMPARE_FUNCTION_EQUAL:
-		return WGPUCompareFunction_Equal;
-	case KORE_GPU_COMPARE_FUNCTION_LESS_EQUAL:
-		return WGPUCompareFunction_LessEqual;
-	case KORE_GPU_COMPARE_FUNCTION_GREATER:
-		return WGPUCompareFunction_Greater;
-	case KORE_GPU_COMPARE_FUNCTION_NOT_EQUAL:
-		return WGPUCompareFunction_NotEqual;
-	case KORE_GPU_COMPARE_FUNCTION_GREATER_EQUAL:
-		return WGPUCompareFunction_GreaterEqual;
-	case KORE_GPU_COMPARE_FUNCTION_ALWAYS:
-		return WGPUCompareFunction_Always;
-	}
-}
-
 void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters, const WGPUBindGroupLayout *bind_group_layouts,
 	uint32_t bind_group_layouts_count) {
 	WGPUColorTargetState color_target_state = {
-	    .format    = convert_format(parameters->fragment.targets[0].format),
+	    .format    = kore_webgpu_convert_texture_format(parameters->fragment.targets[0].format),
 	    .writeMask = WGPUColorWriteMask_All,
 	};
 
@@ -169,7 +148,7 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 
 	if (parameters->depth_stencil.format != KORE_GPU_TEXTURE_FORMAT_UNDEFINED) {
 		WGPUDepthStencilState depth_stencil_state = {
-			.format = convert_format(parameters->depth_stencil.format),
+			.format = kore_webgpu_convert_texture_format(parameters->depth_stencil.format),
 			.depthWriteEnabled = parameters->depth_stencil.depth_write_enabled,
 			.depthCompare = convert_compare(parameters->depth_stencil.depth_compare),
 		};

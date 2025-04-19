@@ -41,7 +41,7 @@ void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	WGPUTextureViewDescriptor texture_view_descriptor = {
-	    .format          = convert_format(parameters->color_attachments[0].texture.texture->webgpu.format),
+	    .format          = kore_webgpu_convert_texture_format(parameters->color_attachments[0].texture.texture->webgpu.format),
 	    .dimension       = WGPUTextureViewDimension_2D,
 	    .arrayLayerCount = 1,
 	    .mipLevelCount   = 1,
@@ -58,7 +58,7 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
 
 	if (parameters->depth_stencil_attachment.texture != NULL) {
 		WGPUTextureViewDescriptor depth_view_descriptor = {
-			.format          = convert_format(parameters->depth_stencil_attachment.texture->webgpu.format),
+			.format          = kore_webgpu_convert_texture_format(parameters->depth_stencil_attachment.texture->webgpu.format),
 			.dimension       = WGPUTextureViewDimension_2D,
 			.arrayLayerCount = 1,
 			.mipLevelCount   = 1,
@@ -139,10 +139,6 @@ void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, ui
 void kore_webgpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset, kore_gpu_buffer *destination,
                                                     uint64_t destination_offset, uint64_t size) {}
 
-void kore_webgpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
-                                                     const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
-                                                     uint32_t depth_or_array_layers) {}
-
 static WGPUTextureAspect convert_texture_aspect(kore_gpu_texture_aspect aspect) {
 	switch (aspect) {
 	case KORE_GPU_IMAGE_COPY_ASPECT_ALL:
@@ -155,6 +151,38 @@ static WGPUTextureAspect convert_texture_aspect(kore_gpu_texture_aspect aspect) 
 
 	assert(false);
 	return WGPUTextureAspect_All;
+}
+
+void kore_webgpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
+                                                     const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
+                                                     uint32_t depth_or_array_layers) {
+	WGPUImageCopyBuffer copy_buffer = {
+		.layout = {
+			.offset = source->offset,
+			.bytesPerRow = source->bytes_per_row,
+			.rowsPerImage = source->rows_per_image,
+		},
+		.buffer = source->buffer->webgpu.buffer,
+	};
+
+	WGPUImageCopyTexture copy_texture = {
+		.texture = destination->texture->webgpu.texture,
+		.mipLevel = destination->mip_level,
+		.origin = {
+			.x = destination->origin_x,
+			.y = destination->origin_y,
+			.z = destination->origin_z,
+		},
+		.aspect = convert_texture_aspect(destination->aspect),
+	};
+
+	WGPUExtent3D size = {
+		.width = width,
+		.height = height,
+		.depthOrArrayLayers = depth_or_array_layers,
+	};
+
+	wgpuCommandEncoderCopyBufferToTexture(list->webgpu.command_encoder, &copy_buffer, &copy_texture, &size);
 }
 
 void kore_webgpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,

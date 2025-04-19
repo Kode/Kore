@@ -113,6 +113,7 @@ typedef enum kore_gpu_filter_mode { KORE_GPU_FILTER_MODE_NEAREST, KORE_GPU_FILTE
 typedef enum kore_gpu_mipmap_filter_mode { KORE_GPU_MIPMAP_FILTER_MODE_NEAREST, KORE_GPU_MIPMAP_FILTER_MODE_LINEAR } kore_gpu_mipmap_filter_mode;
 
 typedef enum kore_gpu_compare_function {
+	KORE_GPU_COMPARE_FUNCTION_UNDEFINED,
 	KORE_GPU_COMPARE_FUNCTION_NEVER,
 	KORE_GPU_COMPARE_FUNCTION_LESS,
 	KORE_GPU_COMPARE_FUNCTION_EQUAL,

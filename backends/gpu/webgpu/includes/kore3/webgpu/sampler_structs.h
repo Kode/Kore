@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 typedef struct kore_webgpu_sampler {
-	int nothing;
+	WGPUSampler sampler;
 } kore_webgpu_sampler;
 
 #ifdef __cplusplus
