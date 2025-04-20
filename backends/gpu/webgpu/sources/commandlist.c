@@ -103,22 +103,16 @@ void kore_webgpu_command_list_present(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
                                                uint64_t size) {
-	if (buffer->webgpu.copy_scheduled) {
-		assert(scheduled_buffer_uploads_count < 256);
-		scheduled_buffer_uploads[scheduled_buffer_uploads_count++] = &buffer->webgpu;
-		buffer->webgpu.copy_scheduled                              = false;
-	}
+	kore_webgpu_buffer_schedule_uploads(&buffer->webgpu);
+
 	wgpuRenderPassEncoderSetIndexBuffer(list->webgpu.render_pass_encoder, buffer->webgpu.buffer,
 	                                    index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? WGPUIndexFormat_Uint16 : WGPUIndexFormat_Uint32, offset, size);
 }
 
 void kore_webgpu_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_webgpu_buffer *buffer, uint64_t offset, uint64_t size,
                                                 uint64_t stride) {
-	if (buffer->copy_scheduled) {
-		assert(scheduled_buffer_uploads_count < 256);
-		scheduled_buffer_uploads[scheduled_buffer_uploads_count++] = buffer;
-		buffer->copy_scheduled                                     = false;
-	}
+	kore_webgpu_buffer_schedule_uploads(buffer);
+
 	wgpuRenderPassEncoderSetVertexBuffer(list->webgpu.render_pass_encoder, slot, buffer->buffer, offset, size); // why is stride not needed?
 }
 

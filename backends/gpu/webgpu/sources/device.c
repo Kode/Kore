@@ -128,7 +128,8 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 
 	buffer->webgpu.write = false;
 	buffer->webgpu.has_copy_buffer = false;
-	buffer->webgpu.copy_scheduled  = false;
+	buffer->webgpu.outdated_regions_count = 0;
+	buffer->webgpu.locked_data = NULL;
 
 	if ((usage & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
 		kore_gpu_buffer_usage usage_without_write = usage ^ KORE_GPU_BUFFER_USAGE_CPU_WRITE;
@@ -229,8 +230,8 @@ void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		WGPUCommandEncoder           buffer_upload_encoder      = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
 
 		for (uint32_t buffer_index = 0; buffer_index < scheduled_buffer_uploads_count; ++buffer_index) {
-			kore_webgpu_buffer *buffer = scheduled_buffer_uploads[buffer_index];
-			wgpuCommandEncoderCopyBufferToBuffer(buffer_upload_encoder, buffer->copy_buffer, 0, buffer->buffer, 0, buffer->size);
+			buffer_upload *upload = &scheduled_buffer_uploads[buffer_index];
+			wgpuCommandEncoderCopyBufferToBuffer(buffer_upload_encoder, upload->buffer->copy_buffer, upload->offset, upload->buffer->buffer, upload->offset, upload->size);
 		}
 
 		WGPUCommandBufferDescriptor command_buffer_descriptor = {0};
