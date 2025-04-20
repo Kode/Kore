@@ -75,26 +75,30 @@ static WGPUVertexFormat convert_vertex_format(kore_webgpu_vertex_format format) 
 
 void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters, const WGPUBindGroupLayout *bind_group_layouts,
 	uint32_t bind_group_layouts_count) {
-	WGPUColorTargetState color_target_state = {
-	    .format    = kore_webgpu_convert_texture_format(parameters->fragment.targets[0].format),
-	    .writeMask = WGPUColorWriteMask_All,
-	};
+	WGPUColorTargetState color_target_states[8];
+	
+	for (uint32_t target_index = 0; target_index < parameters->fragment.targets_count; ++target_index) {
+		color_target_states[target_index] = (WGPUColorTargetState){
+			.format    = kore_webgpu_convert_texture_format(parameters->fragment.targets[target_index].format),
+			.writeMask = WGPUColorWriteMask_All,
+		};
 
-	WGPUBlendState blend_state = {
-	    .color =
-	        {
-	            .operation = WGPUBlendOperation_Add,
-	            .srcFactor = WGPUBlendFactor_One,
-	            .dstFactor = WGPUBlendFactor_Zero,
-	        },
-	    .alpha =
-	        {
-	            .operation = WGPUBlendOperation_Add,
-	            .srcFactor = WGPUBlendFactor_One,
-	            .dstFactor = WGPUBlendFactor_Zero,
-	        },
-	};
-	color_target_state.blend = &blend_state;
+		WGPUBlendState blend_state = {
+			.color =
+				{
+					.operation = WGPUBlendOperation_Add,
+					.srcFactor = WGPUBlendFactor_One,
+					.dstFactor = WGPUBlendFactor_Zero,
+				},
+			.alpha =
+				{
+					.operation = WGPUBlendOperation_Add,
+					.srcFactor = WGPUBlendFactor_One,
+					.dstFactor = WGPUBlendFactor_Zero,
+				},
+		};
+		color_target_states[target_index].blend = &blend_state;
+	}
 
 	WGPUPipelineLayoutDescriptor pipeline_layout_descriptor = {
 	    .bindGroupLayoutCount = bind_group_layouts_count,
@@ -129,8 +133,8 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 	WGPUFragmentState fragment_state = {
 	    .module      = device->shader_module,
 	    .entryPoint  = parameters->fragment.shader.function_name,
-	    .targetCount = 1,
-	    .targets     = &color_target_state,
+	    .targetCount = parameters->fragment.targets_count,
+	    .targets     = color_target_states,
 	};
 
 	WGPUPrimitiveState primitive_state = {

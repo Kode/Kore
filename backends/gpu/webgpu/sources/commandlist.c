@@ -40,21 +40,26 @@ static WGPUStoreOp convert_store_op(kore_gpu_store_op op) {
 void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
-	WGPUTextureViewDescriptor texture_view_descriptor = {
-	    .format          = kore_webgpu_convert_texture_format(parameters->color_attachments[0].texture.texture->webgpu.format),
-	    .dimension       = WGPUTextureViewDimension_2D,
-	    .arrayLayerCount = 1,
-	    .mipLevelCount   = 1,
-	};
-	WGPUTextureView texture_view = wgpuTextureCreateView(parameters->color_attachments[0].texture.texture->webgpu.texture, &texture_view_descriptor);
+	WGPUTextureView texture_views[8];
+	WGPURenderPassColorAttachment color_attachments[8];
 
-	WGPURenderPassColorAttachment color_attachment = {
-	    .view       = texture_view,
-	    .loadOp     = convert_load_op(parameters->color_attachments[0].load_op),
-	    .storeOp    = convert_store_op(parameters->color_attachments[0].store_op),
-	    .clearValue = {parameters->color_attachments[0].clear_value.r, parameters->color_attachments[0].clear_value.g, parameters->color_attachments[0].clear_value.b, parameters->color_attachments[0].clear_value.a},
-	    .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
-	};
+	for (uint32_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
+		WGPUTextureViewDescriptor texture_view_descriptor = {
+			.format          = kore_webgpu_convert_texture_format(parameters->color_attachments[attachment_index].texture.texture->webgpu.format),
+			.dimension       = WGPUTextureViewDimension_2D,
+			.arrayLayerCount = 1,
+			.mipLevelCount   = 1,
+		};
+		texture_views[attachment_index] = wgpuTextureCreateView(parameters->color_attachments[attachment_index].texture.texture->webgpu.texture, &texture_view_descriptor);
+	
+		color_attachments[attachment_index] = (WGPURenderPassColorAttachment){
+			.view       = texture_views[attachment_index],
+			.loadOp     = convert_load_op(parameters->color_attachments[attachment_index].load_op),
+			.storeOp    = convert_store_op(parameters->color_attachments[attachment_index].store_op),
+			.clearValue = {parameters->color_attachments[attachment_index].clear_value.r, parameters->color_attachments[attachment_index].clear_value.g, parameters->color_attachments[attachment_index].clear_value.b, parameters->color_attachments[attachment_index].clear_value.a},
+			.depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
+		};
+	}
 
 	if (parameters->depth_stencil_attachment.texture != NULL) {
 		WGPUTextureViewDescriptor depth_view_descriptor = {
@@ -73,8 +78,8 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
 		};
 
 		WGPURenderPassDescriptor render_pass_descriptor = {
-			.colorAttachmentCount   = 1,
-			.colorAttachments       = &color_attachment,
+			.colorAttachmentCount   = parameters->color_attachments_count,
+			.colorAttachments       = color_attachments,
 			.depthStencilAttachment = &depth_attachment,
 		};
 
@@ -82,8 +87,8 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
 	}
 	else {	
 		WGPURenderPassDescriptor render_pass_descriptor = {
-			.colorAttachmentCount = 1,
-			.colorAttachments     = &color_attachment,
+			.colorAttachmentCount = parameters->color_attachments_count,
+			.colorAttachments     = color_attachments,
 		};
 
 		list->webgpu.render_pass_encoder = wgpuCommandEncoderBeginRenderPass(list->webgpu.command_encoder, &render_pass_descriptor);
