@@ -58,7 +58,7 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	WGPUSurfaceConfiguration surface_configuration = {
 	    .device      = wgpu_device,
 	    .format      = capabilities.formats[0],
-	    .usage       = WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_CopySrc,
+	    .usage       = WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_CopySrc | WGPUTextureUsage_CopyDst,
 	    .alphaMode   = WGPUCompositeAlphaMode_Auto,
 	    .width       = kore_window_width(0),
 	    .height      = kore_window_height(0),

@@ -221,7 +221,37 @@ void kore_webgpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
 
 void kore_webgpu_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                       const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
-                                                      uint32_t depth_or_array_layers) {}
+                                                      uint32_t depth_or_array_layers) {
+	WGPUImageCopyTexture source_texture = {
+		.texture = source->texture->webgpu.texture,
+		.mipLevel = source->mip_level,
+		.origin = {
+			.x = source->origin_x,
+			.y = source->origin_y,
+			.z = source->origin_z,
+		},
+		.aspect = convert_texture_aspect(source->aspect),
+	};
+
+	WGPUImageCopyTexture destination_texture = {
+		.texture = destination->texture->webgpu.texture,
+		.mipLevel = destination->mip_level,
+		.origin = {
+			.x = destination->origin_x,
+			.y = destination->origin_y,
+			.z = destination->origin_z,
+		},
+		.aspect = convert_texture_aspect(source->aspect),
+	};
+
+	WGPUExtent3D size = {
+		.width = width,
+		.height = height,
+		.depthOrArrayLayers = depth_or_array_layers,
+	};
+
+	wgpuCommandEncoderCopyTextureToTexture(list->webgpu.command_encoder, &source_texture, &destination_texture, &size);
+}
 
 void kore_webgpu_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size) {}
 
