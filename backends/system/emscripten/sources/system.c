@@ -290,11 +290,15 @@ double kore_frequency(void) {
 	return 1000.0;
 }
 
+EM_JS(double, kore_html5_timestamp, (), {
+	return window.performance.now();
+});
+
 kore_ticks kore_timestamp(void) {
 #ifdef KORE_OPENGL
 	return (kore_ticks)(glfwGetTime() * 1000.0);
 #else
-	return (kore_ticks)(0.0);
+	return (kore_ticks)kore_html5_timestamp();
 #endif
 }
 
@@ -302,7 +306,7 @@ double kore_time(void) {
 #ifdef KORE_OPENGL
 	return glfwGetTime();
 #else
-	return 0.0;
+	return kore_html5_timestamp() / 1000.0;
 #endif
 }
 
