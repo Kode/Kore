@@ -28,6 +28,8 @@ typedef struct kore_webgpu_buffer {
 	bool       copy_scheduled;
 
 	bool write;
+
+	void *locked_data;
 } kore_webgpu_buffer;
 
 #ifdef __cplusplus
