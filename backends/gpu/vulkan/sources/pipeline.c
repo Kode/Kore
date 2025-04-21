@@ -374,8 +374,9 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	};
 
 	const VkPipelineDepthStencilStateCreateInfo depth_stencil_state_create_info = {
-	    .sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-	    .depthTestEnable       = parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS && parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_UNDEFINED,
+	    .sType           = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+	    .depthTestEnable = parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_ALWAYS &&
+	                       parameters->depth_stencil.depth_compare != KORE_GPU_COMPARE_FUNCTION_UNDEFINED,
 	    .depthWriteEnable      = parameters->depth_stencil.depth_write_enabled,
 	    .depthCompareOp        = convert_compare_mode(parameters->depth_stencil.depth_compare),
 	    .depthBoundsTestEnable = VK_FALSE,

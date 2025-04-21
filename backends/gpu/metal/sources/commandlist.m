@@ -307,11 +307,12 @@ static uint32_t threads_per_threadsgroup_x = 0;
 static uint32_t threads_per_threadsgroup_y = 0;
 static uint32_t threads_per_threadsgroup_z = 0;
 
-void kore_metal_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_metal_compute_pipeline *pipeline, uint32_t threads_x, uint32_t threads_y, uint32_t threads_z) {
+void kore_metal_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_metal_compute_pipeline *pipeline, uint32_t threads_x, uint32_t threads_y,
+                                                  uint32_t threads_z) {
 	threads_per_threadsgroup_x = threads_x;
 	threads_per_threadsgroup_y = threads_y;
 	threads_per_threadsgroup_z = threads_z;
-	
+
 	kore_metal_command_list_begin_compute_pass(list);
 
 	id<MTLComputePipelineState>  metal_pipeline          = (__bridge id<MTLComputePipelineState>)pipeline->pipeline;

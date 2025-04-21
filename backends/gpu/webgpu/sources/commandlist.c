@@ -40,55 +40,57 @@ static WGPUStoreOp convert_store_op(kore_gpu_store_op op) {
 void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
-	WGPUTextureView texture_views[8];
+	WGPUTextureView               texture_views[8];
 	WGPURenderPassColorAttachment color_attachments[8];
 
 	for (uint32_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
 		WGPUTextureViewDescriptor texture_view_descriptor = {
-			.format          = kore_webgpu_convert_texture_format(parameters->color_attachments[attachment_index].texture.texture->webgpu.format),
-			.dimension       = WGPUTextureViewDimension_2D,
-			.arrayLayerCount = 1,
-			.mipLevelCount   = 1,
+		    .format          = kore_webgpu_convert_texture_format(parameters->color_attachments[attachment_index].texture.texture->webgpu.format),
+		    .dimension       = WGPUTextureViewDimension_2D,
+		    .arrayLayerCount = 1,
+		    .mipLevelCount   = 1,
 		};
-		texture_views[attachment_index] = wgpuTextureCreateView(parameters->color_attachments[attachment_index].texture.texture->webgpu.texture, &texture_view_descriptor);
-	
+		texture_views[attachment_index] =
+		    wgpuTextureCreateView(parameters->color_attachments[attachment_index].texture.texture->webgpu.texture, &texture_view_descriptor);
+
 		color_attachments[attachment_index] = (WGPURenderPassColorAttachment){
-			.view       = texture_views[attachment_index],
-			.loadOp     = convert_load_op(parameters->color_attachments[attachment_index].load_op),
-			.storeOp    = convert_store_op(parameters->color_attachments[attachment_index].store_op),
-			.clearValue = {parameters->color_attachments[attachment_index].clear_value.r, parameters->color_attachments[attachment_index].clear_value.g, parameters->color_attachments[attachment_index].clear_value.b, parameters->color_attachments[attachment_index].clear_value.a},
-			.depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
+		    .view       = texture_views[attachment_index],
+		    .loadOp     = convert_load_op(parameters->color_attachments[attachment_index].load_op),
+		    .storeOp    = convert_store_op(parameters->color_attachments[attachment_index].store_op),
+		    .clearValue = {parameters->color_attachments[attachment_index].clear_value.r, parameters->color_attachments[attachment_index].clear_value.g,
+		                   parameters->color_attachments[attachment_index].clear_value.b, parameters->color_attachments[attachment_index].clear_value.a},
+		    .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
 		};
 	}
 
 	if (parameters->depth_stencil_attachment.texture != NULL) {
 		WGPUTextureViewDescriptor depth_view_descriptor = {
-			.format          = kore_webgpu_convert_texture_format(parameters->depth_stencil_attachment.texture->webgpu.format),
-			.dimension       = WGPUTextureViewDimension_2D,
-			.arrayLayerCount = 1,
-			.mipLevelCount   = 1,
+		    .format          = kore_webgpu_convert_texture_format(parameters->depth_stencil_attachment.texture->webgpu.format),
+		    .dimension       = WGPUTextureViewDimension_2D,
+		    .arrayLayerCount = 1,
+		    .mipLevelCount   = 1,
 		};
 		WGPUTextureView depth_view = wgpuTextureCreateView(parameters->depth_stencil_attachment.texture->webgpu.texture, &depth_view_descriptor);
 
 		WGPURenderPassDepthStencilAttachment depth_attachment = (WGPURenderPassDepthStencilAttachment){
-			.view = depth_view,
-			.depthLoadOp = convert_load_op(parameters->depth_stencil_attachment.depth_load_op),
-			.depthStoreOp = convert_store_op(parameters->depth_stencil_attachment.depth_store_op),
-			.depthClearValue = parameters->depth_stencil_attachment.depth_clear_value,
+		    .view            = depth_view,
+		    .depthLoadOp     = convert_load_op(parameters->depth_stencil_attachment.depth_load_op),
+		    .depthStoreOp    = convert_store_op(parameters->depth_stencil_attachment.depth_store_op),
+		    .depthClearValue = parameters->depth_stencil_attachment.depth_clear_value,
 		};
 
 		WGPURenderPassDescriptor render_pass_descriptor = {
-			.colorAttachmentCount   = parameters->color_attachments_count,
-			.colorAttachments       = color_attachments,
-			.depthStencilAttachment = &depth_attachment,
+		    .colorAttachmentCount   = parameters->color_attachments_count,
+		    .colorAttachments       = color_attachments,
+		    .depthStencilAttachment = &depth_attachment,
 		};
 
 		list->webgpu.render_pass_encoder = wgpuCommandEncoderBeginRenderPass(list->webgpu.command_encoder, &render_pass_descriptor);
 	}
-	else {	
+	else {
 		WGPURenderPassDescriptor render_pass_descriptor = {
-			.colorAttachmentCount = parameters->color_attachments_count,
-			.colorAttachments     = color_attachments,
+		    .colorAttachmentCount = parameters->color_attachments_count,
+		    .colorAttachments     = color_attachments,
 		};
 
 		list->webgpu.render_pass_encoder = wgpuCommandEncoderBeginRenderPass(list->webgpu.command_encoder, &render_pass_descriptor);
@@ -128,8 +130,8 @@ void kore_webgpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t
 	wgpuRenderPassEncoderDrawIndexed(list->webgpu.render_pass_encoder, index_count, instance_count, first_index, base_vertex, first_instance);
 }
 
-void kore_webgpu_command_list_set_bind_group(kore_gpu_command_list *list, uint32_t index, kore_webgpu_descriptor_set *set,
-                                                   uint32_t dynamic_count, uint32_t *dynamic_offsets) {
+void kore_webgpu_command_list_set_bind_group(kore_gpu_command_list *list, uint32_t index, kore_webgpu_descriptor_set *set, uint32_t dynamic_count,
+                                             uint32_t *dynamic_offsets) {
 	wgpuRenderPassEncoderSetBindGroup(list->webgpu.render_pass_encoder, index, set->bind_group, dynamic_count, dynamic_offsets);
 }
 
@@ -137,7 +139,8 @@ void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, ui
 
 void kore_webgpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset, kore_gpu_buffer *destination,
                                                     uint64_t destination_offset, uint64_t size) {
-	wgpuCommandEncoderCopyBufferToBuffer(list->webgpu.command_encoder, source->webgpu.has_copy_buffer ? source->webgpu.copy_buffer : source->webgpu.buffer, source_offset, destination->webgpu.buffer, destination_offset, size);
+	wgpuCommandEncoderCopyBufferToBuffer(list->webgpu.command_encoder, source->webgpu.has_copy_buffer ? source->webgpu.copy_buffer : source->webgpu.buffer,
+	                                     source_offset, destination->webgpu.buffer, destination_offset, size);
 }
 
 static WGPUTextureAspect convert_texture_aspect(kore_gpu_texture_aspect aspect) {
@@ -158,29 +161,31 @@ void kore_webgpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
                                                      const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {
 	WGPUImageCopyBuffer copy_buffer = {
-		.layout = {
-			.offset = source->offset,
-			.bytesPerRow = source->bytes_per_row,
-			.rowsPerImage = source->rows_per_image,
-		},
-		.buffer = source->buffer->webgpu.has_copy_buffer ? source->buffer->webgpu.copy_buffer : source->buffer->webgpu.buffer,
+	    .layout =
+	        {
+	            .offset       = source->offset,
+	            .bytesPerRow  = source->bytes_per_row,
+	            .rowsPerImage = source->rows_per_image,
+	        },
+	    .buffer = source->buffer->webgpu.has_copy_buffer ? source->buffer->webgpu.copy_buffer : source->buffer->webgpu.buffer,
 	};
 
 	WGPUImageCopyTexture copy_texture = {
-		.texture = destination->texture->webgpu.texture,
-		.mipLevel = destination->mip_level,
-		.origin = {
-			.x = destination->origin_x,
-			.y = destination->origin_y,
-			.z = destination->origin_z,
-		},
-		.aspect = convert_texture_aspect(destination->aspect),
+	    .texture  = destination->texture->webgpu.texture,
+	    .mipLevel = destination->mip_level,
+	    .origin =
+	        {
+	            .x = destination->origin_x,
+	            .y = destination->origin_y,
+	            .z = destination->origin_z,
+	        },
+	    .aspect = convert_texture_aspect(destination->aspect),
 	};
 
 	WGPUExtent3D size = {
-		.width = width,
-		.height = height,
-		.depthOrArrayLayers = depth_or_array_layers,
+	    .width              = width,
+	    .height             = height,
+	    .depthOrArrayLayers = depth_or_array_layers,
 	};
 
 	wgpuCommandEncoderCopyBufferToTexture(list->webgpu.command_encoder, &copy_buffer, &copy_texture, &size);
@@ -190,29 +195,31 @@ void kore_webgpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
                                                      const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {
 	WGPUImageCopyTexture copy_texture = {
-		.texture = source->texture->webgpu.texture,
-		.mipLevel = source->mip_level,
-		.origin = {
-			.x = source->origin_x,
-			.y = source->origin_y,
-			.z = source->origin_z,
-		},
-		.aspect = convert_texture_aspect(source->aspect),
+	    .texture  = source->texture->webgpu.texture,
+	    .mipLevel = source->mip_level,
+	    .origin =
+	        {
+	            .x = source->origin_x,
+	            .y = source->origin_y,
+	            .z = source->origin_z,
+	        },
+	    .aspect = convert_texture_aspect(source->aspect),
 	};
 
 	WGPUImageCopyBuffer copy_buffer = {
-		.layout = {
-			.offset = destination->offset,
-			.bytesPerRow = destination->bytes_per_row,
-			.rowsPerImage = destination->rows_per_image,
-		},
-		.buffer = destination->buffer->webgpu.buffer,
+	    .layout =
+	        {
+	            .offset       = destination->offset,
+	            .bytesPerRow  = destination->bytes_per_row,
+	            .rowsPerImage = destination->rows_per_image,
+	        },
+	    .buffer = destination->buffer->webgpu.buffer,
 	};
 
 	WGPUExtent3D size = {
-		.width = width,
-		.height = height,
-		.depthOrArrayLayers = depth_or_array_layers,
+	    .width              = width,
+	    .height             = height,
+	    .depthOrArrayLayers = depth_or_array_layers,
 	};
 
 	wgpuCommandEncoderCopyTextureToBuffer(list->webgpu.command_encoder, &copy_texture, &copy_buffer, &size);
@@ -222,31 +229,33 @@ void kore_webgpu_command_list_copy_texture_to_texture(kore_gpu_command_list *lis
                                                       const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                       uint32_t depth_or_array_layers) {
 	WGPUImageCopyTexture source_texture = {
-		.texture = source->texture->webgpu.texture,
-		.mipLevel = source->mip_level,
-		.origin = {
-			.x = source->origin_x,
-			.y = source->origin_y,
-			.z = source->origin_z,
-		},
-		.aspect = convert_texture_aspect(source->aspect),
+	    .texture  = source->texture->webgpu.texture,
+	    .mipLevel = source->mip_level,
+	    .origin =
+	        {
+	            .x = source->origin_x,
+	            .y = source->origin_y,
+	            .z = source->origin_z,
+	        },
+	    .aspect = convert_texture_aspect(source->aspect),
 	};
 
 	WGPUImageCopyTexture destination_texture = {
-		.texture = destination->texture->webgpu.texture,
-		.mipLevel = destination->mip_level,
-		.origin = {
-			.x = destination->origin_x,
-			.y = destination->origin_y,
-			.z = destination->origin_z,
-		},
-		.aspect = convert_texture_aspect(source->aspect),
+	    .texture  = destination->texture->webgpu.texture,
+	    .mipLevel = destination->mip_level,
+	    .origin =
+	        {
+	            .x = destination->origin_x,
+	            .y = destination->origin_y,
+	            .z = destination->origin_z,
+	        },
+	    .aspect = convert_texture_aspect(source->aspect),
 	};
 
 	WGPUExtent3D size = {
-		.width = width,
-		.height = height,
-		.depthOrArrayLayers = depth_or_array_layers,
+	    .width              = width,
+	    .height             = height,
+	    .depthOrArrayLayers = depth_or_array_layers,
 	};
 
 	wgpuCommandEncoderCopyTextureToTexture(list->webgpu.command_encoder, &source_texture, &destination_texture, &size);

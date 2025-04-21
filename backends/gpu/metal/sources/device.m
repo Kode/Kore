@@ -120,7 +120,7 @@ void kore_metal_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 	[command_buffer commit];
 
 	last_running_command_buffer = (__bridge_retained void *)command_buffer;
-	
+
 	id<MTLCommandQueue> command_queue = (__bridge id<MTLCommandQueue>)list->metal.command_queue;
 	command_buffer                    = [command_queue commandBuffer];
 	list->metal.command_buffer        = (__bridge_retained void *)[command_queue commandBuffer];

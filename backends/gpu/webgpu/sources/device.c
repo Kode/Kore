@@ -126,10 +126,10 @@ static WGPUBufferUsage convert_buffer_usage(kore_gpu_buffer_usage usage) {
 void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
 	kore_gpu_buffer_usage usage = parameters->usage_flags;
 
-	buffer->webgpu.write = false;
-	buffer->webgpu.has_copy_buffer = false;
+	buffer->webgpu.write                  = false;
+	buffer->webgpu.has_copy_buffer        = false;
 	buffer->webgpu.outdated_regions_count = 0;
-	buffer->webgpu.locked_data = NULL;
+	buffer->webgpu.locked_data            = NULL;
 
 	if ((usage & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
 		kore_gpu_buffer_usage usage_without_write = usage ^ KORE_GPU_BUFFER_USAGE_CPU_WRITE;
@@ -194,14 +194,15 @@ void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	}
 
 	WGPUTextureDescriptor texture_descriptor = {
-	    .sampleCount   = 1,
-	    .format        = kore_webgpu_convert_texture_format(parameters->format),
-	    .usage         = usage,
-	    .size          = {
-			.width              = parameters->width,
-	    	.height             = parameters->height,
-	    	.depthOrArrayLayers = parameters->depth_or_array_layers,
-		},
+	    .sampleCount = 1,
+	    .format      = kore_webgpu_convert_texture_format(parameters->format),
+	    .usage       = usage,
+	    .size =
+	        {
+	            .width              = parameters->width,
+	            .height             = parameters->height,
+	            .depthOrArrayLayers = parameters->depth_or_array_layers,
+	        },
 	    .dimension     = WGPUTextureDimension_2D,
 	    .mipLevelCount = 1,
 	};
@@ -231,7 +232,8 @@ void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 		for (uint32_t buffer_index = 0; buffer_index < scheduled_buffer_uploads_count; ++buffer_index) {
 			buffer_upload *upload = &scheduled_buffer_uploads[buffer_index];
-			wgpuCommandEncoderCopyBufferToBuffer(buffer_upload_encoder, upload->buffer->copy_buffer, upload->offset, upload->buffer->buffer, upload->offset, upload->size);
+			wgpuCommandEncoderCopyBufferToBuffer(buffer_upload_encoder, upload->buffer->copy_buffer, upload->offset, upload->buffer->buffer, upload->offset,
+			                                     upload->size);
 		}
 
 		WGPUCommandBufferDescriptor command_buffer_descriptor = {0};
@@ -307,16 +309,16 @@ static WGPUMipmapFilterMode convert_mipmap_filter_mode(kore_gpu_mipmap_filter_mo
 
 void kore_webgpu_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {
 	WGPUSamplerDescriptor sampler_descriptor = {
-		.addressModeU = convert_address_mode(parameters->address_mode_u),
-    	.addressModeV = convert_address_mode(parameters->address_mode_v),
-    	.addressModeW = convert_address_mode(parameters->address_mode_w),
-    	.magFilter = convert_filter_mode(parameters->mag_filter),
-    	.minFilter = convert_filter_mode(parameters->min_filter),
-    	.mipmapFilter = convert_mipmap_filter_mode(parameters->mipmap_filter),
-    	.lodMinClamp = parameters->lod_min_clamp,
-    	.lodMaxClamp = parameters->lod_max_clamp,
-    	.compare = convert_compare(parameters->compare),
-    	.maxAnisotropy = parameters->max_anisotropy,
+	    .addressModeU  = convert_address_mode(parameters->address_mode_u),
+	    .addressModeV  = convert_address_mode(parameters->address_mode_v),
+	    .addressModeW  = convert_address_mode(parameters->address_mode_w),
+	    .magFilter     = convert_filter_mode(parameters->mag_filter),
+	    .minFilter     = convert_filter_mode(parameters->min_filter),
+	    .mipmapFilter  = convert_mipmap_filter_mode(parameters->mipmap_filter),
+	    .lodMinClamp   = parameters->lod_min_clamp,
+	    .lodMaxClamp   = parameters->lod_max_clamp,
+	    .compare       = convert_compare(parameters->compare),
+	    .maxAnisotropy = parameters->max_anisotropy,
 	};
 	sampler->webgpu.sampler = wgpuDeviceCreateSampler(device->webgpu.device, &sampler_descriptor);
 }

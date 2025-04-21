@@ -124,7 +124,7 @@ typedef struct kore_gpu_compute_arguments {
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/commandlist_structs.h>
 #else
-#error ("Unknown GPU backend")
+#error("Unknown GPU backend")
 #endif
 
 typedef struct kore_gpu_command_list {

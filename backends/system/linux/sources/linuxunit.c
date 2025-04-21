@@ -51,7 +51,7 @@ void kore_linux_init_procs() {
 #ifndef KORE_NO_WAYLAND
 	if (kore_wayland_init()) {
 		wayland = true;
-		
+
 		procs.handle_messages = kore_wayland_handle_messages;
 		procs.shutdown        = kore_wayland_shutdown;
 

@@ -73,29 +73,29 @@ static WGPUVertexFormat convert_vertex_format(kore_webgpu_vertex_format format) 
 	return WGPUVertexFormat_Float32;
 }
 
-void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters, const WGPUBindGroupLayout *bind_group_layouts,
-	uint32_t bind_group_layouts_count) {
+void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters,
+                                      const WGPUBindGroupLayout *bind_group_layouts, uint32_t bind_group_layouts_count) {
 	WGPUColorTargetState color_target_states[8];
-	
+
 	for (uint32_t target_index = 0; target_index < parameters->fragment.targets_count; ++target_index) {
 		color_target_states[target_index] = (WGPUColorTargetState){
-			.format    = kore_webgpu_convert_texture_format(parameters->fragment.targets[target_index].format),
-			.writeMask = WGPUColorWriteMask_All,
+		    .format    = kore_webgpu_convert_texture_format(parameters->fragment.targets[target_index].format),
+		    .writeMask = WGPUColorWriteMask_All,
 		};
 
 		WGPUBlendState blend_state = {
-			.color =
-				{
-					.operation = WGPUBlendOperation_Add,
-					.srcFactor = WGPUBlendFactor_One,
-					.dstFactor = WGPUBlendFactor_Zero,
-				},
-			.alpha =
-				{
-					.operation = WGPUBlendOperation_Add,
-					.srcFactor = WGPUBlendFactor_One,
-					.dstFactor = WGPUBlendFactor_Zero,
-				},
+		    .color =
+		        {
+		            .operation = WGPUBlendOperation_Add,
+		            .srcFactor = WGPUBlendFactor_One,
+		            .dstFactor = WGPUBlendFactor_Zero,
+		        },
+		    .alpha =
+		        {
+		            .operation = WGPUBlendOperation_Add,
+		            .srcFactor = WGPUBlendFactor_One,
+		            .dstFactor = WGPUBlendFactor_Zero,
+		        },
 		};
 		color_target_states[target_index].blend = &blend_state;
 	}
@@ -152,29 +152,29 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 
 	if (parameters->depth_stencil.format != KORE_GPU_TEXTURE_FORMAT_UNDEFINED) {
 		WGPUDepthStencilState depth_stencil_state = {
-			.format = kore_webgpu_convert_texture_format(parameters->depth_stencil.format),
-			.depthWriteEnabled = parameters->depth_stencil.depth_write_enabled,
-			.depthCompare = convert_compare(parameters->depth_stencil.depth_compare),
+		    .format            = kore_webgpu_convert_texture_format(parameters->depth_stencil.format),
+		    .depthWriteEnabled = parameters->depth_stencil.depth_write_enabled,
+		    .depthCompare      = convert_compare(parameters->depth_stencil.depth_compare),
 		};
-	
+
 		WGPURenderPipelineDescriptor render_pipeline_descriptor = {
-			.layout       = wgpuDeviceCreatePipelineLayout(device->device, &pipeline_layout_descriptor),
-			.fragment     = &fragment_state,
-			.vertex       = vertex_state,
-			.multisample  = multisample_state,
-			.primitive    = primitive_state,
-			.depthStencil = &depth_stencil_state,
+		    .layout       = wgpuDeviceCreatePipelineLayout(device->device, &pipeline_layout_descriptor),
+		    .fragment     = &fragment_state,
+		    .vertex       = vertex_state,
+		    .multisample  = multisample_state,
+		    .primitive    = primitive_state,
+		    .depthStencil = &depth_stencil_state,
 		};
 
 		pipe->render_pipeline = wgpuDeviceCreateRenderPipeline(device->device, &render_pipeline_descriptor);
 	}
 	else {
 		WGPURenderPipelineDescriptor render_pipeline_descriptor = {
-			.layout      = wgpuDeviceCreatePipelineLayout(device->device, &pipeline_layout_descriptor),
-			.fragment    = &fragment_state,
-			.vertex      = vertex_state,
-			.multisample = multisample_state,
-			.primitive   = primitive_state,
+		    .layout      = wgpuDeviceCreatePipelineLayout(device->device, &pipeline_layout_descriptor),
+		    .fragment    = &fragment_state,
+		    .vertex      = vertex_state,
+		    .multisample = multisample_state,
+		    .primitive   = primitive_state,
 		};
 
 		pipe->render_pipeline = wgpuDeviceCreateRenderPipeline(device->device, &render_pipeline_descriptor);

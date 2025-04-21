@@ -290,9 +290,7 @@ double kore_frequency(void) {
 	return 1000.0;
 }
 
-EM_JS(double, kore_html5_timestamp, (), {
-	return window.performance.now();
-});
+EM_JS(double, kore_html5_timestamp, (), { return window.performance.now(); });
 
 kore_ticks kore_timestamp(void) {
 #ifdef KORE_OPENGL

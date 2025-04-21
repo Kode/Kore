@@ -11,11 +11,11 @@ static void kore_webgpu_buffer_schedule_uploads(kore_webgpu_buffer *buffer) {
 		assert(scheduled_buffer_uploads_count < 256);
 
 		buffer_upload *upload = &scheduled_buffer_uploads[scheduled_buffer_uploads_count];
-		
+
 		upload->buffer = buffer;
 		upload->offset = buffer->outdated_regions[region_index].offset;
-		upload->size = buffer->outdated_regions[region_index].size;
-		
+		upload->size   = buffer->outdated_regions[region_index].size;
+
 		scheduled_buffer_uploads_count += 1;
 	}
 
@@ -32,12 +32,12 @@ static void kore_webgpu_outdate_region(kore_webgpu_buffer *buffer, uint64_t offs
 
 	kore_webgpu_buffer_region new_regions[KORE_WEBGPU_MAX_OUTDATED_REGIONS];
 	new_regions[0].offset = offset;
-	new_regions[0].size = size;
+	new_regions[0].size   = size;
 	uint8_t regions_count = 1;
 
 	for (uint8_t region_index = 0; region_index < buffer->outdated_regions_count; ++region_index) {
 		kore_webgpu_buffer_region *region = &buffer->outdated_regions[region_index];
-		
+
 		if (region->offset >= offset && region->offset + region->size <= offset + size) {
 			continue;
 		}
@@ -58,9 +58,7 @@ static void map_async_callback(WGPUBufferMapAsyncStatus status, void *userdata) 
 	mapped = true;
 }
 
-static void map_async_no_callback(WGPUBufferMapAsyncStatus status, void *userdata) {
-	
-}
+static void map_async_no_callback(WGPUBufferMapAsyncStatus status, void *userdata) {}
 
 static void map_async(WGPUBuffer buffer, WGPUMapMode map_mode, uint64_t offset, uint64_t size) {
 	if (wgpuBufferGetMapState(buffer) == WGPUBufferMapState_Mapped) {
@@ -82,8 +80,8 @@ void *kore_webgpu_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
 	if (buffer->webgpu.has_copy_buffer) {
 		if (wgpuBufferGetMapState(buffer->webgpu.copy_buffer) == WGPUBufferMapState_Mapped) {
 			buffer->webgpu.last_lock_offset = 0;
-			buffer->webgpu.last_lock_size = buffer->webgpu.size;
-			
+			buffer->webgpu.last_lock_size   = buffer->webgpu.size;
+
 			buffer->webgpu.locked_data = wgpuBufferGetMappedRange(buffer->webgpu.copy_buffer, 0, buffer->webgpu.size);
 		}
 		else {
@@ -97,7 +95,7 @@ void *kore_webgpu_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
 		if (buffer->webgpu.write) {
 			if (wgpuBufferGetMapState(buffer->webgpu.buffer) == WGPUBufferMapState_Mapped) {
 				buffer->webgpu.last_lock_offset = 0;
-				buffer->webgpu.last_lock_size = buffer->webgpu.size;
+				buffer->webgpu.last_lock_size   = buffer->webgpu.size;
 
 				buffer->webgpu.locked_data = wgpuBufferGetMappedRange(buffer->webgpu.buffer, 0, buffer->webgpu.size);
 			}
@@ -111,7 +109,7 @@ void *kore_webgpu_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
 		else {
 			if (wgpuBufferGetMapState(buffer->webgpu.buffer) == WGPUBufferMapState_Mapped) {
 				buffer->webgpu.last_lock_offset = 0;
-				buffer->webgpu.last_lock_size = buffer->webgpu.size;
+				buffer->webgpu.last_lock_size   = buffer->webgpu.size;
 
 				buffer->webgpu.locked_data = (void *)wgpuBufferGetConstMappedRange(buffer->webgpu.buffer, 0, buffer->webgpu.size);
 			}
@@ -143,7 +141,7 @@ void *kore_webgpu_buffer_lock_all(kore_gpu_buffer *buffer) {
 	}
 
 	buffer->webgpu.last_lock_offset = 0;
-	buffer->webgpu.last_lock_size = buffer->webgpu.size;
+	buffer->webgpu.last_lock_size   = buffer->webgpu.size;
 
 	return buffer->webgpu.locked_data;
 }
@@ -152,7 +150,7 @@ void *kore_webgpu_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, u
 	if (buffer->webgpu.has_copy_buffer) {
 		if (wgpuBufferGetMapState(buffer->webgpu.copy_buffer) == WGPUBufferMapState_Mapped) {
 			buffer->webgpu.last_lock_offset = offset;
-			buffer->webgpu.last_lock_size = size;
+			buffer->webgpu.last_lock_size   = size;
 
 			buffer->webgpu.locked_data = wgpuBufferGetMappedRange(buffer->webgpu.copy_buffer, offset, size);
 		}
@@ -167,7 +165,7 @@ void *kore_webgpu_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, u
 		if (buffer->webgpu.write) {
 			if (wgpuBufferGetMapState(buffer->webgpu.buffer) == WGPUBufferMapState_Mapped) {
 				buffer->webgpu.last_lock_offset = offset;
-				buffer->webgpu.last_lock_size = size;
+				buffer->webgpu.last_lock_size   = size;
 
 				buffer->webgpu.locked_data = wgpuBufferGetMappedRange(buffer->webgpu.buffer, offset, size);
 			}
@@ -181,7 +179,7 @@ void *kore_webgpu_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, u
 		else {
 			if (wgpuBufferGetMapState(buffer->webgpu.buffer) == WGPUBufferMapState_Mapped) {
 				buffer->webgpu.last_lock_offset = offset;
-				buffer->webgpu.last_lock_size = size;
+				buffer->webgpu.last_lock_size   = size;
 
 				buffer->webgpu.locked_data = (void *)wgpuBufferGetConstMappedRange(buffer->webgpu.buffer, offset, size);
 			}
@@ -213,7 +211,7 @@ void *kore_webgpu_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t
 	}
 
 	buffer->webgpu.last_lock_offset = offset;
-	buffer->webgpu.last_lock_size = size;
+	buffer->webgpu.last_lock_size   = size;
 
 	return buffer->webgpu.locked_data;
 }
