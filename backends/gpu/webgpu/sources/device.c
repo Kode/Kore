@@ -232,7 +232,7 @@ void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		wgpuComputePassEncoderEnd(list->webgpu.compute_pass_encoder);
 		list->webgpu.compute_pass_encoder = NULL;
 	}
-	
+
 	if (scheduled_buffer_uploads_count > 0) {
 		WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
 		WGPUCommandEncoder           buffer_upload_encoder      = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
@@ -376,7 +376,16 @@ void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, char
 	kore_log(KORE_LOG_LEVEL_INFO, "adapter device: %s", info.device);
 	kore_log(KORE_LOG_LEVEL_INFO, "adapter description: %s", info.description);
 
-	wgpuAdapterRequestDevice(wgpu_adapter, NULL, device_callback, NULL);
+	WGPUFeatureName required_features[] = {
+		WGPUFeatureName_Float32Filterable,
+	};
+
+	WGPUDeviceDescriptor device_descriptor = {
+		.requiredFeatures = required_features,
+		.requiredFeatureCount =1,//sizeof(required_features) / sizeof(required_features[0]),
+	};
+
+	wgpuAdapterRequestDevice(wgpu_adapter, &device_descriptor, device_callback, NULL);
 }
 
 void kore_webgpu_init(void (*callback)()) {
