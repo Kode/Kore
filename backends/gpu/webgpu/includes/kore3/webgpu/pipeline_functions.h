@@ -14,7 +14,7 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 void kore_webgpu_render_pipeline_destroy(kore_webgpu_render_pipeline *pipe);
 
 void kore_webgpu_compute_pipeline_init(kore_webgpu_device *device, kore_webgpu_compute_pipeline *pipe,
-                                       const kore_webgpu_compute_pipeline_parameters *parameters);
+                                       const kore_webgpu_compute_pipeline_parameters *parameters, const WGPUBindGroupLayout *bind_group_layouts, uint32_t bind_group_layouts_count);
 
 void kore_webgpu_compute_pipeline_destroy(kore_webgpu_compute_pipeline *pipe);
 

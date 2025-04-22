@@ -168,6 +168,8 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
 	WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
 	list->webgpu.command_encoder                            = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
+	list->webgpu.render_pass_encoder = NULL;
+	list->webgpu.compute_pass_encoder = NULL;
 }
 
 void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {

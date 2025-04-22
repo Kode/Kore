@@ -40,6 +40,11 @@ static WGPUStoreOp convert_store_op(kore_gpu_store_op op) {
 void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
+	if (list->webgpu.compute_pass_encoder != NULL) {
+		wgpuComputePassEncoderEnd(list->webgpu.compute_pass_encoder);
+		list->webgpu.compute_pass_encoder = NULL;
+	}
+
 	WGPUTextureView               texture_views[8];
 	WGPURenderPassColorAttachment color_attachments[8];
 
@@ -99,6 +104,7 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
 
 void kore_webgpu_command_list_end_render_pass(kore_gpu_command_list *list) {
 	wgpuRenderPassEncoderEnd(list->webgpu.render_pass_encoder);
+	list->webgpu.render_pass_encoder = NULL;
 }
 
 void kore_webgpu_command_list_present(kore_gpu_command_list *list) {}
@@ -263,7 +269,12 @@ void kore_webgpu_command_list_copy_texture_to_texture(kore_gpu_command_list *lis
 
 void kore_webgpu_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size) {}
 
-void kore_webgpu_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_webgpu_compute_pipeline *pipeline) {}
+void kore_webgpu_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_webgpu_compute_pipeline *pipeline) {
+	WGPUComputePassDescriptor compute_pass_descriptor = {0};
+	list->webgpu.compute_pass_encoder = wgpuCommandEncoderBeginComputePass(list->webgpu.command_encoder, &compute_pass_descriptor);
+
+	wgpuComputePassEncoderSetPipeline(list->webgpu.compute_pass_encoder, pipeline->compute_pipeline);
+}
 
 void kore_webgpu_command_list_compute(kore_gpu_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z) {}
 

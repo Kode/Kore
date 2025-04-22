@@ -206,7 +206,7 @@ typedef struct kore_webgpu_compute_pipeline_parameters {
 } kore_webgpu_compute_pipeline_parameters;
 
 typedef struct kore_webgpu_compute_pipeline {
-	int nothing;
+	WGPUComputePipeline compute_pipeline;
 } kore_webgpu_compute_pipeline;
 
 typedef struct kore_webgpu_ray_pipeline_parameters {
