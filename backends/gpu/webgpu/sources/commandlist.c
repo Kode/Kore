@@ -138,7 +138,13 @@ void kore_webgpu_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t
 
 void kore_webgpu_command_list_set_bind_group(kore_gpu_command_list *list, uint32_t index, kore_webgpu_descriptor_set *set, uint32_t dynamic_count,
                                              uint32_t *dynamic_offsets) {
-	wgpuRenderPassEncoderSetBindGroup(list->webgpu.render_pass_encoder, index, set->bind_group, dynamic_count, dynamic_offsets);
+	if (list->webgpu.render_pass_encoder != NULL) {
+		wgpuRenderPassEncoderSetBindGroup(list->webgpu.render_pass_encoder, index, set->bind_group, dynamic_count, dynamic_offsets);
+	}
+	else {
+		assert(list->webgpu.compute_pass_encoder != NULL);
+		wgpuComputePassEncoderSetBindGroup(list->webgpu.compute_pass_encoder, index, set->bind_group, dynamic_count, dynamic_offsets);
+	}
 }
 
 void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {}
@@ -276,7 +282,9 @@ void kore_webgpu_command_list_set_compute_pipeline(kore_gpu_command_list *list, 
 	wgpuComputePassEncoderSetPipeline(list->webgpu.compute_pass_encoder, pipeline->compute_pipeline);
 }
 
-void kore_webgpu_command_list_compute(kore_gpu_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z) {}
+void kore_webgpu_command_list_compute(kore_gpu_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z) {
+	wgpuComputePassEncoderDispatchWorkgroups(list->webgpu.compute_pass_encoder, workgroup_count_x, workgroup_count_y, workgroup_count_z);
+}
 
 void kore_webgpu_command_list_prepare_raytracing_volume(kore_gpu_command_list *list, kore_gpu_raytracing_volume *volume) {}
 

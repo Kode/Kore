@@ -228,6 +228,11 @@ kore_gpu_texture_format kore_webgpu_device_framebuffer_format(kore_gpu_device *d
 }
 
 void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
+	if (list->webgpu.compute_pass_encoder != NULL) {
+		wgpuComputePassEncoderEnd(list->webgpu.compute_pass_encoder);
+		list->webgpu.compute_pass_encoder = NULL;
+	}
+	
 	if (scheduled_buffer_uploads_count > 0) {
 		WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
 		WGPUCommandEncoder           buffer_upload_encoder      = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
