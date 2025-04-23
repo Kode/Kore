@@ -277,7 +277,7 @@ void kore_webgpu_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu
 
 void kore_webgpu_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_webgpu_compute_pipeline *pipeline) {
 	WGPUComputePassDescriptor compute_pass_descriptor = {0};
-	list->webgpu.compute_pass_encoder = wgpuCommandEncoderBeginComputePass(list->webgpu.command_encoder, &compute_pass_descriptor);
+	list->webgpu.compute_pass_encoder                 = wgpuCommandEncoderBeginComputePass(list->webgpu.command_encoder, &compute_pass_descriptor);
 
 	wgpuComputePassEncoderSetPipeline(list->webgpu.compute_pass_encoder, pipeline->compute_pipeline);
 }

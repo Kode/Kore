@@ -16,8 +16,8 @@ struct kore_webgpu_descriptor_set;
 struct kore_gpu_query_set;
 
 typedef struct kore_webgpu_command_list {
-	WGPUCommandEncoder    command_encoder;
-	WGPURenderPassEncoder render_pass_encoder;
+	WGPUCommandEncoder     command_encoder;
+	WGPURenderPassEncoder  render_pass_encoder;
 	WGPUComputePassEncoder compute_pass_encoder;
 } kore_webgpu_command_list;
 
