@@ -257,5 +257,8 @@ __attribute__((import_module("imports"), import_name("glGenVertexArrays"))) void
 __attribute__((import_module("imports"), import_name("glBindVertexArray"))) void       glBindVertexArray(GLuint array);
 __attribute__((import_module("imports"), import_name("glGetBufferSubData"))) void      glGetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
                                                                                                           void *data);
+__attribute__((import_module("imports"), import_name("glUniformBlockBinding"))) void glUniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
+__attribute__((import_module("imports"), import_name("glBindBufferBase"))) void glBindBufferBase(GLenum target, GLuint index, GLuint buffer);
+__attribute__((import_module("imports"), import_name("glGetUniformBlockIndex"))) GLuint glGetUniformBlockIndex(GLuint program, const GLchar *uniformBlockName);
 
 #endif
