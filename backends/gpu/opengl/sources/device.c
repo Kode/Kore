@@ -241,6 +241,8 @@ void kore_opengl_device_destroy(kore_gpu_device *device) {}
 
 void kore_opengl_device_set_name(kore_gpu_device *device, const char *name) {}
 
+static uint32_t next_uniform_buffer_index = 0;
+
 void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
 	glGenBuffers(1, &buffer->opengl.buffer);
 
@@ -252,6 +254,11 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	}
 	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0) {
 		buffer->opengl.buffer_type = GL_PIXEL_PACK_BUFFER;
+	}
+	else if ((parameters->usage_flags & KORE_OPENGL_BUFFER_USAGE_UNIFORM) != 0) {
+		buffer->opengl.uniform_buffer = next_uniform_buffer_index;
+		glBindBufferBase(GL_UNIFORM_BUFFER, buffer->opengl.uniform_buffer, buffer->opengl.buffer);
+		next_uniform_buffer_index += 1;
 	}
 	else {
 		assert(false);

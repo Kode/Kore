@@ -19,7 +19,14 @@
 void kore_opengl_check_errors(void) {
 	GLenum code = glGetError();
 	if (code != GL_NO_ERROR) {
-		kore_log(KORE_LOG_LEVEL_ERROR, "GL Error %d %s %d\n", code, __FILE__, __LINE__);
+		kore_log(KORE_LOG_LEVEL_ERROR, "GL Error %d\n", code);
+		kore_debug_break();
 	}
 }
 #endif
+
+uint32_t kore_opengl_find_uniform_block_index(unsigned program, const char *name) {
+	uint32_t value = glGetUniformBlockIndex(program, name);
+	assert(value != GL_INVALID_INDEX);
+	return value;
+}

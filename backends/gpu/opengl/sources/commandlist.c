@@ -255,3 +255,7 @@ void kore_opengl_command_list_compute_indirect(kore_gpu_command_list *list, kore
 void kore_opengl_command_list_queue_buffer_access(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size) {}
 
 void kore_opengl_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_opengl_descriptor_set *descriptor_set) {}
+
+void kore_opengl_command_list_set_uniform_buffer(kore_gpu_command_list *list, uint32_t program, kore_gpu_buffer *buffer, uint32_t uniform_block_index) {
+	glUniformBlockBinding(program, uniform_block_index, buffer->opengl.uniform_buffer);
+}
