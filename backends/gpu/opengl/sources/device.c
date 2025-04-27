@@ -259,6 +259,7 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 		buffer->opengl.uniform_buffer = next_uniform_buffer_index;
 		glBindBufferBase(GL_UNIFORM_BUFFER, buffer->opengl.uniform_buffer, buffer->opengl.buffer);
 		next_uniform_buffer_index += 1;
+		buffer->opengl.buffer_type = GL_UNIFORM_BUFFER;
 	}
 	else {
 		assert(false);
