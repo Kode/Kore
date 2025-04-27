@@ -387,6 +387,12 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		case COMMAND_BEGIN_RENDER_PASS: {
 			begin_render_pass *data = (begin_render_pass *)&c->data;
 			framebuffer_view        = data->parameters.color_attachments[0].texture;
+
+			if (data->parameters.color_attachments[0].load_op == KORE_GPU_LOAD_OP_CLEAR) {
+				kore_gpu_color color = data->parameters.color_attachments[0].clear_value;
+				glClearColor(color.r, color.g, color.b, color.a);
+				glClear(GL_COLOR_BUFFER_BIT);
+			}
 			break;
 		}
 		case COMMAND_END_RENDER_PASS: {
