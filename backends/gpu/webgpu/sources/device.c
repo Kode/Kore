@@ -168,8 +168,8 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
 	WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
 	list->webgpu.command_encoder                            = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
-	list->webgpu.render_pass_encoder = NULL;
-	list->webgpu.compute_pass_encoder = NULL;
+	list->webgpu.render_pass_encoder                        = NULL;
+	list->webgpu.compute_pass_encoder                       = NULL;
 }
 
 void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
@@ -377,12 +377,12 @@ void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, char
 	kore_log(KORE_LOG_LEVEL_INFO, "adapter description: %s", info.description);
 
 	WGPUFeatureName required_features[] = {
-		WGPUFeatureName_Float32Filterable,
+	    WGPUFeatureName_Float32Filterable,
 	};
 
 	WGPUDeviceDescriptor device_descriptor = {
-		.requiredFeatures = required_features,
-		.requiredFeatureCount =1,//sizeof(required_features) / sizeof(required_features[0]),
+	    .requiredFeatures     = required_features,
+	    .requiredFeatureCount = 1, // sizeof(required_features) / sizeof(required_features[0]),
 	};
 
 	wgpuAdapterRequestDevice(wgpu_adapter, &device_descriptor, device_callback, NULL);
