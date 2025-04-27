@@ -292,9 +292,181 @@ kore_gpu_texture_format kore_opengl_device_framebuffer_format(kore_gpu_device *d
 	return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
 }
 
+static uint32_t vertex_format_size(kore_opengl_vertex_format format) {
+	switch (format) {
+	case KORE_OPENGL_VERTEX_FORMAT_UINT8X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_UINT8X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_SINT8X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_SINT8X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM8X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM8X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM8X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM8X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_UINT16X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_UINT16X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_SINT16X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_SINT16X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM16X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM16X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM16X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM16X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT16X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT16X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32:
+		return 1u;
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32X3:
+		return 3u;
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32:
+		return 1u;
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32X3:
+		return 3;
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_SIN32:
+		return 1u;
+	case KORE_OPENGL_VERTEX_FORMAT_SINT32X2:
+		return 2u;
+	case KORE_OPENGL_VERTEX_FORMAT_SINT32X3:
+		return 3u;
+	case KORE_OPENGL_VERTEX_FORMAT_SINT32X4:
+		return 4u;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM10_10_10_2:
+		return 4u;
+	}
+
+	assert(false);
+	return 1u;
+}
+
+static GLenum vertex_format_type(kore_opengl_vertex_format format) {
+	switch (format) {
+	case KORE_OPENGL_VERTEX_FORMAT_UINT8X2:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT8X4:
+		return GL_UNSIGNED_BYTE;
+	case KORE_OPENGL_VERTEX_FORMAT_SINT8X2:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT8X4:
+		return GL_BYTE;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM8X2:
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM8X4:
+		return GL_UNSIGNED_BYTE;
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM8X2:
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM8X4:
+		return GL_BYTE;
+	case KORE_OPENGL_VERTEX_FORMAT_UINT16X2:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT16X4:
+		return GL_UNSIGNED_SHORT;
+	case KORE_OPENGL_VERTEX_FORMAT_SINT16X2:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT16X4:
+		return GL_SHORT;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM16X2:
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM16X4:
+		return GL_UNSIGNED_SHORT;
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM16X2:
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM16X4:
+		return GL_SHORT;
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT16X2:
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT16X4:
+		assert(false);
+		return GL_FLOAT;
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32:
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32X2:
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32X3:
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32X4:
+		return GL_FLOAT;
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32X2:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32X3:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32X4:
+		return GL_UNSIGNED_INT;
+	case KORE_OPENGL_VERTEX_FORMAT_SIN32:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT32X2:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT32X3:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT32X4:
+		return GL_INT;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM10_10_10_2:
+		assert(false);
+		return GL_INT;
+	}
+
+	assert(false);
+	return 1u;
+}
+
+static bool vertex_format_normalized(kore_opengl_vertex_format format) {
+	switch (format) {
+	case KORE_OPENGL_VERTEX_FORMAT_UINT8X2:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT8X4:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT8X2:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT8X4:
+		return false;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM8X2:
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM8X4:
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM8X2:
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM8X4:
+		return true;
+	case KORE_OPENGL_VERTEX_FORMAT_UINT16X2:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT16X4:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT16X2:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT16X4:
+		return false;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM16X2:
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM16X4:
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM16X2:
+	case KORE_OPENGL_VERTEX_FORMAT_SNORM16X4:
+		return true;
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT16X2:
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT16X4:
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32:
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32X2:
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32X3:
+	case KORE_OPENGL_VERTEX_FORMAT_FLOAT32X4:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32X2:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32X3:
+	case KORE_OPENGL_VERTEX_FORMAT_UINT32X4:
+	case KORE_OPENGL_VERTEX_FORMAT_SIN32:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT32X2:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT32X3:
+	case KORE_OPENGL_VERTEX_FORMAT_SINT32X4:
+		return false;
+	case KORE_OPENGL_VERTEX_FORMAT_UNORM10_10_10_2:
+		return true;
+	}
+
+	assert(false);
+	return 1u;
+}
+
+static const uint32_t max_vertex_attrib_arrays = 16;
+
 void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
-	kore_gpu_index_format index_format     = KORE_GPU_INDEX_FORMAT_UINT16;
-	kore_gpu_texture_view framebuffer_view = {0};
+	kore_gpu_index_format        index_format     = KORE_GPU_INDEX_FORMAT_UINT16;
+	kore_gpu_texture_view        framebuffer_view = {0};
+	kore_opengl_render_pipeline *pipeline         = NULL;
 
 	uint64_t offset = 0;
 
@@ -315,12 +487,22 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			glBindBuffer(data->buffer->buffer_type, data->buffer->buffer);
 
-			// TODO
-			glEnableVertexAttribArray(0);
-			kore_opengl_check_errors();
+			kore_opengl_vertex_state *vertex_state = &pipeline->vertex_state;
 
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, (void *)(int64_t)0);
-			kore_opengl_check_errors();
+			for (uint32_t attribute_index = 0; attribute_index < vertex_state->buffers->attributes_count; ++attribute_index) {
+				glEnableVertexAttribArray(attribute_index);
+
+				glVertexAttribPointer(attribute_index, vertex_format_size(vertex_state->buffers[0].attributes[0].format),
+				                      vertex_format_type(vertex_state->buffers[0].attributes[0].format),
+				                      vertex_format_normalized(vertex_state->buffers[0].attributes[0].format), (GLsizei)vertex_state->buffers[0].array_stride,
+				                      (void *)(int64_t)vertex_state->buffers[0].attributes[attribute_index].offset);
+
+				kore_opengl_check_errors();
+			}
+
+			for (uint32_t attribute_index = (uint32_t)vertex_state->buffers->attributes_count; attribute_index < max_vertex_attrib_arrays; ++attribute_index) {
+				glDisableVertexAttribArray(attribute_index);
+			}
 
 			break;
 		}
@@ -343,6 +525,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				glUseProgram(data->pipeline->flip_program);
 			}
 			kore_opengl_check_errors();
+
+			pipeline = data->pipeline;
 
 			break;
 		}

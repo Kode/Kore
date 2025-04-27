@@ -56,6 +56,7 @@ void kore_opengl_render_pipeline_init(kore_opengl_device *device, kore_opengl_re
 	kore_opengl_check_errors();
 
 	bind_attributes(&parameters->vertex, pipe->program);
+	pipe->vertex_state = parameters->vertex;
 
 	link_program(pipe->program);
 
