@@ -246,20 +246,21 @@ __attribute__((import_module("imports"), import_name("glEnableVertexAttribArray"
 __attribute__((import_module("imports"), import_name("glDisableVertexAttribArray"))) void glDisableVertexAttribArray(GLuint index);
 __attribute__((import_module("imports"), import_name("glVertexAttribPointer"))) void
 glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
-__attribute__((import_module("imports"), import_name("glBlendColor"))) void            glBlendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-__attribute__((import_module("imports"), import_name("glDrawBuffers"))) void           glDrawBuffers(GLsizei n, const GLenum *bufs);
-__attribute__((import_module("imports"), import_name("glDrawElementsInstanced"))) void glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type,
-                                                                                                               const void *indices, GLsizei instancecount);
-__attribute__((import_module("imports"), import_name("glVertexAttribDivisor"))) void   glVertexAttribDivisor(GLuint index, GLuint divisor);
-__attribute__((import_module("imports"), import_name("glMapBufferRange"))) void       *glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length,
-                                                                                                        GLbitfield access);
-__attribute__((import_module("imports"), import_name("glUnmapBuffer"))) GLboolean      glUnmapBuffer(GLenum target);
-__attribute__((import_module("imports"), import_name("glGenVertexArrays"))) void       glGenVertexArrays(GLsizei n, GLuint *arrays);
-__attribute__((import_module("imports"), import_name("glBindVertexArray"))) void       glBindVertexArray(GLuint array);
-__attribute__((import_module("imports"), import_name("glGetBufferSubData"))) void      glGetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
-                                                                                                          void *data);
-__attribute__((import_module("imports"), import_name("glUniformBlockBinding"))) void glUniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
-__attribute__((import_module("imports"), import_name("glBindBufferBase"))) void glBindBufferBase(GLenum target, GLuint index, GLuint buffer);
+__attribute__((import_module("imports"), import_name("glBlendColor"))) void             glBlendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+__attribute__((import_module("imports"), import_name("glDrawBuffers"))) void            glDrawBuffers(GLsizei n, const GLenum *bufs);
+__attribute__((import_module("imports"), import_name("glDrawElementsInstanced"))) void  glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type,
+                                                                                                                const void *indices, GLsizei instancecount);
+__attribute__((import_module("imports"), import_name("glVertexAttribDivisor"))) void    glVertexAttribDivisor(GLuint index, GLuint divisor);
+__attribute__((import_module("imports"), import_name("glMapBufferRange"))) void        *glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length,
+                                                                                                         GLbitfield access);
+__attribute__((import_module("imports"), import_name("glUnmapBuffer"))) GLboolean       glUnmapBuffer(GLenum target);
+__attribute__((import_module("imports"), import_name("glGenVertexArrays"))) void        glGenVertexArrays(GLsizei n, GLuint *arrays);
+__attribute__((import_module("imports"), import_name("glBindVertexArray"))) void        glBindVertexArray(GLuint array);
+__attribute__((import_module("imports"), import_name("glGetBufferSubData"))) void       glGetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
+                                                                                                           void *data);
+__attribute__((import_module("imports"), import_name("glUniformBlockBinding"))) void    glUniformBlockBinding(GLuint program, GLuint uniformBlockIndex,
+                                                                                                              GLuint uniformBlockBinding);
+__attribute__((import_module("imports"), import_name("glBindBufferBase"))) void         glBindBufferBase(GLenum target, GLuint index, GLuint buffer);
 __attribute__((import_module("imports"), import_name("glGetUniformBlockIndex"))) GLuint glGetUniformBlockIndex(GLuint program, const GLchar *uniformBlockName);
 
 #endif
