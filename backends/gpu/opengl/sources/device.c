@@ -233,6 +233,10 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
+	kore_opengl_check_errors();
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	kore_opengl_check_errors();
 
 	init_flip();
 }
@@ -252,7 +256,7 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_INDEX) != 0) {
 		buffer->opengl.buffer_type = GL_ELEMENT_ARRAY_BUFFER;
 	}
-	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0) {
+	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0 || (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
 		buffer->opengl.buffer_type = GL_PIXEL_PACK_BUFFER;
 	}
 	else if ((parameters->usage_flags & KORE_OPENGL_BUFFER_USAGE_UNIFORM) != 0) {
@@ -283,71 +287,6 @@ void kore_opengl_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 }
 
 static int convert_internal_format(kore_gpu_texture_format format) {
-	switch (format) {
-	case KORE_GPU_TEXTURE_FORMAT_UNDEFINED:
-		assert(false);
-		return GL_RGBA;
-	case KORE_GPU_TEXTURE_FORMAT_R8_UNORM:
-	case KORE_GPU_TEXTURE_FORMAT_R8_SNORM:
-	case KORE_GPU_TEXTURE_FORMAT_R8_UINT:
-	case KORE_GPU_TEXTURE_FORMAT_R8_SINT:
-	case KORE_GPU_TEXTURE_FORMAT_R16_UINT:
-	case KORE_GPU_TEXTURE_FORMAT_R16_SINT:
-	case KORE_GPU_TEXTURE_FORMAT_R16_FLOAT:
-		return GL_R;
-	case KORE_GPU_TEXTURE_FORMAT_RG8_UNORM:
-	case KORE_GPU_TEXTURE_FORMAT_RG8_SNORM:
-	case KORE_GPU_TEXTURE_FORMAT_RG8_UINT:
-	case KORE_GPU_TEXTURE_FORMAT_RG8_SINT:
-		return GL_RG;
-	case KORE_GPU_TEXTURE_FORMAT_R32_UINT:
-	case KORE_GPU_TEXTURE_FORMAT_R32_SINT:
-	case KORE_GPU_TEXTURE_FORMAT_R32_FLOAT:
-		return GL_R;
-	case KORE_GPU_TEXTURE_FORMAT_RG16_UINT:
-	case KORE_GPU_TEXTURE_FORMAT_RG16_SINT:
-	case KORE_GPU_TEXTURE_FORMAT_RG16_FLOAT:
-		return GL_RG;
-	case KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM:
-	case KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM_SRGB:
-	case KORE_GPU_TEXTURE_FORMAT_RGBA8_SNORM:
-	case KORE_GPU_TEXTURE_FORMAT_RGBA8_UINT:
-	case KORE_GPU_TEXTURE_FORMAT_RGBA8_SINT:
-		return GL_RGBA;
-	case KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM:
-	case KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM_SRGB:
-		return GL_BGRA;
-	case KORE_GPU_TEXTURE_FORMAT_RGB9E5U_FLOAT:
-	case KORE_GPU_TEXTURE_FORMAT_RGB10A2_UINT:
-	case KORE_GPU_TEXTURE_FORMAT_RGB10A2_UNORM:
-	case KORE_GPU_TEXTURE_FORMAT_RG11B10U_FLOAT:
-		assert(false);
-		return GL_RGBA;
-	case KORE_GPU_TEXTURE_FORMAT_RG32_UINT:
-	case KORE_GPU_TEXTURE_FORMAT_RG32_SINT:
-	case KORE_GPU_TEXTURE_FORMAT_RG32_FLOAT:
-		return GL_RG;
-	case KORE_GPU_TEXTURE_FORMAT_RGBA16_UINT:
-	case KORE_GPU_TEXTURE_FORMAT_RGBA16_SINT:
-	case KORE_GPU_TEXTURE_FORMAT_RGBA16_FLOAT:
-	case KORE_GPU_TEXTURE_FORMAT_RGBA32_UINT:
-	case KORE_GPU_TEXTURE_FORMAT_RGBA32_SINT:
-	case KORE_GPU_TEXTURE_FORMAT_RGBA32_FLOAT:
-		return GL_RGBA;
-	case KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM:
-	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_NOTHING8:
-	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_STENCIL8:
-	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT:
-	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8_NOTHING24:
-		assert(false);
-		return GL_RGBA;
-	}
-
-	assert(false);
-	return GL_RGBA;
-}
-
-static GLenum convert_format(kore_gpu_texture_format format) {
 	switch (format) {
 	case KORE_GPU_TEXTURE_FORMAT_UNDEFINED:
 		assert(false);
@@ -416,7 +355,10 @@ static GLenum convert_format(kore_gpu_texture_format format) {
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM:
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_NOTHING8:
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_STENCIL8:
+		assert(false);
+		return GL_RGBA32F;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT:
+		return GL_DEPTH_COMPONENT32;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8_NOTHING24:
 		assert(false);
 		return GL_RGBA32F;
@@ -424,6 +366,74 @@ static GLenum convert_format(kore_gpu_texture_format format) {
 
 	assert(false);
 	return GL_RGBA8;
+}
+
+static GLenum convert_format(kore_gpu_texture_format format) {
+	switch (format) {
+	case KORE_GPU_TEXTURE_FORMAT_UNDEFINED:
+		assert(false);
+		return GL_RGBA;
+	case KORE_GPU_TEXTURE_FORMAT_R8_UNORM:
+	case KORE_GPU_TEXTURE_FORMAT_R8_SNORM:
+	case KORE_GPU_TEXTURE_FORMAT_R8_UINT:
+	case KORE_GPU_TEXTURE_FORMAT_R8_SINT:
+	case KORE_GPU_TEXTURE_FORMAT_R16_UINT:
+	case KORE_GPU_TEXTURE_FORMAT_R16_SINT:
+	case KORE_GPU_TEXTURE_FORMAT_R16_FLOAT:
+		return GL_R;
+	case KORE_GPU_TEXTURE_FORMAT_RG8_UNORM:
+	case KORE_GPU_TEXTURE_FORMAT_RG8_SNORM:
+	case KORE_GPU_TEXTURE_FORMAT_RG8_UINT:
+	case KORE_GPU_TEXTURE_FORMAT_RG8_SINT:
+		return GL_RG;
+	case KORE_GPU_TEXTURE_FORMAT_R32_UINT:
+	case KORE_GPU_TEXTURE_FORMAT_R32_SINT:
+	case KORE_GPU_TEXTURE_FORMAT_R32_FLOAT:
+		return GL_R;
+	case KORE_GPU_TEXTURE_FORMAT_RG16_UINT:
+	case KORE_GPU_TEXTURE_FORMAT_RG16_SINT:
+	case KORE_GPU_TEXTURE_FORMAT_RG16_FLOAT:
+		return GL_RG;
+	case KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM:
+	case KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM_SRGB:
+	case KORE_GPU_TEXTURE_FORMAT_RGBA8_SNORM:
+	case KORE_GPU_TEXTURE_FORMAT_RGBA8_UINT:
+	case KORE_GPU_TEXTURE_FORMAT_RGBA8_SINT:
+		return GL_RGBA;
+	case KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM:
+	case KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM_SRGB:
+		return GL_BGRA;
+	case KORE_GPU_TEXTURE_FORMAT_RGB9E5U_FLOAT:
+	case KORE_GPU_TEXTURE_FORMAT_RGB10A2_UINT:
+	case KORE_GPU_TEXTURE_FORMAT_RGB10A2_UNORM:
+	case KORE_GPU_TEXTURE_FORMAT_RG11B10U_FLOAT:
+		assert(false);
+		return GL_RGBA;
+	case KORE_GPU_TEXTURE_FORMAT_RG32_UINT:
+	case KORE_GPU_TEXTURE_FORMAT_RG32_SINT:
+	case KORE_GPU_TEXTURE_FORMAT_RG32_FLOAT:
+		return GL_RG;
+	case KORE_GPU_TEXTURE_FORMAT_RGBA16_UINT:
+	case KORE_GPU_TEXTURE_FORMAT_RGBA16_SINT:
+	case KORE_GPU_TEXTURE_FORMAT_RGBA16_FLOAT:
+	case KORE_GPU_TEXTURE_FORMAT_RGBA32_UINT:
+	case KORE_GPU_TEXTURE_FORMAT_RGBA32_SINT:
+	case KORE_GPU_TEXTURE_FORMAT_RGBA32_FLOAT:
+		return GL_RGBA;
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM:
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_NOTHING8:
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_STENCIL8:
+		assert(false);
+		return GL_RGBA;
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT:
+		return GL_DEPTH_COMPONENT;
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8_NOTHING24:
+		assert(false);
+		return GL_RGBA;
+	}
+
+	assert(false);
+	return GL_RGBA;
 }
 
 static GLenum texture_format_type(kore_opengl_vertex_format format) {
@@ -519,7 +529,6 @@ static GLenum texture_format_type(kore_opengl_vertex_format format) {
 		assert(false);
 		return GL_FLOAT;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT:
-		assert(false);
 		return GL_FLOAT;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8_NOTHING24:
 		assert(false);
@@ -531,15 +540,16 @@ static GLenum texture_format_type(kore_opengl_vertex_format format) {
 }
 
 void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	kore_opengl_check_errors();
 	glGenTextures(1, &texture->opengl.texture);
 	kore_opengl_check_errors();
 	glBindTexture(GL_TEXTURE_2D, texture->opengl.texture);
 	kore_opengl_check_errors();
 
-	glTexImage2D(GL_TEXTURE_2D, 0, convert_internal_format(parameters->format), parameters->width, parameters->height, 0, convert_format(parameters->format),
-	             texture_format_type(parameters->format), NULL);
+	int    internal_format = convert_internal_format(parameters->format);
+	GLenum format          = convert_format(parameters->format);
+	GLenum type            = texture_format_type(parameters->format);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, parameters->width, parameters->height, 0, format, type, NULL);
 	kore_opengl_check_errors();
 }
 
