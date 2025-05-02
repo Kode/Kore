@@ -20,6 +20,7 @@ typedef enum command_type {
 	COMMAND_DRAW_INDEXED,
 	COMMAND_SET_RENDER_PIPELINE,
 	COMMAND_COPY_TEXTURE_TO_BUFFER,
+	COMMAND_SET_UNIFORM_BUFFER,
 	COMMAND_PRESENT,
 	COMMAND_BEGIN_RENDER_PASS,
 	COMMAND_END_RENDER_PASS,
@@ -59,6 +60,11 @@ typedef struct copy_texture_to_buffer {
 	uint32_t                           height;
 	uint32_t                           depth_or_array_layers;
 } copy_texture_to_buffer;
+
+typedef struct set_uniform_buffer {
+	kore_gpu_buffer *buffer;
+	uint32_t         uniform_block_index;
+} set_uniform_buffer;
 
 typedef struct begin_render_pass {
 	kore_gpu_render_pass_parameters parameters;
@@ -256,6 +262,15 @@ void kore_opengl_command_list_queue_buffer_access(kore_gpu_command_list *list, k
 
 void kore_opengl_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_opengl_descriptor_set *descriptor_set) {}
 
-void kore_opengl_command_list_set_uniform_buffer(kore_gpu_command_list *list, uint32_t program, kore_gpu_buffer *buffer, uint32_t uniform_block_index) {
-	glUniformBlockBinding(program, uniform_block_index, buffer->opengl.uniform_buffer);
+void kore_opengl_command_list_set_uniform_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t uniform_block_index) {
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
+
+	c->type = COMMAND_SET_UNIFORM_BUFFER;
+
+	set_uniform_buffer *data  = (set_uniform_buffer *)&c->data;
+	data->buffer              = buffer;
+	data->uniform_block_index = uniform_block_index;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->opengl.commands_offset += c->size;
 }

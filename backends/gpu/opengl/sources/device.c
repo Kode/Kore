@@ -256,14 +256,14 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_INDEX) != 0) {
 		buffer->opengl.buffer_type = GL_ELEMENT_ARRAY_BUFFER;
 	}
-	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0 || (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
-		buffer->opengl.buffer_type = GL_PIXEL_PACK_BUFFER;
-	}
 	else if ((parameters->usage_flags & KORE_OPENGL_BUFFER_USAGE_UNIFORM) != 0) {
 		buffer->opengl.uniform_buffer = next_uniform_buffer_index;
 		glBindBufferBase(GL_UNIFORM_BUFFER, buffer->opengl.uniform_buffer, buffer->opengl.buffer);
 		next_uniform_buffer_index += 1;
 		buffer->opengl.buffer_type = GL_UNIFORM_BUFFER;
+	}
+	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0 || (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
+		buffer->opengl.buffer_type = GL_PIXEL_PACK_BUFFER;
 	}
 	else {
 		assert(false);
@@ -797,6 +797,11 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			pipeline = data->pipeline;
 
+			break;
+		}
+		case COMMAND_SET_UNIFORM_BUFFER: {
+			set_uniform_buffer *data = (set_uniform_buffer *)&c->data;
+			glUniformBlockBinding(pipeline->program, data->uniform_block_index, data->buffer->opengl.uniform_buffer);
 			break;
 		}
 		case COMMAND_COPY_TEXTURE_TO_BUFFER: {
