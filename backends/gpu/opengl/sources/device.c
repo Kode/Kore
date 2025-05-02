@@ -305,7 +305,11 @@ static int convert_internal_format(kore_gpu_texture_format format) {
 	case KORE_GPU_TEXTURE_FORMAT_R16_UINT:
 	case KORE_GPU_TEXTURE_FORMAT_R16_SINT:
 	case KORE_GPU_TEXTURE_FORMAT_R16_FLOAT:
+#ifdef GL_R16
 		return GL_R16;
+#else
+		return GL_RED;
+#endif
 	case KORE_GPU_TEXTURE_FORMAT_RG8_UNORM:
 	case KORE_GPU_TEXTURE_FORMAT_RG8_SNORM:
 		return GL_RG8_SNORM;
@@ -321,7 +325,11 @@ static int convert_internal_format(kore_gpu_texture_format format) {
 	case KORE_GPU_TEXTURE_FORMAT_RG16_UINT:
 	case KORE_GPU_TEXTURE_FORMAT_RG16_SINT:
 	case KORE_GPU_TEXTURE_FORMAT_RG16_FLOAT:
+#ifdef GL_RG16
 		return GL_RG16;
+#else
+		return GL_RED;
+#endif
 	case KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM:
 	case KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM_SRGB:
 	case KORE_GPU_TEXTURE_FORMAT_RGBA8_SNORM:
@@ -363,7 +371,11 @@ static int convert_internal_format(kore_gpu_texture_format format) {
 		assert(false);
 		return GL_RGBA32F;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT:
+#ifdef GL_DEPTH_COMPONENT32
 		return GL_DEPTH_COMPONENT32;
+#else
+		return GL_RED;
+#endif
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8_NOTHING24:
 		assert(false);
 		return GL_RGBA32F;
