@@ -934,7 +934,11 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				glEnable(GL_DEPTH_TEST);
 
 				if (data->parameters.depth_stencil_attachment.depth_load_op == KORE_GPU_LOAD_OP_CLEAR) {
+#ifdef KORE_OPENGL_ES
+					glClearDepthf(data->parameters.depth_stencil_attachment.depth_clear_value);
+#else
 					glClearDepth(data->parameters.depth_stencil_attachment.depth_clear_value);
+#endif
 					glClear(GL_DEPTH_BUFFER_BIT);
 				}
 			}
