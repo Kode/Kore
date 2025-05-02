@@ -206,6 +206,8 @@ typedef struct kore_opengl_render_pipeline {
 	uint32_t flip_vertex_shader;
 	uint32_t flip_program;
 
+	kore_opengl_depth_stencil_state depth_stencil;
+
 	kore_opengl_vertex_state vertex_state;
 } kore_opengl_render_pipeline;
 

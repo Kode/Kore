@@ -250,6 +250,8 @@ static uint32_t next_uniform_buffer_index = 0;
 void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
 	glGenBuffers(1, &buffer->opengl.buffer);
 
+	bool dynamic = false;
+
 	if ((parameters->usage_flags & KORE_OPENGL_BUFFER_USAGE_VERTEX) != 0) {
 		buffer->opengl.buffer_type = GL_ARRAY_BUFFER;
 	}
@@ -261,9 +263,12 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 		glBindBufferBase(GL_UNIFORM_BUFFER, buffer->opengl.uniform_buffer, buffer->opengl.buffer);
 		next_uniform_buffer_index += 1;
 		buffer->opengl.buffer_type = GL_UNIFORM_BUFFER;
+
+		dynamic = true;
 	}
 	else if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0 || (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
 		buffer->opengl.buffer_type = GL_PIXEL_PACK_BUFFER;
+		dynamic                    = true;
 	}
 	else {
 		assert(false);
@@ -273,7 +278,7 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 
 	glBindBuffer(buffer->opengl.buffer_type, buffer->opengl.buffer);
 	kore_opengl_check_errors();
-	glBufferData(buffer->opengl.buffer_type, parameters->size, NULL, GL_STATIC_DRAW);
+	glBufferData(buffer->opengl.buffer_type, parameters->size, NULL, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 	glBindBuffer(buffer->opengl.buffer_type, 0);
 
 #ifdef KORE_WEBGL
@@ -761,9 +766,10 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			for (uint32_t attribute_index = 0; attribute_index < vertex_state->buffers->attributes_count; ++attribute_index) {
 				glEnableVertexAttribArray(attribute_index);
 
-				glVertexAttribPointer(attribute_index, vertex_format_size(vertex_state->buffers[0].attributes[0].format),
-				                      vertex_format_type(vertex_state->buffers[0].attributes[0].format),
-				                      vertex_format_normalized(vertex_state->buffers[0].attributes[0].format), (GLsizei)vertex_state->buffers[0].array_stride,
+				glVertexAttribPointer(attribute_index, vertex_format_size(vertex_state->buffers[0].attributes[attribute_index].format),
+				                      vertex_format_type(vertex_state->buffers[0].attributes[attribute_index].format),
+				                      vertex_format_normalized(vertex_state->buffers[0].attributes[attribute_index].format),
+				                      (GLsizei)vertex_state->buffers[0].array_stride,
 				                      (void *)(int64_t)vertex_state->buffers[0].attributes[attribute_index].offset);
 
 				kore_opengl_check_errors();
@@ -795,28 +801,88 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			}
 			kore_opengl_check_errors();
 
+			switch (data->pipeline->depth_stencil.depth_compare) {
+			case KORE_GPU_COMPARE_FUNCTION_UNDEFINED:
+				break;
+			case KORE_GPU_COMPARE_FUNCTION_NEVER:
+				glDepthFunc(GL_NEVER);
+				break;
+			case KORE_GPU_COMPARE_FUNCTION_LESS:
+				glDepthFunc(GL_LESS);
+				break;
+			case KORE_GPU_COMPARE_FUNCTION_EQUAL:
+				glDepthFunc(GL_EQUAL);
+				break;
+			case KORE_GPU_COMPARE_FUNCTION_LESS_EQUAL:
+				glDepthFunc(GL_LEQUAL);
+				break;
+			case KORE_GPU_COMPARE_FUNCTION_GREATER:
+				glDepthFunc(GL_GREATER);
+				break;
+			case KORE_GPU_COMPARE_FUNCTION_NOT_EQUAL:
+				glDepthFunc(GL_NOTEQUAL);
+				break;
+			case KORE_GPU_COMPARE_FUNCTION_GREATER_EQUAL:
+				glDepthFunc(GL_GEQUAL);
+				break;
+			case KORE_GPU_COMPARE_FUNCTION_ALWAYS:
+				glDepthFunc(GL_ALWAYS);
+				break;
+			}
+
 			pipeline = data->pipeline;
 
 			break;
 		}
 		case COMMAND_SET_UNIFORM_BUFFER: {
 			set_uniform_buffer *data = (set_uniform_buffer *)&c->data;
+
 			glUniformBlockBinding(pipeline->program, data->uniform_block_index, data->buffer->opengl.uniform_buffer);
+			kore_opengl_check_errors();
+
+			break;
+		}
+		case COMMAND_SET_TEXTURE: {
+			set_texture *data = (set_texture *)&c->data;
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, data->view.texture->opengl.texture);
+			kore_opengl_check_errors();
+
+			break;
+		}
+		case COMMAND_COPY_BUFFER_TO_TEXTURE: {
+			copy_buffer_to_texture *data = (copy_buffer_to_texture *)&c->data;
+
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, data->source.buffer->opengl.buffer);
+
+			glActiveTexture(GL_TEXTURE0);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			glBindTexture(GL_TEXTURE_2D, data->destination.texture->opengl.texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8_SNORM, data->width, data->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+			kore_opengl_check_errors();
+
 			break;
 		}
 		case COMMAND_COPY_TEXTURE_TO_BUFFER: {
 			copy_texture_to_buffer *data = (copy_texture_to_buffer *)&c->data;
 
-			if (data->source->texture->opengl.is_primary_framebuffer) {
+			if (data->source.texture->opengl.is_primary_framebuffer) {
 				// read framebuffer into the buffer
-				glBindBuffer(data->destination->buffer->opengl.buffer_type, data->destination->buffer->opengl.buffer);
+				glBindBuffer(data->destination.buffer->opengl.buffer_type, data->destination.buffer->opengl.buffer);
 				glReadPixels(0, 0, data->width, data->height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-				glBindBuffer(data->destination->buffer->opengl.buffer_type, 0);
+				glBindBuffer(data->destination.buffer->opengl.buffer_type, 0);
 
 				kore_opengl_check_errors();
 
 				// create texture backed by the buffer
-				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, data->destination->buffer->opengl.buffer);
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, data->destination.buffer->opengl.buffer);
 				uint32_t texture;
 				glGenTextures(1, &texture);
 				glActiveTexture(GL_TEXTURE0);
@@ -830,9 +896,9 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 				// read the flipped framebuffer into the buffer
 				glBindFramebuffer(GL_FRAMEBUFFER, flipped_framebuffer);
-				glBindBuffer(data->destination->buffer->opengl.buffer_type, data->destination->buffer->opengl.buffer);
+				glBindBuffer(data->destination.buffer->opengl.buffer_type, data->destination.buffer->opengl.buffer);
 				glReadPixels(0, 0, data->width, data->height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-				glBindBuffer(data->destination->buffer->opengl.buffer_type, 0);
+				glBindBuffer(data->destination.buffer->opengl.buffer_type, 0);
 
 				kore_opengl_check_errors();
 			}
@@ -851,6 +917,19 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				glClearColor(color.r, color.g, color.b, color.a);
 				glClear(GL_COLOR_BUFFER_BIT);
 			}
+
+			if (data->parameters.depth_stencil_attachment.texture != NULL) {
+				glEnable(GL_DEPTH_TEST);
+
+				if (data->parameters.depth_stencil_attachment.depth_load_op == KORE_GPU_LOAD_OP_CLEAR) {
+					glClearDepth(data->parameters.depth_stencil_attachment.depth_clear_value);
+					glClear(GL_DEPTH_BUFFER_BIT);
+				}
+			}
+			else {
+				glDisable(GL_DEPTH_TEST);
+			}
+
 			break;
 		}
 		case COMMAND_END_RENDER_PASS: {

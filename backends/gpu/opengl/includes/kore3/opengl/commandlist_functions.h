@@ -105,6 +105,8 @@ void kore_opengl_command_list_queue_descriptor_set_access(kore_gpu_command_list 
 
 void kore_opengl_command_list_set_uniform_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t uniform_block_index);
 
+void kore_opengl_command_list_set_texture(kore_gpu_command_list *list, kore_gpu_texture_view *view, bool writable);
+
 #ifdef __cplusplus
 }
 #endif
