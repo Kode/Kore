@@ -453,7 +453,7 @@ static GLenum convert_format(kore_gpu_texture_format format) {
 	return GL_RGBA;
 }
 
-static GLenum texture_format_type(kore_opengl_vertex_format format) {
+static GLenum texture_format_type(kore_gpu_texture_format format) {
 	switch (format) {
 	case KORE_GPU_TEXTURE_FORMAT_UNDEFINED:
 		assert(false);
