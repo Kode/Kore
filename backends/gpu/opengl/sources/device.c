@@ -419,7 +419,11 @@ static GLenum convert_format(kore_gpu_texture_format format) {
 		return GL_RGBA;
 	case KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM:
 	case KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM_SRGB:
+#ifdef GL_BGRA
 		return GL_BGRA;
+#else
+		return GL_RGBA;
+#endif
 	case KORE_GPU_TEXTURE_FORMAT_RGB9E5U_FLOAT:
 	case KORE_GPU_TEXTURE_FORMAT_RGB10A2_UINT:
 	case KORE_GPU_TEXTURE_FORMAT_RGB10A2_UNORM:
