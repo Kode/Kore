@@ -572,6 +572,20 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, parameters->width, parameters->height, 0, format, type, NULL);
 	kore_opengl_check_errors();
+
+	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
+		glGenFramebuffers(1, &texture->opengl.framebuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, texture->opengl.framebuffer);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->opengl.texture, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	else {
+		texture->opengl.framebuffer = UINT32_MAX;
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	kore_opengl_check_errors();
 }
 
 kore_gpu_texture *kore_opengl_device_get_framebuffer(kore_gpu_device *device) {
@@ -903,7 +917,7 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				glGenTextures(1, &texture);
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, texture);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, data->width, data->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, data->width, data->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 				glBindTexture(GL_TEXTURE_2D, 0);
 
 				kore_opengl_check_errors();
@@ -928,6 +942,9 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			begin_render_pass *data = (begin_render_pass *)&c->data;
 			framebuffer_view        = data->parameters.color_attachments[0].texture;
 
+			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_view.texture->opengl.framebuffer);
+			kore_opengl_check_errors();
+
 			if (data->parameters.color_attachments[0].load_op == KORE_GPU_LOAD_OP_CLEAR) {
 				kore_gpu_color color = data->parameters.color_attachments[0].clear_value;
 				glClearColor(color.r, color.g, color.b, color.a);
@@ -949,6 +966,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			else {
 				glDisable(GL_DEPTH_TEST);
 			}
+
+			kore_opengl_check_errors();
 
 			break;
 		}
