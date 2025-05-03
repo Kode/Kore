@@ -16,6 +16,9 @@ typedef struct kore_opengl_texture {
 	uint32_t framebuffer;
 	uint32_t texture;
 	bool     is_primary_framebuffer;
+
+	uint32_t width;
+	uint32_t height;
 } kore_opengl_texture;
 
 #ifdef __cplusplus
