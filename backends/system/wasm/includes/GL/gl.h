@@ -138,25 +138,25 @@ typedef char     GLchar;
 #define GL_PIXEL_UNPACK_BUFFER              0x88EC
 #define GL_FRAMEBUFFER_BINDING              0x8CA6
 #define GL_UNIFORM_BUFFER                   0x8A11
-#define GL_R8_SNORM 0x8F94
-#define GL_RG8_SNORM 0x8F95
-#define GL_RG8 0x822B
-#define GL_R32UI 0x8236
-#define GL_R32I 0x8235
-#define GL_R32F 0x822E
-#define GL_RGBA8_SNORM 0x8F97
-#define GL_RGBA8 0x8058
-#define GL_RGB9_E5 0x8C3D
-#define GL_RG32UI 0x823C
-#define GL_RGBA16UI 0x8D76
-#define GL_RGBA16I 0x8D88
-#define GL_RGBA16F 0x881A
-#define GL_RG 0x8227
-#define GL_RGBA32F 0x8814
-#define GL_RGBA32I 0x8D82
-#define GL_RGBA32UI 0x8D70
-#define GL_RG32F 0x8230
-#define GL_RG32I 0x823B
+#define GL_R8_SNORM                         0x8F94
+#define GL_RG8_SNORM                        0x8F95
+#define GL_RG8                              0x822B
+#define GL_R32UI                            0x8236
+#define GL_R32I                             0x8235
+#define GL_R32F                             0x822E
+#define GL_RGBA8_SNORM                      0x8F97
+#define GL_RGBA8                            0x8058
+#define GL_RGB9_E5                          0x8C3D
+#define GL_RG32UI                           0x823C
+#define GL_RGBA16UI                         0x8D76
+#define GL_RGBA16I                          0x8D88
+#define GL_RGBA16F                          0x881A
+#define GL_RG                               0x8227
+#define GL_RGBA32F                          0x8814
+#define GL_RGBA32I                          0x8D82
+#define GL_RGBA32UI                         0x8D70
+#define GL_RG32F                            0x8230
+#define GL_RG32I                            0x823B
 
 __attribute__((import_module("imports"), import_name("glUniform1i"))) void        glUniform1i(GLint location, GLint v0);
 __attribute__((import_module("imports"), import_name("glUniform2i"))) void        glUniform2i(GLint location, GLint v0, GLint v1);
