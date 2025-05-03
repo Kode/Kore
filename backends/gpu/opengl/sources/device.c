@@ -877,7 +877,12 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			set_texture *data = (set_texture *)&c->data;
 
 			glActiveTexture(GL_TEXTURE0);
+
 			glBindTexture(GL_TEXTURE_2D, data->view.texture->opengl.texture);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 			kore_opengl_check_errors();
 
 			break;
@@ -888,9 +893,6 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, data->source.buffer->opengl.buffer);
 
 			glActiveTexture(GL_TEXTURE0);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 			glBindTexture(GL_TEXTURE_2D, data->destination.texture->opengl.texture);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8_SNORM, data->width, data->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
