@@ -238,6 +238,7 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	kore_opengl_check_errors();
 
+	init_copy();
 	init_flip();
 }
 
@@ -938,6 +939,24 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			break;
 		}
+		case COMMAND_COPY_TEXTURE_TO_TEXTURE: {
+			copy_texture_to_texture *data = (copy_texture_to_texture *)&c->data;
+
+			if (data->destination.texture->opengl.is_primary_framebuffer) {
+				copy(data->width, data->height, data->source.texture->opengl.texture, data->destination.texture->opengl.framebuffer);
+			}
+			else {
+				glBindFramebuffer(GL_FRAMEBUFFER, data->source.texture->opengl.framebuffer);
+				glReadBuffer(GL_COLOR_ATTACHMENT0);
+				glBindTexture(GL_TEXTURE_2D, data->destination.texture->opengl.texture);
+				glCopyTexSubImage2D(GL_TEXTURE_2D, 0, data->destination.origin_x, data->destination.origin_y, data->source.origin_x, data->source.origin_y,
+				                    data->width, data->height);
+			}
+
+			kore_opengl_check_errors();
+
+			break;
+		}
 		case COMMAND_BEGIN_RENDER_PASS: {
 			begin_render_pass *data = (begin_render_pass *)&c->data;
 			framebuffer_view        = data->parameters.color_attachments[0].texture;
@@ -972,6 +991,9 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			break;
 		}
 		case COMMAND_END_RENDER_PASS: {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			kore_opengl_check_errors();
+
 			break;
 		}
 		case COMMAND_PRESENT: {

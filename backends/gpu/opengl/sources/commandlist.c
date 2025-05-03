@@ -21,6 +21,7 @@ typedef enum command_type {
 	COMMAND_SET_RENDER_PIPELINE,
 	COMMAND_COPY_BUFFER_TO_TEXTURE,
 	COMMAND_COPY_TEXTURE_TO_BUFFER,
+	COMMAND_COPY_TEXTURE_TO_TEXTURE,
 	COMMAND_SET_UNIFORM_BUFFER,
 	COMMAND_SET_TEXTURE,
 	COMMAND_PRESENT,
@@ -70,6 +71,14 @@ typedef struct copy_texture_to_buffer {
 	uint32_t                    height;
 	uint32_t                    depth_or_array_layers;
 } copy_texture_to_buffer;
+
+typedef struct copy_texture_to_texture {
+	kore_gpu_image_copy_texture source;
+	kore_gpu_image_copy_texture destination;
+	uint32_t                    width;
+	uint32_t                    height;
+	uint32_t                    depth_or_array_layers;
+} copy_texture_to_texture;
 
 typedef struct set_uniform_buffer {
 	kore_gpu_buffer *buffer;
@@ -236,7 +245,21 @@ void kore_opengl_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
 
 void kore_opengl_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                       const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
-                                                      uint32_t depth_or_array_layers) {}
+                                                      uint32_t depth_or_array_layers) {
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
+
+	c->type = COMMAND_COPY_TEXTURE_TO_TEXTURE;
+
+	copy_texture_to_texture *data = (copy_texture_to_texture *)&c->data;
+	data->source                  = *source;
+	data->destination             = *destination;
+	data->width                   = width;
+	data->height                  = height;
+	data->depth_or_array_layers   = depth_or_array_layers;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->opengl.commands_offset += c->size;
+}
 
 void kore_opengl_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size) {}
 

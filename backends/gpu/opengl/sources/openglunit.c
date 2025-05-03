@@ -6,6 +6,7 @@
 
 #include "buffer.c"
 #include "commandlist.c"
+#include "copy.c"
 #include "descriptorset.c"
 #include "device.c"
 #include "flip.c"
