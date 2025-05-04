@@ -280,6 +280,7 @@ __attribute__((import_module("imports"), import_name("glGetBufferSubData"))) voi
 __attribute__((import_module("imports"), import_name("glUniformBlockBinding"))) void    glUniformBlockBinding(GLuint program, GLuint uniformBlockIndex,
                                                                                                               GLuint uniformBlockBinding);
 __attribute__((import_module("imports"), import_name("glBindBufferBase"))) void         glBindBufferBase(GLenum target, GLuint index, GLuint buffer);
+__attribute__((import_module("imports"), import_name("glBindBufferRange"))) void        glBindBufferRange(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size);
 __attribute__((import_module("imports"), import_name("glGetUniformBlockIndex"))) GLuint glGetUniformBlockIndex(GLuint program, const GLchar *uniformBlockName);
 __attribute__((import_module("imports"), import_name("glCopyTexSubImage2D"))) void glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
                                                                                                        GLint x, GLint y, GLsizei width, GLsizei height);
