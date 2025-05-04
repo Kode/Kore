@@ -83,6 +83,8 @@ typedef struct copy_texture_to_texture {
 typedef struct set_uniform_buffer {
 	kore_gpu_buffer *buffer;
 	uint32_t         uniform_block_index;
+	uint32_t         offset;
+	uint32_t         size;
 } set_uniform_buffer;
 
 typedef struct set_texture {
@@ -313,7 +315,8 @@ void kore_opengl_command_list_queue_buffer_access(kore_gpu_command_list *list, k
 
 void kore_opengl_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_opengl_descriptor_set *descriptor_set) {}
 
-void kore_opengl_command_list_set_uniform_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t uniform_block_index) {
+void kore_opengl_command_list_set_uniform_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t uniform_block_index, uint32_t offset,
+                                                 uint32_t size) {
 	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
 
 	c->type = COMMAND_SET_UNIFORM_BUFFER;
@@ -321,6 +324,8 @@ void kore_opengl_command_list_set_uniform_buffer(kore_gpu_command_list *list, ko
 	set_uniform_buffer *data  = (set_uniform_buffer *)&c->data;
 	data->buffer              = buffer;
 	data->uniform_block_index = uniform_block_index;
+	data->offset              = offset;
+	data->size                = size;
 
 	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
 	list->opengl.commands_offset += c->size;

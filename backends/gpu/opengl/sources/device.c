@@ -285,7 +285,7 @@ void kore_opengl_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	glBindBuffer(buffer->opengl.buffer_type, 0);
 
 #ifdef KORE_WEBGL
-	buffer->opengl.data = malloc(parameters->size);
+	buffer->opengl.locked_data = malloc(parameters->size);
 #endif
 }
 
@@ -872,6 +872,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		}
 		case COMMAND_SET_UNIFORM_BUFFER: {
 			set_uniform_buffer *data = (set_uniform_buffer *)&c->data;
+
+			glBindBufferRange(GL_UNIFORM_BUFFER, data->buffer->opengl.uniform_buffer, data->buffer->opengl.buffer, data->offset, data->size);
 
 			glUniformBlockBinding(pipeline->program, data->uniform_block_index, data->buffer->opengl.uniform_buffer);
 			kore_opengl_check_errors();

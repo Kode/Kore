@@ -20,9 +20,7 @@ typedef struct kore_opengl_buffer {
 	uint32_t uniform_buffer;
 	uint32_t buffer_type;
 	uint64_t size;
-#ifdef KORE_WEBGL
-	void *data;
-#endif
+	void    *locked_data;
 } kore_opengl_buffer;
 
 #ifdef __cplusplus
