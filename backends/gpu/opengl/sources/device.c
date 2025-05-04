@@ -982,19 +982,21 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				glClear(GL_COLOR_BUFFER_BIT);
 			}
 
-			for (size_t color_index = 1; color_index < data->parameters.color_attachments_count; ++color_index) {
-				glFramebufferTexture2D(GL_FRAMEBUFFER, (GLenum)(GL_COLOR_ATTACHMENT0 + color_index), GL_TEXTURE_2D,
-				                       data->parameters.color_attachments[color_index].texture.texture->opengl.texture, 0);
-			}
+			if (!framebuffer_view.texture->opengl.is_primary_framebuffer) {
+				for (size_t color_index = 1; color_index < data->parameters.color_attachments_count; ++color_index) {
+					glFramebufferTexture2D(GL_FRAMEBUFFER, (GLenum)(GL_COLOR_ATTACHMENT0 + color_index), GL_TEXTURE_2D,
+					                       data->parameters.color_attachments[color_index].texture.texture->opengl.texture, 0);
+				}
 
-			GLenum draw_buffers[16];
-			for (size_t color_index = 0; color_index < data->parameters.color_attachments_count; ++color_index) {
-				draw_buffers[color_index] = (GLenum)(GL_COLOR_ATTACHMENT0 + color_index);
-			}
-			glDrawBuffers((GLsizei)data->parameters.color_attachments_count, draw_buffers);
+				GLenum draw_buffers[16];
+				for (size_t color_index = 0; color_index < data->parameters.color_attachments_count; ++color_index) {
+					draw_buffers[color_index] = (GLenum)(GL_COLOR_ATTACHMENT0 + color_index);
+				}
+				glDrawBuffers((GLsizei)data->parameters.color_attachments_count, draw_buffers);
 
-			for (size_t color_index = data->parameters.color_attachments_count; color_index < 8; ++color_index) {
-				glFramebufferTexture2D(GL_FRAMEBUFFER, (GLenum)(GL_COLOR_ATTACHMENT0 + color_index), GL_TEXTURE_2D, 0, 0);
+				for (size_t color_index = data->parameters.color_attachments_count; color_index < 8; ++color_index) {
+					glFramebufferTexture2D(GL_FRAMEBUFFER, (GLenum)(GL_COLOR_ATTACHMENT0 + color_index), GL_TEXTURE_2D, 0, 0);
+				}
 			}
 
 			if (data->parameters.depth_stencil_attachment.texture != NULL) {
