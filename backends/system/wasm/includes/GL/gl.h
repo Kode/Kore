@@ -157,6 +157,7 @@ typedef char     GLchar;
 #define GL_RGBA32UI                         0x8D70
 #define GL_RG32F                            0x8230
 #define GL_RG32I                            0x823B
+#define GL_TEXTURE_2D_ARRAY 0x8C1A
 
 __attribute__((import_module("imports"), import_name("glUniform1i"))) void        glUniform1i(GLint location, GLint v0);
 __attribute__((import_module("imports"), import_name("glUniform2i"))) void        glUniform2i(GLint location, GLint v0, GLint v1);
@@ -285,5 +286,7 @@ __attribute__((import_module("imports"), import_name("glGetUniformBlockIndex")))
 __attribute__((import_module("imports"), import_name("glCopyTexSubImage2D"))) void glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
                                                                                                        GLint x, GLint y, GLsizei width, GLsizei height);
 __attribute__((import_module("imports"), import_name("glReadBuffer"))) void        glReadBuffer(GLenum mode);
+__attribute__((import_module("imports"), import_name("glTexStorage3D"))) void      glTexStorage3D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth);
+__attribute__((import_module("imports"), import_name("glTexSubImage3D"))) void      glTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void * pixels);
 
 #endif
