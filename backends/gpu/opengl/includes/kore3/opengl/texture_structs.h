@@ -19,6 +19,10 @@ typedef struct kore_opengl_texture {
 
 	uint32_t width;
 	uint32_t height;
+
+	uint32_t target;
+
+	kore_gpu_texture_format format;
 } kore_opengl_texture;
 
 #ifdef __cplusplus

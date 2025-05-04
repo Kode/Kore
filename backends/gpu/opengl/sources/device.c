@@ -217,6 +217,7 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 #if !defined(NDEBUG)
 	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(debug_callback, NULL);
 #endif
 
@@ -232,6 +233,8 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	framebuffer.opengl.is_primary_framebuffer = true;
 	framebuffer.opengl.width                  = kore_window_width(0);
 	framebuffer.opengl.height                 = kore_window_height(0);
+	framebuffer.opengl.format                 = KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
+	framebuffer.opengl.target                 = GL_TEXTURE_2D;
 
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
@@ -294,7 +297,7 @@ void kore_opengl_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	list->opengl.commands_offset = 0;
 }
 
-static int convert_internal_format(kore_gpu_texture_format format) {
+static GLenum convert_internal_format(kore_gpu_texture_format format) {
 	switch (format) {
 	case KORE_GPU_TEXTURE_FORMAT_UNDEFINED:
 		assert(false);
@@ -566,17 +569,30 @@ static GLenum texture_format_type(kore_gpu_texture_format format) {
 void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
 	glGenTextures(1, &texture->opengl.texture);
 	kore_opengl_check_errors();
-	glBindTexture(GL_TEXTURE_2D, texture->opengl.texture);
+
+	GLenum target = GL_TEXTURE_2D;
+	if (parameters->depth_or_array_layers > 1) {
+		target = GL_TEXTURE_2D_ARRAY;
+	}
+
+	glBindTexture(target, texture->opengl.texture);
 	kore_opengl_check_errors();
 
-	int    internal_format = convert_internal_format(parameters->format);
+	GLenum internal_format = convert_internal_format(parameters->format);
 	GLenum format          = convert_format(parameters->format);
 	GLenum type            = texture_format_type(parameters->format);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, parameters->width, parameters->height, 0, format, type, NULL);
+	if (target == GL_TEXTURE_2D_ARRAY) {
+		glTexStorage3D(target, 1, internal_format, parameters->width, parameters->height, parameters->depth_or_array_layers);
+	}
+	else {
+		glTexImage2D(target, 0, internal_format, parameters->width, parameters->height, 0, format, type, NULL);
+	}
 	kore_opengl_check_errors();
 
 	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
+		assert(parameters->depth_or_array_layers == 1);
+
 		glGenFramebuffers(1, &texture->opengl.framebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, texture->opengl.framebuffer);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->opengl.texture, 0);
@@ -586,12 +602,14 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 		texture->opengl.framebuffer = UINT32_MAX;
 	}
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(target, 0);
 
 	kore_opengl_check_errors();
 
 	texture->opengl.width  = parameters->width;
 	texture->opengl.height = parameters->height;
+	texture->opengl.format = parameters->format;
+	texture->opengl.target = target;
 }
 
 kore_gpu_texture *kore_opengl_device_get_framebuffer(kore_gpu_device *device) {
@@ -599,7 +617,7 @@ kore_gpu_texture *kore_opengl_device_get_framebuffer(kore_gpu_device *device) {
 }
 
 kore_gpu_texture_format kore_opengl_device_framebuffer_format(kore_gpu_device *device) {
-	return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
+	return framebuffer.opengl.format;
 }
 
 static uint32_t vertex_format_size(kore_opengl_vertex_format format) {
@@ -885,10 +903,10 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			glActiveTexture(GL_TEXTURE0);
 
-			glBindTexture(GL_TEXTURE_2D, data->view.texture->opengl.texture);
+			glBindTexture(data->view.texture->opengl.target, data->view.texture->opengl.texture);
 
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(data->view.texture->opengl.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(data->view.texture->opengl.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 			kore_opengl_check_errors();
 
@@ -901,10 +919,21 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			glActiveTexture(GL_TEXTURE0);
 
-			glBindTexture(GL_TEXTURE_2D, data->destination.texture->opengl.texture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8_SNORM, data->width, data->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+			glBindTexture(data->destination.texture->opengl.target, data->destination.texture->opengl.texture);
 
-			glBindTexture(GL_TEXTURE_2D, 0);
+			GLenum internal_format = convert_internal_format(data->destination.texture->opengl.format);
+			GLenum format          = convert_format(data->destination.texture->opengl.format);
+			GLenum type            = texture_format_type(data->destination.texture->opengl.format);
+
+			if (data->destination.texture->opengl.target == GL_TEXTURE_2D_ARRAY) {
+				glTexSubImage3D(data->destination.texture->opengl.target, 0, 0, 0, data->destination.origin_z, data->width, data->height,
+				                data->depth_or_array_layers, format, type, 0);
+			}
+			else {
+				glTexImage2D(data->destination.texture->opengl.target, 0, internal_format, data->width, data->height, 0, format, type, 0);
+			}
+
+			glBindTexture(data->destination.texture->opengl.target, 0);
 
 			kore_opengl_check_errors();
 
