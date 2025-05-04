@@ -114,6 +114,8 @@ static uint32_t flip(uint32_t width, uint32_t height, uint32_t source_texture) {
 		glBindFramebuffer(GL_FRAMEBUFFER, flip_framebuffer);
 	}
 
+	glViewport(0, 0, width, height);
+
 	// do normal rendering into the render target
 	glUseProgram(flip_program);
 

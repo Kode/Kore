@@ -60,7 +60,8 @@ void kore_opengl_check_errors(void);
 #endif
 
 static void     init_copy(void);
-static void     copy(uint32_t width, uint32_t height, uint32_t source_texture, uint32_t destination_framebuffer);
+static void     copy(uint32_t source_x, uint32_t source_y, uint32_t source_w, uint32_t source_h, uint32_t destination_x, uint32_t destination_y,
+                     uint32_t destination_w, uint32_t destination_h, uint32_t width, uint32_t height, uint32_t source_texture, uint32_t destination_framebuffer);
 static void     init_flip(void);
 static uint32_t flip(uint32_t width, uint32_t height, uint32_t source_texture);
 static uint32_t compile_shader(uint32_t shader_type, const char *source);

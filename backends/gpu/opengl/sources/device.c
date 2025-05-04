@@ -950,7 +950,9 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			copy_texture_to_texture *data = (copy_texture_to_texture *)&c->data;
 
 			if (data->destination.texture->opengl.is_primary_framebuffer) {
-				copy(data->width, data->height, data->source.texture->opengl.texture, data->destination.texture->opengl.framebuffer);
+				copy(data->source.origin_x, data->source.origin_y, data->source.texture->opengl.width, data->source.texture->opengl.height,
+				     data->destination.origin_x, data->destination.origin_y, data->destination.texture->opengl.width, data->destination.texture->opengl.height,
+				     data->width, data->height, data->source.texture->opengl.texture, data->destination.texture->opengl.framebuffer);
 			}
 			else {
 				glBindFramebuffer(GL_FRAMEBUFFER, data->source.texture->opengl.framebuffer);
