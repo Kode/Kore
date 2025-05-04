@@ -9,7 +9,14 @@ extern "C" {
 #define KORE_GPU_VALIDATION
 #endif
 
-typedef enum kore_gpu_api { KORE_GPU_API_DIRECT3D12, KORE_GPU_API_VULKAN, KORE_GPU_API_METAL, KORE_GPU_API_WEBGPU } kore_gpu_api;
+typedef enum kore_gpu_api {
+	KORE_GPU_API_DIRECT3D11,
+	KORE_GPU_API_DIRECT3D12,
+	KORE_GPU_API_VULKAN,
+	KORE_GPU_API_METAL,
+	KORE_GPU_API_WEBGPU,
+	KORE_GPU_API_OPENGL,
+} kore_gpu_api;
 
 #if defined(KORE_DIRECT3D11)
 
