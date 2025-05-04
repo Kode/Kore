@@ -930,7 +930,7 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				                data->depth_or_array_layers, format, type, 0);
 			}
 			else {
-				glTexImage2D(data->destination.texture->opengl.target, 0, internal_format, data->width, data->height, 0, format, type, 0);
+				glTexSubImage2D(data->destination.texture->opengl.target, 0, 0, 0, data->width, data->height, format, type, 0);
 			}
 
 			glBindTexture(data->destination.texture->opengl.target, 0);
