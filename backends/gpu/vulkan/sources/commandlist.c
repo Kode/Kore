@@ -466,7 +466,7 @@ void kore_vulkan_command_list_set_viewport(kore_gpu_command_list *list, float x,
 
 void kore_vulkan_command_list_set_scissor_rect(kore_gpu_command_list *list, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 	VkRect2D scissor = {
-	    .offset = {0, 0},
+	    .offset = {x, y},
 	    .extent = {width, height},
 	};
 	vkCmdSetScissor(list->vulkan.command_buffer, 0, 1, &scissor);
