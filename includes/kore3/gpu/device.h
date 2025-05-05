@@ -90,7 +90,7 @@ typedef struct kore_gpu_texture_parameters {
 	uint32_t                   sample_count;
 	kore_gpu_texture_dimension dimension;
 	kore_gpu_texture_format    format;
-	kore_gpu_texture_usage     usage;
+	uint32_t                   usage;
 	kore_gpu_texture_format    view_formats[8]; // necessary?
 } kore_gpu_texture_parameters;
 
