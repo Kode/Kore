@@ -23,12 +23,14 @@
 
 static VkInstance       instance;
 static VkPhysicalDevice gpu;
-static VkSwapchainKHR   swapchain;
+static VkSwapchainKHR   swapchain = VK_NULL_HANDLE;
 static kore_gpu_texture framebuffers[4];
 static VkFormat         framebuffer_format;
 static uint32_t         framebuffer_count = 0;
 static uint32_t         framebuffer_index = 0;
-
+static uint32_t         graphics_queue_family_index;
+static VkSurfaceKHR     surface           = VK_NULL_HANDLE;
+static bool             surface_destroyed = true;
 #ifdef VALIDATE
 static bool                     validation;
 static VkDebugUtilsMessengerEXT debug_utils_messenger;
@@ -228,7 +230,6 @@ static void load_extension_functions(void) {
 	GET_VULKAN_FUNCTION2(GetPhysicalDeviceSurfacePresentModes, KHR);
 	GET_VULKAN_FUNCTION2(GetPhysicalDeviceSurfaceSupport, KHR);
 	GET_VULKAN_FUNCTION2(CreateSwapchain, KHR);
-	GET_VULKAN_FUNCTION2(DestroySwapchain, KHR);
 	GET_VULKAN_FUNCTION2(DestroySurface, KHR);
 	GET_VULKAN_FUNCTION2(GetSwapchainImages, KHR);
 	GET_VULKAN_FUNCTION2(AcquireNextImage, KHR);
@@ -388,14 +389,27 @@ static VkResult create_surface(VkInstance instance, int window_index, VkSurfaceK
 #endif
 }
 
-static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_family_index) {
+static void create_swapchain(kore_gpu_device *device) {
 	uint32_t window_width  = kore_window_width(0);
 	uint32_t window_height = kore_window_height(0);
 	bool     vsync         = true; // kore_window_vsynced(0); // TODO
 
-	VkSurfaceKHR surface = {0};
+	VkResult result = VK_SUCCESS;
 
-	VkResult result = create_surface(instance, 0, &surface);
+	if (surface_destroyed) {
+		if (swapchain != VK_NULL_HANDLE) {
+			vkDestroySwapchainKHR(device->vulkan.device, swapchain, NULL);
+			swapchain = VK_NULL_HANDLE;
+		}
+
+		if (surface == VK_NULL_HANDLE) {
+			vkDestroySurfaceKHR(instance, surface, NULL);
+		}
+
+		result = create_surface(instance, 0, &surface);
+		assert(result == VK_SUCCESS);
+		surface_destroyed = false;
+	}
 
 	VkBool32 surface_supported = false;
 	result                     = vkGetPhysicalDeviceSurfaceSupportKHR(gpu, graphics_queue_family_index, surface, &surface_supported);
@@ -461,6 +475,7 @@ static void create_swapchain(kore_gpu_device *device, uint32_t graphics_queue_fa
 	    .presentMode           = vsync ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_MAILBOX_KHR,
 	    .oldSwapchain          = VK_NULL_HANDLE,
 	    .clipped               = true,
+	    .oldSwapchain          = swapchain,
 	};
 
 	result = vkCreateSwapchain(device->vulkan.device, &swapchain_info, NULL, &swapchain);
@@ -682,7 +697,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	}
 #endif
 
-	const uint32_t graphics_queue_family_index = find_graphics_queue_family();
+	graphics_queue_family_index = find_graphics_queue_family();
 
 	const float queue_priorities[1] = {0.0};
 
@@ -756,7 +771,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	result = vkCreateCommandPool(device->vulkan.device, &command_pool_create_info, NULL, &device->vulkan.command_pool);
 	assert(result == VK_SUCCESS);
 
-	create_swapchain(device, graphics_queue_family_index);
+	create_swapchain(device);
 
 	init_framebuffer_availables(device);
 
@@ -990,9 +1005,19 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 }
 
 kore_gpu_texture *kore_vulkan_device_get_framebuffer(kore_gpu_device *device) {
-	VkResult result =
-	    vkAcquireNextImage(device->vulkan.device, swapchain, UINT64_MAX, *get_next_framebuffer_available_semaphore(), VK_NULL_HANDLE, &framebuffer_index);
-	assert(result == VK_SUCCESS);
+	VkSemaphore next_framebuffer_available = *get_next_framebuffer_available_semaphore();
+
+	VkResult err;
+	do {
+		err = vkAcquireNextImage(device->vulkan.device, swapchain, UINT64_MAX, next_framebuffer_available, VK_NULL_HANDLE, &framebuffer_index);
+		if (err == VK_ERROR_SURFACE_LOST_KHR) {
+			surface_destroyed = true;
+			create_swapchain(device);
+		}
+		else if (err == VK_ERROR_OUT_OF_DATE_KHR) {
+			create_swapchain(device);
+		}
+	} while (err != VK_SUCCESS && err != VK_SUBOPTIMAL_KHR);
 
 	return &framebuffers[framebuffer_index];
 }
@@ -1041,10 +1066,19 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 		result = vkQueuePresent(device->vulkan.queue, &present_info);
 		if (result == VK_ERROR_SURFACE_LOST_KHR) {
-			kore_error_message("Surface lost");
+			result = vkDeviceWaitIdle(device->vulkan.device);
+			assert(result == VK_SUCCESS);
+
+			surface_destroyed = true;
+
+			create_swapchain(device);
 		}
 		else if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-			kore_error_message("Surface borked");
+			result = vkDeviceWaitIdle(device->vulkan.device);
+
+			assert(result == VK_SUCCESS);
+
+			create_swapchain(device);
 		}
 		else {
 			assert(result == VK_SUCCESS);
