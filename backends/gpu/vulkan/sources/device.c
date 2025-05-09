@@ -225,16 +225,6 @@ static void load_extension_functions(void) {
 	GET_VULKAN_FUNCTION2(CreateDebugUtilsMessenger, EXT);
 	GET_VULKAN_FUNCTION2(DestroyDebugUtilsMessenger, EXT);
 
-	GET_VULKAN_FUNCTION2(GetPhysicalDeviceSurfaceCapabilities, KHR);
-	GET_VULKAN_FUNCTION2(GetPhysicalDeviceSurfaceFormats, KHR);
-	GET_VULKAN_FUNCTION2(GetPhysicalDeviceSurfacePresentModes, KHR);
-	GET_VULKAN_FUNCTION2(GetPhysicalDeviceSurfaceSupport, KHR);
-	GET_VULKAN_FUNCTION2(CreateSwapchain, KHR);
-	GET_VULKAN_FUNCTION2(DestroySurface, KHR);
-	GET_VULKAN_FUNCTION2(GetSwapchainImages, KHR);
-	GET_VULKAN_FUNCTION2(AcquireNextImage, KHR);
-	GET_VULKAN_FUNCTION2(QueuePresent, KHR);
-
 #undef GET_VULKAN_FUNCTION
 }
 
@@ -348,7 +338,7 @@ static VkSurfaceFormatKHR find_surface_format(VkSurfaceKHR surface) {
 	VkSurfaceFormatKHR surface_formats[256];
 
 	uint32_t formats_count = sizeof(surface_formats) / sizeof(surface_formats[0]);
-	VkResult result        = vkGetPhysicalDeviceSurfaceFormats(gpu, surface, &formats_count, surface_formats);
+	VkResult result        = vkGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formats_count, surface_formats);
 	assert(result == VK_SUCCESS);
 
 	// If the format list includes just one entry of VK_FORMAT_UNDEFINED,
@@ -419,12 +409,12 @@ static void create_swapchain(kore_gpu_device *device) {
 	framebuffer_format        = format.format;
 
 	VkSurfaceCapabilitiesKHR surface_capabilities = {0};
-	result                                        = vkGetPhysicalDeviceSurfaceCapabilities(gpu, surface, &surface_capabilities);
+	result                                        = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(gpu, surface, &surface_capabilities);
 	assert(result == VK_SUCCESS);
 
 	VkPresentModeKHR present_modes[32];
 	uint32_t         present_mode_count = sizeof(present_modes) / sizeof(present_modes[0]);
-	result                              = vkGetPhysicalDeviceSurfacePresentModes(gpu, surface, &present_mode_count, present_modes);
+	result                              = vkGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &present_mode_count, present_modes);
 	assert(result == VK_SUCCESS);
 
 	VkExtent2D swapchain_extent;
@@ -478,12 +468,12 @@ static void create_swapchain(kore_gpu_device *device) {
 	    .oldSwapchain          = swapchain,
 	};
 
-	result = vkCreateSwapchain(device->vulkan.device, &swapchain_info, NULL, &swapchain);
+	result = vkCreateSwapchainKHR(device->vulkan.device, &swapchain_info, NULL, &swapchain);
 	assert(result == VK_SUCCESS);
 
 	VkImage images[4];
 	framebuffer_count = sizeof(images) / sizeof(images[0]);
-	result            = vkGetSwapchainImages(device->vulkan.device, swapchain, &framebuffer_count, images);
+	result            = vkGetSwapchainImagesKHR(device->vulkan.device, swapchain, &framebuffer_count, images);
 	assert(result == VK_SUCCESS);
 
 	for (uint32_t i = 0; i < framebuffer_count; ++i) {
@@ -1009,7 +999,7 @@ kore_gpu_texture *kore_vulkan_device_get_framebuffer(kore_gpu_device *device) {
 
 	VkResult err;
 	do {
-		err = vkAcquireNextImage(device->vulkan.device, swapchain, UINT64_MAX, next_framebuffer_available, VK_NULL_HANDLE, &framebuffer_index);
+		err = vkAcquireNextImageKHR(device->vulkan.device, swapchain, UINT64_MAX, next_framebuffer_available, VK_NULL_HANDLE, &framebuffer_index);
 		if (err == VK_ERROR_SURFACE_LOST_KHR) {
 			surface_destroyed = true;
 			create_swapchain(device);
@@ -1064,7 +1054,7 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		    .waitSemaphoreCount = 0,
 		};
 
-		result = vkQueuePresent(device->vulkan.queue, &present_info);
+		result = vkQueuePresentKHR(device->vulkan.queue, &present_info);
 		if (result == VK_ERROR_SURFACE_LOST_KHR) {
 			result = vkDeviceWaitIdle(device->vulkan.device);
 			assert(result == VK_SUCCESS);

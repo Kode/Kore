@@ -59,24 +59,12 @@
 
 #include <vulkan/vulkan.h>
 
-static PFN_vkGetPhysicalDeviceSurfaceSupportKHR      vkGetPhysicalDeviceSurfaceSupport      = NULL;
-static PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilities = NULL;
-static PFN_vkGetPhysicalDeviceSurfaceFormatsKHR      vkGetPhysicalDeviceSurfaceFormats      = NULL;
-static PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModes = NULL;
-static PFN_vkCreateSwapchainKHR                      vkCreateSwapchain                      = NULL;
-static PFN_vkDestroySwapchainKHR                     vkDestroySwapchain                     = NULL;
-static PFN_vkGetSwapchainImagesKHR                   vkGetSwapchainImages                   = NULL;
-static PFN_vkDestroySurfaceKHR                       vkDestroySurface                       = NULL;
-
 static PFN_vkCmdBeginDebugUtilsLabelEXT    vkCmdBeginDebugUtilsLabel    = NULL;
 static PFN_vkCmdEndDebugUtilsLabelEXT      vkCmdEndDebugUtilsLabel      = NULL;
 static PFN_vkCmdInsertDebugUtilsLabelEXT   vkCmdInsertDebugUtilsLabel   = NULL;
 static PFN_vkSetDebugUtilsObjectNameEXT    vkSetDebugUtilsObjectName    = NULL;
 static PFN_vkCreateDebugUtilsMessengerEXT  vkCreateDebugUtilsMessenger  = NULL;
 static PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessenger = NULL;
-
-static PFN_vkAcquireNextImageKHR vkAcquireNextImage = NULL;
-static PFN_vkQueuePresentKHR     vkQueuePresent     = NULL;
 
 static VkFormat                convert_to_vulkan_format(kore_gpu_texture_format format);
 static kore_gpu_texture_format convert_from_vulkan_format(VkFormat format);
