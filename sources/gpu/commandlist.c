@@ -13,7 +13,7 @@
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/commandlist_functions.h>
 #else
-#error("Unknown GPU backend")
+#error ("Unknown GPU backend")
 #endif
 
 #include <assert.h>
@@ -57,7 +57,7 @@ void kore_gpu_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_bu
 
 void kore_gpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 #ifdef KORE_GPU_VALIDATION
-	if (parameters->depth_stencil_attachment.texture != NULL) {
+	if (parameters->color_attachments_count > 0 && parameters->depth_stencil_attachment.texture != NULL) {
 		uint32_t max_width  = 0;
 		uint32_t max_height = 0;
 
