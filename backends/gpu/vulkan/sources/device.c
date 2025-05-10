@@ -482,8 +482,8 @@ static void create_swapchain(kore_gpu_device *device) {
 		     image_layout_index < sizeof(framebuffers[i].vulkan.image_layouts) / sizeof(framebuffers[i].vulkan.image_layouts[0]); ++image_layout_index) {
 			framebuffers[i].vulkan.image_layouts[image_layout_index] = VK_IMAGE_LAYOUT_UNDEFINED;
 		}
-		framebuffers[i].vulkan.width  = window_width;
-		framebuffers[i].vulkan.height = window_height;
+		framebuffers[i].width         = window_width;
+		framebuffers[i].height        = window_height;
 		framebuffers[i].vulkan.format = convert_from_vulkan_format(framebuffer_format);
 	}
 }
@@ -916,8 +916,8 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	assert((format_properties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) != 0);
 
-	texture->vulkan.width           = parameters->width;
-	texture->vulkan.height          = parameters->height;
+	texture->width                  = parameters->width;
+	texture->height                 = parameters->height;
 	texture->vulkan.format          = parameters->format;
 	texture->vulkan.mip_level_count = parameters->mip_level_count;
 

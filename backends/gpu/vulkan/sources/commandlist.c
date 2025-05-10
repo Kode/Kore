@@ -183,18 +183,17 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 	VkRect2D render_area = {.offset = {0, 0}};
 
 	for (size_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
-		render_area.extent.width =
-		    textures[attachment_index]->vulkan.width > render_area.extent.width ? textures[attachment_index]->vulkan.width : render_area.extent.width;
+		render_area.extent.width = textures[attachment_index]->width > render_area.extent.width ? textures[attachment_index]->width : render_area.extent.width;
 		render_area.extent.height =
-		    textures[attachment_index]->vulkan.height > render_area.extent.height ? textures[attachment_index]->vulkan.height : render_area.extent.height;
+		    textures[attachment_index]->height > render_area.extent.height ? textures[attachment_index]->height : render_area.extent.height;
 	}
 
 	if (parameters->depth_stencil_attachment.texture != NULL) {
-		render_area.extent.width  = parameters->depth_stencil_attachment.texture->vulkan.width > render_area.extent.width
-		                                ? parameters->depth_stencil_attachment.texture->vulkan.width
+		render_area.extent.width  = parameters->depth_stencil_attachment.texture->width > render_area.extent.width
+		                                ? parameters->depth_stencil_attachment.texture->width
 		                                : render_area.extent.width;
-		render_area.extent.height = parameters->depth_stencil_attachment.texture->vulkan.height > render_area.extent.height
-		                                ? parameters->depth_stencil_attachment.texture->vulkan.height
+		render_area.extent.height = parameters->depth_stencil_attachment.texture->height > render_area.extent.height
+		                                ? parameters->depth_stencil_attachment.texture->height
 		                                : render_area.extent.height;
 	}
 

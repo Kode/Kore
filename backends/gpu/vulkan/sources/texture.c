@@ -14,6 +14,11 @@ void kore_vulkan_texture_set_name(kore_gpu_texture *texture, const char *name) {
 	vkSetDebugUtilsObjectName(texture->vulkan.device, &name_info);
 }
 
+void kore_gpu_texture_destroy(kore_gpu_texture *texture) {
+	vkDestroyImage(texture->vulkan.device, texture->vulkan.image, NULL);
+	vkFreeMemory(texture->vulkan.device, texture->vulkan.device_memory, NULL);
+}
+
 static uint32_t kore_vulkan_texture_image_layout_index(kore_gpu_texture *texture, uint32_t mip_level, uint32_t array_layer) {
 	return mip_level + (array_layer * texture->vulkan.mip_level_count);
 }

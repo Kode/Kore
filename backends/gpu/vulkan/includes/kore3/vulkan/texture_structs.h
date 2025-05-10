@@ -14,9 +14,6 @@ typedef enum kore_vulkan_texture_usage {
 } kore_vulkan_texture_usage;
 
 typedef struct kore_vulkan_texture {
-	uint32_t width;
-	uint32_t height;
-
 	VkDeviceMemory device_memory;
 	VkDeviceSize   device_size;
 

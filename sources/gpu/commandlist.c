@@ -56,6 +56,22 @@ void kore_gpu_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_bu
 }
 
 void kore_gpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
+#ifdef KORE_GPU_VALIDATION
+	if (parameters->depth_stencil_attachment.texture != NULL) {
+		uint32_t max_width  = 0;
+		uint32_t max_height = 0;
+
+		for (size_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
+			kore_gpu_texture *texture = parameters->color_attachments[attachment_index].texture.texture;
+
+			max_width  = texture->width > max_width ? texture->width : max_width;
+			max_height = texture->height > max_height ? texture->height : max_height;
+		}
+
+		kore_gpu_texture *depth_texture = parameters->depth_stencil_attachment.texture;
+		assert(depth_texture->width == max_width && depth_texture->height == max_height);
+	}
+#endif
 	KORE_GPU_CALL2(command_list_begin_render_pass, list, parameters);
 }
 

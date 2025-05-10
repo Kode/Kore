@@ -34,6 +34,10 @@ typedef struct kore_gpu_texture {
 #ifdef KORE_GPU_VALIDATION
 	kore_gpu_texture_format validation_format;
 #endif
+
+	uint32_t width;
+	uint32_t height;
+
 	KORE_GPU_IMPL(texture);
 } kore_gpu_texture;
 
@@ -64,6 +68,8 @@ typedef struct kore_gpu_texture_view {
 } kore_gpu_texture_view;
 
 KORE_FUNC void kore_gpu_texture_set_name(kore_gpu_texture *texture, const char *name);
+
+KORE_FUNC void kore_gpu_texture_destroy(kore_gpu_texture *texture);
 
 #ifdef __cplusplus
 }
