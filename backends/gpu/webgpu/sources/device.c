@@ -211,6 +211,8 @@ void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	texture->webgpu.texture = wgpuDeviceCreateTexture(device->webgpu.device, &texture_descriptor);
 	texture->webgpu.format  = parameters->format;
+	texture->webgpu.width   = parameters->width;
+	texture->webgpu.height  = parameters->height;
 }
 
 static kore_gpu_texture framebuffer;
@@ -220,6 +222,10 @@ kore_gpu_texture *kore_webgpu_device_get_framebuffer(kore_gpu_device *device) {
 	wgpuSurfaceGetCurrentTexture(device->webgpu.surface, &surface_texture);
 	framebuffer.webgpu.texture = surface_texture.texture;
 	framebuffer.webgpu.format  = kore_webgpu_device_framebuffer_format(device);
+
+	framebuffer.width  = kore_window_width(0);
+	framebuffer.height = kore_window_height(0);
+
 	return &framebuffer;
 }
 
