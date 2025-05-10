@@ -239,8 +239,7 @@ void kore_vulkan_command_list_present(kore_gpu_command_list *list) {
 	list->vulkan.presenting = true;
 }
 
-void kore_vulkan_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                               uint64_t size) {
+void kore_vulkan_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
 	vkCmdBindIndexBuffer(list->vulkan.command_buffer, buffer->vulkan.buffer, offset,
 	                     index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
 }

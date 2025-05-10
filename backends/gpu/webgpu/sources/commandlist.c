@@ -109,12 +109,11 @@ void kore_webgpu_command_list_end_render_pass(kore_gpu_command_list *list) {
 
 void kore_webgpu_command_list_present(kore_gpu_command_list *list) {}
 
-void kore_webgpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                               uint64_t size) {
+void kore_webgpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
 	kore_webgpu_buffer_schedule_uploads(&buffer->webgpu);
 
 	wgpuRenderPassEncoderSetIndexBuffer(list->webgpu.render_pass_encoder, buffer->webgpu.buffer,
-	                                    index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? WGPUIndexFormat_Uint16 : WGPUIndexFormat_Uint32, offset, size);
+	                                    index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? WGPUIndexFormat_Uint16 : WGPUIndexFormat_Uint32, offset, buffer->webgpu.size - offset);
 }
 
 void kore_webgpu_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_webgpu_buffer *buffer, uint64_t offset, uint64_t size,

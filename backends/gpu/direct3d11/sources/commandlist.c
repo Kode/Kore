@@ -18,7 +18,6 @@ typedef struct set_index_buffer_data {
 	kore_gpu_buffer      *buffer;
 	kore_gpu_index_format index_format;
 	uint64_t              offset;
-	uint64_t              size;
 } set_index_buffer_data;
 
 typedef struct set_vertex_buffer_data {
@@ -94,8 +93,7 @@ void kore_d3d11_command_list_present(kore_gpu_command_list *list) {
 	list->d3d11.commands_offset += c->size;
 }
 
-void kore_d3d11_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                              uint64_t size) {
+void kore_d3d11_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
 	command *c = (command *)&list->d3d11.commands[list->d3d11.commands_offset];
 
 	c->type = COMMAND_SET_INDEX_BUFFER;
@@ -104,7 +102,6 @@ void kore_d3d11_command_list_set_index_buffer(kore_gpu_command_list *list, kore_
 	data->buffer                = buffer;
 	data->index_format          = index_format;
 	data->offset                = offset;
-	data->size                  = size;
 
 	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
 	list->d3d11.commands_offset += c->size;

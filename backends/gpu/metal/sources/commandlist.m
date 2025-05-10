@@ -126,8 +126,7 @@ static void kore_metal_command_list_end_compute_pass(kore_gpu_command_list *list
 	}
 }
 
-void kore_metal_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                              uint64_t size) {
+void kore_metal_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
 	list->metal.index_buffer        = buffer->metal.buffer;
 	list->metal.sixteen_bit_indices = index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? true : false;
 }

@@ -43,8 +43,7 @@ void kore_vulkan_command_list_set_blend_constant(kore_gpu_command_list *list, ko
 
 void kore_vulkan_command_list_set_stencil_reference(kore_gpu_command_list *list, uint32_t reference);
 
-void kore_vulkan_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                               uint64_t size);
+void kore_vulkan_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset);
 
 void kore_vulkan_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_vulkan_buffer *buffer, uint64_t offset, uint64_t size,
                                                 uint64_t stride);
