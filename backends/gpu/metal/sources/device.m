@@ -91,6 +91,9 @@ void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
 	texture->metal.texture     = (__bridge_retained void *)[metal_device newTextureWithDescriptor:descriptor];
 	texture->metal.dimension   = parameters->dimension;
+
+	texture->width  = parameters->width;
+	texture->height = parameters->height;
 }
 
 static kore_gpu_texture framebuffer;
@@ -103,6 +106,10 @@ kore_gpu_texture *kore_metal_device_get_framebuffer(kore_gpu_device *device) {
 	}
 
 	framebuffer.metal.texture = (__bridge_retained void *)drawable.texture;
+
+	framebuffer.width  = kore_window_width(0);
+	framebuffer.height = kore_window_height(0);
+
 	return &framebuffer;
 }
 

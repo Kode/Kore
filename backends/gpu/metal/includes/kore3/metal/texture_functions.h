@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 void kore_metal_texture_set_name(kore_gpu_texture *texture, const char *name);
+void kore_metal_texture_destroy(kore_gpu_texture *texture);
 
 #ifdef __cplusplus
 }
