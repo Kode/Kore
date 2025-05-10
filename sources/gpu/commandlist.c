@@ -83,9 +83,8 @@ void kore_gpu_command_list_present(kore_gpu_command_list *list) {
 	KORE_GPU_CALL1(command_list_present, list);
 }
 
-void kore_gpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                            uint64_t size) {
-	KORE_GPU_CALL5(command_list_set_index_buffer, list, buffer, index_format, offset, size);
+void kore_gpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
+	KORE_GPU_CALL4(command_list_set_index_buffer, list, buffer, index_format, offset);
 }
 
 void kore_gpu_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {

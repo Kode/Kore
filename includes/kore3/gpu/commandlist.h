@@ -124,7 +124,7 @@ typedef struct kore_gpu_compute_arguments {
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/commandlist_structs.h>
 #else
-#error("Unknown GPU backend")
+#error ("Unknown GPU backend")
 #endif
 
 typedef struct kore_gpu_command_list {
@@ -167,8 +167,8 @@ KORE_FUNC void kore_gpu_command_list_clear_buffer(kore_gpu_command_list *list, k
 KORE_FUNC void kore_gpu_command_list_resolve_query_set(kore_gpu_command_list *list, struct kore_gpu_query_set *query_set, uint32_t first_query,
                                                        uint32_t query_count, kore_gpu_buffer *destination, uint64_t destination_offset);
 
-KORE_FUNC void kore_gpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                                      uint64_t size);
+KORE_FUNC void kore_gpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format,
+                                                      uint64_t offset_in_bytes);
 
 KORE_FUNC void kore_gpu_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,
                                           uint32_t first_instance);

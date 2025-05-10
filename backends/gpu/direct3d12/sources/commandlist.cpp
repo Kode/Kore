@@ -180,16 +180,14 @@ void kore_d3d12_command_list_present(kore_gpu_command_list *list) {
 	list->d3d12.presenting = true;
 }
 
-void kore_d3d12_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset,
-                                              uint64_t size) {
+void kore_d3d12_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
 	D3D12_GPU_VIRTUAL_ADDRESS address = buffer->d3d12.resource->GetGPUVirtualAddress();
 	address += offset;
 
 	D3D12_INDEX_BUFFER_VIEW view;
 	view.BufferLocation = address;
-	assert(size <= UINT32_MAX);
-	view.SizeInBytes = (UINT)size;
-	view.Format      = index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+	view.SizeInBytes    = (UINT)(buffer->d3d12.size - offset);
+	view.Format         = index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
 
 	list->d3d12.list->IASetIndexBuffer(&view);
 }
