@@ -211,8 +211,8 @@ void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	texture->webgpu.texture = wgpuDeviceCreateTexture(device->webgpu.device, &texture_descriptor);
 	texture->webgpu.format  = parameters->format;
-	texture->webgpu.width   = parameters->width;
-	texture->webgpu.height  = parameters->height;
+	texture->width   = parameters->width;
+	texture->height  = parameters->height;
 }
 
 static kore_gpu_texture framebuffer;
