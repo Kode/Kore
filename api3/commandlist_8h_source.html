@@ -224,7 +224,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span><span class="preprocessor">#elif defined(KORE_WEBGPU)</span></div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span><span class="preprocessor">#include &lt;kore3/webgpu/commandlist_structs.h&gt;</span></div>
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span><span class="preprocessor">#error(&quot;Unknown GPU backend&quot;)</span></div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span><span class="preprocessor">#error (&quot;Unknown GPU backend&quot;)</span></div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
 <div class="foldopen" id="foldopen00130" data-start="{" data-end="};">
@@ -269,8 +269,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>KORE_FUNC <span class="keywordtype">void</span> kore_gpu_command_list_resolve_query_set(<a class="code hl_struct" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, <span class="keyword">struct</span> <a class="code hl_struct" href="structkore__gpu__query__set.html">kore_gpu_query_set</a> *query_set, uint32_t first_query,</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                                                       uint32_t query_count, <a class="code hl_struct" href="structkore__gpu__buffer.html">kore_gpu_buffer</a> *destination, uint64_t destination_offset);</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>KORE_FUNC <span class="keywordtype">void</span> kore_gpu_command_list_set_index_buffer(<a class="code hl_struct" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, <a class="code hl_struct" href="structkore__gpu__buffer.html">kore_gpu_buffer</a> *buffer, kore_gpu_index_format index_format, uint64_t offset,</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>                                                      uint64_t size);</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>KORE_FUNC <span class="keywordtype">void</span> kore_gpu_command_list_set_index_buffer(<a class="code hl_struct" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, <a class="code hl_struct" href="structkore__gpu__buffer.html">kore_gpu_buffer</a> *buffer, kore_gpu_index_format index_format,</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>                                                      uint64_t offset_in_bytes);</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>KORE_FUNC <span class="keywordtype">void</span> kore_gpu_command_list_draw(<a class="code hl_struct" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,</div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>                                          uint32_t first_instance);</div>
