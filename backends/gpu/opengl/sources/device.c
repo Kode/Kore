@@ -613,6 +613,8 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 }
 
 kore_gpu_texture *kore_opengl_device_get_framebuffer(kore_gpu_device *device) {
+	framebuffer.width  = kore_window_width(0);
+	framebuffer.height = kore_window_height(0);
 	return &framebuffer;
 }
 
