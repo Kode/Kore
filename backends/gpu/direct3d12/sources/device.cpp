@@ -210,16 +210,6 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 
 		oa_create(&device->d3d12.sampler_heap_allocator, sampler_count, 4096);
 	}
-
-	/*{
-	    kore_d3d12_device_create_command_list(device, &device->d3d12.management_list);
-
-	    kore_d3d12_execution_context *execution_context = &device->d3d12.execution_contexts[device->d3d12.execution_context_index];
-	    ID3D12DescriptorHeap *heaps[] = {execution_context->descriptor_heap, execution_context->sampler_heap};
-	    device->d3d12.management_list.d3d12.list->SetDescriptorHeaps(2, heaps);
-
-	    kore_gpu_device_execute_command_list(device, &device->d3d12.management_list);
-	}*/
 }
 
 void kore_d3d12_device_destroy(kore_gpu_device *device) {
@@ -233,15 +223,6 @@ void kore_d3d12_device_set_name(kore_gpu_device *device, const char *name) {
 }
 
 void kore_d3d12_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
-	// assert(parameters.usage_flags & KORE_GPU_BUFFER_USAGE_INDEX);
-
-	// buffer->impl.count = count;
-	// buffer->impl.gpu_memory = gpuMemory;
-	// buffer->impl.format = format;
-
-	// static_assert(sizeof(D3D12IindexBufferView) == sizeof(D3D12_INDEX_BUFFER_VIEW), "Something is wrong with D3D12IindexBufferView");
-	// int uploadBufferSize = format == KORE_G5_INDEX_BUFFER_FORMAT_16BIT ? sizeof(uint16_t) * count : sizeof(uint32_t) * count;
-
 	D3D12_HEAP_PROPERTIES props;
 	props.CPUPageProperty      = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
 	props.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
@@ -574,7 +555,40 @@ void kore_d3d12_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 }
 
 kore_gpu_texture *kore_d3d12_device_get_framebuffer(kore_gpu_device *device) {
-	return &device->d3d12.framebuffer_textures[device->d3d12.framebuffer_index];
+	kore_gpu_texture *framebuffer = &device->d3d12.framebuffer_textures[device->d3d12.framebuffer_index];
+
+	uint32_t window_width = kore_window_width(0);
+	if (window_width < 8) {
+		window_width = 8;
+	}
+
+	uint32_t window_height = kore_window_height(0);
+	if (window_height < 8) {
+		window_height = 8;
+	}
+
+	if (framebuffer->width != window_width || framebuffer->height != window_height) {
+		kore_gpu_device_wait_until_idle(device);
+
+		for (uint32_t index = 0; index < KORE_D3D12_FRAME_COUNT; ++index) {
+			device->d3d12.framebuffer_textures[index].d3d12.resource->Release();
+		}
+
+		HRESULT result =
+		    device->d3d12.swap_chain->ResizeBuffers(0, window_width, window_height, convert_texture_format(kore_d3d12_device_framebuffer_format(device)), 0);
+		assert(SUCCEEDED(result));
+
+		for (uint32_t index = 0; index < KORE_D3D12_FRAME_COUNT; ++index) {
+			device->d3d12.swap_chain->GetBuffer(index, IID_GRAPHICS_PPV_ARGS(&device->d3d12.framebuffer_textures[index].d3d12.resource));
+			device->d3d12.framebuffer_textures[index].width  = window_width;
+			device->d3d12.framebuffer_textures[index].height = window_height;
+		}
+
+		device->d3d12.framebuffer_index = 0;
+		framebuffer                     = &device->d3d12.framebuffer_textures[device->d3d12.framebuffer_index];
+	}
+
+	return framebuffer;
 }
 
 static void wait_for_fence(kore_gpu_device *device, ID3D12Fence *fence, HANDLE event, UINT64 completion_value) {
