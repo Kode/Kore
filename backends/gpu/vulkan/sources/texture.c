@@ -14,7 +14,7 @@ void kore_vulkan_texture_set_name(kore_gpu_texture *texture, const char *name) {
 	vkSetDebugUtilsObjectName(texture->vulkan.device, &name_info);
 }
 
-void kore_gpu_texture_destroy(kore_gpu_texture *texture) {
+void kore_vulkan_texture_destroy(kore_gpu_texture *texture) {
 	vkDestroyImage(texture->vulkan.device, texture->vulkan.image, NULL);
 	vkFreeMemory(texture->vulkan.device, texture->vulkan.device_memory, NULL);
 }

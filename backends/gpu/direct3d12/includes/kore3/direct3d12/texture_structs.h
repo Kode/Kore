@@ -17,8 +17,6 @@ typedef enum kore_d3d12_texture_usage {
 typedef struct kore_d3d12_texture {
 	struct ID3D12Resource *resource;
 
-	uint32_t width;
-	uint32_t height;
 	uint32_t depth_or_array_layers;
 	uint32_t mip_level_count;
 

@@ -13,3 +13,7 @@ void kore_d3d12_texture_set_name(kore_gpu_texture *texture, const char *name) {
 	kore_microsoft_convert_string(wstr, name, 1024);
 	texture->d3d12.resource->SetName(wstr);
 }
+
+void kore_d3d12_texture_destroy(kore_gpu_texture *texture) {
+	texture->d3d12.resource->Release();
+}

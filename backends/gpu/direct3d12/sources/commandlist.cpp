@@ -121,26 +121,21 @@ void kore_d3d12_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	}
 
 	if (parameters->color_attachments_count > 0) {
-		D3D12_VIEWPORT viewport = {0.0f,
-		                           0.0f,
-		                           (FLOAT)parameters->color_attachments[0].texture.texture->d3d12.width,
-		                           (FLOAT)parameters->color_attachments[0].texture.texture->d3d12.height,
-		                           0.0f,
-		                           1.0f};
+		D3D12_VIEWPORT viewport = {
+		    0.0f, 0.0f, (FLOAT)parameters->color_attachments[0].texture.texture->width, (FLOAT)parameters->color_attachments[0].texture.texture->height,
+		    0.0f, 1.0f};
 		list->d3d12.list->RSSetViewports(1, &viewport);
 
-		D3D12_RECT scissor = {0, 0, (LONG)parameters->color_attachments[0].texture.texture->d3d12.width,
-		                      (LONG)parameters->color_attachments[0].texture.texture->d3d12.height};
+		D3D12_RECT scissor = {0, 0, (LONG)parameters->color_attachments[0].texture.texture->width,
+		                      (LONG)parameters->color_attachments[0].texture.texture->height};
 		list->d3d12.list->RSSetScissorRects(1, &scissor);
 	}
 	else if (parameters->depth_stencil_attachment.texture != NULL) {
 		D3D12_VIEWPORT viewport = {
-		    0.0f, 0.0f, (FLOAT)parameters->depth_stencil_attachment.texture->d3d12.width, (FLOAT)parameters->depth_stencil_attachment.texture->d3d12.height,
-		    0.0f, 1.0f};
+		    0.0f, 0.0f, (FLOAT)parameters->depth_stencil_attachment.texture->width, (FLOAT)parameters->depth_stencil_attachment.texture->height, 0.0f, 1.0f};
 		list->d3d12.list->RSSetViewports(1, &viewport);
 
-		D3D12_RECT scissor = {0, 0, (LONG)parameters->depth_stencil_attachment.texture->d3d12.width,
-		                      (LONG)parameters->depth_stencil_attachment.texture->d3d12.height};
+		D3D12_RECT scissor = {0, 0, (LONG)parameters->depth_stencil_attachment.texture->width, (LONG)parameters->depth_stencil_attachment.texture->height};
 		list->d3d12.list->RSSetScissorRects(1, &scissor);
 	}
 

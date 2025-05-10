@@ -158,8 +158,8 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	for (int i = 0; i < KORE_D3D12_FRAME_COUNT; ++i) {
 		device->d3d12.swap_chain->GetBuffer(i, IID_GRAPHICS_PPV_ARGS(&device->d3d12.framebuffer_textures[i].d3d12.resource));
 
-		device->d3d12.framebuffer_textures[i].d3d12.width                 = kore_window_width(0);
-		device->d3d12.framebuffer_textures[i].d3d12.height                = kore_window_height(0);
+		device->d3d12.framebuffer_textures[i].width                       = kore_window_width(0);
+		device->d3d12.framebuffer_textures[i].height                      = kore_window_height(0);
 		device->d3d12.framebuffer_textures[i].d3d12.depth_or_array_layers = 1;
 		device->d3d12.framebuffer_textures[i].d3d12.mip_level_count       = 1;
 
@@ -558,8 +558,8 @@ void kore_d3d12_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 
 	texture->d3d12.format = format;
 
-	texture->d3d12.width                 = parameters->width;
-	texture->d3d12.height                = parameters->height;
+	texture->width                       = parameters->width;
+	texture->height                      = parameters->height;
 	texture->d3d12.depth_or_array_layers = parameters->depth_or_array_layers;
 	texture->d3d12.mip_level_count       = parameters->mip_level_count;
 
