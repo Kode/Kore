@@ -122,5 +122,6 @@ enum tagPOINTER_INPUT_TYPE {
 #include "http.c"
 #include "mouse.c"
 #include "system.c"
+#include "video.c"
 #include "window.c"
 #include "windows.c"
