@@ -231,8 +231,8 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer.opengl.framebuffer);
 	framebuffer.opengl.texture                = 0;
 	framebuffer.opengl.is_primary_framebuffer = true;
-	framebuffer.opengl.width                  = kore_window_width(0);
-	framebuffer.opengl.height                 = kore_window_height(0);
+	framebuffer.width                         = kore_window_width(0);
+	framebuffer.height                        = kore_window_height(0);
 	framebuffer.opengl.format                 = KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
 	framebuffer.opengl.target                 = GL_TEXTURE_2D;
 
@@ -606,8 +606,8 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	kore_opengl_check_errors();
 
-	texture->opengl.width  = parameters->width;
-	texture->opengl.height = parameters->height;
+	texture->width         = parameters->width;
+	texture->height        = parameters->height;
 	texture->opengl.format = parameters->format;
 	texture->opengl.target = target;
 }
@@ -981,9 +981,9 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			copy_texture_to_texture *data = (copy_texture_to_texture *)&c->data;
 
 			if (data->destination.texture->opengl.is_primary_framebuffer) {
-				copy(data->source.origin_x, data->source.origin_y, data->source.texture->opengl.width, data->source.texture->opengl.height,
-				     data->destination.origin_x, data->destination.origin_y, data->destination.texture->opengl.width, data->destination.texture->opengl.height,
-				     data->width, data->height, data->source.texture->opengl.texture, data->destination.texture->opengl.framebuffer);
+				copy(data->source.origin_x, data->source.origin_y, data->source.texture->width, data->source.texture->height, data->destination.origin_x,
+				     data->destination.origin_y, data->destination.texture->width, data->destination.texture->height, data->width, data->height,
+				     data->source.texture->opengl.texture, data->destination.texture->opengl.framebuffer);
 			}
 			else {
 				glBindFramebuffer(GL_FRAMEBUFFER, data->source.texture->opengl.framebuffer);
@@ -1004,8 +1004,7 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_view.texture->opengl.framebuffer);
 			kore_opengl_check_errors();
 
-			glViewport(0, 0, data->parameters.color_attachments[0].texture.texture->opengl.width,
-			           data->parameters.color_attachments[0].texture.texture->opengl.height);
+			glViewport(0, 0, data->parameters.color_attachments[0].texture.texture->width, data->parameters.color_attachments[0].texture.texture->height);
 
 			if (data->parameters.color_attachments[0].load_op == KORE_GPU_LOAD_OP_CLEAR) {
 				kore_gpu_color color = data->parameters.color_attachments[0].clear_value;
