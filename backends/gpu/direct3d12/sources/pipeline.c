@@ -463,7 +463,7 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 	desc.NumSubobjects = 5;
 	desc.pSubobjects   = subobjects;
 
-	kore_microsoft_affirm(device->d3d12.device->CreateStateObject(&desc, IID_PPV_ARGS(&pipe->pipe)));
+	kore_microsoft_affirm(COM_CALL3(device->d3d12.device, CreateStateObject, &desc, &IID_ID3D12StateObject, &pipe->pipe));
 
 	uint32_t                   shader_id_count = 3;
 	kore_gpu_buffer_parameters id_buffer_params;
@@ -472,30 +472,30 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 	kore_gpu_device_create_buffer(device, &id_buffer_params, &pipe->shader_ids);
 
 	ID3D12StateObjectProperties *props;
-	pipe->pipe->QueryInterface(&props);
+	COM_CALL2(pipe->pipe, QueryInterface, &IID_ID3D12StateObjectProperties, &props);
 
 	uint8_t *data = (uint8_t *)kore_gpu_buffer_lock_all(&pipe->shader_ids);
 
 	wchar_t raygen[1024];
 	kore_microsoft_convert_string(raygen, parameters->gen_shader_name, 1024);
-	memcpy(data, props->GetShaderIdentifier(raygen), D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
+	memcpy(data, COM_CALL1(props, GetShaderIdentifier, raygen), D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
 
 	wchar_t miss[1024];
 	kore_microsoft_convert_string(miss, parameters->miss_shader_name, 1024);
-	memcpy(&data[D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT], props->GetShaderIdentifier(miss), D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
+	memcpy(&data[D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT], COM_CALL1(props, GetShaderIdentifier, miss), D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
 
-	memcpy(&data[D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT * 2], props->GetShaderIdentifier(L"HitGroup"), D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
+	memcpy(&data[D3D12_RAYTRACING_SHADER_TABLE_BYTE_ALIGNMENT * 2], COM_CALL1(props, GetShaderIdentifier, L"HitGroup"), D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
 
 	kore_gpu_buffer_unlock(&pipe->shader_ids);
 
-	props->Release();
+	COM_CALL0(props, Release);
 
 	pipe->root_signature = root_signature;
 }
 
 void kore_d3d12_ray_pipeline_destroy(kore_d3d12_ray_pipeline *pipe) {
 	if (pipe->pipe != NULL) {
-		pipe->pipe->Release();
+		COM_CALL0(pipe->pipe, Release);
 		pipe->pipe = NULL;
 	}
 }
