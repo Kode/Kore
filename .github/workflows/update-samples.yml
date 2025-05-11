@@ -17,7 +17,7 @@ jobs:
       run: git config --global user.email "robbot2019@robdangero.us"
 
     - name: Clone Samples
-      run: git clone https://github.com/Kode/Kore-Samples.git
+      run: git clone --branch v2 https://github.com/Kode/Kore-Samples.git
     - name: Get Kore-Submodule
       working-directory: Kore-Samples
       run: git submodule update --init --remote Kore
