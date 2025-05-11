@@ -3,7 +3,7 @@ name: Update Samples
 on:
   push:
     branches:
-    - v3
+    - main
 
 jobs:
   build:
@@ -17,13 +17,13 @@ jobs:
       run: git config --global user.email "robbot2019@robdangero.us"
 
     - name: Clone Samples
-      run: git clone --branch v3 https://github.com/Kode/Kore-Samples.git
+      run: git clone --branch main https://github.com/Kode/Kore-Samples.git
     - name: Get Kore-Submodule
       working-directory: Kore-Samples
       run: git submodule update --init --remote kore
     - name: Checkout Kore
       working-directory: Kore-Samples/kore
-      run: git checkout v3
+      run: git checkout main
     - name: Add Kore
       working-directory: Kore-Samples
       run: git add kore
