@@ -3,7 +3,7 @@ name: Update Samples
 on:
   push:
     branches:
-    - main
+    - v2
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
       run: git submodule update --init --remote Kore
     - name: Checkout Kore
       working-directory: Kore-Samples/Kore
-      run: git checkout main
+      run: git checkout v2
     - name: Add Kore
       working-directory: Kore-Samples
       run: git add Kore
@@ -45,7 +45,7 @@ jobs:
       run: git submodule update --init --remote Kore
     - name: Checkout Kore
       working-directory: Kore-Samples-Switch/Kore
-      run: git checkout main
+      run: git checkout v2
     - name: Add Kore
       working-directory: Kore-Samples-Switch
       run: git add Kore
@@ -67,7 +67,7 @@ jobs:
       run: git submodule update --init --remote Kore
     - name: Checkout Kore
       working-directory: Kore-Samples-PS4/Kore
-      run: git checkout main
+      run: git checkout v2
     - name: Add Kore
       working-directory: Kore-Samples-PS4
       run: git add Kore
@@ -90,7 +90,7 @@ jobs:
       run: git submodule update --init --remote Kore
     - name: Checkout Kore
       working-directory: Kore-Samples-PS5/Kore
-      run: git checkout main
+      run: git checkout v2
     - name: Add Kore
       working-directory: Kore-Samples-PS5
       run: git add Kore
@@ -113,7 +113,7 @@ jobs:
       run: git submodule update --init --remote Kore
     - name: Checkout Kore
       working-directory: Kore-Samples-Xbox/Kore
-      run: git checkout main
+      run: git checkout v2
     - name: Add Kore
       working-directory: Kore-Samples-Xbox
       run: git add Kore
