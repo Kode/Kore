@@ -56,8 +56,32 @@
 #include <d3d12.h>
 #include <dxgi.h>
 
+#include <stdbool.h>
+
 #ifndef IID_GRAPHICS_PPV_ARGS
 #define IID_GRAPHICS_PPV_ARGS(x) IID_PPV_ARGS(x)
+#endif
+
+#ifdef __cplusplus
+#define COM_CALL0(object, method)                                           object->method()
+#define COM_CALL0RET(object, method, ret)                                   ret = object->method()
+#define COM_CALL1(object, method, arg0)                                     object->method(arg0)
+#define COM_CALL2(object, method, arg0, arg1)                               object->method(arg0, arg1)
+#define COM_CALL3(object, method, arg0, arg1, arg2)                         object->method(arg0, arg1, arg2)
+#define COM_CALL4(object, method, arg0, arg1, arg2, arg3)                   object->method(arg0, arg1, arg2, arg3)
+#define COM_CALL5(object, method, arg0, arg1, arg2, arg3, arg4)             object->method(arg0, arg1, arg2, arg3, arg4)
+#define COM_CALL6(object, method, arg0, arg1, arg2, arg3, arg4, arg5)       object->method(arg0, arg1, arg2, arg3, arg4, arg5)
+#define COM_CALL7(object, method, arg0, arg1, arg2, arg3, arg4, arg5, arg6) object->method(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+#else
+#define COM_CALL0(object, method)                                           object->lpVtbl->method(object)
+#define COM_CALL0RET(object, method, ret)                                   object->lpVtbl->method(object, &ret)
+#define COM_CALL1(object, method, arg0)                                     object->lpVtbl->method(object, arg0)
+#define COM_CALL2(object, method, arg0, arg1)                               object->lpVtbl->method(object, arg0, arg1)
+#define COM_CALL3(object, method, arg0, arg1, arg2)                         object->lpVtbl->method(object, arg0, arg1, arg2)
+#define COM_CALL4(object, method, arg0, arg1, arg2, arg3)                   object->lpVtbl->method(object, arg0, arg1, arg2, arg3)
+#define COM_CALL5(object, method, arg0, arg1, arg2, arg3, arg4)             object->lpVtbl->method(object, arg0, arg1, arg2, arg3, arg4)
+#define COM_CALL6(object, method, arg0, arg1, arg2, arg3, arg4, arg5)       object->lpVtbl->method(object, arg0, arg1, arg2, arg3, arg4, arg5)
+#define COM_CALL7(object, method, arg0, arg1, arg2, arg3, arg4, arg5, arg6) object->lpVtbl->method(object, arg0, arg1, arg2, arg3, arg4, arg5, arg6)
 #endif
 
 // https://learn.microsoft.com/en-us/windows/win32/direct3d12/subresources

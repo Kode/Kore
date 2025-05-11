@@ -73,10 +73,10 @@ static D3D12_FILTER convert_filter(kore_gpu_filter_mode minification, kore_gpu_f
 	return D3D12_FILTER_MIN_MAG_MIP_POINT;
 }
 
-#include "buffer.cpp"
-#include "commandlist.cpp"
-#include "descriptorset.cpp"
-#include "device.cpp"
-#include "pipeline.cpp"
-#include "sampler.cpp"
-#include "texture.cpp"
+#include "buffer.c"
+#include "commandlist.c"
+#include "descriptorset.c"
+#include "device.c"
+#include "pipeline.c"
+#include "sampler.c"
+#include "texture.c"

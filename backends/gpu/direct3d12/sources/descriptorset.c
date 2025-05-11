@@ -6,17 +6,19 @@
 #include <kore3/util/align.h>
 
 void kore_d3d12_descriptor_set_set_buffer_view_cbv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index) {
-	D3D12_CONSTANT_BUFFER_VIEW_DESC desc = {};
-	desc.BufferLocation                  = buffer->d3d12.resource->GetGPUVirtualAddress();
+	D3D12_CONSTANT_BUFFER_VIEW_DESC desc = {0};
+	desc.BufferLocation                  = COM_CALL0(buffer->d3d12.resource, GetGPUVirtualAddress);
 	desc.SizeInBytes                     = align_pow2((int)buffer->d3d12.size, 256);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle = device->d3d12.descriptor_heap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
+	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
 	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
-	device->d3d12.device->CreateConstantBufferView(&desc, descriptor_handle);
+
+	COM_CALL2(device->d3d12.device, CreateConstantBufferView, &desc, descriptor_handle);
 }
 
 void kore_d3d12_descriptor_set_set_buffer_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index) {
-	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
+	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {0};
 	desc.ViewDimension                   = D3D12_SRV_DIMENSION_BUFFER;
 	desc.Shader4ComponentMapping         = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	desc.Format                          = DXGI_FORMAT_UNKNOWN;
@@ -25,9 +27,11 @@ void kore_d3d12_descriptor_set_set_buffer_view_srv(kore_gpu_device *device, kore
 	desc.Buffer.StructureByteStride      = (UINT)buffer->d3d12.size;
 	desc.Buffer.Flags                    = D3D12_BUFFER_SRV_FLAG_NONE;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle = device->d3d12.descriptor_heap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
+	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
 	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
-	device->d3d12.device->CreateShaderResourceView(buffer->d3d12.resource, &desc, descriptor_handle);
+
+	COM_CALL3(device->d3d12.device, CreateShaderResourceView, buffer->d3d12.resource, &desc, descriptor_handle);
 }
 
 void kore_d3d12_descriptor_set_set_buffer_view_uav(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index) {
@@ -40,9 +44,11 @@ void kore_d3d12_descriptor_set_set_buffer_view_uav(kore_gpu_device *device, kore
 	desc.Buffer.CounterOffsetInBytes      = 0;
 	desc.Buffer.Flags                     = D3D12_BUFFER_UAV_FLAG_NONE;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle = device->d3d12.descriptor_heap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
+	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
 	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
-	device->d3d12.device->CreateUnorderedAccessView(buffer->d3d12.resource, nullptr, &desc, descriptor_handle);
+
+	COM_CALL4(device->d3d12.device, CreateUnorderedAccessView, buffer->d3d12.resource, NULL, &desc, descriptor_handle);
 }
 
 void kore_d3d12_descriptor_set_set_bvh_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_raytracing_hierarchy *bvh, uint32_t index) {
@@ -50,11 +56,13 @@ void kore_d3d12_descriptor_set_set_bvh_view_srv(kore_gpu_device *device, kore_d3
 	desc.ViewDimension                            = D3D12_SRV_DIMENSION_RAYTRACING_ACCELERATION_STRUCTURE;
 	desc.Shader4ComponentMapping                  = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	desc.Format                                   = DXGI_FORMAT_UNKNOWN;
-	desc.RaytracingAccelerationStructure.Location = bvh->d3d12.acceleration_structure.d3d12.resource->GetGPUVirtualAddress();
+	desc.RaytracingAccelerationStructure.Location = COM_CALL0(bvh->d3d12.acceleration_structure.d3d12.resource, GetGPUVirtualAddress);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle = device->d3d12.descriptor_heap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
+	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
 	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
-	device->d3d12.device->CreateShaderResourceView(nullptr, &desc, descriptor_handle);
+
+	COM_CALL3(device->d3d12.device, CreateShaderResourceView, NULL, &desc, descriptor_handle);
 }
 
 void kore_d3d12_descriptor_set_set_texture_view_srv(kore_gpu_device *device, uint32_t offset, const kore_gpu_texture_view *texture_view) {
@@ -79,9 +87,11 @@ void kore_d3d12_descriptor_set_set_texture_view_srv(kore_gpu_device *device, uin
 	desc.Texture2D.MostDetailedMip     = texture_view->base_mip_level;
 	desc.Texture2D.ResourceMinLODClamp = 0.0f;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle = device->d3d12.descriptor_heap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
+	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
 	descriptor_handle.ptr += offset * device->d3d12.cbv_srv_uav_increment;
-	device->d3d12.device->CreateShaderResourceView(texture_view->texture->d3d12.resource, &desc, descriptor_handle);
+
+	COM_CALL3(device->d3d12.device, CreateShaderResourceView, texture_view->texture->d3d12.resource, &desc, descriptor_handle);
 }
 
 void kore_d3d12_descriptor_set_set_texture_array_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
@@ -106,9 +116,11 @@ void kore_d3d12_descriptor_set_set_texture_array_view_srv(kore_gpu_device *devic
 	desc.Texture2DArray.FirstArraySlice     = texture_view->base_array_layer;
 	desc.Texture2DArray.ArraySize           = texture_view->array_layer_count;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle = device->d3d12.descriptor_heap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
+	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
 	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
-	device->d3d12.device->CreateShaderResourceView(texture_view->texture->d3d12.resource, &desc, descriptor_handle);
+
+	COM_CALL3(device->d3d12.device, CreateShaderResourceView, texture_view->texture->d3d12.resource, &desc, descriptor_handle);
 }
 
 void kore_d3d12_descriptor_set_set_texture_cube_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
@@ -131,32 +143,38 @@ void kore_d3d12_descriptor_set_set_texture_cube_view_srv(kore_gpu_device *device
 	desc.TextureCube.MostDetailedMip     = texture_view->base_mip_level;
 	desc.TextureCube.ResourceMinLODClamp = 0.0f;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle = device->d3d12.descriptor_heap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
+	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
 	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
-	device->d3d12.device->CreateShaderResourceView(texture_view->texture->d3d12.resource, &desc, descriptor_handle);
+
+	COM_CALL3(device->d3d12.device, CreateShaderResourceView, texture_view->texture->d3d12.resource, &desc, descriptor_handle);
 }
 
 void kore_d3d12_descriptor_set_set_texture_view_uav(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                     uint32_t index) {
-	D3D12_UNORDERED_ACCESS_VIEW_DESC desc = {};
+	D3D12_UNORDERED_ACCESS_VIEW_DESC desc = {0};
 	desc.ViewDimension                    = D3D12_UAV_DIMENSION_TEXTURE2D;
 	desc.Format                           = (DXGI_FORMAT)texture_view->texture->d3d12.format;
 	desc.Texture2D.MipSlice               = texture_view->base_mip_level;
 	desc.Texture2D.PlaneSlice             = 0;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle = device->d3d12.descriptor_heap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
+	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
 	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
-	device->d3d12.device->CreateUnorderedAccessView(texture_view->texture->d3d12.resource, NULL, &desc, descriptor_handle);
+
+	COM_CALL4(device->d3d12.device, CreateUnorderedAccessView, texture_view->texture->d3d12.resource, NULL, &desc, descriptor_handle);
 }
 
 void kore_d3d12_descriptor_set_set_sampler(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_sampler *sampler, uint32_t index) {
-	D3D12_CPU_DESCRIPTOR_HANDLE src_handle = device->d3d12.all_samplers->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE src_handle;
+	COM_CALL0RET(device->d3d12.all_samplers, GetCPUDescriptorHandleForHeapStart, src_handle);
 	src_handle.ptr += sampler->d3d12.sampler_index * device->d3d12.sampler_increment;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE dst_handle = device->d3d12.sampler_heap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE dst_handle;
+	COM_CALL0RET(device->d3d12.sampler_heap, GetCPUDescriptorHandleForHeapStart, dst_handle);
 	dst_handle.ptr += (set->sampler_allocation.offset + index) * device->d3d12.sampler_increment;
 
-	device->d3d12.device->CopyDescriptorsSimple(1, dst_handle, src_handle, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
+	COM_CALL4(device->d3d12.device, CopyDescriptorsSimple, 1, dst_handle, src_handle, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 }
 
 void kore_d3d12_descriptor_set_prepare_cbv_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size) {
@@ -169,7 +187,7 @@ void kore_d3d12_descriptor_set_prepare_cbv_buffer(kore_gpu_command_list *list, k
 		barrier.Transition.StateAfter  = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
-		list->d3d12.list->ResourceBarrier(1, &barrier);
+		COM_CALL2(list->d3d12.list, ResourceBarrier, 1, &barrier);
 
 		buffer->d3d12.resource_state = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
 	}
@@ -189,7 +207,7 @@ void kore_d3d12_descriptor_set_prepare_uav_buffer(kore_gpu_command_list *list, k
 		barrier.Transition.StateAfter  = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
-		list->d3d12.list->ResourceBarrier(1, &barrier);
+		COM_CALL2(list->d3d12.list, ResourceBarrier, 1, &barrier);
 
 		buffer->d3d12.resource_state = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 	}
@@ -215,7 +233,7 @@ void kore_d3d12_descriptor_set_prepare_srv_texture(kore_gpu_command_list *list, 
 				barrier.Transition.Subresource = D3D12CalcSubresource(mip_level, array_layer, 0, texture_view->texture->d3d12.mip_level_count,
 				                                                      texture_view->texture->d3d12.depth_or_array_layers);
 
-				list->d3d12.list->ResourceBarrier(1, &barrier);
+				COM_CALL2(list->d3d12.list, ResourceBarrier, 1, &barrier);
 
 				texture_view->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, mip_level, array_layer)] =
 				    D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
@@ -241,7 +259,7 @@ void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, 
 		barrier.Transition.Subresource = D3D12CalcSubresource(texture_view->base_mip_level, 0, 0, texture_view->texture->d3d12.mip_level_count,
 		                                                      texture_view->texture->d3d12.depth_or_array_layers);
 
-		list->d3d12.list->ResourceBarrier(1, &barrier);
+		COM_CALL2(list->d3d12.list, ResourceBarrier, 1, &barrier);
 
 		texture_view->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, texture_view->base_mip_level, 0)] =
 		    D3D12_RESOURCE_STATE_UNORDERED_ACCESS;

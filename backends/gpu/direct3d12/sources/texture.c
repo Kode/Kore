@@ -11,9 +11,9 @@ uint32_t kore_d3d12_texture_resource_state_index(kore_gpu_texture *texture, uint
 void kore_d3d12_texture_set_name(kore_gpu_texture *texture, const char *name) {
 	wchar_t wstr[1024];
 	kore_microsoft_convert_string(wstr, name, 1024);
-	texture->d3d12.resource->SetName(wstr);
+	COM_CALL1(texture->d3d12.resource, SetName, wstr);
 }
 
 void kore_d3d12_texture_destroy(kore_gpu_texture *texture) {
-	texture->d3d12.resource->Release();
+	COM_CALL0(texture->d3d12.resource, Release);
 }
