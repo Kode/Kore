@@ -17,3 +17,22 @@ freely, subject to the following restrictions:
      misrepresented as being the original software.
 
   3. This notice may not be removed or altered from any source distribution.
+
+--
+
+Kore uses offalloc when targeting Direct3D 12.
+offalloc uses the MIT license as located in sources/libs/ofalloc/LICENSE.
+
+Kore uses lz4 when you disable the lz4x switch in kfile.js.
+lz4 uses the BSD 2-Clause license as located in sources/libs/lz4/LICENSE.
+
+Kore uses glew when targeting OpenGL.
+glew uses the BSD 3-Clause license as located in backends/gpu/opengl/libs/glew/glew.c.
+
+Kore uses PIX if you target Direct3D 12 and enable the pix option.
+PIX uses the MIT license as located in backends/gpu/direct3d12/libs/pix/license.txt.
+
+Kore can use the mathfun libraries when compiling shaders to SIMD code.
+The mathfun libraries use the zlib license, just like Kore itself does.
+
+Kore uses stb_image and stb_vorbis. Both are in the public domain.
