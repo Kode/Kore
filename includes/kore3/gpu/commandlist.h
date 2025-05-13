@@ -124,7 +124,7 @@ typedef struct kore_gpu_compute_arguments {
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/commandlist_structs.h>
 #else
-#error("Unknown GPU backend")
+#error ("Unknown GPU backend")
 #endif
 
 typedef struct kore_gpu_command_list {
@@ -135,14 +135,37 @@ typedef struct kore_gpu_command_list {
 extern "C" {
 #endif
 
+/// <summary>
+/// Destroys the command-list. If the command-list is currently queued, destruction is postponed until execution of the command-list ends.
+/// </summary>
+/// <param name="list">The list to destroy</param>
 KORE_FUNC void kore_gpu_command_list_destroy(kore_gpu_command_list *list);
 
+/// <summary>
+/// Set a name for the command-list that's visible in GPU-debuggers.
+/// </summary>
+/// <param name="list">The list to name</param>
+/// <param name="name">The name to set</param>
 KORE_FUNC void kore_gpu_command_list_set_name(kore_gpu_command_list *list, const char *name);
 
+/// <summary>
+/// Groups following commands for better command-organization in GPU-debuggers.
+/// </summary>
+/// <param name="list">The list to group</param>
+/// <param name="name">The name for the group</param>
 KORE_FUNC void kore_gpu_command_list_push_debug_group(kore_gpu_command_list *list, const char *name);
 
+/// <summary>
+/// Closes the previously pushed group.
+/// </summary>
+/// <param name="list">The list to ungroup</param>
 KORE_FUNC void kore_gpu_command_list_pop_debug_group(kore_gpu_command_list *list);
 
+/// <summary>
+/// Inserts a named debug marker that's visible in GPU-debuggers.
+/// </summary>
+/// <param name="list">The list on which the marker is inserted</param>
+/// <param name="name">The name for the marker</param>
 KORE_FUNC void kore_gpu_command_list_insert_debug_marker(kore_gpu_command_list *list, const char *name);
 
 KORE_FUNC void kore_gpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters);
