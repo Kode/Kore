@@ -183,20 +183,20 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a11ceeb6c2304f3f08687367b627fcd35" id="r_a11ceeb6c2304f3f08687367b627fcd35"><td class="memItemLeft" align="right" valign="top"><a id="a11ceeb6c2304f3f08687367b627fcd35" name="a11ceeb6c2304f3f08687367b627fcd35"></a>
-KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><b>kore_gpu_command_list_destroy</b> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list)</td></tr>
+<tr class="memitem:a11ceeb6c2304f3f08687367b627fcd35" id="r_a11ceeb6c2304f3f08687367b627fcd35"><td class="memItemLeft" align="right" valign="top">KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="commandlist_8h.html#a11ceeb6c2304f3f08687367b627fcd35">kore_gpu_command_list_destroy</a> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list)</td></tr>
+<tr class="memdesc:a11ceeb6c2304f3f08687367b627fcd35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the command-list. If the command-list is currently queued, destruction is postponed until execution of the command-list ends.  <br /></td></tr>
 <tr class="separator:a11ceeb6c2304f3f08687367b627fcd35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bcfaded5054e9f010683fedcff256a1" id="r_a1bcfaded5054e9f010683fedcff256a1"><td class="memItemLeft" align="right" valign="top"><a id="a1bcfaded5054e9f010683fedcff256a1" name="a1bcfaded5054e9f010683fedcff256a1"></a>
-KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><b>kore_gpu_command_list_set_name</b> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, const char *name)</td></tr>
+<tr class="memitem:a1bcfaded5054e9f010683fedcff256a1" id="r_a1bcfaded5054e9f010683fedcff256a1"><td class="memItemLeft" align="right" valign="top">KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="commandlist_8h.html#a1bcfaded5054e9f010683fedcff256a1">kore_gpu_command_list_set_name</a> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, const char *name)</td></tr>
+<tr class="memdesc:a1bcfaded5054e9f010683fedcff256a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a name for the command-list that's visible in GPU-debuggers.  <br /></td></tr>
 <tr class="separator:a1bcfaded5054e9f010683fedcff256a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4b84d40674668ae72270bf20dac9ddb" id="r_ae4b84d40674668ae72270bf20dac9ddb"><td class="memItemLeft" align="right" valign="top"><a id="ae4b84d40674668ae72270bf20dac9ddb" name="ae4b84d40674668ae72270bf20dac9ddb"></a>
-KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><b>kore_gpu_command_list_push_debug_group</b> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, const char *name)</td></tr>
+<tr class="memitem:ae4b84d40674668ae72270bf20dac9ddb" id="r_ae4b84d40674668ae72270bf20dac9ddb"><td class="memItemLeft" align="right" valign="top">KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="commandlist_8h.html#ae4b84d40674668ae72270bf20dac9ddb">kore_gpu_command_list_push_debug_group</a> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, const char *name)</td></tr>
+<tr class="memdesc:ae4b84d40674668ae72270bf20dac9ddb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Groups following commands for better command-organization in GPU-debuggers.  <br /></td></tr>
 <tr class="separator:ae4b84d40674668ae72270bf20dac9ddb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5561d62c8a8f99f2bebc93a2e6dfae4" id="r_ab5561d62c8a8f99f2bebc93a2e6dfae4"><td class="memItemLeft" align="right" valign="top"><a id="ab5561d62c8a8f99f2bebc93a2e6dfae4" name="ab5561d62c8a8f99f2bebc93a2e6dfae4"></a>
-KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><b>kore_gpu_command_list_pop_debug_group</b> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list)</td></tr>
+<tr class="memitem:ab5561d62c8a8f99f2bebc93a2e6dfae4" id="r_ab5561d62c8a8f99f2bebc93a2e6dfae4"><td class="memItemLeft" align="right" valign="top">KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="commandlist_8h.html#ab5561d62c8a8f99f2bebc93a2e6dfae4">kore_gpu_command_list_pop_debug_group</a> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list)</td></tr>
+<tr class="memdesc:ab5561d62c8a8f99f2bebc93a2e6dfae4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Closes the previously pushed group.  <br /></td></tr>
 <tr class="separator:ab5561d62c8a8f99f2bebc93a2e6dfae4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6238048a78d01b1ddf6741daa084d260" id="r_a6238048a78d01b1ddf6741daa084d260"><td class="memItemLeft" align="right" valign="top"><a id="a6238048a78d01b1ddf6741daa084d260" name="a6238048a78d01b1ddf6741daa084d260"></a>
-KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><b>kore_gpu_command_list_insert_debug_marker</b> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, const char *name)</td></tr>
+<tr class="memitem:a6238048a78d01b1ddf6741daa084d260" id="r_a6238048a78d01b1ddf6741daa084d260"><td class="memItemLeft" align="right" valign="top">KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="commandlist_8h.html#a6238048a78d01b1ddf6741daa084d260">kore_gpu_command_list_insert_debug_marker</a> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, const char *name)</td></tr>
+<tr class="memdesc:a6238048a78d01b1ddf6741daa084d260"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts a named debug marker that's visible in GPU-debuggers.  <br /></td></tr>
 <tr class="separator:a6238048a78d01b1ddf6741daa084d260"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f375025669d4fec5089ac1f7663068d" id="r_a0f375025669d4fec5089ac1f7663068d"><td class="memItemLeft" align="right" valign="top"><a id="a0f375025669d4fec5089ac1f7663068d" name="a0f375025669d4fec5089ac1f7663068d"></a>
 KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><b>kore_gpu_command_list_begin_render_pass</b> (<a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *list, const <a class="el" href="structkore__gpu__render__pass__parameters.html">kore_gpu_render_pass_parameters</a> *parameters)</td></tr>
@@ -279,7 +279,171 @@ KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><b>kore_gpu_co
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The command list is used to send commands to the GPU. </p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a11ceeb6c2304f3f08687367b627fcd35" name="a11ceeb6c2304f3f08687367b627fcd35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11ceeb6c2304f3f08687367b627fcd35">&#9670;&#160;</a></span>kore_gpu_command_list_destroy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KORE_FUNC void kore_gpu_command_list_destroy </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *&#160;</td>
+          <td class="paramname"><em>list</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destroys the command-list. If the command-list is currently queued, destruction is postponed until execution of the command-list ends. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">list</td><td>The list to destroy</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6238048a78d01b1ddf6741daa084d260" name="a6238048a78d01b1ddf6741daa084d260"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6238048a78d01b1ddf6741daa084d260">&#9670;&#160;</a></span>kore_gpu_command_list_insert_debug_marker()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KORE_FUNC void kore_gpu_command_list_insert_debug_marker </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *&#160;</td>
+          <td class="paramname"><em>list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Inserts a named debug marker that's visible in GPU-debuggers. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">list</td><td>The list on which the marker is inserted</td></tr>
+    <tr><td class="paramname">name</td><td>The name for the marker</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab5561d62c8a8f99f2bebc93a2e6dfae4" name="ab5561d62c8a8f99f2bebc93a2e6dfae4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5561d62c8a8f99f2bebc93a2e6dfae4">&#9670;&#160;</a></span>kore_gpu_command_list_pop_debug_group()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KORE_FUNC void kore_gpu_command_list_pop_debug_group </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *&#160;</td>
+          <td class="paramname"><em>list</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Closes the previously pushed group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">list</td><td>The list to ungroup</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae4b84d40674668ae72270bf20dac9ddb" name="ae4b84d40674668ae72270bf20dac9ddb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4b84d40674668ae72270bf20dac9ddb">&#9670;&#160;</a></span>kore_gpu_command_list_push_debug_group()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KORE_FUNC void kore_gpu_command_list_push_debug_group </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *&#160;</td>
+          <td class="paramname"><em>list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Groups following commands for better command-organization in GPU-debuggers. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">list</td><td>The list to group</td></tr>
+    <tr><td class="paramname">name</td><td>The name for the group</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1bcfaded5054e9f010683fedcff256a1" name="a1bcfaded5054e9f010683fedcff256a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bcfaded5054e9f010683fedcff256a1">&#9670;&#160;</a></span>kore_gpu_command_list_set_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KORE_FUNC void kore_gpu_command_list_set_name </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structkore__gpu__command__list.html">kore_gpu_command_list</a> *&#160;</td>
+          <td class="paramname"><em>list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set a name for the command-list that's visible in GPU-debuggers. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">list</td><td>The list to name</td></tr>
+    <tr><td class="paramname">name</td><td>The name to set</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
