@@ -165,13 +165,13 @@ void kore_metal_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t 
 	                                 baseInstance:first_instance];
 }
 
-void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, struct kore_metal_descriptor_set *set, kore_gpu_buffer **dynamic_buffers,
+void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, uint32_t table_index, struct kore_metal_descriptor_set *set, kore_gpu_buffer **dynamic_buffers,
                                                 uint32_t *dynamic_offsets, uint32_t *dynamic_sizes, uint32_t dynamic_count) {
 	if (list->metal.render_command_encoder == NULL) {
 		id<MTLComputeCommandEncoder> compute_command_encoder = (__bridge id<MTLComputeCommandEncoder>)list->metal.compute_command_encoder;
 		id<MTLBuffer>                metal_buffer            = (__bridge id<MTLBuffer>)set->argument_buffer.metal.buffer;
 
-		[compute_command_encoder setBuffer:metal_buffer offset:0 atIndex:1];
+		[compute_command_encoder setBuffer:metal_buffer offset:0 atIndex:table_index];
 
 		for (uint32_t dynamic_index = 0; dynamic_index < dynamic_count; ++dynamic_index) {
 			id<MTLBuffer> dynamic_buffer = (__bridge id<MTLBuffer>)dynamic_buffers[dynamic_index]->metal.buffer;
@@ -183,14 +183,14 @@ void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, str
 		id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 		id<MTLBuffer>               metal_buffer           = (__bridge id<MTLBuffer>)set->argument_buffer.metal.buffer;
 
-		[render_command_encoder setVertexBuffer:metal_buffer offset:0 atIndex:1];
-		[render_command_encoder setFragmentBuffer:metal_buffer offset:0 atIndex:1];
+		[render_command_encoder setVertexBuffer:metal_buffer offset:0 atIndex:table_index];
+		[render_command_encoder setFragmentBuffer:metal_buffer offset:0 atIndex:table_index];
 
 		for (uint32_t dynamic_index = 0; dynamic_index < dynamic_count; ++dynamic_index) {
 			id<MTLBuffer> dynamic_buffer = (__bridge id<MTLBuffer>)dynamic_buffers[dynamic_index]->metal.buffer;
 
-			[render_command_encoder setVertexBuffer:dynamic_buffer offset:dynamic_offsets[dynamic_index] atIndex:dynamic_index + 2];
-			[render_command_encoder setFragmentBuffer:dynamic_buffer offset:dynamic_offsets[dynamic_index] atIndex:dynamic_index + 2];
+			[render_command_encoder setVertexBuffer:dynamic_buffer offset:dynamic_offsets[dynamic_index] atIndex:dynamic_index + table_index + 1];
+			[render_command_encoder setFragmentBuffer:dynamic_buffer offset:dynamic_offsets[dynamic_index] atIndex:dynamic_index + table_index + 1];
 		}
 	}
 }
