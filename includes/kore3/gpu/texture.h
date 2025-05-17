@@ -31,12 +31,9 @@ extern "C" {
 #endif
 
 typedef struct kore_gpu_texture {
-#ifdef KORE_GPU_VALIDATION
-	kore_gpu_texture_format validation_format;
-#endif
-
 	uint32_t width;
 	uint32_t height;
+	kore_gpu_texture_format format;
 
 	KORE_GPU_IMPL(texture);
 } kore_gpu_texture;

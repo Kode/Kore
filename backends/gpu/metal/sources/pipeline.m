@@ -120,6 +120,28 @@ static uint32_t vertex_attribute_size(kore_metal_vertex_format format) {
 	return 0;
 }
 
+static MTLCompareFunction convert_compare(kore_gpu_compare_function func) {
+	switch (func) {
+		case KORE_GPU_COMPARE_FUNCTION_UNDEFINED:
+		case KORE_GPU_COMPARE_FUNCTION_NEVER:
+			return MTLCompareFunctionNever;
+		case KORE_GPU_COMPARE_FUNCTION_LESS:
+			return MTLCompareFunctionLess;
+		case KORE_GPU_COMPARE_FUNCTION_EQUAL:
+			return MTLCompareFunctionEqual;
+		case KORE_GPU_COMPARE_FUNCTION_LESS_EQUAL:
+			return MTLCompareFunctionLessEqual;
+		case KORE_GPU_COMPARE_FUNCTION_GREATER:
+			return MTLCompareFunctionGreater;
+		case KORE_GPU_COMPARE_FUNCTION_NOT_EQUAL:
+			return MTLCompareFunctionNotEqual;
+		case KORE_GPU_COMPARE_FUNCTION_GREATER_EQUAL:
+			return MTLCompareFunctionGreaterEqual;
+		case KORE_GPU_COMPARE_FUNCTION_ALWAYS:
+			return MTLCompareFunctionAlways;
+	}
+}
+
 void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_render_pipeline *pipe, const kore_metal_render_pipeline_parameters *parameters) {
 	id<MTLLibrary> library = (__bridge id<MTLLibrary>)device->library;
 
@@ -151,9 +173,21 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 
 		render_pipeline_descriptor.colorAttachments[i].writeMask = parameters->fragment.targets[i].write_mask;
 	}
-	render_pipeline_descriptor.depthAttachmentPixelFormat   = MTLPixelFormatInvalid;
-	render_pipeline_descriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
-
+	
+	if (has_depth(parameters->depth_stencil.format)) {
+		render_pipeline_descriptor.depthAttachmentPixelFormat   = convert_format(parameters->depth_stencil.format);
+	}
+	else {
+		render_pipeline_descriptor.depthAttachmentPixelFormat = MTLPixelFormatInvalid;
+	}
+	
+	if (has_stencil(parameters->depth_stencil.format)) {
+		render_pipeline_descriptor.stencilAttachmentPixelFormat   = convert_format(parameters->depth_stencil.format);
+	}
+	else {
+		render_pipeline_descriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
+	}
+	
 	float                offset            = 0;
 	MTLVertexDescriptor *vertex_descriptor = [[MTLVertexDescriptor alloc] init];
 
@@ -278,6 +312,16 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 	                                                                                      options:MTLPipelineOptionBufferTypeInfo
 	                                                                                   reflection:&reflection
 	                                                                                        error:&errors];
+	
+	pipe->depth_stencil_state = NULL;
+	if (has_depth(parameters->depth_stencil.format) || has_stencil(parameters->depth_stencil.format)) {
+		MTLDepthStencilDescriptor *depth_stencil_descriptor = [[MTLDepthStencilDescriptor alloc] init];
+		
+		depth_stencil_descriptor.depthCompareFunction = convert_compare(parameters->depth_stencil.depth_compare);
+		depth_stencil_descriptor.depthWriteEnabled = parameters->depth_stencil.depth_write_enabled;
+		
+		pipe->depth_stencil_state = (__bridge_retained void *)[metal_device newDepthStencilStateWithDescriptor:depth_stencil_descriptor];
+	}
 }
 
 void kore_metal_render_pipeline_destroy(kore_metal_render_pipeline *pipe) {}

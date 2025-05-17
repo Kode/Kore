@@ -197,6 +197,7 @@ typedef struct kore_metal_render_pipeline_parameters {
 
 typedef struct kore_metal_render_pipeline {
 	void *pipeline;
+	void *depth_stencil_state;
 } kore_metal_render_pipeline;
 
 typedef struct kore_metal_compute_pipeline_parameters {

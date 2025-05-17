@@ -46,17 +46,15 @@ void kore_gpu_device_create_texture(kore_gpu_device *device, const kore_gpu_text
 	if (kore_gpu_texture_format_is_depth(parameters->format)) {
 		assert(parameters->dimension != KORE_GPU_TEXTURE_DIMENSION_3D);
 	}
-
-	texture->validation_format = parameters->format;
 #endif
+
+	texture->format = parameters->format;
 	KORE_GPU_CALL3(device_create_texture, device, parameters, texture);
 }
 
 kore_gpu_texture *kore_gpu_device_get_framebuffer(kore_gpu_device *device) {
 	kore_gpu_texture *texture = KORE_GPU_CALL1(device_get_framebuffer, device);
-#ifdef KORE_GPU_VALIDATION
-	texture->validation_format = kore_gpu_device_framebuffer_format(device);
-#endif
+	texture->format = kore_gpu_device_framebuffer_format(device);
 	return texture;
 }
 

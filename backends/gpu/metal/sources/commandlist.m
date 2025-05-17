@@ -66,10 +66,13 @@ void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	render_pass_descriptor.depthAttachment.loadAction     = convert_load_op(parameters->depth_stencil_attachment.depth_load_op);
 	render_pass_descriptor.depthAttachment.storeAction    = convert_store_op(parameters->depth_stencil_attachment.depth_store_op);
 	render_pass_descriptor.depthAttachment.texture        = depth_texture;
-	render_pass_descriptor.stencilAttachment.clearStencil = parameters->depth_stencil_attachment.stencil_clear_value;
-	render_pass_descriptor.stencilAttachment.loadAction   = convert_load_op(parameters->depth_stencil_attachment.stencil_load_op);
-	render_pass_descriptor.stencilAttachment.storeAction  = convert_store_op(parameters->depth_stencil_attachment.stencil_store_op);
-	render_pass_descriptor.stencilAttachment.texture      = depth_texture;
+	
+	if (parameters->depth_stencil_attachment.texture != NULL && has_stencil(parameters->depth_stencil_attachment.texture->format)) {
+		render_pass_descriptor.stencilAttachment.clearStencil = parameters->depth_stencil_attachment.stencil_clear_value;
+		render_pass_descriptor.stencilAttachment.loadAction   = convert_load_op(parameters->depth_stencil_attachment.stencil_load_op);
+		render_pass_descriptor.stencilAttachment.storeAction  = convert_store_op(parameters->depth_stencil_attachment.stencil_store_op);
+		render_pass_descriptor.stencilAttachment.texture      = depth_texture;
+	}
 
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 	list->metal.render_command_encoder  = (__bridge_retained void *)[command_buffer renderCommandEncoderWithDescriptor:render_pass_descriptor];
@@ -144,6 +147,11 @@ void kore_metal_command_list_set_render_pipeline(kore_gpu_command_list *list, ko
 	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 
 	[render_command_encoder setRenderPipelineState:metal_pipeline];
+
+	if (pipeline->depth_stencil_state != NULL) {
+		id<MTLDepthStencilState>  depth_stencil_state      = (__bridge id<MTLDepthStencilState>)pipeline->depth_stencil_state;
+		[render_command_encoder setDepthStencilState:depth_stencil_state];
+	}
 }
 
 void kore_metal_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {
