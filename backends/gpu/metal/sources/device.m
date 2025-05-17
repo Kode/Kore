@@ -63,11 +63,19 @@ void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 		descriptor.arrayLength = parameters->depth_or_array_layers;
 		break;
 	case KORE_GPU_TEXTURE_DIMENSION_2D:
-		descriptor.textureType = parameters->depth_or_array_layers > 1 ? MTLTextureType2DArray : MTLTextureType2D;
 		descriptor.width       = parameters->width;
 		descriptor.height      = parameters->height;
 		descriptor.depth       = 1;
-		descriptor.arrayLength = parameters->depth_or_array_layers;
+
+		if (parameters->depth_or_array_layers == 6) {
+			descriptor.textureType = MTLTextureTypeCube;
+			descriptor.arrayLength = 1;
+			// TODO: Convert to array-texture when used as such in a view
+		}
+		else {
+			descriptor.textureType = parameters->depth_or_array_layers > 1 ? MTLTextureType2DArray : MTLTextureType2D;
+			descriptor.arrayLength = parameters->depth_or_array_layers;
+		}
 		break;
 	case KORE_GPU_TEXTURE_DIMENSION_3D:
 		descriptor.textureType = MTLTextureType3D;

@@ -56,6 +56,8 @@ void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 		render_pass_descriptor.colorAttachments[index].clearColor =
 		    MTLClearColorMake(parameters->color_attachments[index].clear_value.r, parameters->color_attachments[index].clear_value.g,
 		                      parameters->color_attachments[index].clear_value.b, parameters->color_attachments[index].clear_value.a);
+		render_pass_descriptor.colorAttachments[index].slice = parameters->color_attachments[index].texture.base_array_layer;
+		render_pass_descriptor.colorAttachments[index].level = parameters->color_attachments[index].texture.base_mip_level;
 	}
 
 	id<MTLTexture> depth_texture = nil;
