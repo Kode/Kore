@@ -165,9 +165,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 
 		device->d3d12.framebuffer_textures[i].d3d12.in_flight_frame_index = 0;
 
-#ifdef KORE_GPU_VALIDATION
-		device->d3d12.framebuffer_textures[i].validation_format = KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
-#endif
+		device->d3d12.framebuffer_textures[i].format = KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
 
 		kore_gpu_texture_parameters parameters = {};
 		parameters.format                      = KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
@@ -823,7 +821,7 @@ void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gp
 
 	kore_gpu_buffer_parameters as_params;
 	as_params.size        = prebuild_info.ResultDataMaxSizeInBytes;
-	as_params.usage_flags = KORE_D3D12_BUFFER_USAGE_UAV | KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
+	as_params.usage_flags = (uint32_t)KORE_D3D12_BUFFER_USAGE_UAV | (uint32_t)KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
 	kore_gpu_device_create_buffer(device, &as_params, &volume->d3d12.acceleration_structure);
 }
 
@@ -887,7 +885,7 @@ void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore
 
 	kore_gpu_buffer_parameters as_params;
 	as_params.size        = prebuild_info.ResultDataMaxSizeInBytes;
-	as_params.usage_flags = KORE_D3D12_BUFFER_USAGE_UAV | KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
+	as_params.usage_flags = (uint32_t)KORE_D3D12_BUFFER_USAGE_UAV |(uint32_t) KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
 	kore_gpu_device_create_buffer(device, &as_params, &hierarchy->d3d12.acceleration_structure);
 }
 
