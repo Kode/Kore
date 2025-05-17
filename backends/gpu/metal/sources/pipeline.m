@@ -199,6 +199,10 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 	}
 
 	for (uint32_t binding_index = 0; binding_index < bindings_count; ++binding_index) {
+		if (parameters->vertex.buffers[binding_index].step_mode == KORE_METAL_VERTEX_STEP_MODE_INSTANCE) {
+			break;
+		}
+		
 		for (uint32_t attribute_index = 0; attribute_index < parameters->vertex.buffers[binding_index].attributes_count; ++attribute_index) {
 			kore_metal_vertex_attribute attribute = parameters->vertex.buffers[binding_index].attributes[attribute_index];
 
