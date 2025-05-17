@@ -147,6 +147,11 @@ void kore_metal_command_list_set_render_pipeline(kore_gpu_command_list *list, ko
 	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 
 	[render_command_encoder setRenderPipelineState:metal_pipeline];
+
+	if (pipeline->depth_stencil_state != NULL) {
+		id<MTLDepthStencilState>  depth_stencil_state      = (__bridge id<MTLDepthStencilState>)pipeline->depth_stencil_state;
+		[render_command_encoder setDepthStencilState:depth_stencil_state];
+	}
 }
 
 void kore_metal_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {
