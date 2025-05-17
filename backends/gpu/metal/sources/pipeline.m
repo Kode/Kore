@@ -151,9 +151,21 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 
 		render_pipeline_descriptor.colorAttachments[i].writeMask = parameters->fragment.targets[i].write_mask;
 	}
-	render_pipeline_descriptor.depthAttachmentPixelFormat   = MTLPixelFormatInvalid;
-	render_pipeline_descriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
-
+	
+	if (has_depth(parameters->depth_stencil.format)) {
+		render_pipeline_descriptor.depthAttachmentPixelFormat   = convert_format(parameters->depth_stencil.format);
+	}
+	else {
+		render_pipeline_descriptor.depthAttachmentPixelFormat = MTLPixelFormatInvalid;
+	}
+	
+	if (has_stencil(parameters->depth_stencil.format)) {
+		render_pipeline_descriptor.stencilAttachmentPixelFormat   = convert_format(parameters->depth_stencil.format);
+	}
+	else {
+		render_pipeline_descriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
+	}
+	
 	float                offset            = 0;
 	MTLVertexDescriptor *vertex_descriptor = [[MTLVertexDescriptor alloc] init];
 

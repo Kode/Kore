@@ -46,7 +46,7 @@ void kore_gpu_command_list_copy_texture_to_texture(kore_gpu_command_list *list, 
                                                    const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                    uint32_t depth_or_array_layers) {
 #ifdef KORE_GPU_VALIDATION
-	assert(source->texture->validation_format == destination->texture->validation_format);
+	assert(source->texture->format == destination->texture->format);
 #endif
 	KORE_GPU_CALL6(command_list_copy_texture_to_texture, list, source, destination, width, height, depth_or_array_layers);
 }

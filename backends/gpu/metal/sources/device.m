@@ -195,7 +195,7 @@ void kore_metal_device_create_sampler(kore_gpu_device *device, const kore_gpu_sa
 	desc.sAddressMode           = convert_addressing(parameters->address_mode_u);
 	desc.tAddressMode           = convert_addressing(parameters->address_mode_v);
 	desc.mipFilter              = convert_mipmap_mode(parameters->mipmap_filter);
-	desc.maxAnisotropy          = parameters->max_anisotropy;
+	desc.maxAnisotropy          = parameters->max_anisotropy == 0 ? 1 : parameters->max_anisotropy;
 	desc.normalizedCoordinates  = YES;
 	desc.lodMinClamp            = parameters->lod_min_clamp;
 	desc.lodMaxClamp            = parameters->lod_max_clamp;

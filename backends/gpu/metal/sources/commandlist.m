@@ -66,10 +66,13 @@ void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	render_pass_descriptor.depthAttachment.loadAction     = convert_load_op(parameters->depth_stencil_attachment.depth_load_op);
 	render_pass_descriptor.depthAttachment.storeAction    = convert_store_op(parameters->depth_stencil_attachment.depth_store_op);
 	render_pass_descriptor.depthAttachment.texture        = depth_texture;
-	render_pass_descriptor.stencilAttachment.clearStencil = parameters->depth_stencil_attachment.stencil_clear_value;
-	render_pass_descriptor.stencilAttachment.loadAction   = convert_load_op(parameters->depth_stencil_attachment.stencil_load_op);
-	render_pass_descriptor.stencilAttachment.storeAction  = convert_store_op(parameters->depth_stencil_attachment.stencil_store_op);
-	render_pass_descriptor.stencilAttachment.texture      = depth_texture;
+	
+	if (parameters->depth_stencil_attachment.texture != NULL && has_stencil(parameters->depth_stencil_attachment.texture->format)) {
+		render_pass_descriptor.stencilAttachment.clearStencil = parameters->depth_stencil_attachment.stencil_clear_value;
+		render_pass_descriptor.stencilAttachment.loadAction   = convert_load_op(parameters->depth_stencil_attachment.stencil_load_op);
+		render_pass_descriptor.stencilAttachment.storeAction  = convert_store_op(parameters->depth_stencil_attachment.stencil_store_op);
+		render_pass_descriptor.stencilAttachment.texture      = depth_texture;
+	}
 
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 	list->metal.render_command_encoder  = (__bridge_retained void *)[command_buffer renderCommandEncoderWithDescriptor:render_pass_descriptor];

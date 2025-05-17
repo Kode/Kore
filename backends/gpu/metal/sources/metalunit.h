@@ -94,7 +94,7 @@ static MTLPixelFormat convert_format(kore_gpu_texture_format format) {
 		assert(false);
 		return MTLPixelFormatRGBA8Unorm;
 #else
-		return MTLPixelFormatDepth32Float; // only in new iOS
+		return MTLPixelFormatDepth16Unorm; // only in new iOS
 #endif
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_NOTHING8:
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_STENCIL8:
@@ -108,6 +108,30 @@ static MTLPixelFormat convert_format(kore_gpu_texture_format format) {
 		return MTLPixelFormatDepth32Float;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8_NOTHING24:
 		return MTLPixelFormatDepth32Float_Stencil8;
+	}
+}
+
+
+static bool has_depth(kore_gpu_texture_format format) {
+	switch (format) {
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM:
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_NOTHING8:
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_STENCIL8:
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT:
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8_NOTHING24:
+		return true;
+	default:
+		return false;
+	}
+}
+
+static bool has_stencil(kore_gpu_texture_format format) {
+	switch (format) {
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_NOTHING8:
+	case KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8_NOTHING24:
+		return true;
+	default:
+		return false;
 	}
 }
 
