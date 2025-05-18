@@ -64,11 +64,11 @@ void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	if (parameters->depth_stencil_attachment.texture != NULL) {
 		depth_texture = (__bridge id<MTLTexture>)parameters->depth_stencil_attachment.texture->metal.texture;
 	}
-	render_pass_descriptor.depthAttachment.clearDepth     = parameters->depth_stencil_attachment.depth_clear_value;
-	render_pass_descriptor.depthAttachment.loadAction     = convert_load_op(parameters->depth_stencil_attachment.depth_load_op);
-	render_pass_descriptor.depthAttachment.storeAction    = convert_store_op(parameters->depth_stencil_attachment.depth_store_op);
-	render_pass_descriptor.depthAttachment.texture        = depth_texture;
-	
+	render_pass_descriptor.depthAttachment.clearDepth  = parameters->depth_stencil_attachment.depth_clear_value;
+	render_pass_descriptor.depthAttachment.loadAction  = convert_load_op(parameters->depth_stencil_attachment.depth_load_op);
+	render_pass_descriptor.depthAttachment.storeAction = convert_store_op(parameters->depth_stencil_attachment.depth_store_op);
+	render_pass_descriptor.depthAttachment.texture     = depth_texture;
+
 	if (parameters->depth_stencil_attachment.texture != NULL && has_stencil(parameters->depth_stencil_attachment.texture->format)) {
 		render_pass_descriptor.stencilAttachment.clearStencil = parameters->depth_stencil_attachment.stencil_clear_value;
 		render_pass_descriptor.stencilAttachment.loadAction   = convert_load_op(parameters->depth_stencil_attachment.stencil_load_op);
@@ -151,7 +151,7 @@ void kore_metal_command_list_set_render_pipeline(kore_gpu_command_list *list, ko
 	[render_command_encoder setRenderPipelineState:metal_pipeline];
 
 	if (pipeline->depth_stencil_state != NULL) {
-		id<MTLDepthStencilState>  depth_stencil_state      = (__bridge id<MTLDepthStencilState>)pipeline->depth_stencil_state;
+		id<MTLDepthStencilState> depth_stencil_state = (__bridge id<MTLDepthStencilState>)pipeline->depth_stencil_state;
 		[render_command_encoder setDepthStencilState:depth_stencil_state];
 	}
 }

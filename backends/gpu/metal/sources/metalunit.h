@@ -111,7 +111,6 @@ static MTLPixelFormat convert_format(kore_gpu_texture_format format) {
 	}
 }
 
-
 static bool has_depth(kore_gpu_texture_format format) {
 	switch (format) {
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM:
