@@ -4,7 +4,10 @@
 
 void kore_metal_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {}
 
-void kore_metal_buffer_destroy(kore_gpu_buffer *buffer) {}
+void kore_metal_buffer_destroy(kore_gpu_buffer *buffer) {
+	CFRelease(buffer->metal.buffer);
+	buffer->metal.buffer = NULL;
+}
 
 void *kore_metal_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
 	id<MTLBuffer> metal_buffer = (__bridge id<MTLBuffer>)buffer->metal.buffer;
