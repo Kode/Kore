@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 void kore_metal_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size);
-void kore_metal_descriptor_set_prepare_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view, bool writable);
+void kore_metal_descriptor_set_prepare_texture(kore_gpu_command_list *list, void *texture_view, bool writable);
 
 #ifdef __cplusplus
 }

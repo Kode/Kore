@@ -12,8 +12,8 @@ void kore_metal_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_
 	[render_command_encoder useResource:metal_buffer usage:MTLResourceUsageRead stages:MTLRenderStageVertex | MTLRenderStageFragment];
 }
 
-void kore_metal_descriptor_set_prepare_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view, bool writable) {
-	id<MTLTexture> metal_texture = (__bridge id<MTLTexture>)texture_view->texture->metal.texture;
+void kore_metal_descriptor_set_prepare_texture(kore_gpu_command_list *list, void *texture_view, bool writable) {
+	id<MTLTexture> metal_texture = (__bridge id<MTLTexture>)texture_view;
 
 	if (list->metal.render_command_encoder != NULL) {
 		id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
@@ -23,7 +23,7 @@ void kore_metal_descriptor_set_prepare_texture(kore_gpu_command_list *list, cons
 	}
 	else if (list->metal.compute_command_encoder != NULL) {
 		id<MTLComputeCommandEncoder> compute_command_encoder = (__bridge id<MTLComputeCommandEncoder>)list->metal.compute_command_encoder;
-		[compute_command_encoder useResource:metal_texture usage:writable ? MTLResourceUsageWrite : MTLResourceUsageRead];
+		[compute_command_encoder useResource:metal_texture usage:writable ? MTLResourceUsageWrite : MTLResourceUsageSample];
 	}
 	else {
 		assert(false);
