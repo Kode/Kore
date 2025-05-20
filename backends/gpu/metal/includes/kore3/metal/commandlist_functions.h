@@ -55,10 +55,12 @@ void kore_metal_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_c
 void kore_metal_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index, int32_t base_vertex,
                                           uint32_t first_instance);
 
-void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, uint32_t vertex_table_index, uint32_t fragment_table_index, uint32_t compute_table_index, struct kore_metal_descriptor_set *set,
-                                                kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes, uint32_t dynamic_count);
+void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, uint32_t vertex_table_index, uint32_t fragment_table_index,
+                                                uint32_t compute_table_index, struct kore_metal_descriptor_set *set, kore_gpu_buffer **dynamic_buffers,
+                                                uint32_t *dynamic_offsets, uint32_t *dynamic_sizes, uint32_t dynamic_count);
 
-void kore_metal_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t vertex_table_index, uint32_t fragment_table_index, uint32_t compute_table_index, const void *data, size_t data_size);
+void kore_metal_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t vertex_table_index, uint32_t fragment_table_index,
+                                                uint32_t compute_table_index, const void *data, size_t data_size);
 
 void kore_metal_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_metal_compute_pipeline *pipeline, uint32_t threads_x, uint32_t threads_y,
                                                   uint32_t threads_z);

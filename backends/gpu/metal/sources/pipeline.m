@@ -187,7 +187,7 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 	else {
 		render_pipeline_descriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
 	}
-	
+
 	MTLVertexDescriptor *vertex_descriptor = [[MTLVertexDescriptor alloc] init];
 
 	uint32_t attributes_count = 0;
@@ -299,12 +299,14 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 				assert(false);
 				break;
 			}
-			
+
 			metal_attribute_index += 1;
 		}
 
 		vertex_descriptor.layouts[binding_index].stride       = offset;
-		vertex_descriptor.layouts[binding_index].stepFunction = parameters->vertex.buffers[binding_index].step_mode == KORE_METAL_VERTEX_STEP_MODE_INSTANCE ? MTLVertexStepFunctionPerInstance : MTLVertexStepFunctionPerVertex;
+		vertex_descriptor.layouts[binding_index].stepFunction = parameters->vertex.buffers[binding_index].step_mode == KORE_METAL_VERTEX_STEP_MODE_INSTANCE
+		                                                            ? MTLVertexStepFunctionPerInstance
+		                                                            : MTLVertexStepFunctionPerVertex;
 	}
 
 	render_pipeline_descriptor.vertexDescriptor = vertex_descriptor;
