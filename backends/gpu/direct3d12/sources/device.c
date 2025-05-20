@@ -885,7 +885,7 @@ void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore
 
 	kore_gpu_buffer_parameters as_params;
 	as_params.size        = prebuild_info.ResultDataMaxSizeInBytes;
-	as_params.usage_flags = (uint32_t)KORE_D3D12_BUFFER_USAGE_UAV |(uint32_t) KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
+	as_params.usage_flags = (uint32_t)KORE_D3D12_BUFFER_USAGE_UAV | (uint32_t)KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
 	kore_gpu_device_create_buffer(device, &as_params, &hierarchy->d3d12.acceleration_structure);
 }
 
