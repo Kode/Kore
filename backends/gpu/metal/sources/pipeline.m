@@ -188,7 +188,6 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 		render_pipeline_descriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
 	}
 	
-	float                offset            = 0;
 	MTLVertexDescriptor *vertex_descriptor = [[MTLVertexDescriptor alloc] init];
 
 	uint32_t attributes_count = 0;
@@ -198,113 +197,115 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 		++bindings_count;
 	}
 
+	uint32_t metal_attribute_index = 0;
 	for (uint32_t binding_index = 0; binding_index < bindings_count; ++binding_index) {
-		if (parameters->vertex.buffers[binding_index].step_mode == KORE_METAL_VERTEX_STEP_MODE_INSTANCE) {
-			break;
-		}
-		
+		uint32_t offset = 0;
+
 		for (uint32_t attribute_index = 0; attribute_index < parameters->vertex.buffers[binding_index].attributes_count; ++attribute_index) {
 			kore_metal_vertex_attribute attribute = parameters->vertex.buffers[binding_index].attributes[attribute_index];
 
-			vertex_descriptor.attributes[attribute_index].bufferIndex = 0;
-			vertex_descriptor.attributes[attribute_index].offset      = offset;
+			vertex_descriptor.attributes[metal_attribute_index].bufferIndex = 0;
+			vertex_descriptor.attributes[metal_attribute_index].offset      = offset;
+			vertex_descriptor.attributes[metal_attribute_index].bufferIndex = binding_index;
 
 			offset += vertex_attribute_size(attribute.format);
 
 			switch (attribute.format) {
 			case KORE_METAL_VERTEX_FORMAT_FLOAT32:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatFloat;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatFloat;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_FLOAT32X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatFloat2;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatFloat2;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_FLOAT32X3:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatFloat3;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatFloat3;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_FLOAT32X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatFloat4;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatFloat4;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SINT8X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatChar2;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatChar2;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UINT8X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUChar2;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUChar2;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SNORM8X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatChar2Normalized;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatChar2Normalized;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UNORM8X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUChar2Normalized;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUChar2Normalized;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SINT8X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatChar4;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatChar4;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UINT8X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUChar4;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUChar4;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SNORM8X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatChar4Normalized;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatChar4Normalized;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UNORM8X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUChar4Normalized;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUChar4Normalized;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SINT16X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatShort2;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatShort2;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UINT16X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUShort2;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUShort2;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SNORM16X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatShort2Normalized;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatShort2Normalized;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UNORM16X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUShort2Normalized;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUShort2Normalized;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SINT16X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatShort4;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatShort4;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UINT16X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUShort4;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUShort4;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SNORM16X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatShort4Normalized;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatShort4Normalized;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UNORM16X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUShort4Normalized;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUShort4Normalized;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SINT32:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatInt;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatInt;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UINT32:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUInt;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUInt;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SINT32X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatInt2;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatInt2;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UINT32X2:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUInt2;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUInt2;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SINT32X3:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatInt3;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatInt3;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UINT32X3:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUInt3;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUInt3;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_SINT32X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatInt4;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatInt4;
 				break;
 			case KORE_METAL_VERTEX_FORMAT_UINT32X4:
-				vertex_descriptor.attributes[attribute_index].format = MTLVertexFormatUInt4;
+				vertex_descriptor.attributes[metal_attribute_index].format = MTLVertexFormatUInt4;
 				break;
 			default:
 				assert(false);
 				break;
 			}
+			
+			metal_attribute_index += 1;
 		}
-	}
 
-	vertex_descriptor.layouts[0].stride       = offset;
-	vertex_descriptor.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
+		vertex_descriptor.layouts[binding_index].stride       = offset;
+		vertex_descriptor.layouts[binding_index].stepFunction = parameters->vertex.buffers[binding_index].step_mode == KORE_METAL_VERTEX_STEP_MODE_INSTANCE ? MTLVertexStepFunctionPerInstance : MTLVertexStepFunctionPerVertex;
+	}
 
 	render_pipeline_descriptor.vertexDescriptor = vertex_descriptor;
 
