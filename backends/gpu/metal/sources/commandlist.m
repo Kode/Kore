@@ -89,7 +89,7 @@ void kore_metal_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 void kore_metal_command_list_end_render_pass(kore_gpu_command_list *list) {
 	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 	[render_command_encoder endEncoding];
-	
+
 	CFRelease(list->metal.render_command_encoder);
 	list->metal.render_command_encoder = NULL;
 }
@@ -116,7 +116,7 @@ static void kore_metal_command_list_end_blit_pass(kore_gpu_command_list *list) {
 	if (list->metal.blit_command_encoder != NULL) {
 		id<MTLBlitCommandEncoder> blit_command_encoder = (__bridge id<MTLBlitCommandEncoder>)list->metal.blit_command_encoder;
 		[blit_command_encoder endEncoding];
-		
+
 		CFRelease(list->metal.blit_command_encoder);
 		list->metal.blit_command_encoder = NULL;
 	}
@@ -137,7 +137,7 @@ static void kore_metal_command_list_end_compute_pass(kore_gpu_command_list *list
 	if (list->metal.compute_command_encoder != NULL) {
 		id<MTLComputeCommandEncoder> compute_command_encoder = (__bridge id<MTLComputeCommandEncoder>)list->metal.compute_command_encoder;
 		[compute_command_encoder endEncoding];
-		
+
 		CFRelease(list->metal.compute_command_encoder);
 		list->metal.compute_command_encoder = NULL;
 	}
