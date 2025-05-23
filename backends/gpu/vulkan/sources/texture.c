@@ -51,7 +51,7 @@ void kore_vulkan_texture_transition(kore_gpu_command_list *list, kore_gpu_textur
 				    .image         = texture->vulkan.image,
 				    .subresourceRange =
 				        {
-				            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
+				            .aspectMask     = kore_gpu_texture_format_is_depth(texture->format) ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT,
 				            .baseMipLevel   = mip_level,
 				            .levelCount     = 1,
 				            .baseArrayLayer = array_layer,
