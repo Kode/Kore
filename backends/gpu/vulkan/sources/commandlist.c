@@ -214,7 +214,7 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 	vkCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
 #endif
 
-	kore_vulkan_command_list_set_viewport(list, 0, 0, (float)render_area.extent.width, (float)render_area.extent.height, 0.1f, 1.0f);
+	kore_vulkan_command_list_set_viewport(list, 0, 0, (float)render_area.extent.width, (float)render_area.extent.height, 0.0f, 1.0f);
 
 	kore_vulkan_command_list_set_scissor_rect(list, 0, 0, render_area.extent.width, render_area.extent.height);
 
