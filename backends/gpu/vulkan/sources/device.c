@@ -1133,15 +1133,15 @@ static VkFilter convert_filter(kore_gpu_filter_mode filter) {
 	return VK_FILTER_NEAREST;
 }
 
-static VkFilter convert_mipmap_filter(kore_gpu_mipmap_filter_mode filter) {
+static VkSamplerMipmapMode convert_mipmap_filter(kore_gpu_mipmap_filter_mode filter) {
 	switch (filter) {
 	case KORE_GPU_MIPMAP_FILTER_MODE_NEAREST:
-		return VK_FILTER_NEAREST;
+		return VK_SAMPLER_MIPMAP_MODE_NEAREST;
 	case KORE_GPU_MIPMAP_FILTER_MODE_LINEAR:
-		return VK_FILTER_LINEAR;
+		return VK_SAMPLER_MIPMAP_MODE_LINEAR;
 	}
 
-	return VK_FILTER_NEAREST;
+	return VK_SAMPLER_MIPMAP_MODE_NEAREST;
 }
 
 static VkCompareOp convert_compare_function(kore_gpu_compare_function func) {

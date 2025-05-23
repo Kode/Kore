@@ -135,7 +135,7 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		    .resolveMode        = VK_RESOLVE_MODE_NONE,
 		    .resolveImageView   = VK_NULL_HANDLE,
 		    .resolveImageLayout = VK_IMAGE_LAYOUT_GENERAL,
-		    .loadOp             = paused ? KORE_GPU_LOAD_OP_LOAD : convert_load_op(parameters->color_attachments[attachment_index].load_op),
+		    .loadOp             = paused ? VK_ATTACHMENT_LOAD_OP_LOAD : convert_load_op(parameters->color_attachments[attachment_index].load_op),
 		    .storeOp            = convert_store_op(parameters->color_attachments[attachment_index].store_op),
 		    .clearValue = convert_color_clear_value(textures[attachment_index]->vulkan.format, parameters->color_attachments[attachment_index].clear_value),
 		};
@@ -174,7 +174,7 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		    .resolveMode        = VK_RESOLVE_MODE_NONE,
 		    .resolveImageView   = VK_NULL_HANDLE,
 		    .resolveImageLayout = VK_IMAGE_LAYOUT_GENERAL,
-		    .loadOp             = paused ? KORE_GPU_LOAD_OP_LOAD : convert_load_op(parameters->depth_stencil_attachment.depth_load_op),
+		    .loadOp             = paused ? VK_ATTACHMENT_LOAD_OP_LOAD : convert_load_op(parameters->depth_stencil_attachment.depth_load_op),
 		    .storeOp            = convert_store_op(parameters->depth_stencil_attachment.depth_store_op),
 		    .clearValue         = convert_depth_clear_value(parameters->depth_stencil_attachment.depth_clear_value),
 		};
