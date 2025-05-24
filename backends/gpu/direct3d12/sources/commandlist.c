@@ -565,7 +565,7 @@ void kore_d3d12_command_list_compute(kore_gpu_command_list *list, uint32_t workg
 }
 
 void kore_d3d12_command_list_prepare_raytracing_volume(kore_gpu_command_list *list, kore_gpu_raytracing_volume *volume) {
-	D3D12_RAYTRACING_GEOMETRY_DESC geometry_desc = {};
+	D3D12_RAYTRACING_GEOMETRY_DESC geometry_desc = {0};
 
 	geometry_desc.Type  = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
 	geometry_desc.Flags = D3D12_RAYTRACING_GEOMETRY_FLAG_OPAQUE;
@@ -580,7 +580,7 @@ void kore_d3d12_command_list_prepare_raytracing_volume(kore_gpu_command_list *li
 	geometry_desc.Triangles.VertexBuffer.StartAddress  = COM_CALL0(volume->d3d12.vertex_buffer->d3d12.resource, GetGPUVirtualAddress);
 	geometry_desc.Triangles.VertexBuffer.StrideInBytes = sizeof(float) * 3;
 
-	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs = {};
+	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs = {0};
 	inputs.Type                                                 = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL;
 	inputs.Flags                                                = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE;
 	inputs.NumDescs                                             = 1;
@@ -594,7 +594,7 @@ void kore_d3d12_command_list_prepare_raytracing_volume(kore_gpu_command_list *li
 
 	COM_CALL3(list->d3d12.list, BuildRaytracingAccelerationStructure, &build_desc, 0, NULL);
 
-	D3D12_RESOURCE_BARRIER barrier = {};
+	D3D12_RESOURCE_BARRIER barrier = {0};
 	barrier.Type                   = D3D12_RESOURCE_BARRIER_TYPE_UAV;
 	barrier.UAV.pResource          = volume->d3d12.acceleration_structure.d3d12.resource;
 
@@ -602,7 +602,7 @@ void kore_d3d12_command_list_prepare_raytracing_volume(kore_gpu_command_list *li
 }
 
 void kore_d3d12_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list *list, kore_gpu_raytracing_hierarchy *hierarchy) {
-	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs = {};
+	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs = {0};
 	inputs.Type                                                 = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL;
 	inputs.Flags                                                = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_UPDATE;
 	inputs.NumDescs                                             = hierarchy->d3d12.volumes_count;
@@ -616,7 +616,7 @@ void kore_d3d12_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list 
 
 	COM_CALL3(list->d3d12.list, BuildRaytracingAccelerationStructure, &build_desc, 0, NULL);
 
-	D3D12_RESOURCE_BARRIER barrier = {};
+	D3D12_RESOURCE_BARRIER barrier = {0};
 	barrier.Type                   = D3D12_RESOURCE_BARRIER_TYPE_UAV;
 	barrier.UAV.pResource          = hierarchy->d3d12.acceleration_structure.d3d12.resource;
 
@@ -662,7 +662,7 @@ void kore_d3d12_command_list_update_raytracing_hierarchy(kore_gpu_command_list *
 
 	COM_CALL3(list->d3d12.list, BuildRaytracingAccelerationStructure, &build_desc, 0, NULL);
 
-	D3D12_RESOURCE_BARRIER barrier = {};
+	D3D12_RESOURCE_BARRIER barrier = {0};
 	barrier.Type                   = D3D12_RESOURCE_BARRIER_TYPE_UAV;
 	barrier.UAV.pResource          = hierarchy->d3d12.acceleration_structure.d3d12.resource;
 

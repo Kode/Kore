@@ -7,7 +7,14 @@
 extern "C" {
 #endif
 
-typedef long HRESULT;
+#ifndef _HRESULT_DEFINED
+#define _HRESULT_DEFINED
+#ifdef __midl
+typedef LONG HRESULT;
+#else
+typedef _Return_type_success_(return >= 0) long HRESULT;
+#endif // __midl
+#endif // !_HRESULT_DEFINED
 
 void kore_microsoft_affirm(HRESULT result);
 void kore_microsoft_affirm_message(HRESULT result, const char *format, ...);
