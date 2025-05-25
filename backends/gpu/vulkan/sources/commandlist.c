@@ -112,10 +112,10 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		    .subresourceRange =
 		        {
 		            .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
-		            .baseMipLevel   = 0,
-		            .levelCount     = 1,
-		            .baseArrayLayer = 0,
-		            .layerCount     = 1,
+		            .baseMipLevel   = parameters->color_attachments[attachment_index].texture.base_mip_level,
+		            .levelCount     = parameters->color_attachments[attachment_index].texture.mip_level_count,
+		            .baseArrayLayer = parameters->color_attachments[attachment_index].texture.base_array_layer,
+		            .layerCount     = parameters->color_attachments[attachment_index].texture.array_layer_count,
 		        },
 		    .flags = 0,
 		};
