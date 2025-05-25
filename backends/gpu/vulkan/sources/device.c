@@ -959,7 +959,7 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	    .samples       = VK_SAMPLE_COUNT_1_BIT,
 	    .tiling        = VK_IMAGE_TILING_OPTIMAL,
 	    .usage         = usage,
-	    .flags         = 0,
+	    .flags         = parameters->depth_or_array_layers == 6 ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0,
 	    .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
 	};
 
