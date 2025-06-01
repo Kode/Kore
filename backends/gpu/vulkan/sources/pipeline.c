@@ -209,124 +209,126 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 		++bindings_count;
 	}
 
-	VkVertexInputBindingDescription   vi_bindings[64];
-	VkVertexInputAttributeDescription vi_attrs[256];
+	VkVertexInputBindingDescription   binding_descriptions[64];
+	VkVertexInputAttributeDescription attribute_descriptions[256];
 
 	const VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
 	    .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
 	    .pNext                           = NULL,
 	    .vertexBindingDescriptionCount   = bindings_count,
-	    .pVertexBindingDescriptions      = vi_bindings,
+	    .pVertexBindingDescriptions      = binding_descriptions,
 	    .vertexAttributeDescriptionCount = attributes_count,
-	    .pVertexAttributeDescriptions    = vi_attrs,
+	    .pVertexAttributeDescriptions    = attribute_descriptions,
 	};
 
-	uint32_t attribute_index = 0;
+	uint32_t global_attribute_index = 0;
 	for (uint32_t binding_index = 0; binding_index < bindings_count; ++binding_index) {
 		uint32_t stride = 0;
 		for (uint32_t attribute_index = 0; attribute_index < parameters->vertex.buffers[binding_index].attributes_count; ++attribute_index) {
-			kore_vulkan_vertex_attribute attribute = parameters->vertex.buffers[binding_index].attributes[attribute_index];
-			vi_attrs[attribute_index].binding      = binding_index;
-			vi_attrs[attribute_index].location     = attribute.shader_location;
-			vi_attrs[attribute_index].offset       = (uint32_t)attribute.offset;
+			kore_vulkan_vertex_attribute attribute                  = parameters->vertex.buffers[binding_index].attributes[attribute_index];
+			attribute_descriptions[global_attribute_index].binding  = binding_index;
+			attribute_descriptions[global_attribute_index].location = attribute.shader_location;
+			attribute_descriptions[global_attribute_index].offset   = (uint32_t)attribute.offset;
 			stride += vertex_attribute_size(attribute.format);
 
 			switch (attribute.format) {
 			case KORE_VULKAN_VERTEX_FORMAT_FLOAT32:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32_SFLOAT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32_SFLOAT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_FLOAT32X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32G32_SFLOAT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32G32_SFLOAT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_FLOAT32X3:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32G32B32_SFLOAT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32G32B32_SFLOAT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_FLOAT32X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32G32B32A32_SFLOAT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SINT8X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R8G8_SINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R8G8_SINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UINT8X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R8G8_UINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R8G8_UINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SNORM8X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R8G8_SNORM;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R8G8_SNORM;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UNORM8X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R8G8_UNORM;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R8G8_UNORM;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SINT8X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R8G8B8A8_SINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R8G8B8A8_SINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UINT8X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R8G8B8A8_UINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R8G8B8A8_UINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SNORM8X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R8G8B8A8_SNORM;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R8G8B8A8_SNORM;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UNORM8X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R8G8B8A8_UNORM;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R8G8B8A8_UNORM;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SINT16X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R16G16_SINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R16G16_SINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UINT16X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R16G16_UINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R16G16_UINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SNORM16X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R16G16_SNORM;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R16G16_SNORM;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UNORM16X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R16G16_UNORM;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R16G16_UNORM;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SINT16X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R16G16B16A16_SINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R16G16B16A16_SINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UINT16X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R16G16B16A16_UINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R16G16B16A16_UINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SNORM16X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R16G16B16A16_SNORM;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R16G16B16A16_SNORM;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UNORM16X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R16G16B16A16_UNORM;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R16G16B16A16_UNORM;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SINT32:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32_SINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32_SINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UINT32:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32_UINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32_UINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SINT32X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32G32_SINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32G32_SINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UINT32X2:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32G32_UINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32G32_UINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SINT32X3:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32G32B32_SINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32G32B32_SINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UINT32X3:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32G32B32_UINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32G32B32_UINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_SINT32X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32G32B32A32_SINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32G32B32A32_SINT;
 				break;
 			case KORE_VULKAN_VERTEX_FORMAT_UINT32X4:
-				vi_attrs[attribute_index].format = VK_FORMAT_R32G32B32A32_UINT;
+				attribute_descriptions[global_attribute_index].format = VK_FORMAT_R32G32B32A32_UINT;
 				break;
 			default:
 				assert(false);
 				break;
 			}
+
+			++global_attribute_index;
 		}
 
-		vi_bindings[binding_index].binding   = binding_index;
-		vi_bindings[binding_index].stride    = stride;
-		vi_bindings[binding_index].inputRate = (parameters->vertex.buffers[binding_index].step_mode == KORE_VULKAN_VERTEX_STEP_MODE_INSTANCE)
-		                                           ? VK_VERTEX_INPUT_RATE_INSTANCE
-		                                           : VK_VERTEX_INPUT_RATE_VERTEX;
+		binding_descriptions[binding_index].binding   = binding_index;
+		binding_descriptions[binding_index].stride    = stride;
+		binding_descriptions[binding_index].inputRate = (parameters->vertex.buffers[binding_index].step_mode == KORE_VULKAN_VERTEX_STEP_MODE_INSTANCE)
+		                                                    ? VK_VERTEX_INPUT_RATE_INSTANCE
+		                                                    : VK_VERTEX_INPUT_RATE_VERTEX;
 	}
 
 	const VkPipelineInputAssemblyStateCreateInfo input_assembly_state_create_info = {
