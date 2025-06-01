@@ -58,7 +58,7 @@ void kore_vulkan_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t
 void kore_vulkan_command_list_set_descriptor_set(kore_gpu_command_list *list, uint32_t set_index, kore_vulkan_descriptor_set *set,
                                                  uint32_t dynamic_offsets_count, uint32_t *dynamic_offsets);
 
-void kore_vulkan_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size);
+void kore_vulkan_command_list_set_root_constants(kore_gpu_command_list *list, const void *data, size_t data_size);
 
 void kore_vulkan_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_vulkan_compute_pipeline *pipeline);
 

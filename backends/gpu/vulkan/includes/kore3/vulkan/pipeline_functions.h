@@ -12,13 +12,13 @@ extern "C" {
 
 void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_render_pipeline *pipeline,
                                       const kore_vulkan_render_pipeline_parameters *parameters, const VkDescriptorSetLayout *descriptor_set_layouts,
-                                      uint32_t descriptor_set_layouts_count);
+                                      uint32_t descriptor_set_layouts_count, uint32_t root_constants_size);
 
 void kore_vulkan_render_pipeline_destroy(kore_vulkan_render_pipeline *pipeline);
 
 void kore_vulkan_compute_pipeline_init(kore_vulkan_device *device, kore_vulkan_compute_pipeline *pipeline,
                                        const kore_vulkan_compute_pipeline_parameters *parameters, const VkDescriptorSetLayout *descriptor_set_layouts,
-                                       uint32_t descriptor_set_layouts_count);
+                                       uint32_t descriptor_set_layouts_count, uint32_t root_constants_size);
 
 void kore_vulkan_compute_pipeline_destroy(kore_vulkan_compute_pipeline *pipeline);
 

@@ -284,7 +284,18 @@ void kore_vulkan_command_list_set_descriptor_set(kore_gpu_command_list *list, ui
 	}
 }
 
-void kore_vulkan_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {}
+void kore_vulkan_command_list_set_root_constants(kore_gpu_command_list *list, const void *data, size_t data_size) {
+	if (current_render_pipeline != NULL) {
+		vkCmdPushConstants(list->vulkan.command_buffer, current_render_pipeline->pipeline_layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+		                   (uint32_t)data_size, data);
+	}
+	else if (current_compute_pipeline != NULL) {
+		vkCmdPushConstants(list->vulkan.command_buffer, current_compute_pipeline->pipeline_layout, VK_SHADER_STAGE_COMPUTE_BIT, 0, (uint32_t)data_size, data);
+	}
+	else {
+		assert(false);
+	}
+}
 
 void kore_vulkan_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset, kore_gpu_buffer *destination,
                                                     uint64_t destination_offset, uint64_t size) {

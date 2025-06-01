@@ -180,13 +180,24 @@ static VkShaderModule create_shader_module(kore_vulkan_device *device, const kor
 
 void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_render_pipeline *pipeline,
                                       const kore_vulkan_render_pipeline_parameters *parameters, const VkDescriptorSetLayout *descriptor_set_layouts,
-                                      uint32_t descriptor_set_layouts_count) {
-	const VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
+                                      uint32_t descriptor_set_layouts_count, uint32_t root_constants_size) {
+	VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
 	    .sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 	    .pNext          = NULL,
 	    .setLayoutCount = descriptor_set_layouts_count,
 	    .pSetLayouts    = descriptor_set_layouts,
 	};
+
+	VkPushConstantRange push_constant_range = {
+	    .offset     = 0,
+	    .size       = root_constants_size,
+	    .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+	};
+
+	if (root_constants_size > 0) {
+		pipeline_layout_create_info.pPushConstantRanges    = &push_constant_range;
+		pipeline_layout_create_info.pushConstantRangeCount = 1;
+	}
 
 	VkResult result = vkCreatePipelineLayout(device->device, &pipeline_layout_create_info, NULL, &pipeline->pipeline_layout);
 	assert(result == VK_SUCCESS);
@@ -457,13 +468,24 @@ void kore_vulkan_render_pipeline_destroy(kore_vulkan_render_pipeline *pipeline) 
 
 void kore_vulkan_compute_pipeline_init(kore_vulkan_device *device, kore_vulkan_compute_pipeline *pipeline,
                                        const kore_vulkan_compute_pipeline_parameters *parameters, const VkDescriptorSetLayout *descriptor_set_layouts,
-                                       uint32_t descriptor_set_layouts_count) {
-	const VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
+                                       uint32_t descriptor_set_layouts_count, uint32_t root_constants_size) {
+	VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
 	    .sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 	    .pNext          = NULL,
 	    .setLayoutCount = descriptor_set_layouts_count,
 	    .pSetLayouts    = descriptor_set_layouts,
 	};
+
+	VkPushConstantRange push_constant_range = {
+	    .offset     = 0,
+	    .size       = root_constants_size,
+	    .stageFlags = VK_SHADER_STAGE_COMPUTE_BIT,
+	};
+
+	if (root_constants_size > 0) {
+		pipeline_layout_create_info.pPushConstantRanges    = &push_constant_range;
+		pipeline_layout_create_info.pushConstantRangeCount = 1;
+	}
 
 	VkResult result = vkCreatePipelineLayout(device->device, &pipeline_layout_create_info, NULL, &pipeline->pipeline_layout);
 	assert(result == VK_SUCCESS);
