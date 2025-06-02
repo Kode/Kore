@@ -37,6 +37,26 @@ static WGPUStoreOp convert_store_op(kore_gpu_store_op op) {
 	return WGPUStoreOp_Store;
 }
 
+static WGPUTextureViewDimension convert_dimension(kore_gpu_texture_view_dimension dimension) {
+	switch (dimension) {
+	case KORE_GPU_TEXTURE_VIEW_DIMENSION_1D:
+		return WGPUTextureViewDimension_1D;
+	case KORE_GPU_TEXTURE_VIEW_DIMENSION_2D:
+		return WGPUTextureViewDimension_2D;
+	case KORE_GPU_TEXTURE_VIEW_DIMENSION_2DARRAY:
+		return WGPUTextureViewDimension_2DArray;
+	case KORE_GPU_TEXTURE_VIEW_DIMENSION_CUBE:
+		return WGPUTextureViewDimension_Cube;
+	case KORE_GPU_TEXTURE_VIEW_DIMENSION_CUBEARRAY:
+		return WGPUTextureViewDimension_CubeArray;
+	case KORE_GPU_TEXTURE_VIEW_DIMENSION_3D:
+		return WGPUTextureViewDimension_3D;
+	}
+
+	assert(false);
+	return WGPUTextureViewDimension_2D;
+}
+
 void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
@@ -50,10 +70,12 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
 
 	for (uint32_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
 		WGPUTextureViewDescriptor texture_view_descriptor = {
-		    .format          = kore_webgpu_convert_texture_format(parameters->color_attachments[attachment_index].texture.texture->webgpu.format),
-		    .dimension       = WGPUTextureViewDimension_2D,
-		    .arrayLayerCount = 1,
-		    .mipLevelCount   = 1,
+		    .format           = kore_webgpu_convert_texture_format(parameters->color_attachments[attachment_index].texture.texture->webgpu.format),
+		    .dimension        = convert_dimension(parameters->color_attachments[attachment_index].texture.dimension),
+			.baseMipLevel     = parameters->color_attachments[attachment_index].texture.base_mip_level,
+			.mipLevelCount    = parameters->color_attachments[attachment_index].texture.mip_level_count,
+			.baseArrayLayer   = parameters->color_attachments[attachment_index].texture.base_array_layer,
+		    .arrayLayerCount  = parameters->color_attachments[attachment_index].texture.array_layer_count,
 		};
 		texture_views[attachment_index] =
 		    wgpuTextureCreateView(parameters->color_attachments[attachment_index].texture.texture->webgpu.texture, &texture_view_descriptor);
