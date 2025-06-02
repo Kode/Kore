@@ -106,28 +106,36 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 	};
 
 	WGPUVertexAttribute attributes[8];
+	WGPUVertexBufferLayout vertex_buffer_layouts[8];
+
+	size_t attribute_offset = 0;
+
 	for (size_t buffer_index = 0; buffer_index < parameters->vertex.buffers_count; ++buffer_index) {
+		WGPUVertexBufferLayout vertex_buffer_layout = {
+			.arrayStride    = parameters->vertex.buffers[buffer_index].array_stride,
+			.attributeCount = parameters->vertex.buffers[buffer_index].attributes_count,
+			.attributes     = &attributes[attribute_offset],
+			.stepMode       = parameters->vertex.buffers[buffer_index].step_mode == KORE_WEBGPU_VERTEX_STEP_MODE_VERTEX ? WGPUVertexStepMode_Vertex : WGPUVertexStepMode_Instance,
+		};
+
 		for (size_t attribute_index = 0; attribute_index < parameters->vertex.buffers[buffer_index].attributes_count; ++attribute_index) {
 			WGPUVertexAttribute attribute = {
 			    .shaderLocation = parameters->vertex.buffers[buffer_index].attributes[attribute_index].shader_location,
 			    .offset         = parameters->vertex.buffers[buffer_index].attributes[attribute_index].offset,
 			    .format         = convert_vertex_format(parameters->vertex.buffers[buffer_index].attributes[attribute_index].format),
 			};
-			attributes[attribute_index] = attribute;
+			attributes[attribute_offset] = attribute;
+			++attribute_offset;
 		}
-	}
 
-	WGPUVertexBufferLayout vertex_buffer_layout = {
-	    .arrayStride    = parameters->vertex.buffers[0].array_stride,
-	    .attributeCount = parameters->vertex.buffers[0].attributes_count,
-	    .attributes     = &attributes[0],
-	};
+		vertex_buffer_layouts[buffer_index] = vertex_buffer_layout;
+	}
 
 	WGPUVertexState vertex_state = {
 	    .module      = device->shader_module,
 	    .entryPoint  = parameters->vertex.shader.function_name,
-	    .bufferCount = 1,
-	    .buffers     = &vertex_buffer_layout,
+	    .bufferCount = parameters->vertex.buffers_count,
+	    .buffers     = &vertex_buffer_layouts[0],
 	};
 
 	WGPUFragmentState fragment_state = {
