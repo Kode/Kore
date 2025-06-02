@@ -206,7 +206,7 @@ void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	            .depthOrArrayLayers = parameters->depth_or_array_layers,
 	        },
 	    .dimension     = WGPUTextureDimension_2D,
-	    .mipLevelCount = 1,
+	    .mipLevelCount = parameters->mip_level_count,
 	};
 
 	texture->webgpu.texture = wgpuDeviceCreateTexture(device->webgpu.device, &texture_descriptor);
