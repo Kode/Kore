@@ -73,8 +73,38 @@ static WGPUVertexFormat convert_vertex_format(kore_webgpu_vertex_format format) 
 	return WGPUVertexFormat_Float32;
 }
 
+static void compilation_info_callback(WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo *info, void *userdata) {
+	assert(status == WGPUCompilationInfoRequestStatus_Success);
+	assert(info->messageCount == 0);
+	kore_log(KORE_LOG_LEVEL_INFO, "Shader compile succeeded");
+}
+
 void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters,
                                       const WGPUBindGroupLayout *bind_group_layouts, uint32_t bind_group_layouts_count) {
+	WGPUShaderModuleWGSLDescriptor vertex_shader_module_wgsl_descriptor = {
+	    .code        = parameters->vertex.shader.data,
+	    .chain.sType = WGPUSType_ShaderModuleWGSLDescriptor,
+	};
+
+	WGPUShaderModuleDescriptor vertex_shader_module_descriptor = {
+	    .nextInChain = (WGPUChainedStruct *)&vertex_shader_module_wgsl_descriptor,
+	};
+
+	WGPUShaderModule vertex_shader_module = wgpuDeviceCreateShaderModule(device->device, &vertex_shader_module_descriptor);
+	wgpuShaderModuleGetCompilationInfo(vertex_shader_module, compilation_info_callback, NULL);
+
+	WGPUShaderModuleWGSLDescriptor fragment_shader_module_wgsl_descriptor = {
+	    .code        = parameters->fragment.shader.data,
+	    .chain.sType = WGPUSType_ShaderModuleWGSLDescriptor,
+	};
+
+	WGPUShaderModuleDescriptor fragment_shader_module_descriptor = {
+	    .nextInChain = (WGPUChainedStruct *)&fragment_shader_module_wgsl_descriptor,
+	};
+
+	WGPUShaderModule fragment_shader_module = wgpuDeviceCreateShaderModule(device->device, &fragment_shader_module_descriptor);
+	wgpuShaderModuleGetCompilationInfo(fragment_shader_module, compilation_info_callback, NULL);
+
 	WGPUColorTargetState color_target_states[8];
 
 	for (uint32_t target_index = 0; target_index < parameters->fragment.targets_count; ++target_index) {
@@ -133,15 +163,15 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 	}
 
 	WGPUVertexState vertex_state = {
-	    .module      = device->shader_module,
-	    .entryPoint  = parameters->vertex.shader.function_name,
+	    .module      = vertex_shader_module,
+	    .entryPoint  = "main",
 	    .bufferCount = parameters->vertex.buffers_count,
 	    .buffers     = &vertex_buffer_layouts[0],
 	};
 
 	WGPUFragmentState fragment_state = {
-	    .module      = device->shader_module,
-	    .entryPoint  = parameters->fragment.shader.function_name,
+	    .module      = fragment_shader_module,
+	    .entryPoint  = "main",
 	    .targetCount = parameters->fragment.targets_count,
 	    .targets     = color_target_states,
 	};
@@ -195,14 +225,26 @@ void kore_webgpu_render_pipeline_destroy(kore_webgpu_render_pipeline *pipe) {}
 void kore_webgpu_compute_pipeline_init(kore_webgpu_device *device, kore_webgpu_compute_pipeline *pipe,
                                        const kore_webgpu_compute_pipeline_parameters *parameters, const WGPUBindGroupLayout *bind_group_layouts,
                                        uint32_t bind_group_layouts_count) {
+	WGPUShaderModuleWGSLDescriptor shader_module_wgsl_descriptor = {
+	    .code        = parameters->shader.data,
+	    .chain.sType = WGPUSType_ShaderModuleWGSLDescriptor,
+	};
+
+	WGPUShaderModuleDescriptor shader_module_descriptor = {
+	    .nextInChain = (WGPUChainedStruct *)&shader_module_wgsl_descriptor,
+	};
+
+	WGPUShaderModule shader_module = wgpuDeviceCreateShaderModule(device->device, &shader_module_descriptor);
+	wgpuShaderModuleGetCompilationInfo(shader_module, compilation_info_callback, NULL);
+
 	WGPUPipelineLayoutDescriptor pipeline_layout_descriptor = {
 	    .bindGroupLayoutCount = bind_group_layouts_count,
 	    .bindGroupLayouts     = bind_group_layouts,
 	};
 
 	WGPUProgrammableStageDescriptor compute_state = {
-	    .module     = device->shader_module,
-	    .entryPoint = parameters->shader.function_name,
+	    .module     = shader_module,
+	    .entryPoint = "main",
 	};
 
 	WGPUComputePipelineDescriptor compute_pipeline_descriptor = {

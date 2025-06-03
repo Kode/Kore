@@ -8,8 +8,6 @@
 #include <kore3/log.h>
 #include <kore3/window.h>
 
-#include <wgsl.h>
-
 #ifdef KORE_EMSCRIPTEN
 #include <emscripten.h>
 #include <emscripten/html5.h>
@@ -24,12 +22,6 @@ static WGPUAdapter  wgpu_adapter;
 
 static void error_callback(WGPUErrorType errorType, const char *message, void *userdata) {
 	kore_log(KORE_LOG_LEVEL_ERROR, "%d: %s", errorType, message);
-}
-
-static void compilation_info_callback(WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo *info, void *userdata) {
-	assert(status == WGPUCompilationInfoRequestStatus_Success);
-	assert(info->messageCount == 0);
-	kore_log(KORE_LOG_LEVEL_INFO, "Shader compile succeeded");
 }
 
 void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
@@ -65,18 +57,6 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .presentMode = WGPUPresentMode_Fifo,
 	};
 	wgpuSurfaceConfigure(device->webgpu.surface, &surface_configuration);
-
-	WGPUShaderModuleWGSLDescriptor shader_module_wgsl_descriptor = {
-	    .code        = wgsl,
-	    .chain.sType = WGPUSType_ShaderModuleWGSLDescriptor,
-	};
-
-	WGPUShaderModuleDescriptor shader_module_descriptor = {
-	    .nextInChain = (WGPUChainedStruct *)&shader_module_wgsl_descriptor,
-	};
-
-	device->webgpu.shader_module = wgpuDeviceCreateShaderModule(device->webgpu.device, &shader_module_descriptor);
-	wgpuShaderModuleGetCompilationInfo(device->webgpu.shader_module, compilation_info_callback, NULL);
 }
 
 void kore_webgpu_device_destroy(kore_gpu_device *device) {}

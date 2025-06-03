@@ -13,7 +13,6 @@ typedef struct kore_webgpu_device {
 	WGPUDevice       device;
 	WGPUQueue        queue;
 	WGPUSurface      surface;
-	WGPUShaderModule shader_module;
 } kore_webgpu_device;
 
 typedef struct kore_webgpu_query_set {
