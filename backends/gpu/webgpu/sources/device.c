@@ -388,41 +388,42 @@ void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, char
 
 	// default values via https://gpuweb.github.io/gpuweb/#limits
 	WGPURequiredLimits required_limits = {
-		.limits = {
-			.maxTextureDimension1D = 8192,
-			.maxTextureDimension2D = 8192,
-			.maxTextureDimension3D = 2048,
-			.maxTextureArrayLayers = 256,
-			.maxBindGroups = 4,
-			.maxBindGroupsPlusVertexBuffers = 24,
-			.maxBindingsPerBindGroup = 1000,
-			.maxDynamicUniformBuffersPerPipelineLayout = 8,
-			.maxDynamicStorageBuffersPerPipelineLayout = 4,
-			.maxSampledTexturesPerShaderStage = 16,
-			.maxSamplersPerShaderStage = 16,
-			.maxStorageBuffersPerShaderStage = 8,
-			.maxStorageTexturesPerShaderStage = 4,
-			.maxUniformBuffersPerShaderStage = 12,
-			.maxUniformBufferBindingSize = 65536,
-			.maxStorageBufferBindingSize = 134217728,
-			.minUniformBufferOffsetAlignment = 256,
-			.minStorageBufferOffsetAlignment = 256,
-			.maxVertexBuffers = 8,
-			.maxBufferSize = 268435456,
-			.maxVertexAttributes = 16,
-			.maxVertexBufferArrayStride = 2048,
-			.maxInterStageShaderVariables = 16,
-			.maxColorAttachments = 8,
-			.maxColorAttachmentBytesPerSample = 32,
-			.maxComputeWorkgroupStorageSize = 16384,
-			.maxComputeInvocationsPerWorkgroup = 256,
-			.maxComputeWorkgroupSizeX = 256,
-			.maxComputeWorkgroupSizeY = 256,
-			.maxComputeWorkgroupSizeZ = 64,
-			.maxComputeWorkgroupsPerDimension = 65535,
+	    .limits =
+	        {
+	            .maxTextureDimension1D                     = 8192,
+	            .maxTextureDimension2D                     = 8192,
+	            .maxTextureDimension3D                     = 2048,
+	            .maxTextureArrayLayers                     = 256,
+	            .maxBindGroups                             = 4,
+	            .maxBindGroupsPlusVertexBuffers            = 24,
+	            .maxBindingsPerBindGroup                   = 1000,
+	            .maxDynamicUniformBuffersPerPipelineLayout = 8,
+	            .maxDynamicStorageBuffersPerPipelineLayout = 4,
+	            .maxSampledTexturesPerShaderStage          = 16,
+	            .maxSamplersPerShaderStage                 = 16,
+	            .maxStorageBuffersPerShaderStage           = 8,
+	            .maxStorageTexturesPerShaderStage          = 4,
+	            .maxUniformBuffersPerShaderStage           = 12,
+	            .maxUniformBufferBindingSize               = 65536,
+	            .maxStorageBufferBindingSize               = 134217728,
+	            .minUniformBufferOffsetAlignment           = 256,
+	            .minStorageBufferOffsetAlignment           = 256,
+	            .maxVertexBuffers                          = 8,
+	            .maxBufferSize                             = 268435456,
+	            .maxVertexAttributes                       = 16,
+	            .maxVertexBufferArrayStride                = 2048,
+	            .maxInterStageShaderVariables              = 16,
+	            .maxColorAttachments                       = 8,
+	            .maxColorAttachmentBytesPerSample          = 32,
+	            .maxComputeWorkgroupStorageSize            = 16384,
+	            .maxComputeInvocationsPerWorkgroup         = 256,
+	            .maxComputeWorkgroupSizeX                  = 256,
+	            .maxComputeWorkgroupSizeY                  = 256,
+	            .maxComputeWorkgroupSizeZ                  = 64,
+	            .maxComputeWorkgroupsPerDimension          = 65535,
 
-			.maxInterStageShaderComponents = WGPU_LIMIT_U32_UNDEFINED, // removed
-		},
+	            .maxInterStageShaderComponents = WGPU_LIMIT_U32_UNDEFINED, // removed
+	        },
 	};
 
 	required_limits.limits.maxColorAttachmentBytesPerSample = 48; // enough to write to a cube map
@@ -430,7 +431,7 @@ void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, char
 	WGPUDeviceDescriptor device_descriptor = {
 	    .requiredFeatures     = required_features,
 	    .requiredFeatureCount = sizeof(required_features) / sizeof(required_features[0]),
-		.requiredLimits       = &required_limits,
+	    .requiredLimits       = &required_limits,
 	};
 
 	wgpuAdapterRequestDevice(wgpu_adapter, &device_descriptor, device_callback, NULL);

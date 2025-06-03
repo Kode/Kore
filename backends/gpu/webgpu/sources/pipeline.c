@@ -105,17 +105,18 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 	    .bindGroupLayouts     = bind_group_layouts,
 	};
 
-	WGPUVertexAttribute attributes[8];
+	WGPUVertexAttribute    attributes[8];
 	WGPUVertexBufferLayout vertex_buffer_layouts[8];
 
 	size_t attribute_offset = 0;
 
 	for (size_t buffer_index = 0; buffer_index < parameters->vertex.buffers_count; ++buffer_index) {
 		WGPUVertexBufferLayout vertex_buffer_layout = {
-			.arrayStride    = parameters->vertex.buffers[buffer_index].array_stride,
-			.attributeCount = parameters->vertex.buffers[buffer_index].attributes_count,
-			.attributes     = &attributes[attribute_offset],
-			.stepMode       = parameters->vertex.buffers[buffer_index].step_mode == KORE_WEBGPU_VERTEX_STEP_MODE_VERTEX ? WGPUVertexStepMode_Vertex : WGPUVertexStepMode_Instance,
+		    .arrayStride    = parameters->vertex.buffers[buffer_index].array_stride,
+		    .attributeCount = parameters->vertex.buffers[buffer_index].attributes_count,
+		    .attributes     = &attributes[attribute_offset],
+		    .stepMode       = parameters->vertex.buffers[buffer_index].step_mode == KORE_WEBGPU_VERTEX_STEP_MODE_VERTEX ? WGPUVertexStepMode_Vertex
+		                                                                                                                : WGPUVertexStepMode_Instance,
 		};
 
 		for (size_t attribute_index = 0; attribute_index < parameters->vertex.buffers[buffer_index].attributes_count; ++attribute_index) {

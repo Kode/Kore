@@ -70,12 +70,12 @@ void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, con
 
 	for (uint32_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
 		WGPUTextureViewDescriptor texture_view_descriptor = {
-		    .format           = kore_webgpu_convert_texture_format(parameters->color_attachments[attachment_index].texture.texture->webgpu.format),
-		    .dimension        = convert_dimension(parameters->color_attachments[attachment_index].texture.dimension),
-			.baseMipLevel     = parameters->color_attachments[attachment_index].texture.base_mip_level,
-			.mipLevelCount    = parameters->color_attachments[attachment_index].texture.mip_level_count,
-			.baseArrayLayer   = parameters->color_attachments[attachment_index].texture.base_array_layer,
-		    .arrayLayerCount  = parameters->color_attachments[attachment_index].texture.array_layer_count,
+		    .format          = kore_webgpu_convert_texture_format(parameters->color_attachments[attachment_index].texture.texture->webgpu.format),
+		    .dimension       = convert_dimension(parameters->color_attachments[attachment_index].texture.dimension),
+		    .baseMipLevel    = parameters->color_attachments[attachment_index].texture.base_mip_level,
+		    .mipLevelCount   = parameters->color_attachments[attachment_index].texture.mip_level_count,
+		    .baseArrayLayer  = parameters->color_attachments[attachment_index].texture.base_array_layer,
+		    .arrayLayerCount = parameters->color_attachments[attachment_index].texture.array_layer_count,
 		};
 		texture_views[attachment_index] =
 		    wgpuTextureCreateView(parameters->color_attachments[attachment_index].texture.texture->webgpu.texture, &texture_view_descriptor);
