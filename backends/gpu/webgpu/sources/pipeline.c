@@ -79,6 +79,58 @@ static void compilation_info_callback(WGPUCompilationInfoRequestStatus status, c
 	kore_log(KORE_LOG_LEVEL_INFO, "Shader compile succeeded");
 }
 
+static WGPUBlendFactor convert_blend_factor(kore_webgpu_blend_factor factor) {
+	switch (factor) {
+	case KORE_WEBGPU_BLEND_FACTOR_ZERO:
+		return WGPUBlendFactor_Zero;
+	case KORE_WEBGPU_BLEND_FACTOR_ONE:
+		return WGPUBlendFactor_One;
+	case KORE_WEBGPU_BLEND_FACTOR_SRC:
+		return WGPUBlendFactor_Src;
+	case KORE_WEBGPU_BLEND_FACTOR_ONE_MINUS_SRC:
+		return WGPUBlendFactor_OneMinusSrc;
+	case KORE_WEBGPU_BLEND_FACTOR_SRC_ALPHA:
+		return WGPUBlendFactor_SrcAlpha;
+	case KORE_WEBGPU_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:
+		return WGPUBlendFactor_OneMinusSrcAlpha;
+	case KORE_WEBGPU_BLEND_FACTOR_DST:
+		return WGPUBlendFactor_Dst;
+	case KORE_WEBGPU_BLEND_FACTOR_ONE_MINUS_DST:
+		return WGPUBlendFactor_OneMinusDst;
+	case KORE_WEBGPU_BLEND_FACTOR_DST_ALPHA:
+		return WGPUBlendFactor_DstAlpha;
+	case KORE_WEBGPU_BLEND_FACTOR_ONE_MINUS_DST_ALPHA:
+		return WGPUBlendFactor_OneMinusDstAlpha;
+	case KORE_WEBGPU_BLEND_FACTOR_SRC_ALPHA_SATURATED:
+		return WGPUBlendFactor_SrcAlphaSaturated;
+	case KORE_WEBGPU_BLEND_FACTOR_CONSTANT:
+		return WGPUBlendFactor_Constant;
+	case KORE_WEBGPU_BLEND_FACTOR_ONE_MINUS_CONSTANT:
+		return WGPUBlendFactor_OneMinusConstant;
+	}
+
+	assert(false);
+	return WGPUBlendFactor_One;
+}
+
+static WGPUBlendOperation convert_blend_operation(kore_webgpu_blend_operation op) {
+	switch (op) {
+	case KORE_WEBGPU_BLEND_OPERATION_ADD:
+		return WGPUBlendOperation_Add;
+	case KORE_WEBGPU_BLEND_OPERATION_SUBTRACT:
+		return WGPUBlendOperation_Subtract;
+	case KORE_WEBGPU_BLEND_OPERATION_REVERSE_SUBTRACT:
+		return WGPUBlendOperation_ReverseSubtract;
+	case KORE_WEBGPU_BLEND_OPERATION_MIN:
+		return WGPUBlendOperation_Min;
+	case KORE_WEBGPU_BLEND_OPERATION_MAX:
+		return WGPUBlendOperation_Max;
+	}
+
+	assert(false);
+	return WGPUBlendOperation_Add;
+}
+
 void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters,
                                       const WGPUBindGroupLayout *bind_group_layouts, uint32_t bind_group_layouts_count) {
 	WGPUShaderModuleWGSLDescriptor vertex_shader_module_wgsl_descriptor = {
@@ -116,15 +168,15 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 		WGPUBlendState blend_state = {
 		    .color =
 		        {
-		            .operation = WGPUBlendOperation_Add,
-		            .srcFactor = WGPUBlendFactor_One,
-		            .dstFactor = WGPUBlendFactor_Zero,
+		            .operation = convert_blend_operation(parameters->fragment.targets[target_index].blend.color.operation),
+		            .srcFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.color.src_factor),
+		            .dstFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.color.dst_factor),
 		        },
 		    .alpha =
 		        {
-		            .operation = WGPUBlendOperation_Add,
-		            .srcFactor = WGPUBlendFactor_One,
-		            .dstFactor = WGPUBlendFactor_Zero,
+		            .operation = convert_blend_operation(parameters->fragment.targets[target_index].blend.alpha.operation),
+		            .srcFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.alpha.src_factor),
+		            .dstFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.alpha.dst_factor),
 		        },
 		};
 		color_target_states[target_index].blend = &blend_state;
