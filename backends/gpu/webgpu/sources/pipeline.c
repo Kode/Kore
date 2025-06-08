@@ -163,7 +163,7 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 
 	for (uint32_t target_index = 0; target_index < parameters->fragment.targets_count; ++target_index) {
 		color_target_states[target_index] = (WGPUColorTargetState){
-		    .format    = kore_webgpu_convert_texture_format(parameters->fragment.targets[target_index].format),
+		    .format    = kore_webgpu_convert_texture_format_to_webgpu(parameters->fragment.targets[target_index].format),
 		    .writeMask = WGPUColorWriteMask_All,
 		};
 
@@ -255,7 +255,7 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 
 	if (parameters->depth_stencil.format != KORE_GPU_TEXTURE_FORMAT_UNDEFINED) {
 		WGPUDepthStencilState depth_stencil_state = {
-		    .format            = kore_webgpu_convert_texture_format(parameters->depth_stencil.format),
+		    .format            = kore_webgpu_convert_texture_format_to_webgpu(parameters->depth_stencil.format),
 		    .depthWriteEnabled = parameters->depth_stencil.depth_write_enabled,
 		    .depthCompare      = convert_compare(parameters->depth_stencil.depth_compare),
 		};

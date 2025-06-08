@@ -19,6 +19,7 @@
 static WGPUDevice   wgpu_device;
 static WGPUInstance wgpu_instance;
 static WGPUAdapter  wgpu_adapter;
+static kore_gpu_texture_format framebuffer_format;
 
 static void error_callback(WGPUErrorType errorType, const char *message, void *userdata) {
 	kore_log(KORE_LOG_LEVEL_ERROR, "%d: %s", errorType, message);
@@ -47,9 +48,25 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	WGPUSurfaceCapabilities capabilities = {0};
 	wgpuSurfaceGetCapabilities(device->webgpu.surface, wgpu_adapter, &capabilities);
 
+	bool rgba8_found = false;
+	for (size_t format_index = 0; format_index < capabilities.formatCount; ++format_index) {
+		if (capabilities.formats[format_index] == WGPUTextureFormat_RGBA8Unorm) {
+			rgba8_found = true;
+			break;
+		}
+	}
+
+	if (rgba8_found) {
+		framebuffer_format = KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
+	}
+	else {
+		kore_log(KORE_LOG_LEVEL_WARNING, "Can not use RGBA8Unorm format for the framebuffer, direct writes to the framebuffer might not be possible.");
+		framebuffer_format = kore_webgpu_convert_texture_format_to_kore(capabilities.formats[0]);
+	}
+
 	WGPUSurfaceConfiguration surface_configuration = {
 	    .device      = wgpu_device,
-	    .format      = capabilities.formats[0],
+	    .format      = kore_webgpu_convert_texture_format_to_webgpu(framebuffer_format),
 	    .usage       = WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_CopySrc | WGPUTextureUsage_CopyDst,
 	    .alphaMode   = WGPUCompositeAlphaMode_Auto,
 	    .width       = kore_window_width(0),
@@ -177,7 +194,7 @@ void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	WGPUTextureDescriptor texture_descriptor = {
 	    .sampleCount = 1,
-	    .format      = kore_webgpu_convert_texture_format(parameters->format),
+	    .format      = kore_webgpu_convert_texture_format_to_webgpu(parameters->format),
 	    .usage       = usage,
 	    .size =
 	        {
@@ -210,7 +227,7 @@ kore_gpu_texture *kore_webgpu_device_get_framebuffer(kore_gpu_device *device) {
 }
 
 kore_gpu_texture_format kore_webgpu_device_framebuffer_format(kore_gpu_device *device) {
-	return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
+	return framebuffer_format;
 }
 
 void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {

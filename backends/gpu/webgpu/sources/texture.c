@@ -8,7 +8,7 @@ void kore_webgpu_texture_set_name(kore_gpu_texture *texture, const char *name) {
 
 void kore_webgpu_texture_destroy(kore_gpu_texture *texture) {}
 
-WGPUTextureFormat kore_webgpu_convert_texture_format(kore_gpu_texture_format format) {
+WGPUTextureFormat kore_webgpu_convert_texture_format_to_webgpu(kore_gpu_texture_format format) {
 	switch (format) {
 	case KORE_GPU_TEXTURE_FORMAT_UNDEFINED:
 		assert(false);
@@ -101,4 +101,205 @@ WGPUTextureFormat kore_webgpu_convert_texture_format(kore_gpu_texture_format for
 
 	assert(false);
 	return WGPUTextureFormat_BGRA8Unorm;
+}
+
+kore_gpu_texture_format kore_webgpu_convert_texture_format_to_kore(WGPUTextureFormat format) {
+	switch (format) {
+	case WGPUTextureFormat_Undefined:
+		assert(false);
+		return KORE_GPU_TEXTURE_FORMAT_UNDEFINED;
+    case WGPUTextureFormat_R8Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_R8Snorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_SNORM;
+    case WGPUTextureFormat_R8Uint:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UINT;
+    case WGPUTextureFormat_R8Sint:
+		return KORE_GPU_TEXTURE_FORMAT_R8_SINT;
+    case WGPUTextureFormat_R16Uint:
+		return KORE_GPU_TEXTURE_FORMAT_R16_UINT;
+    case WGPUTextureFormat_R16Sint:
+		return KORE_GPU_TEXTURE_FORMAT_R16_SINT;
+    case WGPUTextureFormat_R16Float:
+		return KORE_GPU_TEXTURE_FORMAT_R16_FLOAT;
+    case WGPUTextureFormat_RG8Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_RG8_UNORM;
+    case WGPUTextureFormat_RG8Snorm:
+		return KORE_GPU_TEXTURE_FORMAT_RG8_SNORM;
+    case WGPUTextureFormat_RG8Uint:
+		return KORE_GPU_TEXTURE_FORMAT_RG8_UINT;
+    case WGPUTextureFormat_RG8Sint:
+		return KORE_GPU_TEXTURE_FORMAT_RG8_SINT;
+    case WGPUTextureFormat_R32Float:
+		return KORE_GPU_TEXTURE_FORMAT_R32_FLOAT;
+    case WGPUTextureFormat_R32Uint:
+		return KORE_GPU_TEXTURE_FORMAT_R32_UINT;
+    case WGPUTextureFormat_R32Sint:
+		return KORE_GPU_TEXTURE_FORMAT_R32_SINT;
+    case WGPUTextureFormat_RG16Uint:
+		return KORE_GPU_TEXTURE_FORMAT_RG16_UINT;
+    case WGPUTextureFormat_RG16Sint:
+		return KORE_GPU_TEXTURE_FORMAT_RG16_SINT;
+    case WGPUTextureFormat_RG16Float:
+		return KORE_GPU_TEXTURE_FORMAT_RG16_FLOAT;
+    case WGPUTextureFormat_RGBA8Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
+    case WGPUTextureFormat_RGBA8UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM_SRGB;
+    case WGPUTextureFormat_RGBA8Snorm:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA8_SNORM;
+    case WGPUTextureFormat_RGBA8Uint:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA8_UINT;
+    case WGPUTextureFormat_RGBA8Sint:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA8_SINT;
+    case WGPUTextureFormat_BGRA8Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM;
+    case WGPUTextureFormat_BGRA8UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM_SRGB;
+    case WGPUTextureFormat_RGB10A2Uint:
+		return KORE_GPU_TEXTURE_FORMAT_RGB10A2_UINT;
+    case WGPUTextureFormat_RGB10A2Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_RGB10A2_UNORM;
+    case WGPUTextureFormat_RG11B10Ufloat:
+		return KORE_GPU_TEXTURE_FORMAT_RG11B10U_FLOAT;
+    case WGPUTextureFormat_RGB9E5Ufloat:
+		return KORE_GPU_TEXTURE_FORMAT_RGB9E5U_FLOAT;
+    case WGPUTextureFormat_RG32Float:
+		return KORE_GPU_TEXTURE_FORMAT_RG32_FLOAT;
+    case WGPUTextureFormat_RG32Uint:
+		return KORE_GPU_TEXTURE_FORMAT_RG32_UINT;
+    case WGPUTextureFormat_RG32Sint:
+		return KORE_GPU_TEXTURE_FORMAT_RG32_SINT;
+    case WGPUTextureFormat_RGBA16Uint:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA16_UINT;
+    case WGPUTextureFormat_RGBA16Sint:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA16_SINT;
+    case WGPUTextureFormat_RGBA16Float:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA16_FLOAT;
+    case WGPUTextureFormat_RGBA32Float:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA32_FLOAT;
+    case WGPUTextureFormat_RGBA32Uint:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA32_UINT;
+    case WGPUTextureFormat_RGBA32Sint:
+		return KORE_GPU_TEXTURE_FORMAT_RGBA32_SINT;
+    //case WGPUTextureFormat_Stencil8:
+	//	return KORE_GPU_TEXTURE_FORMAT_STENCIL8;
+    case WGPUTextureFormat_Depth16Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM;
+    case WGPUTextureFormat_Depth24Plus:
+		return KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_NOTHING8;
+    case WGPUTextureFormat_Depth24PlusStencil8:
+		return KORE_GPU_TEXTURE_FORMAT_DEPTH24PLUS_STENCIL8;
+    case WGPUTextureFormat_Depth32Float:
+		return KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT;
+    case WGPUTextureFormat_Depth32FloatStencil8:
+		return KORE_GPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8_NOTHING24;
+    /*case WGPUTextureFormat_BC1RGBAUnorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC1RGBAUnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC2RGBAUnorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC2RGBAUnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC3RGBAUnorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC3RGBAUnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC4RUnorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC4RSnorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC5RGUnorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC5RGSnorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC6HRGBUfloat:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC6HRGBFloat:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC7RGBAUnorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ETC2RGB8Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ETC2RGB8A1Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ETC2RGBA8Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_EACR11Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_EACR11Snorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_EACRG11Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_EACRG11Snorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC4x4Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC4x4UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC5x4Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC5x4UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC5x5Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC5x5UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC6x5Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC6x5UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC6x6Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC6x6UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC8x5Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC8x5UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC8x6Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC8x6UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC8x8Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC8x8UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC10x5Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC10x5UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC10x6Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC10x6UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC10x8Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC10x8UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC10x10Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC10x10UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC12x10Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC12x10UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC12x12Unorm:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;
+    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+		return KORE_GPU_TEXTURE_FORMAT_R8_UNORM;*/
+	default:
+		assert(false);
+		return KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM;
+	}
 }
