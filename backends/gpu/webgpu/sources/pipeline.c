@@ -159,27 +159,39 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 
 	WGPUColorTargetState color_target_states[8];
 
+	WGPUBlendState blend_states[8];
+
 	for (uint32_t target_index = 0; target_index < parameters->fragment.targets_count; ++target_index) {
 		color_target_states[target_index] = (WGPUColorTargetState){
 		    .format    = kore_webgpu_convert_texture_format(parameters->fragment.targets[target_index].format),
 		    .writeMask = WGPUColorWriteMask_All,
 		};
 
-		WGPUBlendState blend_state = {
-		    .color =
-		        {
-		            .operation = convert_blend_operation(parameters->fragment.targets[target_index].blend.color.operation),
-		            .srcFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.color.src_factor),
-		            .dstFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.color.dst_factor),
-		        },
-		    .alpha =
-		        {
-		            .operation = convert_blend_operation(parameters->fragment.targets[target_index].blend.alpha.operation),
-		            .srcFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.alpha.src_factor),
-		            .dstFactor = convert_blend_factor(parameters->fragment.targets[target_index].blend.alpha.dst_factor),
-		        },
-		};
-		color_target_states[target_index].blend = &blend_state;
+		const kore_webgpu_blend_state *blend = &parameters->fragment.targets[target_index].blend;
+
+		if (blend->color.src_factor == KORE_WEBGPU_BLEND_FACTOR_ONE && blend->color.dst_factor == KORE_WEBGPU_BLEND_FACTOR_ZERO && blend->color.operation == KORE_WEBGPU_BLEND_OPERATION_ADD
+			&& blend->alpha.src_factor == KORE_WEBGPU_BLEND_FACTOR_ONE && blend->alpha.dst_factor == KORE_WEBGPU_BLEND_FACTOR_ZERO && blend->alpha.operation == KORE_WEBGPU_BLEND_OPERATION_ADD
+		) {
+			// disabled
+		}
+		else {
+			blend_states[target_index] = (WGPUBlendState){
+				.color =
+					{
+						.operation = convert_blend_operation(blend->color.operation),
+						.srcFactor = convert_blend_factor(blend->color.src_factor),
+						.dstFactor = convert_blend_factor(blend->color.dst_factor),
+					},
+				.alpha =
+					{
+						.operation = convert_blend_operation(blend->alpha.operation),
+						.srcFactor = convert_blend_factor(blend->alpha.src_factor),
+						.dstFactor = convert_blend_factor(blend->alpha.dst_factor),
+					},
+			};
+
+			color_target_states[target_index].blend = &blend_states[target_index];
+		}
 	}
 
 	WGPUPipelineLayoutDescriptor pipeline_layout_descriptor = {
