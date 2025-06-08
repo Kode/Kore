@@ -16,9 +16,9 @@
 
 #include <assert.h>
 
-static WGPUDevice   wgpu_device;
-static WGPUInstance wgpu_instance;
-static WGPUAdapter  wgpu_adapter;
+static WGPUDevice              wgpu_device;
+static WGPUInstance            wgpu_instance;
+static WGPUAdapter             wgpu_adapter;
 static kore_gpu_texture_format framebuffer_format;
 
 static void error_callback(WGPUErrorType errorType, const char *message, void *userdata) {
