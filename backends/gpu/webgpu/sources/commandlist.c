@@ -59,11 +59,17 @@ static WGPUTextureViewDimension convert_dimension(kore_gpu_texture_view_dimensio
 
 void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 
-void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
+static void end_compute(kore_gpu_command_list *list) {
 	if (list->webgpu.compute_pass_encoder != NULL) {
 		wgpuComputePassEncoderEnd(list->webgpu.compute_pass_encoder);
+		list->webgpu.compute_pipeline = NULL;
+		list->webgpu.compute_bind_groups_count = 0;
 		list->webgpu.compute_pass_encoder = NULL;
 	}
+}
+
+void kore_webgpu_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
+	end_compute(list);
 
 	WGPUTextureView               texture_views[8];
 	WGPURenderPassColorAttachment color_attachments[8];
@@ -166,13 +172,74 @@ void kore_webgpu_command_list_set_bind_group(kore_gpu_command_list *list, uint32
 	else {
 		assert(list->webgpu.compute_pass_encoder != NULL);
 		wgpuComputePassEncoderSetBindGroup(list->webgpu.compute_pass_encoder, index, set->bind_group, dynamic_count, dynamic_offsets);
+
+		kore_webgpu_compute_bind_group *group = &list->webgpu.compute_bind_groups[list->webgpu.compute_bind_groups_count];
+		group->index = index;
+		group->bind_group = set->bind_group;
+		group->dynamic_count = dynamic_count;
+		memcpy(group->dynamic_offsets, dynamic_offsets, dynamic_count * sizeof(uint32_t));
+
+		++list->webgpu.compute_bind_groups_count;
 	}
 }
 
-void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {}
+static void root_constants_map_async_callback(WGPUBufferMapAsyncStatus status, void *userdata) {
+	kore_gpu_command_list *list = (kore_gpu_command_list *)userdata;
+	list->webgpu.root_constants_mapped = true;
+}
+
+void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {
+	if (list->webgpu.root_constants_offset + data_size > KORE_WEBGPU_ROOT_CONSTANTS_SIZE) {
+		list->webgpu.root_constants_offset = 0;
+	}
+
+	list->webgpu.root_constants_mapped = false;
+
+	wgpuBufferMapAsync(list->webgpu.root_constants_cpu_buffer, WGPUMapMode_Write, list->webgpu.root_constants_offset, data_size, root_constants_map_async_callback, list);
+	while (!list->webgpu.root_constants_mapped) {
+		emscripten_sleep(0);
+	}
+
+	void *root_constants_data = wgpuBufferGetMappedRange(list->webgpu.root_constants_cpu_buffer, list->webgpu.root_constants_offset, data_size);
+
+	memcpy(root_constants_data, data, data_size);
+
+	wgpuBufferUnmap(list->webgpu.root_constants_cpu_buffer);
+
+	if (list->webgpu.compute_pass_encoder != NULL) {
+		wgpuComputePassEncoderEnd(list->webgpu.compute_pass_encoder);
+		list->webgpu.compute_pass_encoder = NULL;
+	}
+
+	wgpuCommandEncoderCopyBufferToBuffer(list->webgpu.command_encoder, list->webgpu.root_constants_cpu_buffer,
+	                                     list->webgpu.root_constants_offset, list->webgpu.root_constants_gpu_buffer, list->webgpu.root_constants_offset, data_size);
+
+	if (list->webgpu.render_pass_encoder != NULL) {
+		wgpuRenderPassEncoderSetBindGroup(list->webgpu.render_pass_encoder, table_index, list->webgpu.root_constants_bind_group, 1, &list->webgpu.root_constants_offset);
+	}
+	else {
+		WGPUComputePassDescriptor compute_pass_descriptor = {0};
+		list->webgpu.compute_pass_encoder                 = wgpuCommandEncoderBeginComputePass(list->webgpu.command_encoder, &compute_pass_descriptor);
+
+		if (list->webgpu.compute_pipeline != NULL) {
+			wgpuComputePassEncoderSetPipeline(list->webgpu.compute_pass_encoder, list->webgpu.compute_pipeline);
+		}
+
+		for (uint32_t bind_group_index = 0; bind_group_index < list->webgpu.compute_bind_groups_count; ++bind_group_index) {
+			kore_webgpu_compute_bind_group *group = &list->webgpu.compute_bind_groups[bind_group_index];
+			wgpuComputePassEncoderSetBindGroup(list->webgpu.compute_pass_encoder, group->index, group->bind_group, group->dynamic_count, group->dynamic_offsets);
+		}
+
+		wgpuComputePassEncoderSetBindGroup(list->webgpu.compute_pass_encoder, table_index, list->webgpu.root_constants_bind_group, 1, &list->webgpu.root_constants_offset);
+	}
+
+	list->webgpu.root_constants_offset += 256;
+}
 
 void kore_webgpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset, kore_gpu_buffer *destination,
                                                     uint64_t destination_offset, uint64_t size) {
+	end_compute(list);
+	
 	wgpuCommandEncoderCopyBufferToBuffer(list->webgpu.command_encoder, source->webgpu.has_copy_buffer ? source->webgpu.copy_buffer : source->webgpu.buffer,
 	                                     source_offset, destination->webgpu.buffer, destination_offset, size);
 }
@@ -194,6 +261,8 @@ static WGPUTextureAspect convert_texture_aspect(kore_gpu_texture_aspect aspect) 
 void kore_webgpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
                                                      const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {
+	end_compute(list);
+
 	WGPUImageCopyBuffer copy_buffer = {
 	    .layout =
 	        {
@@ -228,6 +297,8 @@ void kore_webgpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
 void kore_webgpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                      const kore_gpu_image_copy_buffer *destination, uint32_t width, uint32_t height,
                                                      uint32_t depth_or_array_layers) {
+	end_compute(list);
+
 	WGPUImageCopyTexture copy_texture = {
 	    .texture  = source->texture->webgpu.texture,
 	    .mipLevel = source->mip_level,
@@ -262,6 +333,8 @@ void kore_webgpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
 void kore_webgpu_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
                                                       const kore_gpu_image_copy_texture *destination, uint32_t width, uint32_t height,
                                                       uint32_t depth_or_array_layers) {
+	end_compute(list);
+
 	WGPUImageCopyTexture source_texture = {
 	    .texture  = source->texture->webgpu.texture,
 	    .mipLevel = source->mip_level,
@@ -300,8 +373,10 @@ void kore_webgpu_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu
 void kore_webgpu_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_webgpu_compute_pipeline *pipeline) {
 	WGPUComputePassDescriptor compute_pass_descriptor = {0};
 	list->webgpu.compute_pass_encoder                 = wgpuCommandEncoderBeginComputePass(list->webgpu.command_encoder, &compute_pass_descriptor);
+	list->webgpu.compute_bind_groups_count = 0;
 
 	wgpuComputePassEncoderSetPipeline(list->webgpu.compute_pass_encoder, pipeline->compute_pipeline);
+	list->webgpu.compute_pipeline = pipeline->compute_pipeline;
 }
 
 void kore_webgpu_command_list_compute(kore_gpu_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z) {

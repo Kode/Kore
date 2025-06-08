@@ -162,11 +162,49 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	buffer->webgpu.size = align_pow2(parameters->size, 4);
 }
 
+extern WGPUBindGroupLayout root_constants_set_layout;
+
 void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
 	WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
 	list->webgpu.command_encoder                            = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
 	list->webgpu.render_pass_encoder                        = NULL;
 	list->webgpu.compute_pass_encoder                       = NULL;
+
+	WGPUBufferDescriptor cpu_buffer_descriptor = {
+	    .size             = KORE_WEBGPU_ROOT_CONSTANTS_SIZE,
+	    .usage            = WGPUBufferUsage_MapWrite | WGPUBufferUsage_CopySrc,
+	    .mappedAtCreation = false,
+	};
+
+	list->webgpu.root_constants_cpu_buffer = wgpuDeviceCreateBuffer(device->webgpu.device, &cpu_buffer_descriptor);
+
+	WGPUBufferDescriptor gpu_buffer_descriptor = {
+	    .size             = KORE_WEBGPU_ROOT_CONSTANTS_SIZE,
+	    .usage            = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform,
+	    .mappedAtCreation = false,
+	};
+
+	list->webgpu.root_constants_gpu_buffer = wgpuDeviceCreateBuffer(device->webgpu.device, &gpu_buffer_descriptor);
+
+	const WGPUBindGroupEntry entries[] = {
+		{
+			.binding = 0,
+			.buffer  = list->webgpu.root_constants_gpu_buffer,
+			.offset  = 0,
+			.size    = 256,
+		},
+	};
+
+	WGPUBindGroupDescriptor bind_group_descriptor = {
+		.layout     = root_constants_set_layout,
+		.entries    = entries,
+		.entryCount = 1,
+	};
+	list->webgpu.root_constants_bind_group = wgpuDeviceCreateBindGroup(device->webgpu.device, &bind_group_descriptor);
+
+	list->webgpu.root_constants_offset = 0;
+
+	list->webgpu.compute_pipeline = NULL;
 }
 
 void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
@@ -233,6 +271,8 @@ kore_gpu_texture_format kore_webgpu_device_framebuffer_format(kore_gpu_device *d
 void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
 	if (list->webgpu.compute_pass_encoder != NULL) {
 		wgpuComputePassEncoderEnd(list->webgpu.compute_pass_encoder);
+		list->webgpu.compute_pipeline = NULL;
+		list->webgpu.compute_bind_groups_count = 0;
 		list->webgpu.compute_pass_encoder = NULL;
 	}
 
