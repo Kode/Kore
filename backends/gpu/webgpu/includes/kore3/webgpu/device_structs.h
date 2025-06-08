@@ -10,9 +10,9 @@ extern "C" {
 #define KORE_WEBGPU_FRAME_COUNT 2
 
 typedef struct kore_webgpu_device {
-	WGPUDevice       device;
-	WGPUQueue        queue;
-	WGPUSurface      surface;
+	WGPUDevice  device;
+	WGPUQueue   queue;
+	WGPUSurface surface;
 } kore_webgpu_device;
 
 typedef struct kore_webgpu_query_set {
