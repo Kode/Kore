@@ -62,9 +62,9 @@ void kore_webgpu_command_list_destroy(kore_gpu_command_list *list) {}
 static void end_compute(kore_gpu_command_list *list) {
 	if (list->webgpu.compute_pass_encoder != NULL) {
 		wgpuComputePassEncoderEnd(list->webgpu.compute_pass_encoder);
-		list->webgpu.compute_pipeline = NULL;
+		list->webgpu.compute_pipeline          = NULL;
 		list->webgpu.compute_bind_groups_count = 0;
-		list->webgpu.compute_pass_encoder = NULL;
+		list->webgpu.compute_pass_encoder      = NULL;
 	}
 }
 
@@ -174,9 +174,9 @@ void kore_webgpu_command_list_set_bind_group(kore_gpu_command_list *list, uint32
 		wgpuComputePassEncoderSetBindGroup(list->webgpu.compute_pass_encoder, index, set->bind_group, dynamic_count, dynamic_offsets);
 
 		kore_webgpu_compute_bind_group *group = &list->webgpu.compute_bind_groups[list->webgpu.compute_bind_groups_count];
-		group->index = index;
-		group->bind_group = set->bind_group;
-		group->dynamic_count = dynamic_count;
+		group->index                          = index;
+		group->bind_group                     = set->bind_group;
+		group->dynamic_count                  = dynamic_count;
 		memcpy(group->dynamic_offsets, dynamic_offsets, dynamic_count * sizeof(uint32_t));
 
 		++list->webgpu.compute_bind_groups_count;
@@ -187,10 +187,12 @@ void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, ui
 	memcpy(&list->webgpu.root_constants_data[0], data, data_size);
 
 	if (list->webgpu.render_pass_encoder != NULL) {
-		wgpuRenderPassEncoderSetBindGroup(list->webgpu.render_pass_encoder, table_index, list->webgpu.root_constants_bind_group, 1, &list->webgpu.root_constants_offset);
+		wgpuRenderPassEncoderSetBindGroup(list->webgpu.render_pass_encoder, table_index, list->webgpu.root_constants_bind_group, 1,
+		                                  &list->webgpu.root_constants_offset);
 	}
 	else {
-		wgpuComputePassEncoderSetBindGroup(list->webgpu.compute_pass_encoder, table_index, list->webgpu.root_constants_bind_group, 1, &list->webgpu.root_constants_offset);
+		wgpuComputePassEncoderSetBindGroup(list->webgpu.compute_pass_encoder, table_index, list->webgpu.root_constants_bind_group, 1,
+		                                   &list->webgpu.root_constants_offset);
 	}
 
 	list->webgpu.root_constants_written = true;
@@ -199,7 +201,7 @@ void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, ui
 void kore_webgpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset, kore_gpu_buffer *destination,
                                                     uint64_t destination_offset, uint64_t size) {
 	end_compute(list);
-	
+
 	wgpuCommandEncoderCopyBufferToBuffer(list->webgpu.command_encoder, source->webgpu.has_copy_buffer ? source->webgpu.copy_buffer : source->webgpu.buffer,
 	                                     source_offset, destination->webgpu.buffer, destination_offset, size);
 }
@@ -333,7 +335,7 @@ void kore_webgpu_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu
 void kore_webgpu_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_webgpu_compute_pipeline *pipeline) {
 	WGPUComputePassDescriptor compute_pass_descriptor = {0};
 	list->webgpu.compute_pass_encoder                 = wgpuCommandEncoderBeginComputePass(list->webgpu.command_encoder, &compute_pass_descriptor);
-	list->webgpu.compute_bind_groups_count = 0;
+	list->webgpu.compute_bind_groups_count            = 0;
 
 	wgpuComputePassEncoderSetPipeline(list->webgpu.compute_pass_encoder, pipeline->compute_pipeline);
 	list->webgpu.compute_pipeline = pipeline->compute_pipeline;

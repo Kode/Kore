@@ -18,10 +18,10 @@ struct kore_gpu_query_set;
 #define KORE_WEBGPU_ROOT_CONSTANTS_SIZE 4096
 
 typedef struct kore_webgpu_compute_bind_group {
-	uint32_t index;
+	uint32_t      index;
 	WGPUBindGroup bind_group;
-	uint32_t dynamic_count;
-	uint32_t dynamic_offsets[64];
+	uint32_t      dynamic_count;
+	uint32_t      dynamic_offsets[64];
 } kore_webgpu_compute_bind_group;
 
 typedef struct kore_webgpu_command_list {
@@ -35,9 +35,9 @@ typedef struct kore_webgpu_command_list {
 	uint32_t      root_constants_offset;
 	bool          root_constants_written;
 
-	WGPUComputePipeline compute_pipeline;
+	WGPUComputePipeline            compute_pipeline;
 	kore_webgpu_compute_bind_group compute_bind_groups[16];
-	uint32_t compute_bind_groups_count;
+	uint32_t                       compute_bind_groups_count;
 } kore_webgpu_command_list;
 
 #ifdef __cplusplus

@@ -170,7 +170,6 @@ void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	list->webgpu.render_pass_encoder                        = NULL;
 	list->webgpu.compute_pass_encoder                       = NULL;
 
-
 	WGPUBufferDescriptor buffer_descriptor = {
 	    .size             = KORE_WEBGPU_ROOT_CONSTANTS_SIZE,
 	    .usage            = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform,
@@ -180,18 +179,18 @@ void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	list->webgpu.root_constants_buffer = wgpuDeviceCreateBuffer(device->webgpu.device, &buffer_descriptor);
 
 	const WGPUBindGroupEntry entries[] = {
-		{
-			.binding = 0,
-			.buffer  = list->webgpu.root_constants_buffer,
-			.offset  = 0,
-			.size    = 256,
-		},
+	    {
+	        .binding = 0,
+	        .buffer  = list->webgpu.root_constants_buffer,
+	        .offset  = 0,
+	        .size    = 256,
+	    },
 	};
 
 	WGPUBindGroupDescriptor bind_group_descriptor = {
-		.layout     = root_constants_set_layout,
-		.entries    = entries,
-		.entryCount = 1,
+	    .layout     = root_constants_set_layout,
+	    .entries    = entries,
+	    .entryCount = 1,
 	};
 	list->webgpu.root_constants_bind_group = wgpuDeviceCreateBindGroup(device->webgpu.device, &bind_group_descriptor);
 
@@ -265,13 +264,14 @@ kore_gpu_texture_format kore_webgpu_device_framebuffer_format(kore_gpu_device *d
 void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
 	if (list->webgpu.compute_pass_encoder != NULL) {
 		wgpuComputePassEncoderEnd(list->webgpu.compute_pass_encoder);
-		list->webgpu.compute_pipeline = NULL;
+		list->webgpu.compute_pipeline          = NULL;
 		list->webgpu.compute_bind_groups_count = 0;
-		list->webgpu.compute_pass_encoder = NULL;
+		list->webgpu.compute_pass_encoder      = NULL;
 	}
 
 	if (list->webgpu.root_constants_written) {
-		wgpuQueueWriteBuffer(device->webgpu.queue, list->webgpu.root_constants_buffer, list->webgpu.root_constants_offset, &list->webgpu.root_constants_data[0], 256);
+		wgpuQueueWriteBuffer(device->webgpu.queue, list->webgpu.root_constants_buffer, list->webgpu.root_constants_offset, &list->webgpu.root_constants_data[0],
+		                     256);
 
 		list->webgpu.root_constants_offset += 256;
 		if (list->webgpu.root_constants_offset + 256 > KORE_WEBGPU_ROOT_CONSTANTS_SIZE) {
