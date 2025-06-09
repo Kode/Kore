@@ -29,11 +29,10 @@ typedef struct kore_webgpu_command_list {
 	WGPURenderPassEncoder  render_pass_encoder;
 	WGPUComputePassEncoder compute_pass_encoder;
 
-	uint8_t       root_constants_data[256];
+	uint8_t       root_constants_data[KORE_WEBGPU_ROOT_CONSTANTS_SIZE];
 	WGPUBuffer    root_constants_buffer;
 	WGPUBindGroup root_constants_bind_group;
 	uint32_t      root_constants_offset;
-	bool          root_constants_written;
 
 	WGPUComputePipeline            compute_pipeline;
 	kore_webgpu_compute_bind_group compute_bind_groups[16];

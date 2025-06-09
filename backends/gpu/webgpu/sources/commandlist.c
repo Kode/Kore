@@ -184,7 +184,10 @@ void kore_webgpu_command_list_set_bind_group(kore_gpu_command_list *list, uint32
 }
 
 void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {
-	memcpy(&list->webgpu.root_constants_data[0], data, data_size);
+	assert(data_size <= 256);
+	assert(list->webgpu.root_constants_offset + 256 <= KORE_WEBGPU_ROOT_CONSTANTS_SIZE);
+
+	memcpy(&list->webgpu.root_constants_data[list->webgpu.root_constants_offset], data, data_size);
 
 	if (list->webgpu.render_pass_encoder != NULL) {
 		wgpuRenderPassEncoderSetBindGroup(list->webgpu.render_pass_encoder, table_index, list->webgpu.root_constants_bind_group, 1,
@@ -195,7 +198,7 @@ void kore_webgpu_command_list_set_root_constants(kore_gpu_command_list *list, ui
 		                                   &list->webgpu.root_constants_offset);
 	}
 
-	list->webgpu.root_constants_written = true;
+	list->webgpu.root_constants_offset += 256;
 }
 
 void kore_webgpu_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, kore_gpu_buffer *source, uint64_t source_offset, kore_gpu_buffer *destination,
