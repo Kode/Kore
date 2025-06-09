@@ -131,6 +131,38 @@ static WGPUBlendOperation convert_blend_operation(kore_webgpu_blend_operation op
 	return WGPUBlendOperation_Add;
 }
 
+const char *kore_webgpu_prepare_shader(kore_gpu_device *device, const char *code, size_t size, bool uses_framebuffer_texture_format) {
+	if (!uses_framebuffer_texture_format) {
+		return code;
+	}
+
+	char *new_code = malloc(size + 1);
+	memcpy(new_code, code, size + 1);
+
+	char format[64];
+	switch (kore_webgpu_device_framebuffer_format(device)) {
+	case KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM:
+		strcpy(format, "rgba8unorm");
+		break;
+	default:
+		strcpy(format, "error_format");
+		break;
+	}
+
+	for (size_t index = 0; index < size; ++index) {
+		if (code[index] == '$') {
+			size_t format_index = 0;
+			while (format[format_index] != 0) {
+				new_code[index] = format[format_index];
+				++index;
+				++format_index;
+			}
+		}
+	}
+
+	return new_code;
+}
+
 void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters,
                                       const WGPUBindGroupLayout *bind_group_layouts, uint32_t bind_group_layouts_count) {
 	WGPUShaderModuleWGSLDescriptor vertex_shader_module_wgsl_descriptor = {

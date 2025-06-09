@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+const char *kore_webgpu_prepare_shader(kore_gpu_device *device, const char *code, size_t size, bool uses_framebuffer_texture_format);
+
 void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters,
                                       const WGPUBindGroupLayout *bind_group_layouts, uint32_t bind_group_layouts_count);
 
