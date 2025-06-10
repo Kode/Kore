@@ -194,7 +194,7 @@ void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	};
 	list->webgpu.root_constants_bind_group = wgpuDeviceCreateBindGroup(device->webgpu.device, &bind_group_descriptor);
 
-	list->webgpu.root_constants_offset  = 0;
+	list->webgpu.root_constants_offset = 0;
 
 	list->webgpu.compute_pipeline = NULL;
 }
