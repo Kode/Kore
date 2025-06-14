@@ -836,13 +836,15 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 					glBindBuffer(buffer_data->buffer->buffer_type, buffer_data->buffer->buffer);
 
 					for (uint32_t attribute_index = 0; attribute_index < vertex_state->buffers[buffer_index].attributes_count; ++attribute_index) {
+						kore_opengl_vertex_attribute *attribute = &vertex_state->buffers[buffer_index].attributes[attribute_index];
+
 						glEnableVertexAttribArray(input_index);
 
-						glVertexAttribPointer(input_index, vertex_format_size(vertex_state->buffers[buffer_index].attributes[attribute_index].format),
-						                      vertex_format_type(vertex_state->buffers[buffer_index].attributes[attribute_index].format),
-						                      vertex_format_normalized(vertex_state->buffers[buffer_index].attributes[attribute_index].format),
-						                      (GLsizei)vertex_state->buffers[buffer_index].array_stride,
-						                      (void *)(int64_t)vertex_state->buffers[buffer_index].attributes[attribute_index].offset);
+						glVertexAttribPointer(input_index, vertex_format_size(attribute->format), vertex_format_type(attribute->format),
+						                      vertex_format_normalized(attribute->format), (GLsizei)vertex_state->buffers[buffer_index].array_stride,
+						                      (void *)(int64_t)attribute->offset);
+
+						glVertexAttribDivisor(input_index, vertex_state->buffers[buffer_index].step_mode == KORE_OPENGL_VERTEX_STEP_MODE_INSTANCE ? 1 : 0);
 
 						kore_opengl_check_errors();
 
@@ -859,7 +861,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			void *start =
 			    index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? (void *)(data->first_index * sizeof(uint16_t)) : (void *)(data->first_index * sizeof(uint32_t));
-			glDrawElements(GL_TRIANGLES, data->index_count, index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, start);
+			glDrawElementsInstanced(GL_TRIANGLES, data->index_count, index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, start,
+			                        data->instance_count);
 
 			memset(vertex_buffer_set, 0, sizeof(vertex_buffer_set));
 
