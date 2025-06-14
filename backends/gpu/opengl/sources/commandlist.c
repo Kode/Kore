@@ -24,6 +24,7 @@ typedef enum command_type {
 	COMMAND_COPY_TEXTURE_TO_TEXTURE,
 	COMMAND_SET_UNIFORM_BUFFER,
 	COMMAND_SET_TEXTURE,
+	COMMAND_SET_SAMPLER,
 	COMMAND_PRESENT,
 	COMMAND_BEGIN_RENDER_PASS,
 	COMMAND_END_RENDER_PASS,
@@ -89,6 +90,10 @@ typedef struct set_uniform_buffer {
 typedef struct set_texture {
 	kore_gpu_texture_view view;
 } set_texture;
+
+typedef struct set_sampler {
+	kore_gpu_sampler sampler;
+} set_sampler;
 
 typedef struct begin_render_pass {
 	kore_gpu_render_pass_parameters parameters;
@@ -197,9 +202,6 @@ void kore_opengl_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t
 	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
 	list->opengl.commands_offset += c->size;
 }
-
-void kore_opengl_command_list_set_descriptor_table(kore_gpu_command_list *list, uint32_t table_index, kore_opengl_descriptor_set *set,
-                                                   kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {}
 
 void kore_opengl_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size) {}
 
@@ -335,6 +337,18 @@ void kore_opengl_command_list_set_texture(kore_gpu_command_list *list, kore_gpu_
 
 	set_texture *data = (set_texture *)&c->data;
 	data->view        = *view;
+
+	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
+	list->opengl.commands_offset += c->size;
+}
+
+void kore_opengl_command_list_set_sampler(kore_gpu_command_list *list, kore_gpu_sampler *sampler) {
+	command *c = (command *)&list->opengl.commands[list->opengl.commands_offset];
+
+	c->type = COMMAND_SET_SAMPLER;
+
+	set_sampler *data = (set_sampler *)&c->data;
+	data->sampler     = *sampler;
 
 	c->size = sizeof(command) - sizeof(c->data) + sizeof(*data);
 	list->opengl.commands_offset += c->size;

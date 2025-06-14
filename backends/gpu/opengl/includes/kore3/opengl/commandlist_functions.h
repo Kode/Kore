@@ -55,9 +55,6 @@ void kore_opengl_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_
 void kore_opengl_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
                                            int32_t base_vertex, uint32_t first_instance);
 
-void kore_opengl_command_list_set_descriptor_table(kore_gpu_command_list *list, uint32_t table_index, kore_opengl_descriptor_set *set,
-                                                   kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes);
-
 void kore_opengl_command_list_set_root_constants(kore_gpu_command_list *list, uint32_t table_index, const void *data, size_t data_size);
 
 void kore_opengl_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_opengl_compute_pipeline *pipeline);
@@ -106,6 +103,8 @@ void kore_opengl_command_list_set_uniform_buffer(kore_gpu_command_list *list, ko
                                                  uint32_t size);
 
 void kore_opengl_command_list_set_texture(kore_gpu_command_list *list, kore_gpu_texture_view *view, bool writable);
+
+void kore_opengl_command_list_set_sampler(kore_gpu_command_list *list, kore_gpu_sampler *sampler);
 
 #ifdef __cplusplus
 }

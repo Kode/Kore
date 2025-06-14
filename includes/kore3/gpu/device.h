@@ -25,7 +25,7 @@
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/device_structs.h>
 #else
-#error("Unknown GPU backend")
+#error ("Unknown GPU backend")
 #endif
 
 /*! \file device.h
@@ -128,8 +128,8 @@ typedef struct kore_gpu_sampler_parameters {
 	kore_gpu_address_mode       address_mode_u;
 	kore_gpu_address_mode       address_mode_v;
 	kore_gpu_address_mode       address_mode_w;
-	kore_gpu_filter_mode        mag_filter;
 	kore_gpu_filter_mode        min_filter;
+	kore_gpu_filter_mode        mag_filter;
 	kore_gpu_mipmap_filter_mode mipmap_filter;
 	float                       lod_min_clamp;
 	float                       lod_max_clamp;

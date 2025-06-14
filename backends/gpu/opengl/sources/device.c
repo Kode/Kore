@@ -926,10 +926,19 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			glBindTexture(data->view.texture->opengl.target, data->view.texture->opengl.texture);
 
-			glTexParameteri(data->view.texture->opengl.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(data->view.texture->opengl.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 			kore_opengl_check_errors();
+
+			break;
+		}
+		case COMMAND_SET_SAMPLER: {
+			set_sampler *data = (set_sampler *)&c->data;
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, data->sampler.opengl.min_filter);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, data->sampler.opengl.mag_filter);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, data->sampler.opengl.address_mode_u);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, data->sampler.opengl.address_mode_v);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, data->sampler.opengl.address_mode_w);
 
 			break;
 		}
@@ -1106,10 +1115,99 @@ void kore_opengl_device_wait_until_idle(kore_gpu_device *device) {
 	glFlush();
 }
 
-void kore_opengl_device_create_descriptor_set(kore_gpu_device *device, uint32_t descriptor_count, uint32_t dynamic_descriptor_count,
-                                              uint32_t bindless_descriptor_count, uint32_t sampler_count, kore_opengl_descriptor_set *set) {}
+static unsigned convert_address_mode(kore_gpu_address_mode mode) {
+	switch (mode) {
+	case KORE_GPU_ADDRESS_MODE_CLAMP_TO_EDGE:
+		return GL_CLAMP_TO_EDGE;
+	case KORE_GPU_ADDRESS_MODE_REPEAT:
+		return GL_REPEAT;
+	case KORE_GPU_ADDRESS_MODE_MIRROR_REPEAT:
+		return GL_MIRRORED_REPEAT;
+	}
 
-void kore_opengl_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {}
+	assert(false);
+	return KORE_GPU_ADDRESS_MODE_REPEAT;
+}
+
+static unsigned convert_filter_mode(kore_gpu_filter_mode mode) {
+	switch (mode) {
+	case KORE_GPU_FILTER_MODE_NEAREST:
+		return GL_NEAREST;
+	case KORE_GPU_FILTER_MODE_LINEAR:
+		return GL_LINEAR;
+	}
+
+	assert(false);
+	return GL_NEAREST;
+}
+
+static unsigned convert_mipmap_filter_mode(kore_gpu_filter_mode mode, kore_gpu_mipmap_filter_mode mipmap_mode) {
+	switch (mode) {
+	case KORE_GPU_FILTER_MODE_NEAREST:
+		switch (mipmap_mode) {
+		case KORE_GPU_MIPMAP_FILTER_MODE_NEAREST:
+			return GL_NEAREST_MIPMAP_NEAREST;
+		case KORE_GPU_MIPMAP_FILTER_MODE_LINEAR:
+			return GL_NEAREST_MIPMAP_LINEAR;
+		}
+		break;
+	case KORE_GPU_FILTER_MODE_LINEAR:
+		switch (mipmap_mode) {
+		case KORE_GPU_MIPMAP_FILTER_MODE_NEAREST:
+			return GL_LINEAR_MIPMAP_NEAREST;
+		case KORE_GPU_MIPMAP_FILTER_MODE_LINEAR:
+			return GL_LINEAR_MIPMAP_LINEAR;
+		}
+		break;
+	}
+
+	assert(false);
+	return GL_NEAREST;
+}
+
+static unsigned convert_compare_function(kore_gpu_compare_function func) {
+	switch (func) {
+	case KORE_GPU_COMPARE_FUNCTION_UNDEFINED:
+	case KORE_GPU_COMPARE_FUNCTION_NEVER:
+		return GL_NEVER;
+	case KORE_GPU_COMPARE_FUNCTION_LESS:
+		return GL_LESS;
+	case KORE_GPU_COMPARE_FUNCTION_EQUAL:
+		return GL_EQUAL;
+	case KORE_GPU_COMPARE_FUNCTION_LESS_EQUAL:
+		return GL_LEQUAL;
+	case KORE_GPU_COMPARE_FUNCTION_GREATER:
+		return GL_GREATER;
+	case KORE_GPU_COMPARE_FUNCTION_NOT_EQUAL:
+		return GL_NOTEQUAL;
+	case KORE_GPU_COMPARE_FUNCTION_GREATER_EQUAL:
+		return GL_GEQUAL;
+	case KORE_GPU_COMPARE_FUNCTION_ALWAYS:
+		return GL_ALWAYS;
+	}
+
+	assert(false);
+	return GL_NEVER;
+}
+
+void kore_opengl_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {
+	sampler->opengl.address_mode_u = convert_address_mode(parameters->address_mode_u);
+	sampler->opengl.address_mode_v = convert_address_mode(parameters->address_mode_v);
+	sampler->opengl.address_mode_w = convert_address_mode(parameters->address_mode_w);
+
+	sampler->opengl.min_filter = convert_filter_mode(parameters->min_filter);
+	sampler->opengl.mag_filter = convert_filter_mode(parameters->mag_filter);
+
+	sampler->opengl.min_mip_filter = convert_mipmap_filter_mode(parameters->min_filter, parameters->mipmap_filter);
+	sampler->opengl.mag_mip_filter = convert_mipmap_filter_mode(parameters->mag_filter, parameters->mipmap_filter);
+
+	sampler->opengl.lod_min_clamp = parameters->lod_min_clamp;
+	sampler->opengl.lod_max_clamp = parameters->lod_max_clamp;
+
+	sampler->opengl.compare = convert_compare_function(parameters->compare);
+
+	sampler->opengl.max_anisotropy = parameters->max_anisotropy;
+}
 
 void kore_opengl_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
                                                  uint32_t index_count, kore_gpu_raytracing_volume *volume) {}
