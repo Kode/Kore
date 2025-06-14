@@ -109,7 +109,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#elif defined(KORE_WEBGPU)</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &lt;kore3/webgpu/device_structs.h&gt;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#error(&quot;Unknown GPU backend&quot;)</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#error (&quot;Unknown GPU backend&quot;)</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#ifdef __cplusplus</span></div>
@@ -217,8 +217,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    kore_gpu_address_mode       address_mode_u;</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    kore_gpu_address_mode       address_mode_v;</div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    kore_gpu_address_mode       address_mode_w;</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    kore_gpu_filter_mode        mag_filter;</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    kore_gpu_filter_mode        min_filter;</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    kore_gpu_filter_mode        min_filter;</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    kore_gpu_filter_mode        mag_filter;</div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    kore_gpu_mipmap_filter_mode mipmap_filter;</div>
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    <span class="keywordtype">float</span>                       lod_min_clamp;</div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    <span class="keywordtype">float</span>                       lod_max_clamp;</div>
