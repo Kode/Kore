@@ -44,7 +44,9 @@ typedef char     GLchar;
 #define GL_TEXTURE0                         0x84C0
 #define GL_TEXTURE_WRAP_S                   0x2802
 #define GL_TEXTURE_WRAP_T                   0x2803
+#define GL_TEXTURE_WRAP_R                   0x8072
 #define GL_REPEAT                           0x2901
+#define GL_MIRRORED_REPEAT                  0x8370
 #define GL_DEPTH_TEST                       0x0B71
 #define GL_COLOR_BUFFER_BIT                 0x00004000
 #define GL_DEPTH_BUFFER_BIT                 0x00000100
