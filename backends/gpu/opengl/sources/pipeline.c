@@ -35,11 +35,15 @@ static void link_program(uint32_t program) {
 }
 
 static void bind_attributes(const kore_opengl_vertex_state *vertex_state, uint32_t program) {
+	size_t input_index = 0;
+
 	for (size_t buffer_index = 0; buffer_index < vertex_state->buffers_count; ++buffer_index) {
 		for (size_t attribute_index = 0; attribute_index < vertex_state->buffers[buffer_index].attributes_count; ++attribute_index) {
 			const kore_opengl_vertex_attribute *attribute = &vertex_state->buffers[buffer_index].attributes[attribute_index];
-			glBindAttribLocation(program, (GLuint)attribute_index, attribute->name);
+			glBindAttribLocation(program, (GLuint)input_index, attribute->name);
 			kore_opengl_check_errors();
+
+			++input_index;
 		}
 	}
 }

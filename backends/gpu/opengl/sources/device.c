@@ -798,6 +798,10 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	kore_gpu_texture_view        framebuffer_view = {0};
 	kore_opengl_render_pipeline *pipeline         = NULL;
 
+#define MAX_VERTEX_BUFFERS 8
+	set_vertex_buffer_data *vertex_buffers[MAX_VERTEX_BUFFERS]    = {0};
+	bool                    vertex_buffer_set[MAX_VERTEX_BUFFERS] = {0};
+
 	uint64_t offset = 0;
 
 	while (offset < list->opengl.commands_offset) {
@@ -815,34 +819,49 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		case COMMAND_SET_VERTEX_BUFFER: {
 			set_vertex_buffer_data *data = (set_vertex_buffer_data *)&c->data;
 
-			glBindBuffer(data->buffer->buffer_type, data->buffer->buffer);
-
-			kore_opengl_vertex_state *vertex_state = &pipeline->vertex_state;
-
-			for (uint32_t attribute_index = 0; attribute_index < vertex_state->buffers->attributes_count; ++attribute_index) {
-				glEnableVertexAttribArray(attribute_index);
-
-				glVertexAttribPointer(attribute_index, vertex_format_size(vertex_state->buffers[0].attributes[attribute_index].format),
-				                      vertex_format_type(vertex_state->buffers[0].attributes[attribute_index].format),
-				                      vertex_format_normalized(vertex_state->buffers[0].attributes[attribute_index].format),
-				                      (GLsizei)vertex_state->buffers[0].array_stride,
-				                      (void *)(int64_t)vertex_state->buffers[0].attributes[attribute_index].offset);
-
-				kore_opengl_check_errors();
-			}
-
-			for (uint32_t attribute_index = (uint32_t)vertex_state->buffers->attributes_count; attribute_index < max_vertex_attrib_arrays; ++attribute_index) {
-				glDisableVertexAttribArray(attribute_index);
-			}
+			assert(data->slot < MAX_VERTEX_BUFFERS);
+			vertex_buffers[data->slot]    = data;
+			vertex_buffer_set[data->slot] = true;
 
 			break;
 		}
 		case COMMAND_DRAW_INDEXED: {
+			kore_opengl_vertex_state *vertex_state = &pipeline->vertex_state;
+
+			uint32_t input_index = 0;
+
+			for (uint32_t buffer_index = 0; buffer_index < MAX_VERTEX_BUFFERS; ++buffer_index) {
+				if (vertex_buffer_set[buffer_index]) {
+					set_vertex_buffer_data *buffer_data = vertex_buffers[buffer_index];
+					glBindBuffer(buffer_data->buffer->buffer_type, buffer_data->buffer->buffer);
+
+					for (uint32_t attribute_index = 0; attribute_index < vertex_state->buffers[buffer_index].attributes_count; ++attribute_index) {
+						glEnableVertexAttribArray(input_index);
+
+						glVertexAttribPointer(input_index, vertex_format_size(vertex_state->buffers[buffer_index].attributes[attribute_index].format),
+						                      vertex_format_type(vertex_state->buffers[buffer_index].attributes[attribute_index].format),
+						                      vertex_format_normalized(vertex_state->buffers[buffer_index].attributes[attribute_index].format),
+						                      (GLsizei)vertex_state->buffers[buffer_index].array_stride,
+						                      (void *)(int64_t)vertex_state->buffers[buffer_index].attributes[attribute_index].offset);
+
+						kore_opengl_check_errors();
+
+						++input_index;
+					}
+				}
+			}
+
+			for (; input_index < max_vertex_attrib_arrays; ++input_index) {
+				glDisableVertexAttribArray(input_index);
+			}
+
 			draw_indexed_data *data = (draw_indexed_data *)&c->data;
 
 			void *start =
 			    index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? (void *)(data->first_index * sizeof(uint16_t)) : (void *)(data->first_index * sizeof(uint32_t));
 			glDrawElements(GL_TRIANGLES, data->index_count, index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, start);
+
+			memset(vertex_buffer_set, 0, sizeof(vertex_buffer_set));
 
 			break;
 		}
