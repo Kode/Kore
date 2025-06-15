@@ -134,8 +134,11 @@ static void copy(uint32_t source_x, uint32_t source_y, uint32_t source_w, uint32
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * 4, (void *)(int64_t)0);
+	glVertexAttribDivisor(0, 0);
+
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * 4, (void *)(int64_t)(2 * 4));
+	glVertexAttribDivisor(1, 0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, copy_index_buffer);
 
