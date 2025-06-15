@@ -228,7 +228,7 @@ void kore_webgpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
                                                      uint32_t depth_or_array_layers) {
 	end_compute(list);
 
-	WGPUImageCopyBuffer copy_buffer = {
+	WGPUTexelCopyBufferInfo copy_buffer = {
 	    .layout =
 	        {
 	            .offset       = source->offset,
@@ -238,7 +238,7 @@ void kore_webgpu_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
 	    .buffer = source->buffer->webgpu.has_copy_buffer ? source->buffer->webgpu.copy_buffer : source->buffer->webgpu.buffer,
 	};
 
-	WGPUImageCopyTexture copy_texture = {
+	WGPUTexelCopyTextureInfo copy_texture = {
 	    .texture  = destination->texture->webgpu.texture,
 	    .mipLevel = destination->mip_level,
 	    .origin =
@@ -264,7 +264,7 @@ void kore_webgpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
                                                      uint32_t depth_or_array_layers) {
 	end_compute(list);
 
-	WGPUImageCopyTexture copy_texture = {
+	WGPUTexelCopyTextureInfo copy_texture = {
 	    .texture  = source->texture->webgpu.texture,
 	    .mipLevel = source->mip_level,
 	    .origin =
@@ -276,7 +276,7 @@ void kore_webgpu_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
 	    .aspect = convert_texture_aspect(source->aspect),
 	};
 
-	WGPUImageCopyBuffer copy_buffer = {
+	WGPUTexelCopyBufferInfo copy_buffer = {
 	    .layout =
 	        {
 	            .offset       = destination->offset,
@@ -300,7 +300,7 @@ void kore_webgpu_command_list_copy_texture_to_texture(kore_gpu_command_list *lis
                                                       uint32_t depth_or_array_layers) {
 	end_compute(list);
 
-	WGPUImageCopyTexture source_texture = {
+	WGPUTexelCopyTextureInfo source_texture = {
 	    .texture  = source->texture->webgpu.texture,
 	    .mipLevel = source->mip_level,
 	    .origin =
@@ -312,7 +312,7 @@ void kore_webgpu_command_list_copy_texture_to_texture(kore_gpu_command_list *lis
 	    .aspect = convert_texture_aspect(source->aspect),
 	};
 
-	WGPUImageCopyTexture destination_texture = {
+	WGPUTexelCopyTextureInfo destination_texture = {
 	    .texture  = destination->texture->webgpu.texture,
 	    .mipLevel = destination->mip_level,
 	    .origin =

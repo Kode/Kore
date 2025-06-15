@@ -285,7 +285,11 @@ else if (platform === Platform.Emscripten) {
 	if (graphics === GraphicsApi.WebGPU) {
 		addBackend('gpu/webgpu');
 		addKoreDefine('WEBGPU');
-		project.addLinkerFlag('-sUSE_WEBGPU=1');
+
+		project.addCFlag('--use-port=emdawnwebgpu');
+		project.addCppFlag('--use-port=emdawnwebgpu');
+		project.addLinkerFlag('--use-port=emdawnwebgpu');
+
 		project.addLinkerFlag('-sASYNCIFY');
 		project.addLinkerFlag('-sEXIT_RUNTIME');
 	}

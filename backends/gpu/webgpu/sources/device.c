@@ -11,7 +11,7 @@
 #ifdef KORE_EMSCRIPTEN
 #include <emscripten.h>
 #include <emscripten/html5.h>
-#include <emscripten/html5_webgpu.h>
+#include <webgpu/webgpu.h>
 #endif
 
 #include <assert.h>
@@ -21,22 +21,23 @@ static WGPUInstance            wgpu_instance;
 static WGPUAdapter             wgpu_adapter;
 static kore_gpu_texture_format framebuffer_format;
 
-static void error_callback(WGPUErrorType errorType, const char *message, void *userdata) {
-	kore_log(KORE_LOG_LEVEL_ERROR, "%d: %s", errorType, message);
+static void error_callback(WGPUDevice const * device, WGPUErrorType type, WGPUStringView message, void *userdata1, void *userdata2) {
+	kore_log(KORE_LOG_LEVEL_ERROR, "%d: %s", type, message.data);
 }
 
 void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
 	device->webgpu.device = wgpu_device;
 
-	wgpuDeviceSetUncapturedErrorCallback(wgpu_device, error_callback, NULL);
-
 	device->webgpu.queue = wgpuDeviceGetQueue(device->webgpu.device);
 
-	WGPUSurfaceDescriptorFromCanvasHTMLSelector canvas_selector = {
-	    .selector = "#canvas",
+	WGPUEmscriptenSurfaceSourceCanvasHTMLSelector canvas_selector = {
+	    .selector = {
+			.data = "#canvas",
+			.length = 7,
+		},
 	    .chain =
 	        {
-	            .sType = WGPUSType_SurfaceDescriptorFromCanvasHTMLSelector,
+	            .sType = WGPUSType_EmscriptenSurfaceSourceCanvasHTMLSelector,
 	        },
 	};
 
@@ -200,7 +201,7 @@ void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 }
 
 void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
-	WGPUTextureUsageFlags usage = 0;
+	WGPUTextureUsage usage = 0;
 
 	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_COPY_SRC) != 0) {
 		usage |= WGPUTextureUsage_CopySrc;
@@ -302,13 +303,20 @@ void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 static bool work_done = false;
 
-static void work_done_callback(WGPUQueueWorkDoneStatus status, void *userdata) {
+static void work_done_callback(WGPUQueueWorkDoneStatus status, void *userdata1, void *userdata2) {
 	work_done = true;
 }
 
 void kore_webgpu_device_wait_until_idle(kore_gpu_device *device) {
 	work_done = false;
-	wgpuQueueOnSubmittedWorkDone(device->webgpu.queue, work_done_callback, NULL);
+
+	WGPUQueueWorkDoneCallbackInfo callback_info = {
+		.mode = WGPUCallbackMode_AllowProcessEvents,
+		.callback = work_done_callback,
+	};
+
+	wgpuQueueOnSubmittedWorkDone(device->webgpu.queue, callback_info);
+	
 	while (!work_done) {
 		emscripten_sleep(0);
 	}
@@ -392,8 +400,8 @@ void kore_webgpu_device_wait(kore_gpu_device *device, kore_gpu_command_list_type
 
 static void (*kickstart_callback)();
 
-void device_callback(WGPURequestDeviceStatus status, WGPUDevice device, char const *message, void *userdata) {
-	if (message != NULL) {
+static void device_callback(WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message, void *userdata1, void *userdata2) {
+	if (message.length > 0) {
 		kore_log(KORE_LOG_LEVEL_INFO, "RequestDevice: %s", message);
 	}
 	assert(status == WGPURequestDeviceStatus_Success);
@@ -403,8 +411,8 @@ void device_callback(WGPURequestDeviceStatus status, WGPUDevice device, char con
 	kickstart_callback();
 }
 
-void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, char const *message, void *userdata) {
-	if (message != NULL) {
+static void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, WGPUStringView message, void *userdata1, void *userdata2) {
+	if (message.length > 0) {
 		kore_log(KORE_LOG_LEVEL_INFO, "RequestAdapter: %s", message);
 	}
 	assert(status == WGPURequestAdapterStatus_Success);
@@ -423,59 +431,69 @@ void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, char
 	};
 
 	// default values via https://gpuweb.github.io/gpuweb/#limits
-	WGPURequiredLimits required_limits = {
-	    .limits =
-	        {
-	            .maxTextureDimension1D                     = 8192,
-	            .maxTextureDimension2D                     = 8192,
-	            .maxTextureDimension3D                     = 2048,
-	            .maxTextureArrayLayers                     = 256,
-	            .maxBindGroups                             = 4,
-	            .maxBindGroupsPlusVertexBuffers            = 24,
-	            .maxBindingsPerBindGroup                   = 1000,
-	            .maxDynamicUniformBuffersPerPipelineLayout = 8,
-	            .maxDynamicStorageBuffersPerPipelineLayout = 4,
-	            .maxSampledTexturesPerShaderStage          = 16,
-	            .maxSamplersPerShaderStage                 = 16,
-	            .maxStorageBuffersPerShaderStage           = 8,
-	            .maxStorageTexturesPerShaderStage          = 4,
-	            .maxUniformBuffersPerShaderStage           = 12,
-	            .maxUniformBufferBindingSize               = 65536,
-	            .maxStorageBufferBindingSize               = 134217728,
-	            .minUniformBufferOffsetAlignment           = 256,
-	            .minStorageBufferOffsetAlignment           = 256,
-	            .maxVertexBuffers                          = 8,
-	            .maxBufferSize                             = 268435456,
-	            .maxVertexAttributes                       = 16,
-	            .maxVertexBufferArrayStride                = 2048,
-	            .maxInterStageShaderVariables              = 16,
-	            .maxColorAttachments                       = 8,
-	            .maxColorAttachmentBytesPerSample          = 32,
-	            .maxComputeWorkgroupStorageSize            = 16384,
-	            .maxComputeInvocationsPerWorkgroup         = 256,
-	            .maxComputeWorkgroupSizeX                  = 256,
-	            .maxComputeWorkgroupSizeY                  = 256,
-	            .maxComputeWorkgroupSizeZ                  = 64,
-	            .maxComputeWorkgroupsPerDimension          = 65535,
-
-	            .maxInterStageShaderComponents = WGPU_LIMIT_U32_UNDEFINED, // removed
-	        },
+	WGPULimits required_limits = {
+		.maxTextureDimension1D                     = 8192,
+		.maxTextureDimension2D                     = 8192,
+		.maxTextureDimension3D                     = 2048,
+		.maxTextureArrayLayers                     = 256,
+		.maxBindGroups                             = 4,
+		.maxBindGroupsPlusVertexBuffers            = 24,
+		.maxBindingsPerBindGroup                   = 1000,
+		.maxDynamicUniformBuffersPerPipelineLayout = 8,
+		.maxDynamicStorageBuffersPerPipelineLayout = 4,
+		.maxSampledTexturesPerShaderStage          = 16,
+		.maxSamplersPerShaderStage                 = 16,
+		.maxStorageBuffersPerShaderStage           = 8,
+		.maxStorageTexturesPerShaderStage          = 4,
+		.maxUniformBuffersPerShaderStage           = 12,
+		.maxUniformBufferBindingSize               = 65536,
+		.maxStorageBufferBindingSize               = 134217728,
+		.minUniformBufferOffsetAlignment           = 256,
+		.minStorageBufferOffsetAlignment           = 256,
+		.maxVertexBuffers                          = 8,
+		.maxBufferSize                             = 268435456,
+		.maxVertexAttributes                       = 16,
+		.maxVertexBufferArrayStride                = 2048,
+		.maxInterStageShaderVariables              = 16,
+		.maxColorAttachments                       = 8,
+		.maxColorAttachmentBytesPerSample          = 32,
+		.maxComputeWorkgroupStorageSize            = 16384,
+		.maxComputeInvocationsPerWorkgroup         = 256,
+		.maxComputeWorkgroupSizeX                  = 256,
+		.maxComputeWorkgroupSizeY                  = 256,
+		.maxComputeWorkgroupSizeZ                  = 64,
+		.maxComputeWorkgroupsPerDimension          = 65535,
 	};
 
-	required_limits.limits.maxColorAttachmentBytesPerSample = 48; // enough to write to a cube map
+	required_limits.maxColorAttachmentBytesPerSample = 48; // enough to write to a cube map
+
+	WGPUUncapturedErrorCallbackInfo error_callback_info = {
+		.callback = error_callback,
+	};
 
 	WGPUDeviceDescriptor device_descriptor = {
 	    .requiredFeatures     = required_features,
 	    .requiredFeatureCount = sizeof(required_features) / sizeof(required_features[0]),
 	    .requiredLimits       = &required_limits,
+		.uncapturedErrorCallbackInfo = error_callback_info,
 	};
 
-	wgpuAdapterRequestDevice(wgpu_adapter, &device_descriptor, device_callback, NULL);
+	WGPURequestDeviceCallbackInfo callback_info = {
+		.mode = WGPUCallbackMode_AllowProcessEvents,
+		.callback = device_callback,
+	};
+
+	wgpuAdapterRequestDevice(wgpu_adapter, &device_descriptor, callback_info);
 }
 
 void kore_webgpu_init(void (*callback)()) {
 	kickstart_callback = callback;
 
 	wgpu_instance = wgpuCreateInstance(NULL);
-	wgpuInstanceRequestAdapter(wgpu_instance, NULL, adapter_callback, NULL);
+
+	WGPURequestAdapterCallbackInfo callback_info = {
+		.mode = WGPUCallbackMode_AllowProcessEvents,
+		.callback = adapter_callback,
+	};
+	wgpuInstanceRequestAdapter(wgpu_instance, NULL, callback_info);
 }

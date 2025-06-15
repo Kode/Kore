@@ -54,11 +54,11 @@ static void kore_webgpu_outdate_region(kore_webgpu_buffer *buffer, uint64_t offs
 
 static bool mapped = false;
 
-static void map_async_callback(WGPUBufferMapAsyncStatus status, void *userdata) {
+static void map_async_callback(WGPUMapAsyncStatus status, WGPUStringView message, void *userdata1, void *userdata2) {
 	mapped = true;
 }
 
-static void map_async_no_callback(WGPUBufferMapAsyncStatus status, void *userdata) {}
+static void map_async_no_callback(WGPUMapAsyncStatus status, WGPUStringView message, void *userdata1, void *userdata2) {}
 
 static void map_async(WGPUBuffer buffer, WGPUMapMode map_mode, uint64_t offset, uint64_t size) {
 	if (wgpuBufferGetMapState(buffer) == WGPUBufferMapState_Mapped) {
@@ -66,7 +66,13 @@ static void map_async(WGPUBuffer buffer, WGPUMapMode map_mode, uint64_t offset, 
 	}
 
 	mapped = false;
-	wgpuBufferMapAsync(buffer, map_mode, offset, size, map_async_callback, NULL);
+
+	WGPUBufferMapCallbackInfo callback_info = {
+		.mode = WGPUCallbackMode_AllowProcessEvents,
+		.callback = map_async_callback,
+	};
+	wgpuBufferMapAsync(buffer, map_mode, offset, size, callback_info);
+
 	while (!mapped) {
 		emscripten_sleep(0);
 	}
@@ -86,7 +92,11 @@ void *kore_webgpu_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
 		}
 		else {
 			if (wgpuBufferGetMapState(buffer->webgpu.copy_buffer) == WGPUBufferMapState_Unmapped) {
-				wgpuBufferMapAsync(buffer->webgpu.copy_buffer, WGPUMapMode_Write, 0, buffer->webgpu.size, map_async_no_callback, NULL);
+				WGPUBufferMapCallbackInfo callback_info = {
+					.mode = WGPUCallbackMode_AllowProcessEvents,
+					.callback = map_async_no_callback,
+				};
+				wgpuBufferMapAsync(buffer->webgpu.copy_buffer, WGPUMapMode_Write, 0, buffer->webgpu.size, callback_info);
 			}
 			buffer->webgpu.locked_data = NULL;
 		}
@@ -101,7 +111,11 @@ void *kore_webgpu_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
 			}
 			else {
 				if (wgpuBufferGetMapState(buffer->webgpu.buffer) == WGPUBufferMapState_Unmapped) {
-					wgpuBufferMapAsync(buffer->webgpu.buffer, WGPUMapMode_Write, 0, buffer->webgpu.size, map_async_no_callback, NULL);
+					WGPUBufferMapCallbackInfo callback_info = {
+						.mode = WGPUCallbackMode_AllowProcessEvents,
+						.callback = map_async_no_callback,
+					};
+					wgpuBufferMapAsync(buffer->webgpu.buffer, WGPUMapMode_Write, 0, buffer->webgpu.size, callback_info);
 				}
 				buffer->webgpu.locked_data = NULL;
 			}
@@ -115,7 +129,11 @@ void *kore_webgpu_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
 			}
 			else {
 				if (wgpuBufferGetMapState(buffer->webgpu.buffer) == WGPUBufferMapState_Unmapped) {
-					wgpuBufferMapAsync(buffer->webgpu.buffer, WGPUMapMode_Read, 0, buffer->webgpu.size, map_async_no_callback, NULL);
+					WGPUBufferMapCallbackInfo callback_info = {
+						.mode = WGPUCallbackMode_AllowProcessEvents,
+						.callback = map_async_no_callback,
+					};
+					wgpuBufferMapAsync(buffer->webgpu.buffer, WGPUMapMode_Read, 0, buffer->webgpu.size, callback_info);
 				}
 				buffer->webgpu.locked_data = NULL;
 			}
@@ -156,7 +174,11 @@ void *kore_webgpu_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, u
 		}
 		else {
 			if (wgpuBufferGetMapState(buffer->webgpu.copy_buffer) == WGPUBufferMapState_Unmapped) {
-				wgpuBufferMapAsync(buffer->webgpu.copy_buffer, WGPUMapMode_Write, offset, size, map_async_no_callback, NULL);
+				WGPUBufferMapCallbackInfo callback_info = {
+					.mode = WGPUCallbackMode_AllowProcessEvents,
+					.callback = map_async_no_callback,
+				};
+				wgpuBufferMapAsync(buffer->webgpu.copy_buffer, WGPUMapMode_Write, offset, size, callback_info);
 			}
 			buffer->webgpu.locked_data = NULL;
 		}
@@ -171,7 +193,11 @@ void *kore_webgpu_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, u
 			}
 			else {
 				if (wgpuBufferGetMapState(buffer->webgpu.buffer) == WGPUBufferMapState_Unmapped) {
-					wgpuBufferMapAsync(buffer->webgpu.buffer, WGPUMapMode_Write, offset, size, map_async_no_callback, NULL);
+					WGPUBufferMapCallbackInfo callback_info = {
+						.mode = WGPUCallbackMode_AllowProcessEvents,
+						.callback = map_async_no_callback,
+					};
+					wgpuBufferMapAsync(buffer->webgpu.buffer, WGPUMapMode_Write, offset, size, callback_info);
 				}
 				buffer->webgpu.locked_data = NULL;
 			}
@@ -185,7 +211,11 @@ void *kore_webgpu_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, u
 			}
 			else {
 				if (wgpuBufferGetMapState(buffer->webgpu.buffer) == WGPUBufferMapState_Unmapped) {
-					wgpuBufferMapAsync(buffer->webgpu.buffer, WGPUMapMode_Read, offset, size, map_async_no_callback, NULL);
+					WGPUBufferMapCallbackInfo callback_info = {
+						.mode = WGPUCallbackMode_AllowProcessEvents,
+						.callback = map_async_no_callback,
+					};
+					wgpuBufferMapAsync(buffer->webgpu.buffer, WGPUMapMode_Read, offset, size, callback_info);
 				}
 				buffer->webgpu.locked_data = NULL;
 			}

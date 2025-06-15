@@ -73,7 +73,7 @@ static WGPUVertexFormat convert_vertex_format(kore_webgpu_vertex_format format) 
 	return WGPUVertexFormat_Float32;
 }
 
-static void compilation_info_callback(WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo *info, void *userdata) {
+static void compilation_info_callback(WGPUCompilationInfoRequestStatus status, struct WGPUCompilationInfo const *info, void *userdata1, void *userdata2) {
 	assert(status == WGPUCompilationInfoRequestStatus_Success);
 	assert(info->messageCount == 0);
 	kore_log(KORE_LOG_LEVEL_INFO, "Shader compile succeeded");
@@ -165,29 +165,35 @@ const char *kore_webgpu_prepare_shader(kore_gpu_device *device, const char *code
 
 void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters,
                                       const WGPUBindGroupLayout *bind_group_layouts, uint32_t bind_group_layouts_count) {
-	WGPUShaderModuleWGSLDescriptor vertex_shader_module_wgsl_descriptor = {
+	WGPUShaderSourceWGSL vertex_shader_source = {
 	    .code        = parameters->vertex.shader.data,
-	    .chain.sType = WGPUSType_ShaderModuleWGSLDescriptor,
+	    .chain.sType = WGPUSType_ShaderSourceWGSL,
 	};
 
 	WGPUShaderModuleDescriptor vertex_shader_module_descriptor = {
-	    .nextInChain = (WGPUChainedStruct *)&vertex_shader_module_wgsl_descriptor,
+	    .nextInChain = (WGPUChainedStruct *)&vertex_shader_source,
 	};
 
 	WGPUShaderModule vertex_shader_module = wgpuDeviceCreateShaderModule(device->device, &vertex_shader_module_descriptor);
-	wgpuShaderModuleGetCompilationInfo(vertex_shader_module, compilation_info_callback, NULL);
 
-	WGPUShaderModuleWGSLDescriptor fragment_shader_module_wgsl_descriptor = {
+	WGPUCompilationInfoCallbackInfo callback_info = {
+		.mode = WGPUCallbackMode_AllowProcessEvents,
+		.callback = compilation_info_callback,
+	};
+	wgpuShaderModuleGetCompilationInfo(vertex_shader_module, callback_info);
+
+	WGPUShaderSourceWGSL fragment_shader_source = {
 	    .code        = parameters->fragment.shader.data,
-	    .chain.sType = WGPUSType_ShaderModuleWGSLDescriptor,
+	    .chain.sType = WGPUSType_ShaderSourceWGSL,
 	};
 
 	WGPUShaderModuleDescriptor fragment_shader_module_descriptor = {
-	    .nextInChain = (WGPUChainedStruct *)&fragment_shader_module_wgsl_descriptor,
+	    .nextInChain = (WGPUChainedStruct *)&fragment_shader_source,
 	};
 
 	WGPUShaderModule fragment_shader_module = wgpuDeviceCreateShaderModule(device->device, &fragment_shader_module_descriptor);
-	wgpuShaderModuleGetCompilationInfo(fragment_shader_module, compilation_info_callback, NULL);
+
+	wgpuShaderModuleGetCompilationInfo(fragment_shader_module, callback_info);
 
 	WGPUColorTargetState color_target_states[8];
 
@@ -321,24 +327,29 @@ void kore_webgpu_render_pipeline_destroy(kore_webgpu_render_pipeline *pipe) {}
 void kore_webgpu_compute_pipeline_init(kore_webgpu_device *device, kore_webgpu_compute_pipeline *pipe,
                                        const kore_webgpu_compute_pipeline_parameters *parameters, const WGPUBindGroupLayout *bind_group_layouts,
                                        uint32_t bind_group_layouts_count) {
-	WGPUShaderModuleWGSLDescriptor shader_module_wgsl_descriptor = {
+	WGPUShaderSourceWGSL shader_source = {
 	    .code        = parameters->shader.data,
-	    .chain.sType = WGPUSType_ShaderModuleWGSLDescriptor,
+	    .chain.sType = WGPUSType_ShaderSourceWGSL,
 	};
 
 	WGPUShaderModuleDescriptor shader_module_descriptor = {
-	    .nextInChain = (WGPUChainedStruct *)&shader_module_wgsl_descriptor,
+	    .nextInChain = (WGPUChainedStruct *)&shader_source,
 	};
 
 	WGPUShaderModule shader_module = wgpuDeviceCreateShaderModule(device->device, &shader_module_descriptor);
-	wgpuShaderModuleGetCompilationInfo(shader_module, compilation_info_callback, NULL);
+
+	WGPUCompilationInfoCallbackInfo callback_info = {
+		.mode = WGPUCallbackMode_AllowProcessEvents,
+		.callback = compilation_info_callback,
+	};
+	wgpuShaderModuleGetCompilationInfo(shader_module, callback_info);
 
 	WGPUPipelineLayoutDescriptor pipeline_layout_descriptor = {
 	    .bindGroupLayoutCount = bind_group_layouts_count,
 	    .bindGroupLayouts     = bind_group_layouts,
 	};
 
-	WGPUProgrammableStageDescriptor compute_state = {
+	WGPUComputeState compute_state = {
 	    .module     = shader_module,
 	    .entryPoint = "main",
 	};
