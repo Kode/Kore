@@ -281,17 +281,20 @@ else if (platform === Platform.Emscripten) {
 	addKoreDefine('EMSCRIPTEN');
 	//project.addLib('websocket.js -sPROXY_POSIX_SOCKETS -sUSE_PTHREADS -sPROXY_TO_PTHREAD');
 	addBackend('system/emscripten');
-	project.addLib('USE_GLFW=2');
+	project.addLinkerFlag('-sUSE_GLFW=2');
 	if (graphics === GraphicsApi.WebGPU) {
 		addBackend('gpu/webgpu');
 		addKoreDefine('WEBGPU');
+		project.addLinkerFlag('-sUSE_WEBGPU=1');
+		project.addLinkerFlag('-sASYNCIFY');
+		project.addLinkerFlag('-sEXIT_RUNTIME');
 	}
 	else if (graphics === GraphicsApi.OpenGL || graphics === GraphicsApi.Default) {
 		addBackend('gpu/opengl');
 		addKoreDefine('OPENGL');
 		addKoreDefine('OPENGL_ES');
 		addKoreDefine('WEBGL');
-		project.addLib('USE_WEBGL2=1');
+		project.addLinkerFlag('-sUSE_WEBGL2=1');
 	}
 	else {
 		throw new Error('Graphics API ' + graphics + ' is not available for Emscripten.');
