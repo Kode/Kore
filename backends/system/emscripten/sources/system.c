@@ -27,7 +27,7 @@ extern WGPUInstance wgpu_instance;
 
 static void drawfunc() {
 #ifdef KORE_WEBGPU
-		wgpuInstanceProcessEvents(wgpu_instance);
+	wgpuInstanceProcessEvents(wgpu_instance);
 #endif
 
 	if (running) {
@@ -39,7 +39,7 @@ static void drawfunc() {
 	}
 
 #ifdef KORE_WEBGPU
-		wgpuInstanceProcessEvents(wgpu_instance);
+	wgpuInstanceProcessEvents(wgpu_instance);
 #endif
 }
 

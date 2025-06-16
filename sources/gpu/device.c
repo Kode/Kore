@@ -13,7 +13,7 @@
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/device_functions.h>
 #else
-#error ("Unknown GPU backend")
+#error("Unknown GPU backend")
 #endif
 
 #include <assert.h>
