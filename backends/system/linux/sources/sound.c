@@ -14,7 +14,8 @@ kore_audio_buffer audio_buffer;
 pthread_t  threadid;
 bool       audioRunning = false;
 snd_pcm_t *playback_handle;
-short      buf[4096 * 4];
+const uint32_t buffer_size = 4096 * 4;
+short buf[buffer_size];
 
 static unsigned int samples_per_second = 44100;
 
@@ -39,14 +40,19 @@ int playback_callback(snd_pcm_sframes_t nframes) {
 		int ni = 0;
 		while (ni < nframes) {
 			int i = 0;
-			for (; ni < nframes && i < 4096 * 2; ++i, ++ni) {
+			for (; ni < nframes && i < buffer_size / 2; ++i, ++ni) {
 				copySample(&buf[i * 2]);
 			}
 			int err2;
 			if ((err2 = snd_pcm_writei(playback_handle, buf, i)) < 0) {
+				// EPIPE is an underrun
 				fprintf(stderr, "write failed (%s)\n", snd_strerror(err2));
+				int recovered = snd_pcm_recover(playback_handle, err2, 1);
+				printf("Recovered: %d\n", recovered);
 			}
-			err += err2;
+			else {
+				err += err2;
+			}
 		}
 	}
 	return err;
@@ -196,7 +202,7 @@ void *doAudio(void *arg) {
 
 			if (delivered != frames_to_deliver) {
 				fprintf(stderr, "playback callback failed (delivered %i / %ld frames)\n", delivered, frames_to_deliver);
-				// break;
+				// break; // Do not break so we can recover from errors.
 			}
 		}
 	}
