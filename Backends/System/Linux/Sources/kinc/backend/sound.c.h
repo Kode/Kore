@@ -1,4 +1,4 @@
-#include <kore3/audio/audio.h>
+#include <kinc/audio2/audio.h>
 
 #include <alsa/asoundlib.h>
 #include <errno.h>
