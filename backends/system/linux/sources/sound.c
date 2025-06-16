@@ -14,8 +14,8 @@ kore_audio_buffer audio_buffer;
 pthread_t  threadid;
 bool       audioRunning = false;
 snd_pcm_t *playback_handle;
-const uint32_t buffer_size = 4096 * 4;
-short buf[buffer_size];
+#define AUDIO_BUFFER_SIZE (4096 * 4)
+short buf[AUDIO_BUFFER_SIZE];
 
 static unsigned int samples_per_second = 44100;
 
@@ -40,7 +40,7 @@ int playback_callback(snd_pcm_sframes_t nframes) {
 		int ni = 0;
 		while (ni < nframes) {
 			int i = 0;
-			for (; ni < nframes && i < buffer_size / 2; ++i, ++ni) {
+			for (; ni < nframes && i < AUDIO_BUFFER_SIZE / 2; ++i, ++ni) {
 				copySample(&buf[i * 2]);
 			}
 			int err2;
