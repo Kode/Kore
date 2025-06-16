@@ -351,7 +351,7 @@ int main(int argc, char **argv) {
 	emscripten_set_main_loop(drawfunc, 0, false);
 #else
 	kickstart(argc, argv);
-	emscripten_set_main_loop(drawfunc, 0, true);
+	emscripten_set_main_loop(drawfunc, 0, false);
 	running = true;
 #endif
 
