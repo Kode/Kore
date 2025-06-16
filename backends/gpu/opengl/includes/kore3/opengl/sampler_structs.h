@@ -11,8 +11,7 @@ typedef struct kore_opengl_sampler {
 	unsigned address_mode_w;
 	unsigned min_filter;
 	unsigned mag_filter;
-	unsigned min_mip_filter;
-	unsigned mag_mip_filter;
+	unsigned mip_filter;
 	float    lod_min_clamp;
 	float    lod_max_clamp;
 	unsigned compare;

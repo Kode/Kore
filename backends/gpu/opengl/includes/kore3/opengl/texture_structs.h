@@ -18,6 +18,7 @@ typedef struct kore_opengl_texture {
 	bool     is_primary_framebuffer;
 
 	uint32_t target;
+	uint32_t mip_level_count;
 
 	kore_gpu_texture_format format;
 } kore_opengl_texture;

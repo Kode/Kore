@@ -586,15 +586,85 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	GLenum type            = texture_format_type(parameters->format);
 
 	if (target == GL_TEXTURE_2D_ARRAY) {
-		glTexStorage3D(target, 1, internal_format, parameters->width, parameters->height, parameters->depth_or_array_layers);
+		glTexStorage3D(target, parameters->mip_level_count, internal_format, parameters->width, parameters->height, parameters->depth_or_array_layers);
 	}
 	else if (target == GL_TEXTURE_CUBE_MAP) {
 		for (uint32_t face = 0; face < 6; ++face) {
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, internal_format, parameters->width, parameters->height, 0, format, type, NULL);
+			uint32_t width  = parameters->width;
+			uint32_t height = parameters->height;
+
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, internal_format, width, height, 0, format, type, NULL);
+
+			if (parameters->mip_level_count > 0 && (width > 1 || height > 1)) {
+				// OpenGL requires a complete mip chain
+
+				uint32_t level = 1;
+
+				if (width > 1) {
+					width /= 2;
+				}
+
+				if (height > 1) {
+					height /= 2;
+				}
+
+				for (;;) {
+					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, level, internal_format, width, height, 0, format, type, NULL);
+
+					if (width == 1 && height == 1) {
+						break;
+					}
+
+					if (width > 1) {
+						width /= 2;
+					}
+
+					if (height > 1) {
+						height /= 2;
+					}
+
+					++level;
+				}
+			}
 		}
 	}
 	else {
-		glTexImage2D(target, 0, internal_format, parameters->width, parameters->height, 0, format, type, NULL);
+		uint32_t width  = parameters->width;
+		uint32_t height = parameters->height;
+
+		glTexImage2D(target, 0, internal_format, width, height, 0, format, type, NULL);
+
+		if (parameters->mip_level_count > 0 && (width > 1 || height > 1)) {
+			// OpenGL requires a complete mip chain
+
+			uint32_t level = 1;
+
+			if (width > 1) {
+				width /= 2;
+			}
+
+			if (height > 1) {
+				height /= 2;
+			}
+
+			for (;;) {
+				glTexImage2D(target, level, internal_format, width, height, 0, format, type, NULL);
+
+				if (width == 1 && height == 1) {
+					break;
+				}
+
+				if (width > 1) {
+					width /= 2;
+				}
+
+				if (height > 1) {
+					height /= 2;
+				}
+
+				++level;
+			}
+		}
 	}
 	kore_opengl_check_errors();
 
@@ -617,10 +687,11 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	kore_opengl_check_errors();
 
-	texture->width         = parameters->width;
-	texture->height        = parameters->height;
-	texture->opengl.format = parameters->format;
-	texture->opengl.target = target;
+	texture->width                  = parameters->width;
+	texture->height                 = parameters->height;
+	texture->opengl.format          = parameters->format;
+	texture->opengl.target          = target;
+	texture->opengl.mip_level_count = parameters->mip_level_count;
 }
 
 kore_gpu_texture *kore_opengl_device_get_framebuffer(kore_gpu_device *device) {
@@ -808,6 +879,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	kore_gpu_index_format        index_format     = KORE_GPU_INDEX_FORMAT_UINT16;
 	kore_gpu_texture_view        framebuffer_view = {0};
 	kore_opengl_render_pipeline *pipeline         = NULL;
+	set_texture                 *texture          = NULL;
+	set_sampler                 *sampler          = NULL;
 
 #define MAX_VERTEX_BUFFERS 8
 	set_vertex_buffer_data *vertex_buffers[MAX_VERTEX_BUFFERS]    = {0};
@@ -837,6 +910,38 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			break;
 		}
 		case COMMAND_DRAW_INDEXED: {
+			if (texture != NULL) {
+				glActiveTexture(GL_TEXTURE0);
+
+				glBindTexture(texture->view.texture->opengl.target, texture->view.texture->opengl.texture);
+
+				kore_opengl_check_errors();
+
+				if (sampler != NULL) {
+					if (texture->view.texture->opengl.mip_level_count > 1) {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, sampler->sampler.opengl.mip_filter);
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, sampler->sampler.opengl.mip_filter);
+					}
+					else {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, sampler->sampler.opengl.min_filter);
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, sampler->sampler.opengl.min_filter);
+					}
+
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, sampler->sampler.opengl.mag_filter);
+					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, sampler->sampler.opengl.mag_filter);
+
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, sampler->sampler.opengl.address_mode_u);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, sampler->sampler.opengl.address_mode_v);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, sampler->sampler.opengl.address_mode_w);
+
+					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, sampler->sampler.opengl.address_mode_u);
+					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, sampler->sampler.opengl.address_mode_v);
+					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, sampler->sampler.opengl.address_mode_w);
+
+					kore_opengl_check_errors();
+				}
+			}
+
 			kore_opengl_vertex_state *vertex_state = &pipeline->vertex_state;
 
 			uint32_t input_index = 0;
@@ -933,38 +1038,12 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			break;
 		}
-		case COMMAND_SET_TEXTURE: {
-			set_texture *data = (set_texture *)&c->data;
-
-			glActiveTexture(GL_TEXTURE0);
-
-			glBindTexture(data->view.texture->opengl.target, data->view.texture->opengl.texture);
-
-			kore_opengl_check_errors();
-
+		case COMMAND_SET_TEXTURE:
+			texture = (set_texture *)&c->data;
 			break;
-		}
-		case COMMAND_SET_SAMPLER: {
-			set_sampler *data = (set_sampler *)&c->data;
-
-			glActiveTexture(GL_TEXTURE0);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, data->sampler.opengl.min_filter);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, data->sampler.opengl.mag_filter);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, data->sampler.opengl.address_mode_u);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, data->sampler.opengl.address_mode_v);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, data->sampler.opengl.address_mode_w);
-
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, data->sampler.opengl.min_filter);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, data->sampler.opengl.mag_filter);
-
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, data->sampler.opengl.address_mode_u);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, data->sampler.opengl.address_mode_v);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, data->sampler.opengl.address_mode_w);
-
+		case COMMAND_SET_SAMPLER:
+			sampler = (set_sampler *)&c->data;
 			break;
-		}
 		case COMMAND_COPY_BUFFER_TO_TEXTURE: {
 			copy_buffer_to_texture *data = (copy_buffer_to_texture *)&c->data;
 
@@ -979,11 +1058,11 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			GLenum type            = texture_format_type(data->destination.texture->opengl.format);
 
 			if (data->destination.texture->opengl.target == GL_TEXTURE_2D_ARRAY) {
-				glTexSubImage3D(data->destination.texture->opengl.target, 0, 0, 0, data->destination.origin_z, data->width, data->height,
-				                data->depth_or_array_layers, format, type, 0);
+				glTexSubImage3D(data->destination.texture->opengl.target, data->destination.mip_level, 0, 0, data->destination.origin_z, data->width,
+				                data->height, data->depth_or_array_layers, format, type, 0);
 			}
 			else {
-				glTexSubImage2D(data->destination.texture->opengl.target, 0, 0, 0, data->width, data->height, format, type, 0);
+				glTexSubImage2D(data->destination.texture->opengl.target, data->destination.mip_level, 0, 0, data->width, data->height, format, type, 0);
 			}
 
 			glBindTexture(data->destination.texture->opengl.target, 0);
@@ -1228,8 +1307,7 @@ void kore_opengl_device_create_sampler(kore_gpu_device *device, const kore_gpu_s
 	sampler->opengl.min_filter = convert_filter_mode(parameters->min_filter);
 	sampler->opengl.mag_filter = convert_filter_mode(parameters->mag_filter);
 
-	sampler->opengl.min_mip_filter = convert_mipmap_filter_mode(parameters->min_filter, parameters->mipmap_filter);
-	sampler->opengl.mag_mip_filter = convert_mipmap_filter_mode(parameters->mag_filter, parameters->mipmap_filter);
+	sampler->opengl.mip_filter = convert_mipmap_filter_mode(parameters->min_filter, parameters->mipmap_filter);
 
 	sampler->opengl.lod_min_clamp = parameters->lod_min_clamp;
 	sampler->opengl.lod_max_clamp = parameters->lod_max_clamp;
