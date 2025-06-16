@@ -17,7 +17,7 @@
 #include <assert.h>
 
 static WGPUDevice              wgpu_device;
-static WGPUInstance            wgpu_instance;
+WGPUInstance            wgpu_instance;
 static WGPUAdapter             wgpu_adapter;
 static kore_gpu_texture_format framebuffer_format;
 
@@ -402,7 +402,7 @@ static void (*kickstart_callback)();
 
 static void device_callback(WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message, void *userdata1, void *userdata2) {
 	if (message.length > 0) {
-		kore_log(KORE_LOG_LEVEL_INFO, "RequestDevice: %s", message);
+		kore_log(KORE_LOG_LEVEL_INFO, "RequestDevice: %s", message.data);
 	}
 	assert(status == WGPURequestDeviceStatus_Success);
 
@@ -413,18 +413,18 @@ static void device_callback(WGPURequestDeviceStatus status, WGPUDevice device, W
 
 static void adapter_callback(WGPURequestAdapterStatus status, WGPUAdapter adapter, WGPUStringView message, void *userdata1, void *userdata2) {
 	if (message.length > 0) {
-		kore_log(KORE_LOG_LEVEL_INFO, "RequestAdapter: %s", message);
+		kore_log(KORE_LOG_LEVEL_INFO, "RequestAdapter: %s", message.data);
 	}
 	assert(status == WGPURequestAdapterStatus_Success);
 
 	wgpu_adapter = adapter;
 
-	WGPUAdapterInfo info;
+	WGPUAdapterInfo info = {0};
 	wgpuAdapterGetInfo(wgpu_adapter, &info);
-	kore_log(KORE_LOG_LEVEL_INFO, "adapter vendor: %s", info.vendor);
-	kore_log(KORE_LOG_LEVEL_INFO, "adapter architecture: %s", info.architecture);
-	kore_log(KORE_LOG_LEVEL_INFO, "adapter device: %s", info.device);
-	kore_log(KORE_LOG_LEVEL_INFO, "adapter description: %s", info.description);
+	kore_log(KORE_LOG_LEVEL_INFO, "adapter vendor: %s", info.vendor.data);
+	kore_log(KORE_LOG_LEVEL_INFO, "adapter architecture: %s", info.architecture.data);
+	kore_log(KORE_LOG_LEVEL_INFO, "adapter device: %s", info.device.data);
+	kore_log(KORE_LOG_LEVEL_INFO, "adapter description: %s", info.description.data);
 
 	WGPUFeatureName required_features[] = {
 	    WGPUFeatureName_Float32Filterable,

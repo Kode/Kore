@@ -19,11 +19,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static bool running = false;
+
+#ifdef KORE_WEBGPU
+extern WGPUInstance wgpu_instance;
+#endif
+
 static void drawfunc() {
-	kore_internal_update_callback();
-	kore_audio_update();
+#ifdef KORE_WEBGPU
+		wgpuInstanceProcessEvents(wgpu_instance);
+#endif
+
+	if (running) {
+		kore_internal_update_callback();
+		kore_audio_update();
 #ifdef KORE_OPENGL
-	glfwSwapBuffers();
+		glfwSwapBuffers();
+#endif
+	}
+
+#ifdef KORE_WEBGPU
+		wgpuInstanceProcessEvents(wgpu_instance);
 #endif
 }
 
@@ -323,7 +339,7 @@ static char **html5_argv;
 
 void main_after_webgpu_init(void) {
 	kickstart(html5_argc, html5_argv);
-	emscripten_set_main_loop(drawfunc, 0, false);
+	running = true;
 }
 
 int main(int argc, char **argv) {
@@ -332,9 +348,11 @@ int main(int argc, char **argv) {
 
 #ifdef KORE_WEBGPU
 	kore_webgpu_init(main_after_webgpu_init);
+	emscripten_set_main_loop(drawfunc, 0, false);
 #else
 	kickstart(argc, argv);
-	emscripten_set_main_loop(drawfunc, 0, 1);
+	emscripten_set_main_loop(drawfunc, 0, true);
+	running = true;
 #endif
 
 	return 0;

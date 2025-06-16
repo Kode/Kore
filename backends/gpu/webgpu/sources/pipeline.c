@@ -166,7 +166,10 @@ const char *kore_webgpu_prepare_shader(kore_gpu_device *device, const char *code
 void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_render_pipeline *pipe, const kore_webgpu_render_pipeline_parameters *parameters,
                                       const WGPUBindGroupLayout *bind_group_layouts, uint32_t bind_group_layouts_count) {
 	WGPUShaderSourceWGSL vertex_shader_source = {
-	    .code        = parameters->vertex.shader.data,
+	    .code        = {
+			.data = parameters->vertex.shader.data,
+			.length = strlen(parameters->vertex.shader.data),
+		},
 	    .chain.sType = WGPUSType_ShaderSourceWGSL,
 	};
 
@@ -183,7 +186,10 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 	wgpuShaderModuleGetCompilationInfo(vertex_shader_module, callback_info);
 
 	WGPUShaderSourceWGSL fragment_shader_source = {
-	    .code        = parameters->fragment.shader.data,
+	    .code        = {
+			.data = parameters->fragment.shader.data,
+			.length = strlen(parameters->fragment.shader.data),
+		},
 	    .chain.sType = WGPUSType_ShaderSourceWGSL,
 	};
 
@@ -266,14 +272,20 @@ void kore_webgpu_render_pipeline_init(kore_webgpu_device *device, kore_webgpu_re
 
 	WGPUVertexState vertex_state = {
 	    .module      = vertex_shader_module,
-	    .entryPoint  = "main",
+	    .entryPoint  = {
+			.data = "main",
+			.length = 4,
+		},
 	    .bufferCount = parameters->vertex.buffers_count,
 	    .buffers     = &vertex_buffer_layouts[0],
 	};
 
 	WGPUFragmentState fragment_state = {
 	    .module      = fragment_shader_module,
-	    .entryPoint  = "main",
+	    .entryPoint  = {
+			.data = "main",
+			.length = 4,
+		},
 	    .targetCount = parameters->fragment.targets_count,
 	    .targets     = color_target_states,
 	};
@@ -328,7 +340,10 @@ void kore_webgpu_compute_pipeline_init(kore_webgpu_device *device, kore_webgpu_c
                                        const kore_webgpu_compute_pipeline_parameters *parameters, const WGPUBindGroupLayout *bind_group_layouts,
                                        uint32_t bind_group_layouts_count) {
 	WGPUShaderSourceWGSL shader_source = {
-	    .code        = parameters->shader.data,
+	    .code        = {
+			.data = parameters->shader.data,
+			.length = strlen(parameters->shader.data),
+		},
 	    .chain.sType = WGPUSType_ShaderSourceWGSL,
 	};
 
@@ -351,7 +366,10 @@ void kore_webgpu_compute_pipeline_init(kore_webgpu_device *device, kore_webgpu_c
 
 	WGPUComputeState compute_state = {
 	    .module     = shader_module,
-	    .entryPoint = "main",
+	    .entryPoint = {
+			.data = "main",
+			.length = 4,
+		},
 	};
 
 	WGPUComputePipelineDescriptor compute_pipeline_descriptor = {
