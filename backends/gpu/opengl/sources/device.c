@@ -588,11 +588,6 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	if (target == GL_TEXTURE_2D_ARRAY) {
 		glTexStorage3D(target, parameters->mip_level_count, internal_format, parameters->width, parameters->height, parameters->depth_or_array_layers);
 	}
-	else if (target == GL_TEXTURE_CUBE_MAP) {
-		for (uint32_t face = 0; face < 6; ++face) {
-			glTexStorage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, parameters->mip_level_count, internal_format, parameters->width, parameters->height);
-		}
-	}
 	else {
 		glTexStorage2D(target, parameters->mip_level_count, internal_format, parameters->width, parameters->height);
 	}
