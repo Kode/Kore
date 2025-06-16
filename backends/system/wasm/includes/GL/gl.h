@@ -289,6 +289,8 @@ __attribute__((import_module("imports"), import_name("glGetUniformBlockIndex")))
 __attribute__((import_module("imports"), import_name("glCopyTexSubImage2D"))) void glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
                                                                                                        GLint x, GLint y, GLsizei width, GLsizei height);
 __attribute__((import_module("imports"), import_name("glReadBuffer"))) void        glReadBuffer(GLenum mode);
+__attribute__((import_module("imports"), import_name("glTexStorage2D"))) void      glTexStorage2D(GLenum target, GLsizei levels, GLenum internalformat,
+                                                                                                  GLsizei width, GLsizei height);
 __attribute__((import_module("imports"), import_name("glTexStorage3D"))) void      glTexStorage3D(GLenum target, GLsizei levels, GLenum internalformat,
                                                                                                   GLsizei width, GLsizei height, GLsizei depth);
 __attribute__((import_module("imports"), import_name("glTexSubImage3D"))) void     glTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
