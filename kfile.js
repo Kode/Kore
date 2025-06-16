@@ -461,26 +461,6 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 	project.addDefine('_POSIX_C_SOURCE=200112L');
 	project.addDefine('_XOPEN_SOURCE=600');
 }
-else if (platform === Platform.Pi) {
-	addKoreDefine('RASPBERRY_PI');
-	addBackend('system/pi');
-	addBackend('system/posix');
-	addBackend('gpu/opengl');
-	addKoreDefine('OPENGL');
-	addKoreDefine('OPENGL_ES');
-	addKoreDefine('POSIX');
-	project.addDefine('_POSIX_C_SOURCE=200112L');
-	project.addDefine('_XOPEN_SOURCE=600');
-	project.addIncludeDir('/opt/vc/include');
-	project.addIncludeDir('/opt/vc/include/interface/vcos/pthreads');
-	project.addIncludeDir('/opt/vc/include/interface/vmcs_host/linux');
-	project.addLib('dl');
-	project.addLib('GLESv2');
-	project.addLib('EGL');
-	project.addLib('bcm_host');
-	project.addLib('asound');
-	project.addLib('X11');
-}
 else {
 	plugin = true;
 }
@@ -490,17 +470,14 @@ if (plugin) {
 	if (platform === Platform.PS4) {
 		backend = 'PlayStation4';
 	}
-	else if (platform === Platform.XboxOne) {
+	else if (platform === Platform.PS5) {
+		backend = 'PlayStation5'
+	}
+	else if (platform === Platform.XboxOne || platform === Platform.XboxSeries) {
 		backend = 'Xbox';
 	}
 	else if (platform === Platform.Switch) {
 		backend = 'Switch';
-	}
-	else if (platform === Platform.XboxSeries) {
-		backend = 'Xbox';
-	}
-	else if (platform === Platform.PS5) {
-		backend = 'PlayStation5'
 	}
 
 	let ancestor = project;
