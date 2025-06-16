@@ -590,87 +590,20 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	}
 	else if (target == GL_TEXTURE_CUBE_MAP) {
 		for (uint32_t face = 0; face < 6; ++face) {
-			uint32_t width  = parameters->width;
-			uint32_t height = parameters->height;
-
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, internal_format, width, height, 0, format, type, NULL);
-
-			if (parameters->mip_level_count > 0 && (width > 1 || height > 1)) {
-				// OpenGL requires a complete mip chain
-
-				uint32_t level = 1;
-
-				if (width > 1) {
-					width /= 2;
-				}
-
-				if (height > 1) {
-					height /= 2;
-				}
-
-				for (;;) {
-					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, level, internal_format, width, height, 0, format, type, NULL);
-
-					if (width == 1 && height == 1) {
-						break;
-					}
-
-					if (width > 1) {
-						width /= 2;
-					}
-
-					if (height > 1) {
-						height /= 2;
-					}
-
-					++level;
-				}
-			}
+			glTexStorage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, parameters->mip_level_count, internal_format, parameters->width, parameters->height);
 		}
 	}
 	else {
-		uint32_t width  = parameters->width;
-		uint32_t height = parameters->height;
-
-		glTexImage2D(target, 0, internal_format, width, height, 0, format, type, NULL);
-
-		if (parameters->mip_level_count > 0 && (width > 1 || height > 1)) {
-			// OpenGL requires a complete mip chain
-
-			uint32_t level = 1;
-
-			if (width > 1) {
-				width /= 2;
-			}
-
-			if (height > 1) {
-				height /= 2;
-			}
-
-			for (;;) {
-				glTexImage2D(target, level, internal_format, width, height, 0, format, type, NULL);
-
-				if (width == 1 && height == 1) {
-					break;
-				}
-
-				if (width > 1) {
-					width /= 2;
-				}
-
-				if (height > 1) {
-					height /= 2;
-				}
-
-				++level;
-			}
-		}
+		glTexStorage2D(target, parameters->mip_level_count, internal_format, parameters->width, parameters->height);
 	}
 	kore_opengl_check_errors();
 
 	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
 		glGenFramebuffers(1, &texture->opengl.framebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, texture->opengl.framebuffer);
+
+		// Only GL_COLOR_ATTACHMENT0 is set here, additional attachments are set in COMMAND_BEGIN_RENDER_PASS
+
 		if (target == GL_TEXTURE_CUBE_MAP) {
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X, texture->opengl.texture, 0);
 		}
@@ -1145,6 +1078,7 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			}
 
 			if (!framebuffer_view.texture->opengl.is_primary_framebuffer) {
+				// GL_COLOR_ATTACHMENT0 is set in kore_opengl_device_create_texture
 				for (size_t color_index = 1; color_index < data->parameters.color_attachments_count; ++color_index) {
 					kore_gpu_texture_view *view = &data->parameters.color_attachments[color_index].texture;
 
