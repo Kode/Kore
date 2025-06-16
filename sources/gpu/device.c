@@ -13,7 +13,7 @@
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/device_functions.h>
 #else
-#error("Unknown GPU backend")
+#error ("Unknown GPU backend")
 #endif
 
 #include <assert.h>
@@ -75,6 +75,10 @@ void kore_gpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_comm
 }
 
 void kore_gpu_device_create_sampler(kore_gpu_device *device, const kore_gpu_sampler_parameters *parameters, kore_gpu_sampler *sampler) {
+#ifdef KORE_GPU_VALIDATION
+	assert(parameters->max_anisotropy >= 1);
+#endif
+
 	KORE_GPU_CALL3(device_create_sampler, device, parameters, sampler);
 }
 
