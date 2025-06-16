@@ -44,8 +44,10 @@ void kore_gpu_device_create_command_list(kore_gpu_device *device, kore_gpu_comma
 void kore_gpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
 #ifdef KORE_GPU_VALIDATION
 	if (kore_gpu_texture_format_is_depth(parameters->format)) {
-		assert(parameters->dimension != KORE_GPU_TEXTURE_DIMENSION_3D);
+		assert(parameters->dimension == KORE_GPU_TEXTURE_DIMENSION_2D);
 	}
+	assert(parameters->width > 0);
+	assert(parameters->height > 0);
 #endif
 
 	texture->format = parameters->format;

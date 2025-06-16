@@ -372,10 +372,18 @@ static GLenum convert_internal_format(kore_gpu_texture_format format) {
 	case KORE_GPU_TEXTURE_FORMAT_RGBA32_FLOAT:
 		return GL_RGBA32F;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM:
+#ifdef GL_DEPTH_COMPONENT24
+		return GL_DEPTH_COMPONENT16;
+#else
+		return GL_RED;
+#endif
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH24_NOTHING8:
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH24_STENCIL8:
-		assert(false);
-		return GL_RGBA32F;
+#ifdef GL_DEPTH_COMPONENT24
+		return GL_DEPTH_COMPONENT24;
+#else
+		return GL_RED;
+#endif
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH32_FLOAT:
 #ifdef GL_DEPTH_COMPONENT32
 		return GL_DEPTH_COMPONENT32;
@@ -450,8 +458,6 @@ static GLenum convert_format(kore_gpu_texture_format format) {
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM:
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH24_NOTHING8:
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH24_STENCIL8:
-		assert(false);
-		return GL_RGBA;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH32_FLOAT:
 		return GL_DEPTH_COMPONENT;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH32_FLOAT_STENCIL8_NOTHING24:
@@ -567,6 +573,9 @@ static GLenum texture_format_type(kore_gpu_texture_format format) {
 }
 
 void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
+	uint32_t width  = parameters->width > 0 ? parameters->width : 1;
+	uint32_t height = parameters->height > 0 ? parameters->height : 1;
+
 	glGenTextures(1, &texture->opengl.texture);
 	kore_opengl_check_errors();
 
@@ -586,10 +595,10 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	GLenum type            = texture_format_type(parameters->format);
 
 	if (target == GL_TEXTURE_2D_ARRAY) {
-		glTexStorage3D(target, parameters->mip_level_count, internal_format, parameters->width, parameters->height, parameters->depth_or_array_layers);
+		glTexStorage3D(target, parameters->mip_level_count, internal_format, width, height, parameters->depth_or_array_layers);
 	}
 	else {
-		glTexStorage2D(target, parameters->mip_level_count, internal_format, parameters->width, parameters->height);
+		glTexStorage2D(target, parameters->mip_level_count, internal_format, width, height);
 	}
 	kore_opengl_check_errors();
 
@@ -599,7 +608,11 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 		// Only GL_COLOR_ATTACHMENT0 is set here, additional attachments are set in COMMAND_BEGIN_RENDER_PASS
 
-		if (target == GL_TEXTURE_CUBE_MAP) {
+		if (kore_gpu_texture_format_is_depth(parameters->format)) {
+			assert(target == GL_TEXTURE_2D);
+			// bound in COMMAND_BEGIN_RENDER_PASS
+		}
+		else if (target == GL_TEXTURE_CUBE_MAP) {
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X, texture->opengl.texture, 0);
 		}
 		else {
@@ -615,16 +628,20 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 
 	kore_opengl_check_errors();
 
-	texture->width                  = parameters->width;
-	texture->height                 = parameters->height;
+	texture->width                  = width;
+	texture->height                 = height;
 	texture->opengl.format          = parameters->format;
 	texture->opengl.target          = target;
 	texture->opengl.mip_level_count = parameters->mip_level_count;
 }
 
 kore_gpu_texture *kore_opengl_device_get_framebuffer(kore_gpu_device *device) {
-	framebuffer.width  = kore_window_width(0);
-	framebuffer.height = kore_window_height(0);
+	uint32_t width  = kore_window_width(0);
+	uint32_t height = kore_window_height(0);
+
+	framebuffer.width  = width > 8 ? width : 8;
+	framebuffer.height = height > 8 ? height : 8;
+
 	return &framebuffer;
 }
 
@@ -1098,6 +1115,9 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			}
 
 			if (data->parameters.depth_stencil_attachment.texture != NULL) {
+				// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, data->parameters.depth_stencil_attachment.texture->opengl.texture,
+				// 0);
+
 				glEnable(GL_DEPTH_TEST);
 
 				if (data->parameters.depth_stencil_attachment.depth_load_op == KORE_GPU_LOAD_OP_CLEAR) {
