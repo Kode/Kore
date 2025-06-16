@@ -6,6 +6,8 @@
 
 #include <string.h>
 
+extern WGPUInstance wgpu_instance;
+
 static void kore_webgpu_buffer_schedule_uploads(kore_webgpu_buffer *buffer) {
 	for (uint8_t region_index = 0; region_index < buffer->outdated_regions_count; ++region_index) {
 		assert(scheduled_buffer_uploads_count < 256);
@@ -75,6 +77,7 @@ static void map_async(WGPUBuffer buffer, WGPUMapMode map_mode, uint64_t offset, 
 
 	while (!mapped) {
 		emscripten_sleep(0);
+		wgpuInstanceProcessEvents(wgpu_instance);
 	}
 }
 

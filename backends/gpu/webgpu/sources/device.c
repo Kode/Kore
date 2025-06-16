@@ -319,6 +319,7 @@ void kore_webgpu_device_wait_until_idle(kore_gpu_device *device) {
 	
 	while (!work_done) {
 		emscripten_sleep(0);
+		wgpuInstanceProcessEvents(wgpu_instance);
 	}
 }
 
