@@ -1151,7 +1151,7 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		case COMMAND_END_RENDER_PASS: {
 			if (written_to_internal_framebuffer) {
 				glBindFramebuffer(GL_READ_FRAMEBUFFER, device->opengl.custom_framebuffer);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebuffer.opengl.texture, 0);
+				glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebuffer.opengl.texture, 0);
 
 				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, device->opengl.default_framebuffer);
 

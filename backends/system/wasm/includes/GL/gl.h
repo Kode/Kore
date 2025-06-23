@@ -163,6 +163,8 @@ typedef char     GLchar;
 #define GL_RG32F                            0x8230
 #define GL_RG32I                            0x823B
 #define GL_TEXTURE_2D_ARRAY                 0x8C1A
+#define GL_READ_FRAMEBUFFER                 0x8CA8
+#define GL_DRAW_FRAMEBUFFER                 0x8CA9
 
 __attribute__((import_module("imports"), import_name("glUniform1i"))) void        glUniform1i(GLint location, GLint v0);
 __attribute__((import_module("imports"), import_name("glUniform2i"))) void        glUniform2i(GLint location, GLint v0, GLint v1);
