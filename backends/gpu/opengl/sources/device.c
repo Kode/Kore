@@ -228,13 +228,20 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	kore_egl_init_window(0);
 #endif
 
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer.opengl.framebuffer);
-	framebuffer.opengl.texture                = 0;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &device->opengl.default_framebuffer);
+
+	const kore_gpu_texture_parameters texture_parameters = {
+	    .width                 = kore_window_width(0),
+	    .height                = kore_window_height(0),
+	    .format                = KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM,
+	    .dimension             = KORE_GPU_TEXTURE_DIMENSION_2D,
+	    .depth_or_array_layers = 1,
+	    .mip_level_count       = 1,
+	    .sample_count          = 1,
+	    .usage                 = KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT | KORE_GPU_TEXTURE_USAGE_COPY_DST,
+	};
+	kore_gpu_device_create_texture(device, &texture_parameters, &framebuffer);
 	framebuffer.opengl.is_primary_framebuffer = true;
-	framebuffer.width                         = kore_window_width(0);
-	framebuffer.height                        = kore_window_height(0);
-	framebuffer.opengl.format                 = KORE_GPU_TEXTURE_FORMAT_RGBA8_UNORM;
-	framebuffer.opengl.target                 = GL_TEXTURE_2D;
 
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
@@ -242,6 +249,8 @@ void kore_opengl_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	kore_opengl_check_errors();
+
+	glGenFramebuffers(1, &device->opengl.custom_framebuffer);
 
 	init_copy();
 	init_flip();
@@ -553,7 +562,6 @@ static GLenum texture_format_type(kore_gpu_texture_format format) {
 	case KORE_GPU_TEXTURE_FORMAT_RGBA32_FLOAT:
 		return GL_FLOAT;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH16_UNORM:
-		assert(false);
 		return GL_FLOAT;
 	case KORE_GPU_TEXTURE_FORMAT_DEPTH24_NOTHING8:
 		assert(false);
@@ -601,28 +609,6 @@ void kore_opengl_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 		glTexStorage2D(target, parameters->mip_level_count, internal_format, width, height);
 	}
 	kore_opengl_check_errors();
-
-	if ((parameters->usage & KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT) != 0) {
-		glGenFramebuffers(1, &texture->opengl.framebuffer);
-		glBindFramebuffer(GL_FRAMEBUFFER, texture->opengl.framebuffer);
-
-		// Only GL_COLOR_ATTACHMENT0 is set here, additional attachments are set in COMMAND_BEGIN_RENDER_PASS
-
-		if (kore_gpu_texture_format_is_depth(parameters->format)) {
-			assert(target == GL_TEXTURE_2D);
-			// bound in COMMAND_BEGIN_RENDER_PASS
-		}
-		else if (target == GL_TEXTURE_CUBE_MAP) {
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X, texture->opengl.texture, 0);
-		}
-		else {
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->opengl.texture, 0);
-		}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-	else {
-		texture->opengl.framebuffer = UINT32_MAX;
-	}
 
 	glBindTexture(target, 0);
 
@@ -821,11 +807,12 @@ static bool vertex_format_normalized(kore_opengl_vertex_format format) {
 static const uint32_t max_vertex_attrib_arrays = 16;
 
 void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
-	kore_gpu_index_format        index_format     = KORE_GPU_INDEX_FORMAT_UINT16;
-	kore_gpu_texture_view        framebuffer_view = {0};
-	kore_opengl_render_pipeline *pipeline         = NULL;
-	set_texture                 *texture          = NULL;
-	set_sampler                 *sampler          = NULL;
+	kore_gpu_index_format        index_format                    = KORE_GPU_INDEX_FORMAT_UINT16;
+	bool                         primary_framebuffer             = false;
+	bool                         written_to_internal_framebuffer = false;
+	kore_opengl_render_pipeline *pipeline                        = NULL;
+	set_texture                 *texture                         = NULL;
+	set_sampler                 *sampler                         = NULL;
 
 #define MAX_VERTEX_BUFFERS 8
 	set_vertex_buffer_data *vertex_buffers[MAX_VERTEX_BUFFERS]    = {0};
@@ -932,7 +919,7 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		case COMMAND_SET_RENDER_PIPELINE: {
 			set_render_pipeline *data = (set_render_pipeline *)&c->data;
 
-			if (framebuffer_view.texture->opengl.is_primary_framebuffer) {
+			if (primary_framebuffer) {
 				glUseProgram(data->pipeline->program);
 			}
 			else {
@@ -1060,10 +1047,12 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			if (data->destination.texture->opengl.is_primary_framebuffer) {
 				copy(data->source.origin_x, data->source.origin_y, data->source.texture->width, data->source.texture->height, data->destination.origin_x,
 				     data->destination.origin_y, data->destination.texture->width, data->destination.texture->height, data->width, data->height,
-				     data->source.texture->opengl.texture, data->destination.texture->opengl.framebuffer);
+				     data->source.texture->opengl.texture, device->opengl.default_framebuffer);
 			}
 			else {
-				glBindFramebuffer(GL_FRAMEBUFFER, data->source.texture->opengl.framebuffer);
+				glBindFramebuffer(GL_FRAMEBUFFER, device->opengl.custom_framebuffer);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, data->source.texture->opengl.texture, 0);
+
 				glReadBuffer(GL_COLOR_ATTACHMENT0);
 				glBindTexture(GL_TEXTURE_2D, data->destination.texture->opengl.texture);
 				glCopyTexSubImage2D(GL_TEXTURE_2D, 0, data->destination.origin_x, data->destination.origin_y, data->source.origin_x, data->source.origin_y,
@@ -1076,23 +1065,42 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		}
 		case COMMAND_BEGIN_RENDER_PASS: {
 			begin_render_pass *data = (begin_render_pass *)&c->data;
-			framebuffer_view        = data->parameters.color_attachments[0].texture;
 
-			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_view.texture->opengl.framebuffer);
-			kore_opengl_check_errors();
+			written_to_internal_framebuffer = false;
 
-			glViewport(0, 0, data->parameters.color_attachments[0].texture.texture->width, data->parameters.color_attachments[0].texture.texture->height);
+			if (data->parameters.color_attachments_count == 1 && data->parameters.color_attachments[0].texture.texture->opengl.is_primary_framebuffer &&
+			    data->parameters.depth_stencil_attachment.texture == NULL) {
+				primary_framebuffer = true;
 
-			if (data->parameters.color_attachments[0].load_op == KORE_GPU_LOAD_OP_CLEAR) {
-				kore_gpu_color color = data->parameters.color_attachments[0].clear_value;
-				glClearColor(color.r, color.g, color.b, color.a);
-				glClear(GL_COLOR_BUFFER_BIT);
+				glBindFramebuffer(GL_FRAMEBUFFER, device->opengl.default_framebuffer);
+				kore_opengl_check_errors();
+
+				glViewport(0, 0, data->parameters.color_attachments[0].texture.texture->width, data->parameters.color_attachments[0].texture.texture->height);
+				kore_opengl_check_errors();
+
+				if (data->parameters.color_attachments[0].load_op == KORE_GPU_LOAD_OP_CLEAR) {
+					kore_gpu_color color = data->parameters.color_attachments[0].clear_value;
+					glClearColor(color.r, color.g, color.b, color.a);
+					glClear(GL_COLOR_BUFFER_BIT);
+					kore_opengl_check_errors();
+				}
 			}
+			else {
+				primary_framebuffer = false;
 
-			if (!framebuffer_view.texture->opengl.is_primary_framebuffer) {
-				// GL_COLOR_ATTACHMENT0 is set in kore_opengl_device_create_texture
-				for (size_t color_index = 1; color_index < data->parameters.color_attachments_count; ++color_index) {
+				glBindFramebuffer(GL_FRAMEBUFFER, device->opengl.custom_framebuffer);
+				kore_opengl_check_errors();
+
+				for (size_t color_index = 0; color_index < data->parameters.color_attachments_count; ++color_index) {
 					kore_gpu_texture_view *view = &data->parameters.color_attachments[color_index].texture;
+
+					if (view->texture->opengl.is_primary_framebuffer) {
+						written_to_internal_framebuffer = true;
+					}
+
+					if (color_index == 0) {
+						glViewport(0, 0, view->texture->width, view->texture->height);
+					}
 
 					if (view->texture->opengl.target == GL_TEXTURE_CUBE_MAP) {
 						glFramebufferTexture2D(GL_FRAMEBUFFER, (GLenum)(GL_COLOR_ATTACHMENT0 + color_index),
@@ -1100,6 +1108,12 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 					}
 					else {
 						glFramebufferTexture2D(GL_FRAMEBUFFER, (GLenum)(GL_COLOR_ATTACHMENT0 + color_index), GL_TEXTURE_2D, view->texture->opengl.texture, 0);
+					}
+
+					if (data->parameters.color_attachments[color_index].load_op == KORE_GPU_LOAD_OP_CLEAR) {
+						kore_gpu_color color = data->parameters.color_attachments[0].clear_value;
+						glClearBufferfv(GL_COLOR, (GLint)color_index, (float *)&color);
+						kore_opengl_check_errors();
 					}
 				}
 
@@ -1112,32 +1126,39 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				for (size_t color_index = data->parameters.color_attachments_count; color_index < 8; ++color_index) {
 					glFramebufferTexture2D(GL_FRAMEBUFFER, (GLenum)(GL_COLOR_ATTACHMENT0 + color_index), GL_TEXTURE_2D, 0, 0);
 				}
-			}
 
-			if (data->parameters.depth_stencil_attachment.texture != NULL) {
-				// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, data->parameters.depth_stencil_attachment.texture->opengl.texture,
-				// 0);
+				if (data->parameters.depth_stencil_attachment.texture != NULL) {
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+					                       data->parameters.depth_stencil_attachment.texture->opengl.texture, 0);
 
-				glEnable(GL_DEPTH_TEST);
+					glEnable(GL_DEPTH_TEST);
 
-				if (data->parameters.depth_stencil_attachment.depth_load_op == KORE_GPU_LOAD_OP_CLEAR) {
-#ifdef KORE_OPENGL_ES
-					glClearDepthf(data->parameters.depth_stencil_attachment.depth_clear_value);
-#else
-					glClearDepth(data->parameters.depth_stencil_attachment.depth_clear_value);
-#endif
-					glClear(GL_DEPTH_BUFFER_BIT);
+					if (data->parameters.depth_stencil_attachment.depth_load_op == KORE_GPU_LOAD_OP_CLEAR) {
+						glClearBufferfv(GL_DEPTH, 0, &data->parameters.depth_stencil_attachment.depth_clear_value);
+					}
+
+					if (data->parameters.depth_stencil_attachment.stencil_load_op == KORE_GPU_LOAD_OP_CLEAR) {
+						glClearBufferiv(GL_STENCIL, 0, &data->parameters.depth_stencil_attachment.stencil_clear_value);
+					}
+				}
+				else {
+					glDisable(GL_DEPTH_TEST);
 				}
 			}
-			else {
-				glDisable(GL_DEPTH_TEST);
-			}
-
-			kore_opengl_check_errors();
 
 			break;
 		}
 		case COMMAND_END_RENDER_PASS: {
+			if (written_to_internal_framebuffer) {
+				glBindFramebuffer(GL_READ_FRAMEBUFFER, device->opengl.custom_framebuffer);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebuffer.opengl.texture, 0);
+
+				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, device->opengl.default_framebuffer);
+
+				glBlitFramebuffer(0, 0, framebuffer.width, framebuffer.height, 0, framebuffer.height, framebuffer.width, 0, GL_COLOR_BUFFER_BIT,
+				                  GL_NEAREST); // flip
+			}
+
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			kore_opengl_check_errors();
 

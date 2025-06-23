@@ -8,7 +8,8 @@ extern "C" {
 #define KORE_OPENGL_FRAME_COUNT 2
 
 typedef struct kore_opengl_device {
-	int nothing;
+	uint32_t default_framebuffer;
+	uint32_t custom_framebuffer;
 } kore_opengl_device;
 
 typedef struct kore_opengl_query_set {
