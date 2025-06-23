@@ -12,7 +12,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 	fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	MACHINE_TYPE=`uname -m`
-	if [[ "$MACHINE_TYPE" == "aarch64"* ]]; then
+	if [[ "$MACHINE_TYPE" == "arm64"* ]]; then
 		KORE_PLATFORM=macos_arm64
 	elif [[ "$MACHINE_TYPE" == "x86_64"* ]]; then
 		KORE_PLATFORM=macos_x64
