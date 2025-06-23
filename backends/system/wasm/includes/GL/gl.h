@@ -28,6 +28,9 @@ typedef char     GLchar;
 #define GL_INFO_LOG_LENGTH 0xABCD
 
 // regular WebGL defines
+#define GL_COLOR                            0x1800
+#define GL_DEPTH                            0x1801
+#define GL_STENCIL                          0x1802
 #define GL_CLAMP_TO_EDGE                    0x812F
 #define GL_INT_VEC2                         0x8B53
 #define GL_INT_VEC3                         0x8B54
@@ -296,5 +299,8 @@ __attribute__((import_module("imports"), import_name("glTexStorage3D"))) void   
 __attribute__((import_module("imports"), import_name("glTexSubImage3D"))) void     glTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
                                                                                                    GLint zoffset, GLsizei width, GLsizei height, GLsizei depth,
                                                                                                    GLenum format, GLenum type, const void *pixels);
+__attribute__((import_module("imports"), import_name("glClearBufferfv"))) void glClearBufferfv(GLenum buffer, GLint drawBuffer, const GLfloat* value);
+__attribute__((import_module("imports"), import_name("glClearBufferiv"))) void glClearBufferiv(GLenum buffer, GLint drawBuffer, const GLint* value);
+__attribute__((import_module("imports"), import_name("glBlitFramebuffer"))) void glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
 
 #endif
