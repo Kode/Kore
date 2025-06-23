@@ -301,8 +301,9 @@ __attribute__((import_module("imports"), import_name("glTexStorage3D"))) void   
 __attribute__((import_module("imports"), import_name("glTexSubImage3D"))) void     glTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
                                                                                                    GLint zoffset, GLsizei width, GLsizei height, GLsizei depth,
                                                                                                    GLenum format, GLenum type, const void *pixels);
-__attribute__((import_module("imports"), import_name("glClearBufferfv"))) void glClearBufferfv(GLenum buffer, GLint drawBuffer, const GLfloat* value);
-__attribute__((import_module("imports"), import_name("glClearBufferiv"))) void glClearBufferiv(GLenum buffer, GLint drawBuffer, const GLint* value);
-__attribute__((import_module("imports"), import_name("glBlitFramebuffer"))) void glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+__attribute__((import_module("imports"), import_name("glClearBufferfv"))) void     glClearBufferfv(GLenum buffer, GLint drawBuffer, const GLfloat *value);
+__attribute__((import_module("imports"), import_name("glClearBufferiv"))) void     glClearBufferiv(GLenum buffer, GLint drawBuffer, const GLint *value);
+__attribute__((import_module("imports"), import_name("glBlitFramebuffer"))) void
+glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
 
 #endif
