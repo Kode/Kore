@@ -202,15 +202,7 @@ static bool check_device_layers(const char **device_layers, int device_layers_co
 }
 
 static void load_extension_functions(void) {
-#define GET_VULKAN_FUNCTION(entrypoint)                                                              \
-	{                                                                                                \
-		vulkan_##entrypoint = (PFN_vk##entrypoint)vkGetInstanceProcAddr(instance, "vk" #entrypoint); \
-		if (vulkan_##entrypoint == NULL) {                                                           \
-			kore_error_message("vkGetInstanceProcAddr failed to find vk" #entrypoint);               \
-		}                                                                                            \
-	}
-
-#define GET_VULKAN_FUNCTION2(entrypoint, ext)                                                             \
+#define GET_VULKAN_FUNCTION(entrypoint, ext)                                                             \
 	{                                                                                                     \
 		vk##entrypoint = (PFN_vk##entrypoint##ext)vkGetInstanceProcAddr(instance, "vk" #entrypoint #ext); \
 		if (vk##entrypoint == NULL) {                                                                     \
@@ -218,12 +210,12 @@ static void load_extension_functions(void) {
 		}                                                                                                 \
 	}
 
-	GET_VULKAN_FUNCTION2(CmdBeginDebugUtilsLabel, EXT);
-	GET_VULKAN_FUNCTION2(CmdEndDebugUtilsLabel, EXT);
-	GET_VULKAN_FUNCTION2(CmdInsertDebugUtilsLabel, EXT);
-	GET_VULKAN_FUNCTION2(SetDebugUtilsObjectName, EXT);
-	GET_VULKAN_FUNCTION2(CreateDebugUtilsMessenger, EXT);
-	GET_VULKAN_FUNCTION2(DestroyDebugUtilsMessenger, EXT);
+	GET_VULKAN_FUNCTION(CmdBeginDebugUtilsLabel, EXT);
+	GET_VULKAN_FUNCTION(CmdEndDebugUtilsLabel, EXT);
+	GET_VULKAN_FUNCTION(CmdInsertDebugUtilsLabel, EXT);
+	GET_VULKAN_FUNCTION(SetDebugUtilsObjectName, EXT);
+	GET_VULKAN_FUNCTION(CreateDebugUtilsMessenger, EXT);
+	GET_VULKAN_FUNCTION(DestroyDebugUtilsMessenger, EXT);
 
 #undef GET_VULKAN_FUNCTION
 }
