@@ -197,6 +197,51 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		                                : render_area.extent.height;
 	}
 
+#ifdef KORE_NO_DYNAMIC_RENDERING
+	{
+		VkClearValue clear_value = convert_color_clear_value(textures[0]->vulkan.format, parameters->color_attachments[0].clear_value);
+
+		render_pass_parameters parameters = {
+		    .attachments =
+		        {
+		            {
+		                .format           = convert_to_vulkan_format(textures[0]->vulkan.format),
+		                .load_op          = VK_ATTACHMENT_LOAD_OP_CLEAR,
+		                .store_op         = VK_ATTACHMENT_STORE_OP_STORE,
+		                .stencil_load_op  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		                .stencil_store_op = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		            },
+		        },
+		    .attachments_count = 1,
+		    .depth_attachment =
+		        {
+		            .format           = VK_FORMAT_UNDEFINED,
+		            .load_op          = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		            .store_op         = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		            .stencil_load_op  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		            .stencil_store_op = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		        },
+		};
+
+		VkRenderPass render_pass;
+		find_render_pass(list->vulkan.device, &parameters, &render_pass);
+
+		VkFramebuffer framebuffer;
+		find_framebuffer(list->vulkan.device, render_area.extent.width, render_area.extent.height, image_views, 1, render_pass, &framebuffer);
+
+		VkRenderPassBeginInfo render_pass_begin_info = {
+		    .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+		    .pNext           = NULL,
+		    .renderArea      = render_area,
+		    .clearValueCount = 1,
+		    .pClearValues    = &clear_value,
+		    .renderPass      = render_pass,
+		    .framebuffer     = framebuffer,
+		};
+
+		vkCmdBeginRenderPass(list->vulkan.command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+	}
+#else
 	const VkRenderingInfo rendering_info = {
 	    .sType                = VK_STRUCTURE_TYPE_RENDERING_INFO,
 	    .pNext                = NULL,
@@ -210,20 +255,6 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 	    .pStencilAttachment   = VK_NULL_HANDLE,
 	};
 
-#ifdef KORE_NO_DYNAMIC_RENDERING
-	VkClearValue clear_value = convert_color_clear_value(textures[0]->vulkan.format, parameters->color_attachments[0].clear_value);
-
-	VkRenderPassBeginInfo render_pass_begin_info = {
-	    .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-	    .pNext           = NULL,
-	    .renderArea      = render_area,
-	    .clearValueCount = 1,
-	    .pClearValues    = &clear_value,
-	    .renderPass      = NULL,
-	    .framebuffer     = NULL,
-	};
-	vkCmdBeginRenderPass(list->vulkan.command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
-#else
 	vkCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
 #endif
 
@@ -241,7 +272,9 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 
 void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
 	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
-#ifndef KORE_NO_DYNAMIC_RENDERING
+#ifdef KORE_NO_DYNAMIC_RENDERING
+		vkCmdEndRenderPass(list->vulkan.command_buffer);
+#else
 		vkCmdEndRendering(list->vulkan.command_buffer);
 #endif
 	}

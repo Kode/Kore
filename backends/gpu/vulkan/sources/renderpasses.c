@@ -1,7 +1,21 @@
 #include "vulkanunit.h"
 
-static void create_default_render_pass(kore_vulkan_device *device, VkFormat formats[8], uint32_t formats_count, VkFormat depth_format,
-                                       VkRenderPass *render_pass) {
+static void find_framebuffer(VkDevice device, uint32_t width, uint32_t height, VkImageView image_views[9], uint32_t image_views_count, VkRenderPass render_pass,
+                             VkFramebuffer *framebuffer) {
+	VkFramebufferCreateInfo framebuffer_create_info = {
+	    .sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+	    .renderPass      = render_pass,
+	    .attachmentCount = image_views_count,
+	    .pAttachments    = image_views,
+	    .width           = width,
+	    .height          = height,
+	    .layers          = 1,
+	};
+
+	vkCreateFramebuffer(device, &framebuffer_create_info, NULL, framebuffer);
+}
+
+static void find_default_render_pass(VkDevice device, VkFormat formats[8], uint32_t formats_count, VkFormat depth_format, VkRenderPass *render_pass) {
 	render_pass_parameters parameters = {
 	    .attachments_count = formats_count,
 	    .depth_attachment =
@@ -24,10 +38,10 @@ static void create_default_render_pass(kore_vulkan_device *device, VkFormat form
 		};
 	}
 
-	create_render_pass(device, &parameters, render_pass);
+	find_render_pass(device, &parameters, render_pass);
 }
 
-static void create_render_pass(kore_vulkan_device *device, const render_pass_parameters *parameters, VkRenderPass *render_pass) {
+static void find_render_pass(VkDevice device, const render_pass_parameters *parameters, VkRenderPass *render_pass) {
 	VkAttachmentDescription attachment_descriptions[9];
 	VkAttachmentReference   attachment_references[8];
 
@@ -96,5 +110,5 @@ static void create_render_pass(kore_vulkan_device *device, const render_pass_par
 	    .pDependencies   = &dependency,
 	};
 
-	vkCreateRenderPass(device->device, &render_pass_create_info, NULL, render_pass);
+	vkCreateRenderPass(device, &render_pass_create_info, NULL, render_pass);
 }

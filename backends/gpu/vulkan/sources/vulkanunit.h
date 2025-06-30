@@ -83,11 +83,11 @@ typedef struct render_pass_parameters {
 	render_pass_attachment depth_attachment;
 } render_pass_parameters;
 
-struct kore_vulkan_device;
+static void find_default_render_pass(VkDevice device, VkFormat formats[8], uint32_t formats_count, VkFormat depth_format, VkRenderPass *render_pass);
 
-static void create_default_render_pass(struct kore_vulkan_device *device, VkFormat formats[8], uint32_t formats_count, VkFormat depth_format,
-                                       VkRenderPass *render_pass);
+static void find_render_pass(VkDevice device, const render_pass_parameters *parameters, VkRenderPass *render_pass);
 
-static void create_render_pass(struct kore_vulkan_device *device, const render_pass_parameters *parameters, VkRenderPass *render_pass);
+static void find_framebuffer(VkDevice device, uint32_t width, uint32_t height, VkImageView image_views[9], uint32_t image_views_count, VkRenderPass render_pass,
+                             VkFramebuffer *framebuffer);
 
 #endif

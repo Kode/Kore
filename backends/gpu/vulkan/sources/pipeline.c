@@ -443,8 +443,8 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	};
 
 #ifdef KORE_NO_DYNAMIC_RENDERING
-	create_default_render_pass(device, color_attachment_formats, (uint32_t)parameters->fragment.targets_count,
-	                           convert_to_vulkan_format(parameters->depth_stencil.format), &pipeline->render_pass);
+	find_default_render_pass(device->device, color_attachment_formats, (uint32_t)parameters->fragment.targets_count,
+	                         convert_to_vulkan_format(parameters->depth_stencil.format), &pipeline->render_pass);
 #endif
 
 	const VkGraphicsPipelineCreateInfo pipeline_create_info = {
