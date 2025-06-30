@@ -69,4 +69,25 @@ static PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessenger = NULL;
 static VkFormat                convert_to_vulkan_format(kore_gpu_texture_format format);
 static kore_gpu_texture_format convert_from_vulkan_format(VkFormat format);
 
+typedef struct render_pass_attachment {
+	VkFormat            format;
+	VkAttachmentLoadOp  load_op;
+	VkAttachmentStoreOp store_op;
+	VkAttachmentLoadOp  stencil_load_op;
+	VkAttachmentStoreOp stencil_store_op;
+} render_pass_attachment;
+
+typedef struct render_pass_parameters {
+	render_pass_attachment attachments[8];
+	uint32_t               attachments_count;
+	render_pass_attachment depth_attachment;
+} render_pass_parameters;
+
+struct kore_vulkan_device;
+
+static void create_default_render_pass(struct kore_vulkan_device *device, VkFormat formats[8], uint32_t formats_count, VkFormat depth_format,
+                                       VkRenderPass *render_pass);
+
+static void create_render_pass(struct kore_vulkan_device *device, const render_pass_parameters *parameters, VkRenderPass *render_pass);
+
 #endif

@@ -210,7 +210,20 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 	    .pStencilAttachment   = VK_NULL_HANDLE,
 	};
 
-#ifndef KORE_ANDROID // TODO
+#ifdef KORE_NO_DYNAMIC_RENDERING
+	VkClearValue clear_value = convert_color_clear_value(textures[0]->vulkan.format, parameters->color_attachments[0].clear_value);
+
+	VkRenderPassBeginInfo render_pass_begin_info = {
+	    .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+	    .pNext           = NULL,
+	    .renderArea      = render_area,
+	    .clearValueCount = 1,
+	    .pClearValues    = &clear_value,
+	    .renderPass      = NULL,
+	    .framebuffer     = NULL,
+	};
+	vkCmdBeginRenderPass(list->vulkan.command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+#else
 	vkCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
 #endif
 
@@ -228,7 +241,7 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 
 void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
 	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
-#ifndef KORE_ANDROID // TODO
+#ifndef KORE_NO_DYNAMIC_RENDERING
 		vkCmdEndRendering(list->vulkan.command_buffer);
 #endif
 	}

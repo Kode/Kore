@@ -442,11 +442,20 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	    .depthAttachmentFormat   = convert_to_vulkan_format(parameters->depth_stencil.format),
 	};
 
+#ifdef KORE_NO_DYNAMIC_RENDERING
+	create_default_render_pass(device, color_attachment_formats, (uint32_t)parameters->fragment.targets_count,
+	                           convert_to_vulkan_format(parameters->depth_stencil.format), &pipeline->render_pass);
+#endif
+
 	const VkGraphicsPipelineCreateInfo pipeline_create_info = {
-	    .sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-	    .pNext               = &pipeline_rendering_create_info,
-	    .layout              = pipeline->pipeline_layout,
-	    .renderPass          = VK_NULL_HANDLE,
+	    .sType  = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+	    .pNext  = &pipeline_rendering_create_info,
+	    .layout = pipeline->pipeline_layout,
+#ifdef KORE_NO_DYNAMIC_RENDERING
+	    .renderPass = pipeline->render_pass,
+#else
+	    .renderPass = VK_NULL_HANDLE,
+#endif
 	    .stageCount          = 2,
 	    .pVertexInputState   = &vertex_input_state_create_info,
 	    .pInputAssemblyState = &input_assembly_state_create_info,
@@ -462,8 +471,13 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	result = vkCreateGraphicsPipelines(device->device, VK_NULL_HANDLE, 1, &pipeline_create_info, NULL, &pipeline->pipeline);
 	assert(result == VK_SUCCESS);
 
+#ifdef KORE_NO_DYNAMIC_RENDERING
+	pipeline->shader_stages[0] = shader_stages[0];
+	pipeline->shader_stages[1] = shader_stages[1];
+#else
 	vkDestroyShaderModule(device->device, shader_stages[0].module, NULL);
 	vkDestroyShaderModule(device->device, shader_stages[1].module, NULL);
+#endif
 }
 
 void kore_vulkan_render_pipeline_destroy(kore_vulkan_render_pipeline *pipeline) {}

@@ -202,7 +202,7 @@ static bool check_device_layers(const char **device_layers, int device_layers_co
 }
 
 static void load_extension_functions(void) {
-#define GET_VULKAN_FUNCTION(entrypoint, ext)                                                             \
+#define GET_VULKAN_FUNCTION(entrypoint, ext)                                                              \
 	{                                                                                                     \
 		vk##entrypoint = (PFN_vk##entrypoint##ext)vkGetInstanceProcAddr(instance, "vk" #entrypoint #ext); \
 		if (vk##entrypoint == NULL) {                                                                     \
@@ -699,11 +699,13 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .pQueuePriorities = queue_priorities,
 	};
 
+#ifndef KORE_NO_DYNAMIC_RENDERING
 	const VkPhysicalDeviceDynamicRenderingFeaturesKHR dynamic_rendering = {
 	    .sType            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR,
 	    .pNext            = NULL,
 	    .dynamicRendering = VK_TRUE,
 	};
+#endif
 
 #ifdef KORE_VKRT
 	const VkPhysicalDeviceRayTracingPipelineFeaturesKHR raytracing_pipeline = {
@@ -740,7 +742,11 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 #ifdef KORE_VKRT
 	    .pNext = &buffer_device_address,
 #else
+#ifdef KORE_NO_DYNAMIC_RENDERING
+	    .pNext = NULL,
+#else
 	    .pNext = &dynamic_rendering,
+#endif
 #endif
 	};
 
