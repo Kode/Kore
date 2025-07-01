@@ -654,6 +654,16 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	        .optional = true,
 	    },
 	    {
+	        // required by VK_KHR_CREATE_RENDERPASS_2
+	        .name     = VK_KHR_MULTIVIEW_EXTENSION_NAME,
+	        .optional = true,
+	    },
+	    {
+	        // required by VK_KHR_CREATE_RENDERPASS_2
+	        .name     = VK_KHR_MAINTENANCE1_EXTENSION_NAME,
+	        .optional = true,
+	    },
+	    {
 	        // required by VK_KHR_DEPTH_STENCIL_RESOLVE
 	        .name     = VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME,
 	        .optional = true,
