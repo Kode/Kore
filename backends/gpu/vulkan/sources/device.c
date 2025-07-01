@@ -704,8 +704,8 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 	check_device_extensions(device_extensions, KORE_ARRAY_SIZE(device_extensions));
 
-	assert(device_extensions[5].name == VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
-	device->vulkan.has_dynamic_rendering = device_extensions[5].found;
+	assert(device_extensions[7].name == VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
+	device->vulkan.has_dynamic_rendering = device_extensions[7].found;
 
 	const char *device_extension_names[KORE_ARRAY_SIZE(device_extensions)];
 
