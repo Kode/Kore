@@ -674,6 +674,11 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	        .optional = true,
 	    },
 	    {
+	        // Required in vkCmdBeginRendering when using depth
+	        .name     = VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME,
+	        .optional = true,
+	    },
+	    {
 	        .name     = VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
 	        .optional = true,
 	    },
@@ -704,8 +709,9 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 	check_device_extensions(device_extensions, KORE_ARRAY_SIZE(device_extensions));
 
-	assert(device_extensions[7].name == VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
-	device->vulkan.has_dynamic_rendering = device_extensions[7].found;
+	const uint32_t dynamic_rendering_index = 8;
+	assert(device_extensions[dynamic_rendering_index].name == VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
+	device->vulkan.has_dynamic_rendering = device_extensions[dynamic_rendering_index].found;
 
 	const char *device_extension_names[KORE_ARRAY_SIZE(device_extensions)];
 
