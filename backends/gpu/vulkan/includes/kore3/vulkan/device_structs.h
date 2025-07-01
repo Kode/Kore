@@ -13,6 +13,8 @@ typedef struct kore_vulkan_device {
 	VkQueue                          queue;
 	VkPhysicalDeviceMemoryProperties device_memory_properties;
 	VkDescriptorPool                 descriptor_pool;
+
+	bool has_dynamic_rendering;
 } kore_vulkan_device;
 
 typedef struct kore_vulkan_query_set {

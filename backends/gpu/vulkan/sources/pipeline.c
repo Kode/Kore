@@ -442,10 +442,10 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	    .depthAttachmentFormat   = convert_to_vulkan_format(parameters->depth_stencil.format),
 	};
 
-#ifdef KORE_NO_DYNAMIC_RENDERING
-	find_pipeline_render_pass(device->device, color_attachment_formats, (uint32_t)parameters->fragment.targets_count,
-	                          convert_to_vulkan_format(parameters->depth_stencil.format), &pipeline->render_pass);
-#endif
+	if (!device->has_dynamic_rendering) {
+		find_pipeline_render_pass(device->device, color_attachment_formats, (uint32_t)parameters->fragment.targets_count,
+		                          convert_to_vulkan_format(parameters->depth_stencil.format), &pipeline->render_pass);
+	}
 
 	VkGraphicsPipelineCreateInfo pipeline_create_info = {
 	    .sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -464,11 +464,12 @@ void kore_vulkan_render_pipeline_init(kore_vulkan_device *device, kore_vulkan_re
 	    .pDynamicState       = &dynamic_state_create_info,
 	};
 
-#ifdef KORE_NO_DYNAMIC_RENDERING
-	pipeline_create_info.renderPass = pipeline->render_pass,
-#else
-	pipeline_create_info.pNext = &pipeline_rendering_create_info;
-#endif
+	if (device->has_dynamic_rendering) {
+		pipeline_create_info.pNext = &pipeline_rendering_create_info;
+	}
+	else {
+		pipeline_create_info.renderPass = pipeline->render_pass;
+	}
 
 	result = vkCreateGraphicsPipelines(device->device, VK_NULL_HANDLE, 1, &pipeline_create_info, NULL, &pipeline->pipeline);
 	assert(result == VK_SUCCESS);

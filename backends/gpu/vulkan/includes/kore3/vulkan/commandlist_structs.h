@@ -33,6 +33,8 @@ typedef struct kore_vulkan_command_list {
 
 	kore_vulkan_render_pass_status  render_pass_status;
 	kore_gpu_render_pass_parameters current_render_pass;
+
+	bool has_dynamic_rendering;
 } kore_vulkan_command_list;
 
 #ifdef __cplusplus

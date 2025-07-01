@@ -76,11 +76,12 @@ VkClearValue convert_depth_clear_value(float value) {
 
 static void pause_render_pass(kore_gpu_command_list *list) {
 	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
-#ifdef KORE_NO_DYNAMIC_RENDERING
-		vkCmdEndRenderPass(list->vulkan.command_buffer);
-#else
-		vulkanCmdEndRendering(list->vulkan.command_buffer);
-#endif
+		if (list->vulkan.has_dynamic_rendering) {
+			vulkanCmdEndRendering(list->vulkan.command_buffer);
+		}
+		else {
+			vkCmdEndRenderPass(list->vulkan.command_buffer);
+		}
 		list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_PAUSED;
 	}
 }
@@ -200,8 +201,23 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		                                : render_area.extent.height;
 	}
 
-#ifdef KORE_NO_DYNAMIC_RENDERING
-	{
+	if (list->vulkan.has_dynamic_rendering) {
+		const VkRenderingInfo rendering_info = {
+		    .sType                = VK_STRUCTURE_TYPE_RENDERING_INFO,
+		    .pNext                = NULL,
+		    .flags                = 0,
+		    .renderArea           = render_area,
+		    .layerCount           = 1,
+		    .viewMask             = 0,
+		    .colorAttachmentCount = (uint32_t)parameters->color_attachments_count,
+		    .pColorAttachments    = color_attachment_infos,
+		    .pDepthAttachment     = parameters->depth_stencil_attachment.texture == NULL ? VK_NULL_HANDLE : &depth_attachment_info,
+		    .pStencilAttachment   = VK_NULL_HANDLE,
+		};
+
+		vulkanCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
+	}
+	else {
 		VkClearValue clear_values[9];
 		for (uint32_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
 			clear_values[attachment_index] = convert_color_clear_value(textures[0]->vulkan.format, parameters->color_attachments[attachment_index].clear_value);
@@ -251,22 +267,6 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 
 		vkCmdBeginRenderPass(list->vulkan.command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 	}
-#else
-	const VkRenderingInfo rendering_info = {
-	    .sType                = VK_STRUCTURE_TYPE_RENDERING_INFO,
-	    .pNext                = NULL,
-	    .flags                = 0,
-	    .renderArea           = render_area,
-	    .layerCount           = 1,
-	    .viewMask             = 0,
-	    .colorAttachmentCount = (uint32_t)parameters->color_attachments_count,
-	    .pColorAttachments    = color_attachment_infos,
-	    .pDepthAttachment     = parameters->depth_stencil_attachment.texture == NULL ? VK_NULL_HANDLE : &depth_attachment_info,
-	    .pStencilAttachment   = VK_NULL_HANDLE,
-	};
-
-	vulkanCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
-#endif
 
 	kore_vulkan_command_list_set_viewport(list, 0, 0, (float)render_area.extent.width, (float)render_area.extent.height, 0.0f, 1.0f);
 
@@ -282,11 +282,12 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 
 void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
 	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
-#ifdef KORE_NO_DYNAMIC_RENDERING
-		vkCmdEndRenderPass(list->vulkan.command_buffer);
-#else
-		vulkanCmdEndRendering(list->vulkan.command_buffer);
-#endif
+		if (list->vulkan.has_dynamic_rendering) {
+			vulkanCmdEndRendering(list->vulkan.command_buffer);
+		}
+		else {
+			vkCmdEndRenderPass(list->vulkan.command_buffer);
+		}
 	}
 	list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_NONE;
 }

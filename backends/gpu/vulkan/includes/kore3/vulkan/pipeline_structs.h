@@ -199,9 +199,7 @@ typedef struct kore_vulkan_render_pipeline_parameters {
 typedef struct kore_vulkan_render_pipeline {
 	VkPipelineLayout pipeline_layout;
 	VkPipeline       pipeline;
-#ifdef KORE_NO_DYNAMIC_RENDERING
-	VkRenderPass render_pass;
-#endif
+	VkRenderPass     render_pass;
 } kore_vulkan_render_pipeline;
 
 typedef struct kore_vulkan_compute_pipeline_parameters {

@@ -694,6 +694,9 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 	check_device_extensions(device_extensions, KORE_ARRAY_SIZE(device_extensions));
 
+	assert(device_extensions[5].name == VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
+	device->vulkan.has_dynamic_rendering = device_extensions[5].found;
+
 	const char *device_extension_names[KORE_ARRAY_SIZE(device_extensions)];
 
 	for (uint32_t index = 0; index < KORE_ARRAY_SIZE(device_extensions); ++index) {
@@ -732,13 +735,11 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .pQueuePriorities = queue_priorities,
 	};
 
-#ifndef KORE_NO_DYNAMIC_RENDERING
 	const VkPhysicalDeviceDynamicRenderingFeaturesKHR dynamic_rendering = {
 	    .sType            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR,
 	    .pNext            = NULL,
 	    .dynamicRendering = VK_TRUE,
 	};
-#endif
 
 #ifdef KORE_VKRT
 	const VkPhysicalDeviceRayTracingPipelineFeaturesKHR raytracing_pipeline = {
@@ -760,7 +761,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	};
 #endif
 
-	const VkDeviceCreateInfo device_create_info = {
+	VkDeviceCreateInfo device_create_info = {
 	    .sType                = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 	    .pNext                = NULL,
 	    .queueCreateInfoCount = 1,
@@ -775,13 +776,13 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 #ifdef KORE_VKRT
 	    .pNext = &buffer_device_address,
 #else
-#ifdef KORE_NO_DYNAMIC_RENDERING
 	    .pNext = NULL,
-#else
-	    .pNext = &dynamic_rendering,
-#endif
 #endif
 	};
+
+	if (device->vulkan.has_dynamic_rendering) {
+		device_create_info.pNext = &dynamic_rendering;
+	}
 
 	result = vkCreateDevice(gpu, &device_create_info, NULL, &device->vulkan.device);
 	assert(result == VK_SUCCESS);
@@ -911,10 +912,11 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 }
 
 void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
-	list->vulkan.device             = device->vulkan.device;
-	list->vulkan.command_pool       = device->vulkan.command_pool;
-	list->vulkan.presenting         = false;
-	list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_NONE;
+	list->vulkan.device                = device->vulkan.device;
+	list->vulkan.has_dynamic_rendering = device->vulkan.has_dynamic_rendering;
+	list->vulkan.command_pool          = device->vulkan.command_pool;
+	list->vulkan.presenting            = false;
+	list->vulkan.render_pass_status    = KORE_VULKAN_RENDER_PASS_STATUS_NONE;
 
 	const VkFenceCreateInfo fence_create_info = {
 	    .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
