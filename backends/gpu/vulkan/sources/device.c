@@ -660,7 +660,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    },
 	    {
 	        // required by VK_KHR_CREATE_RENDERPASS_2
-	        .name     = VK_KHR_MAINTENANCE1_EXTENSION_NAME,
+	        .name     = VK_KHR_MAINTENANCE2_EXTENSION_NAME,
 	        .optional = true,
 	    },
 	    {
