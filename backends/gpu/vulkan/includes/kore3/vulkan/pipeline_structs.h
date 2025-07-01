@@ -200,8 +200,7 @@ typedef struct kore_vulkan_render_pipeline {
 	VkPipelineLayout pipeline_layout;
 	VkPipeline       pipeline;
 #ifdef KORE_NO_DYNAMIC_RENDERING
-	VkPipelineShaderStageCreateInfo shader_stages[2];
-	VkRenderPass                    render_pass;
+	VkRenderPass render_pass;
 #endif
 } kore_vulkan_render_pipeline;
 

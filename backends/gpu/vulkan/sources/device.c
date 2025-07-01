@@ -201,23 +201,40 @@ static bool check_device_layers(const char **device_layers, int device_layers_co
 	return check_layers(device_layers, device_layers_count, device_layer_properties, device_layer_properties_count);
 }
 
-static void load_extension_functions(void) {
-#define GET_VULKAN_FUNCTION(entrypoint, ext)                                                              \
+static void load_instance_functions(void) {
+#define GET_INSTANCE_FUNCTION(entrypoint, ext)                                                                \
+	{                                                                                                         \
+		vulkan##entrypoint = (PFN_vk##entrypoint##ext)vkGetInstanceProcAddr(instance, "vk" #entrypoint #ext); \
+		if (vulkan##entrypoint == NULL) {                                                                     \
+			kore_error_message("vkGetInstanceProcAddr failed to find vk" #entrypoint);                        \
+		}                                                                                                     \
+	}
+
+	GET_INSTANCE_FUNCTION(CmdBeginDebugUtilsLabel, EXT);
+	GET_INSTANCE_FUNCTION(CmdEndDebugUtilsLabel, EXT);
+	GET_INSTANCE_FUNCTION(CmdInsertDebugUtilsLabel, EXT);
+	GET_INSTANCE_FUNCTION(SetDebugUtilsObjectName, EXT);
+	GET_INSTANCE_FUNCTION(CreateDebugUtilsMessenger, EXT);
+	GET_INSTANCE_FUNCTION(DestroyDebugUtilsMessenger, EXT);
+
+	GET_INSTANCE_FUNCTION(CmdBeginRendering, KHR);
+	GET_INSTANCE_FUNCTION(CmdEndRendering, KHR);
+
+#undef GET_INSTANCE_FUNCTION
+}
+
+static void load_device_functions(VkDevice device) {
+#define GET_DEVICE_FUNCTION(entrypoint, ext)                                                              \
 	{                                                                                                     \
-		vk##entrypoint = (PFN_vk##entrypoint##ext)vkGetInstanceProcAddr(instance, "vk" #entrypoint #ext); \
-		if (vk##entrypoint == NULL) {                                                                     \
-			kore_error_message("vkGetInstanceProcAddr failed to find vk" #entrypoint);                    \
+		vulkan##entrypoint = (PFN_vk##entrypoint##ext)vkGetDeviceProcAddr(device, "vk" #entrypoint #ext); \
+		if (vulkan##entrypoint == NULL) {                                                                 \
+			kore_error_message("vkGetDeviceProcAddr failed to find vk" #entrypoint);                      \
 		}                                                                                                 \
 	}
 
-	GET_VULKAN_FUNCTION(CmdBeginDebugUtilsLabel, EXT);
-	GET_VULKAN_FUNCTION(CmdEndDebugUtilsLabel, EXT);
-	GET_VULKAN_FUNCTION(CmdInsertDebugUtilsLabel, EXT);
-	GET_VULKAN_FUNCTION(SetDebugUtilsObjectName, EXT);
-	GET_VULKAN_FUNCTION(CreateDebugUtilsMessenger, EXT);
-	GET_VULKAN_FUNCTION(DestroyDebugUtilsMessenger, EXT);
+	//
 
-#undef GET_VULKAN_FUNCTION
+#undef GET_DEVICE_FUNCTION
 }
 
 static bool presentation_support(VkPhysicalDevice gpu, uint32_t queue_index) {
@@ -380,9 +397,13 @@ static VkResult create_surface(VkInstance instance, int window_index, VkSurfaceK
 }
 
 static void create_swapchain(kore_gpu_device *device) {
-	uint32_t window_width  = kore_window_width(0);
+	uint32_t window_width = kore_window_width(0);
+	window_width          = window_width > 4 ? window_width : window_width;
+
 	uint32_t window_height = kore_window_height(0);
-	bool     vsync         = true; // kore_window_vsynced(0); // TODO
+	window_height          = window_height > 4 ? window_height : window_height;
+
+	bool vsync = true; // kore_window_vsynced(0); // TODO
 
 	VkResult result = VK_SUCCESS;
 
@@ -417,15 +438,12 @@ static void create_swapchain(kore_gpu_device *device) {
 	result                              = vkGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &present_mode_count, present_modes);
 	assert(result == VK_SUCCESS);
 
-	VkExtent2D swapchain_extent;
-	if (surface_capabilities.currentExtent.width == (uint32_t)-1) {
-		swapchain_extent.width  = window_width;
-		swapchain_extent.height = window_height;
-	}
-	else {
-		swapchain_extent = surface_capabilities.currentExtent;
-		window_width     = surface_capabilities.currentExtent.width;
-		window_height    = surface_capabilities.currentExtent.height;
+	if (surface_capabilities.currentExtent.width != (uint32_t)-1) {
+		window_width = surface_capabilities.currentExtent.width;
+		window_width = window_width > 4 ? window_width : window_width;
+
+		window_height = surface_capabilities.currentExtent.height;
+		window_height = window_height > 4 ? window_height : window_height;
 	}
 
 	VkCompositeAlphaFlagBitsKHR composite_alpha;
@@ -452,8 +470,8 @@ static void create_swapchain(kore_gpu_device *device) {
 	    .minImageCount         = surface_capabilities.minImageCount,
 	    .imageFormat           = format.format,
 	    .imageColorSpace       = format.colorSpace,
-	    .imageExtent.width     = swapchain_extent.width,
-	    .imageExtent.height    = swapchain_extent.height,
+	    .imageExtent.width     = window_width,
+	    .imageExtent.height    = window_height,
 	    .imageUsage            = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
 	    .preTransform          = (surface_capabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) ? VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR
 	                                                                                                                : surface_capabilities.currentTransform,
@@ -567,7 +585,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .applicationVersion = 0,
 	    .pEngineName        = "Kore",
 	    .engineVersion      = 0,
-	    .apiVersion         = VK_API_VERSION_1_3,
+	    .apiVersion         = VK_API_VERSION_1_0,
 	};
 
 	const VkInstanceCreateInfo instance_create_info = {
@@ -635,6 +653,20 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	        .name     = VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME,
 	        .optional = true,
 	    },
+	    {
+	        // required by VK_KHR_DEPTH_STENCIL_RESOLVE
+	        .name     = VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME,
+	        .optional = true,
+	    },
+	    {
+	        // required by VK_KHR_DYNAMIC_RENDERING
+	        .name     = VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME,
+	        .optional = true,
+	    },
+	    {
+	        .name     = VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
+	        .optional = true,
+	    },
 #ifdef KORE_VKRT
 	    {
 	        .name = VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
@@ -668,7 +700,8 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 		device_extension_names[index] = device_extensions[index].name;
 	}
 
-	load_extension_functions();
+	load_instance_functions();
+	load_device_functions(device->vulkan.device);
 
 #ifdef VALIDATE
 	if (validation) {
@@ -682,7 +715,7 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 		    .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
 		};
 
-		result = vkCreateDebugUtilsMessenger(instance, &create_info, NULL, &debug_utils_messenger);
+		result = vulkanCreateDebugUtilsMessenger(instance, &create_info, NULL, &debug_utils_messenger);
 		assert(result == VK_SUCCESS);
 	}
 #endif
@@ -786,7 +819,7 @@ void kore_vulkan_device_set_name(kore_gpu_device *device, const char *name) {
 	    .objectHandle = (uint64_t)device->vulkan.device,
 	    .pObjectName  = name,
 	};
-	vkSetDebugUtilsObjectName(device->vulkan.device, &name_info);
+	vulkanSetDebugUtilsObjectName(device->vulkan.device, &name_info);
 }
 
 static bool memory_type_from_properties(kore_gpu_device *device, uint32_t type_bits, VkFlags requirements_mask, uint32_t *type_index) {

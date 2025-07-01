@@ -11,7 +11,7 @@ void kore_vulkan_texture_set_name(kore_gpu_texture *texture, const char *name) {
 	    .objectHandle = (uint64_t)texture->vulkan.image,
 	    .pObjectName  = name,
 	};
-	vkSetDebugUtilsObjectName(texture->vulkan.device, &name_info);
+	vulkanSetDebugUtilsObjectName(texture->vulkan.device, &name_info);
 }
 
 void kore_vulkan_texture_destroy(kore_gpu_texture *texture) {

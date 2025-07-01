@@ -9,7 +9,7 @@ void kore_vulkan_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {
 	    .objectHandle = (uint64_t)buffer->vulkan.buffer,
 	    .pObjectName  = name,
 	};
-	vkSetDebugUtilsObjectName(buffer->vulkan.device, &name_info);
+	vulkanSetDebugUtilsObjectName(buffer->vulkan.device, &name_info);
 }
 
 void kore_vulkan_buffer_destroy(kore_gpu_buffer *buffer) {

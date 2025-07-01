@@ -1,5 +1,12 @@
 #include "vulkanunit.h"
 
+#define FRAMEBUFFER_COUNT 256
+
+// TODO
+typedef struct stored_framebuffer {
+	int nothing;
+} stored_framebuffer;
+
 static void find_framebuffer(VkDevice device, uint32_t width, uint32_t height, VkImageView image_views[9], uint32_t image_views_count, VkRenderPass render_pass,
                              VkFramebuffer *framebuffer) {
 	VkFramebufferCreateInfo framebuffer_create_info = {
@@ -15,7 +22,18 @@ static void find_framebuffer(VkDevice device, uint32_t width, uint32_t height, V
 	vkCreateFramebuffer(device, &framebuffer_create_info, NULL, framebuffer);
 }
 
-static void find_default_render_pass(VkDevice device, VkFormat formats[8], uint32_t formats_count, VkFormat depth_format, VkRenderPass *render_pass) {
+#define RENDER_PASSES_COUNT 256
+
+typedef struct stored_render_pass {
+	render_pass_parameters parameters;
+	VkRenderPass           pass;
+} stored_render_pass;
+
+static stored_render_pass render_passes[RENDER_PASSES_COUNT] = {0};
+
+static uint32_t render_passes_count = 0;
+
+static void find_pipeline_render_pass(VkDevice device, VkFormat formats[8], uint32_t formats_count, VkFormat depth_format, VkRenderPass *render_pass) {
 	render_pass_parameters parameters = {
 	    .attachments_count = formats_count,
 	    .depth_attachment =
@@ -42,6 +60,15 @@ static void find_default_render_pass(VkDevice device, VkFormat formats[8], uint3
 }
 
 static void find_render_pass(VkDevice device, const render_pass_parameters *parameters, VkRenderPass *render_pass) {
+	for (uint32_t render_pass_index = 0; render_pass_index < render_passes_count; ++render_pass_index) {
+		if (memcmp(&render_passes[render_pass_index].parameters, parameters, sizeof(render_pass_parameters)) == 0) {
+			*render_pass = render_passes[render_pass_index].pass;
+			return;
+		}
+	}
+
+	assert(render_passes_count < RENDER_PASSES_COUNT);
+
 	VkAttachmentDescription attachment_descriptions[9];
 	VkAttachmentReference   attachment_references[8];
 
@@ -111,4 +138,8 @@ static void find_render_pass(VkDevice device, const render_pass_parameters *para
 	};
 
 	vkCreateRenderPass(device, &render_pass_create_info, NULL, render_pass);
+
+	render_passes[render_passes_count].parameters = *parameters;
+	render_passes[render_passes_count].pass       = *render_pass;
+	++render_passes_count;
 }

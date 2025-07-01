@@ -76,8 +76,10 @@ VkClearValue convert_depth_clear_value(float value) {
 
 static void pause_render_pass(kore_gpu_command_list *list) {
 	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
-#ifndef KORE_ANDROID // TODO
-		vkCmdEndRendering(list->vulkan.command_buffer);
+#ifdef KORE_NO_DYNAMIC_RENDERING
+		vkCmdEndRenderPass(list->vulkan.command_buffer);
+#else
+		vulkanCmdEndRendering(list->vulkan.command_buffer);
 #endif
 		list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_PAUSED;
 	}
@@ -88,6 +90,7 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		return;
 	}
 
+	// do no clears when coming back from a pause
 	bool paused = list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_PAUSED;
 
 	const kore_gpu_render_pass_parameters *parameters = &list->vulkan.current_render_pass;
@@ -199,32 +202,39 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 
 #ifdef KORE_NO_DYNAMIC_RENDERING
 	{
-		VkClearValue clear_value = convert_color_clear_value(textures[0]->vulkan.format, parameters->color_attachments[0].clear_value);
+		VkClearValue clear_values[9];
+		for (uint32_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
+			clear_values[attachment_index] = convert_color_clear_value(textures[0]->vulkan.format, parameters->color_attachments[attachment_index].clear_value);
+		}
 
-		render_pass_parameters parameters = {
-		    .attachments =
-		        {
-		            {
-		                .format           = convert_to_vulkan_format(textures[0]->vulkan.format),
-		                .load_op          = VK_ATTACHMENT_LOAD_OP_CLEAR,
-		                .store_op         = VK_ATTACHMENT_STORE_OP_STORE,
-		                .stencil_load_op  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-		                .stencil_store_op = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		            },
-		        },
-		    .attachments_count = 1,
+		bool has_depth = parameters->depth_stencil_attachment.texture != NULL;
+
+		clear_values[parameters->color_attachments_count] = convert_depth_clear_value(parameters->depth_stencil_attachment.depth_clear_value);
+
+		render_pass_parameters pass_parameters = {
+		    .attachments_count = (uint32_t)parameters->color_attachments_count,
 		    .depth_attachment =
 		        {
 		            .format           = VK_FORMAT_UNDEFINED,
-		            .load_op          = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-		            .store_op         = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		            .stencil_load_op  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-		            .stencil_store_op = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		            .load_op          = paused ? VK_ATTACHMENT_LOAD_OP_LOAD : convert_load_op(parameters->depth_stencil_attachment.depth_load_op),
+		            .store_op         = convert_store_op(parameters->depth_stencil_attachment.depth_store_op),
+		            .stencil_load_op  = paused ? VK_ATTACHMENT_LOAD_OP_LOAD : convert_load_op(parameters->depth_stencil_attachment.stencil_load_op),
+		            .stencil_store_op = convert_store_op(parameters->depth_stencil_attachment.stencil_store_op),
 		        },
 		};
 
+		for (uint32_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
+			pass_parameters.attachments[attachment_index] = (render_pass_attachment){
+			    .format           = convert_to_vulkan_format(textures[attachment_index]->vulkan.format),
+			    .load_op          = paused ? VK_ATTACHMENT_LOAD_OP_LOAD : convert_load_op(parameters->color_attachments[attachment_index].load_op),
+			    .store_op         = convert_store_op(parameters->color_attachments[attachment_index].store_op),
+			    .stencil_load_op  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			    .stencil_store_op = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+			};
+		}
+
 		VkRenderPass render_pass;
-		find_render_pass(list->vulkan.device, &parameters, &render_pass);
+		find_render_pass(list->vulkan.device, &pass_parameters, &render_pass);
 
 		VkFramebuffer framebuffer;
 		find_framebuffer(list->vulkan.device, render_area.extent.width, render_area.extent.height, image_views, 1, render_pass, &framebuffer);
@@ -233,8 +243,8 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		    .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		    .pNext           = NULL,
 		    .renderArea      = render_area,
-		    .clearValueCount = 1,
-		    .pClearValues    = &clear_value,
+		    .clearValueCount = has_depth ? (uint32_t)parameters->color_attachments_count + 1 : (uint32_t)parameters->color_attachments_count,
+		    .pClearValues    = clear_values,
 		    .renderPass      = render_pass,
 		    .framebuffer     = framebuffer,
 		};
@@ -255,7 +265,7 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 	    .pStencilAttachment   = VK_NULL_HANDLE,
 	};
 
-	vkCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
+	vulkanCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
 #endif
 
 	kore_vulkan_command_list_set_viewport(list, 0, 0, (float)render_area.extent.width, (float)render_area.extent.height, 0.0f, 1.0f);
@@ -275,7 +285,7 @@ void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
 #ifdef KORE_NO_DYNAMIC_RENDERING
 		vkCmdEndRenderPass(list->vulkan.command_buffer);
 #else
-		vkCmdEndRendering(list->vulkan.command_buffer);
+		vulkanCmdEndRendering(list->vulkan.command_buffer);
 #endif
 	}
 	list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_NONE;
@@ -538,7 +548,7 @@ void kore_vulkan_command_list_set_name(kore_gpu_command_list *list, const char *
 	    .objectHandle = (uint64_t)list->vulkan.command_buffer,
 	    .pObjectName  = name,
 	};
-	vkSetDebugUtilsObjectName(list->vulkan.device, &name_info);
+	vulkanSetDebugUtilsObjectName(list->vulkan.device, &name_info);
 }
 
 void kore_vulkan_command_list_push_debug_group(kore_gpu_command_list *list, const char *name) {
@@ -548,11 +558,11 @@ void kore_vulkan_command_list_push_debug_group(kore_gpu_command_list *list, cons
 	    .pLabelName = name,
 	    .color      = {0.0f, 0.0f, 1.0f, 1.0f},
 	};
-	vkCmdBeginDebugUtilsLabel(list->vulkan.command_buffer, &label_info);
+	vulkanCmdBeginDebugUtilsLabel(list->vulkan.command_buffer, &label_info);
 }
 
 void kore_vulkan_command_list_pop_debug_group(kore_gpu_command_list *list) {
-	vkCmdEndDebugUtilsLabel(list->vulkan.command_buffer);
+	vulkanCmdEndDebugUtilsLabel(list->vulkan.command_buffer);
 }
 
 void kore_vulkan_command_list_insert_debug_marker(kore_gpu_command_list *list, const char *name) {
@@ -562,7 +572,7 @@ void kore_vulkan_command_list_insert_debug_marker(kore_gpu_command_list *list, c
 	    .pLabelName = name,
 	    .color      = {0.0f, 0.0f, 1.0f, 1.0f},
 	};
-	vkCmdInsertDebugUtilsLabel(list->vulkan.command_buffer, &label_info);
+	vulkanCmdInsertDebugUtilsLabel(list->vulkan.command_buffer, &label_info);
 }
 
 void kore_vulkan_command_list_begin_occlusion_query(kore_gpu_command_list *list, uint32_t query_index) {}

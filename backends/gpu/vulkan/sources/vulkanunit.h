@@ -59,12 +59,14 @@
 
 #include <vulkan/vulkan.h>
 
-static PFN_vkCmdBeginDebugUtilsLabelEXT    vkCmdBeginDebugUtilsLabel    = NULL;
-static PFN_vkCmdEndDebugUtilsLabelEXT      vkCmdEndDebugUtilsLabel      = NULL;
-static PFN_vkCmdInsertDebugUtilsLabelEXT   vkCmdInsertDebugUtilsLabel   = NULL;
-static PFN_vkSetDebugUtilsObjectNameEXT    vkSetDebugUtilsObjectName    = NULL;
-static PFN_vkCreateDebugUtilsMessengerEXT  vkCreateDebugUtilsMessenger  = NULL;
-static PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessenger = NULL;
+static PFN_vkCmdBeginDebugUtilsLabelEXT    vulkanCmdBeginDebugUtilsLabel    = NULL;
+static PFN_vkCmdEndDebugUtilsLabelEXT      vulkanCmdEndDebugUtilsLabel      = NULL;
+static PFN_vkCmdInsertDebugUtilsLabelEXT   vulkanCmdInsertDebugUtilsLabel   = NULL;
+static PFN_vkSetDebugUtilsObjectNameEXT    vulkanSetDebugUtilsObjectName    = NULL;
+static PFN_vkCreateDebugUtilsMessengerEXT  vulkanCreateDebugUtilsMessenger  = NULL;
+static PFN_vkDestroyDebugUtilsMessengerEXT vulkanDestroyDebugUtilsMessenger = NULL;
+static PFN_vkCmdBeginRendering             vulkanCmdBeginRendering          = NULL;
+static PFN_vkCmdEndRendering               vulkanCmdEndRendering            = NULL;
 
 static VkFormat                convert_to_vulkan_format(kore_gpu_texture_format format);
 static kore_gpu_texture_format convert_from_vulkan_format(VkFormat format);
@@ -83,7 +85,7 @@ typedef struct render_pass_parameters {
 	render_pass_attachment depth_attachment;
 } render_pass_parameters;
 
-static void find_default_render_pass(VkDevice device, VkFormat formats[8], uint32_t formats_count, VkFormat depth_format, VkRenderPass *render_pass);
+static void find_pipeline_render_pass(VkDevice device, VkFormat formats[8], uint32_t formats_count, VkFormat depth_format, VkRenderPass *render_pass);
 
 static void find_render_pass(VkDevice device, const render_pass_parameters *parameters, VkRenderPass *render_pass);
 

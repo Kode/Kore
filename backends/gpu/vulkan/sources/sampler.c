@@ -11,5 +11,5 @@ void kore_vulkan_sampler_set_name(kore_gpu_sampler *sampler, const char *name) {
 	    .objectHandle = (uint64_t)sampler->vulkan.sampler,
 	    .pObjectName  = name,
 	};
-	vkSetDebugUtilsObjectName(sampler->vulkan.device, &name_info);
+	vulkanSetDebugUtilsObjectName(sampler->vulkan.device, &name_info);
 }
