@@ -30,9 +30,9 @@ struct ID3D12Fence;
 #define KORE_D3D12_COMMAND_LIST_MAX_QUEUED_DESCRIPTOR_SET_ACCESSES 256
 
 typedef struct kore_d3d12_buffer_access {
-	kore_gpu_buffer *buffer;
-	uint64_t         offset;
-	uint64_t         size;
+	kore_d3d12_buffer *buffer;
+	uint64_t           offset;
+	uint64_t           size;
 } kore_d3d12_buffer_access;
 
 typedef struct kore_d3d12_command_list {

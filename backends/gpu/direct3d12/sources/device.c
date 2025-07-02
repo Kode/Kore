@@ -612,19 +612,19 @@ static void wait_for_frame(kore_gpu_device *device, uint64_t frame_index) {
 	wait_for_fence(device, device->d3d12.frame_fence, device->d3d12.frame_event, frame_index);
 }
 
-static void clean_buffer_accesses(kore_gpu_buffer *buffer, uint64_t finished_execution_index) {
+static void clean_buffer_accesses(kore_d3d12_buffer *buffer, uint64_t finished_execution_index) {
 	kore_d3d12_buffer_range ranges[KORE_D3D12_MAX_BUFFER_RANGES];
 	uint32_t                ranges_count = 0;
 
-	for (uint32_t range_index = 0; range_index < buffer->d3d12.ranges_count; ++range_index) {
-		if (buffer->d3d12.ranges[range_index].execution_index > finished_execution_index) {
-			ranges[ranges_count] = buffer->d3d12.ranges[range_index];
+	for (uint32_t range_index = 0; range_index < buffer->ranges_count; ++range_index) {
+		if (buffer->ranges[range_index].execution_index > finished_execution_index) {
+			ranges[ranges_count] = buffer->ranges[range_index];
 			ranges_count += 1;
 		}
 	}
 
-	memcpy(&buffer->d3d12.ranges, &ranges, sizeof(ranges));
-	buffer->d3d12.ranges_count = ranges_count;
+	memcpy(&buffer->ranges, &ranges, sizeof(ranges));
+	buffer->ranges_count = ranges_count;
 }
 
 void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
@@ -654,15 +654,15 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 
 	for (uint32_t buffer_access_index = 0; buffer_access_index < list->d3d12.queued_buffer_accesses_count; ++buffer_access_index) {
 		kore_d3d12_buffer_access access = list->d3d12.queued_buffer_accesses[buffer_access_index];
-		kore_gpu_buffer         *buffer = access.buffer;
+		kore_d3d12_buffer       *buffer = access.buffer;
 
 		clean_buffer_accesses(buffer, COM_CALL0(device->d3d12.execution_fence, GetCompletedValue));
 
-		assert(buffer->d3d12.ranges_count < KORE_D3D12_MAX_BUFFER_RANGES);
-		buffer->d3d12.ranges[buffer->d3d12.ranges_count].execution_index = device->d3d12.execution_index;
-		buffer->d3d12.ranges[buffer->d3d12.ranges_count].offset          = access.offset;
-		buffer->d3d12.ranges[buffer->d3d12.ranges_count].size            = access.size;
-		buffer->d3d12.ranges_count += 1;
+		assert(buffer->ranges_count < KORE_D3D12_MAX_BUFFER_RANGES);
+		buffer->ranges[buffer->ranges_count].execution_index = device->d3d12.execution_index;
+		buffer->ranges[buffer->ranges_count].offset          = access.offset;
+		buffer->ranges[buffer->ranges_count].size            = access.size;
+		buffer->ranges_count += 1;
 	}
 	list->d3d12.queued_buffer_accesses_count = 0;
 

@@ -192,6 +192,10 @@ void kore_d3d12_command_list_set_index_buffer(kore_gpu_command_list *list, kore_
 	view.Format         = index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
 
 	COM_CALL1(list->d3d12.list, IASetIndexBuffer, &view);
+
+	if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
+		kore_d3d12_command_list_queue_buffer_access(list, &buffer->d3d12, (uint32_t)offset, (uint32_t)(buffer->d3d12.size - offset));
+	}
 }
 
 void kore_d3d12_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_d3d12_buffer *buffer, uint64_t offset, uint64_t size,
@@ -205,6 +209,10 @@ void kore_d3d12_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint
 	view.StrideInBytes  = (UINT)stride;
 
 	COM_CALL3(list->d3d12.list, IASetVertexBuffers, slot, 1, &view);
+
+	if (buffer->cpu_read || buffer->cpu_write) {
+		kore_d3d12_command_list_queue_buffer_access(list, buffer, (uint32_t)offset, (uint32_t)size);
+	}
 }
 
 void kore_d3d12_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_d3d12_render_pipeline *pipeline) {
@@ -786,7 +794,7 @@ void kore_d3d12_command_list_compute_indirect(kore_gpu_command_list *list, kore_
 	          0);
 }
 
-void kore_d3d12_command_list_queue_buffer_access(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size) {
+void kore_d3d12_command_list_queue_buffer_access(kore_gpu_command_list *list, kore_d3d12_buffer *buffer, uint32_t offset, uint32_t size) {
 	kore_d3d12_buffer_access access;
 	access.buffer = buffer;
 	access.offset = offset;

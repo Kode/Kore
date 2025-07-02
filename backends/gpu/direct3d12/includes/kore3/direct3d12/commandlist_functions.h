@@ -98,7 +98,7 @@ void kore_d3d12_command_list_draw_indexed_indirect(kore_gpu_command_list *list, 
 
 void kore_d3d12_command_list_compute_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset);
 
-void kore_d3d12_command_list_queue_buffer_access(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size);
+void kore_d3d12_command_list_queue_buffer_access(kore_gpu_command_list *list, kore_d3d12_buffer *buffer, uint32_t offset, uint32_t size);
 
 void kore_d3d12_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_d3d12_descriptor_set *descriptor_set);
 

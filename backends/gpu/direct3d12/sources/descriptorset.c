@@ -193,7 +193,7 @@ void kore_d3d12_descriptor_set_prepare_cbv_buffer(kore_gpu_command_list *list, k
 	}
 
 	if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
-		kore_d3d12_command_list_queue_buffer_access(list, buffer, offset, size);
+		kore_d3d12_command_list_queue_buffer_access(list, &buffer->d3d12, offset, size);
 	}
 }
 
@@ -213,7 +213,7 @@ void kore_d3d12_descriptor_set_prepare_uav_buffer(kore_gpu_command_list *list, k
 	}
 
 	if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
-		kore_d3d12_command_list_queue_buffer_access(list, buffer, offset, size);
+		kore_d3d12_command_list_queue_buffer_access(list, &buffer->d3d12, offset, size);
 	}
 }
 
