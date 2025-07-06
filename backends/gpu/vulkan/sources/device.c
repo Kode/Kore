@@ -1132,6 +1132,8 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		}
 	}
 
+	list->vulkan.presenting = false;
+
 	// TODO: Use multiple command buffers to avoid waits
 	result = vkWaitForFences(device->vulkan.device, 1, &list->vulkan.fence, VK_TRUE, UINT64_MAX);
 	assert(result == VK_SUCCESS);
