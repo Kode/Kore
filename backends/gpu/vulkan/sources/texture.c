@@ -59,8 +59,8 @@ void kore_vulkan_texture_transition(kore_gpu_command_list *list, kore_gpu_textur
 				        },
 				};
 
-				vkCmdPipelineBarrier(list->vulkan.command_buffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL,
-				                     1, &barrier);
+				vkCmdPipelineBarrier(list->vulkan.command_buffers[list->vulkan.active_command_buffer], VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+				                     VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &barrier);
 
 				texture->vulkan.image_layouts[kore_vulkan_texture_image_layout_index(texture, mip_level, array_layer)] = layout;
 			}

@@ -14,7 +14,7 @@
 #include <assert.h>
 
 void kore_vulkan_command_list_destroy(kore_gpu_command_list *list) {
-	vkFreeCommandBuffers(list->vulkan.device, list->vulkan.command_pool, 1, &list->vulkan.command_buffer);
+	vkFreeCommandBuffers(list->vulkan.device, list->vulkan.command_pool, KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT, list->vulkan.command_buffers);
 }
 
 VkAttachmentLoadOp convert_load_op(kore_gpu_load_op op) {
@@ -77,10 +77,10 @@ VkClearValue convert_depth_clear_value(float value) {
 static void pause_render_pass(kore_gpu_command_list *list) {
 	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
 		if (list->vulkan.has_dynamic_rendering) {
-			vulkanCmdEndRendering(list->vulkan.command_buffer);
+			vulkanCmdEndRendering(list->vulkan.command_buffers[list->vulkan.active_command_buffer]);
 		}
 		else {
-			vkCmdEndRenderPass(list->vulkan.command_buffer);
+			vkCmdEndRenderPass(list->vulkan.command_buffers[list->vulkan.active_command_buffer]);
 		}
 		list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_PAUSED;
 	}
@@ -215,7 +215,7 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		    .pStencilAttachment   = VK_NULL_HANDLE,
 		};
 
-		vulkanCmdBeginRendering(list->vulkan.command_buffer, &rendering_info);
+		vulkanCmdBeginRendering(list->vulkan.command_buffers[list->vulkan.active_command_buffer], &rendering_info);
 	}
 	else {
 		VkClearValue clear_values[9];
@@ -265,7 +265,7 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 		    .framebuffer     = framebuffer,
 		};
 
-		vkCmdBeginRenderPass(list->vulkan.command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRenderPass(list->vulkan.command_buffers[list->vulkan.active_command_buffer], &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	kore_vulkan_command_list_set_viewport(list, 0, 0, (float)render_area.extent.width, (float)render_area.extent.height, 0.0f, 1.0f);
@@ -283,10 +283,10 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
 	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
 		if (list->vulkan.has_dynamic_rendering) {
-			vulkanCmdEndRendering(list->vulkan.command_buffer);
+			vulkanCmdEndRendering(list->vulkan.command_buffers[list->vulkan.active_command_buffer]);
 		}
 		else {
-			vkCmdEndRenderPass(list->vulkan.command_buffer);
+			vkCmdEndRenderPass(list->vulkan.command_buffers[list->vulkan.active_command_buffer]);
 		}
 	}
 	list->vulkan.render_pass_status = KORE_VULKAN_RENDER_PASS_STATUS_NONE;
@@ -297,20 +297,20 @@ void kore_vulkan_command_list_present(kore_gpu_command_list *list) {
 }
 
 void kore_vulkan_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
-	vkCmdBindIndexBuffer(list->vulkan.command_buffer, buffer->vulkan.buffer, offset,
+	vkCmdBindIndexBuffer(list->vulkan.command_buffers[list->vulkan.active_command_buffer], buffer->vulkan.buffer, offset,
 	                     index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
 }
 
 void kore_vulkan_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_vulkan_buffer *buffer, uint64_t offset, uint64_t size,
                                                 uint64_t stride) {
-	vkCmdBindVertexBuffers(list->vulkan.command_buffer, slot, 1, &buffer->buffer, &offset);
+	vkCmdBindVertexBuffers(list->vulkan.command_buffers[list->vulkan.active_command_buffer], slot, 1, &buffer->buffer, &offset);
 }
 
 static kore_vulkan_render_pipeline  *current_render_pipeline  = NULL;
 static kore_vulkan_compute_pipeline *current_compute_pipeline = NULL;
 
 void kore_vulkan_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_vulkan_render_pipeline *pipeline) {
-	vkCmdBindPipeline(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
+	vkCmdBindPipeline(list->vulkan.command_buffers[list->vulkan.active_command_buffer], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
 	current_render_pipeline  = pipeline;
 	current_compute_pipeline = NULL;
 }
@@ -321,7 +321,7 @@ void kore_vulkan_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_
 void kore_vulkan_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
                                            int32_t base_vertex, uint32_t first_instance) {
 	resume_render_pass(list);
-	vkCmdDrawIndexed(list->vulkan.command_buffer, index_count, instance_count, first_index, base_vertex, first_instance);
+	vkCmdDrawIndexed(list->vulkan.command_buffers[list->vulkan.active_command_buffer], index_count, instance_count, first_index, base_vertex, first_instance);
 }
 
 void kore_vulkan_command_list_set_descriptor_set(kore_gpu_command_list *list, uint32_t set_index, kore_vulkan_descriptor_set *set,
@@ -329,12 +329,12 @@ void kore_vulkan_command_list_set_descriptor_set(kore_gpu_command_list *list, ui
 	pause_render_pass(list);
 
 	if (current_render_pipeline != NULL) {
-		vkCmdBindDescriptorSets(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, current_render_pipeline->pipeline_layout, set_index, 1,
-		                        &set->descriptor_set, dynamic_offsets_count, dynamic_offsets);
+		vkCmdBindDescriptorSets(list->vulkan.command_buffers[list->vulkan.active_command_buffer], VK_PIPELINE_BIND_POINT_GRAPHICS,
+		                        current_render_pipeline->pipeline_layout, set_index, 1, &set->descriptor_set, dynamic_offsets_count, dynamic_offsets);
 	}
 	else if (current_compute_pipeline != NULL) {
-		vkCmdBindDescriptorSets(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, current_compute_pipeline->pipeline_layout, set_index, 1,
-		                        &set->descriptor_set, dynamic_offsets_count, dynamic_offsets);
+		vkCmdBindDescriptorSets(list->vulkan.command_buffers[list->vulkan.active_command_buffer], VK_PIPELINE_BIND_POINT_COMPUTE,
+		                        current_compute_pipeline->pipeline_layout, set_index, 1, &set->descriptor_set, dynamic_offsets_count, dynamic_offsets);
 	}
 	else {
 		assert(false);
@@ -343,11 +343,12 @@ void kore_vulkan_command_list_set_descriptor_set(kore_gpu_command_list *list, ui
 
 void kore_vulkan_command_list_set_root_constants(kore_gpu_command_list *list, const void *data, size_t data_size) {
 	if (current_render_pipeline != NULL) {
-		vkCmdPushConstants(list->vulkan.command_buffer, current_render_pipeline->pipeline_layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
-		                   (uint32_t)data_size, data);
+		vkCmdPushConstants(list->vulkan.command_buffers[list->vulkan.active_command_buffer], current_render_pipeline->pipeline_layout,
+		                   VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, (uint32_t)data_size, data);
 	}
 	else if (current_compute_pipeline != NULL) {
-		vkCmdPushConstants(list->vulkan.command_buffer, current_compute_pipeline->pipeline_layout, VK_SHADER_STAGE_COMPUTE_BIT, 0, (uint32_t)data_size, data);
+		vkCmdPushConstants(list->vulkan.command_buffers[list->vulkan.active_command_buffer], current_compute_pipeline->pipeline_layout,
+		                   VK_SHADER_STAGE_COMPUTE_BIT, 0, (uint32_t)data_size, data);
 	}
 	else {
 		assert(false);
@@ -361,7 +362,7 @@ void kore_vulkan_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list,
 	    .dstOffset = destination_offset,
 	    .size      = size,
 	};
-	vkCmdCopyBuffer(list->vulkan.command_buffer, source->vulkan.buffer, destination->vulkan.buffer, 1, &region);
+	vkCmdCopyBuffer(list->vulkan.command_buffers[list->vulkan.active_command_buffer], source->vulkan.buffer, destination->vulkan.buffer, 1, &region);
 }
 
 void kore_vulkan_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
@@ -397,8 +398,8 @@ void kore_vulkan_command_list_copy_buffer_to_texture(kore_gpu_command_list *list
 	    .imageOffset = {destination->origin_x, destination->origin_y, 0},
 	    .imageExtent = {width, height, 1},
 	};
-	vkCmdCopyBufferToImage(list->vulkan.command_buffer, source->buffer->vulkan.buffer, destination->texture->vulkan.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-	                       1, &region);
+	vkCmdCopyBufferToImage(list->vulkan.command_buffers[list->vulkan.active_command_buffer], source->buffer->vulkan.buffer, destination->texture->vulkan.image,
+	                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 }
 
 void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
@@ -433,8 +434,8 @@ void kore_vulkan_command_list_copy_texture_to_buffer(kore_gpu_command_list *list
 	    .imageOffset = {source->origin_x, source->origin_y, 0},
 	    .imageExtent = {width, height, 1},
 	};
-	vkCmdCopyImageToBuffer(list->vulkan.command_buffer, source->texture->vulkan.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, destination->buffer->vulkan.buffer,
-	                       1, &region);
+	vkCmdCopyImageToBuffer(list->vulkan.command_buffers[list->vulkan.active_command_buffer], source->texture->vulkan.image,
+	                       VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, destination->buffer->vulkan.buffer, 1, &region);
 }
 
 void kore_vulkan_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
@@ -490,20 +491,20 @@ void kore_vulkan_command_list_copy_texture_to_texture(kore_gpu_command_list *lis
 	    .extent    = {width, height, 1},
 	};
 
-	vkCmdCopyImage(list->vulkan.command_buffer, source->texture->vulkan.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, destination->texture->vulkan.image,
-	               VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+	vkCmdCopyImage(list->vulkan.command_buffers[list->vulkan.active_command_buffer], source->texture->vulkan.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+	               destination->texture->vulkan.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 }
 
 void kore_vulkan_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size) {}
 
 void kore_vulkan_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_vulkan_compute_pipeline *pipeline) {
-	vkCmdBindPipeline(list->vulkan.command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
+	vkCmdBindPipeline(list->vulkan.command_buffers[list->vulkan.active_command_buffer], VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
 	current_compute_pipeline = pipeline;
 	current_render_pipeline  = NULL;
 }
 
 void kore_vulkan_command_list_compute(kore_gpu_command_list *list, uint32_t workgroup_count_x, uint32_t workgroup_count_y, uint32_t workgroup_count_z) {
-	vkCmdDispatch(list->vulkan.command_buffer, workgroup_count_x, workgroup_count_y, workgroup_count_z);
+	vkCmdDispatch(list->vulkan.command_buffers[list->vulkan.active_command_buffer], workgroup_count_x, workgroup_count_y, workgroup_count_z);
 }
 
 void kore_vulkan_command_list_prepare_raytracing_volume(kore_gpu_command_list *list, kore_gpu_raytracing_volume *volume) {}
@@ -527,7 +528,7 @@ void kore_vulkan_command_list_set_viewport(kore_gpu_command_list *list, float x,
 	    .minDepth = min_depth,
 	    .maxDepth = max_depth,
 	};
-	vkCmdSetViewport(list->vulkan.command_buffer, 0, 1, &viewport);
+	vkCmdSetViewport(list->vulkan.command_buffers[list->vulkan.active_command_buffer], 0, 1, &viewport);
 }
 
 void kore_vulkan_command_list_set_scissor_rect(kore_gpu_command_list *list, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
@@ -535,7 +536,7 @@ void kore_vulkan_command_list_set_scissor_rect(kore_gpu_command_list *list, uint
 	    .offset = {x, y},
 	    .extent = {width, height},
 	};
-	vkCmdSetScissor(list->vulkan.command_buffer, 0, 1, &scissor);
+	vkCmdSetScissor(list->vulkan.command_buffers[list->vulkan.active_command_buffer], 0, 1, &scissor);
 }
 
 void kore_vulkan_command_list_set_blend_constant(kore_gpu_command_list *list, kore_gpu_color color) {}
@@ -546,7 +547,7 @@ void kore_vulkan_command_list_set_name(kore_gpu_command_list *list, const char *
 	const VkDebugUtilsObjectNameInfoEXT name_info = {
 	    .sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
 	    .objectType   = VK_OBJECT_TYPE_COMMAND_BUFFER,
-	    .objectHandle = (uint64_t)list->vulkan.command_buffer,
+	    .objectHandle = (uint64_t)list->vulkan.command_buffers[list->vulkan.active_command_buffer],
 	    .pObjectName  = name,
 	};
 	vulkanSetDebugUtilsObjectName(list->vulkan.device, &name_info);
@@ -559,11 +560,11 @@ void kore_vulkan_command_list_push_debug_group(kore_gpu_command_list *list, cons
 	    .pLabelName = name,
 	    .color      = {0.0f, 0.0f, 1.0f, 1.0f},
 	};
-	vulkanCmdBeginDebugUtilsLabel(list->vulkan.command_buffer, &label_info);
+	vulkanCmdBeginDebugUtilsLabel(list->vulkan.command_buffers[list->vulkan.active_command_buffer], &label_info);
 }
 
 void kore_vulkan_command_list_pop_debug_group(kore_gpu_command_list *list) {
-	vulkanCmdEndDebugUtilsLabel(list->vulkan.command_buffer);
+	vulkanCmdEndDebugUtilsLabel(list->vulkan.command_buffers[list->vulkan.active_command_buffer]);
 }
 
 void kore_vulkan_command_list_insert_debug_marker(kore_gpu_command_list *list, const char *name) {
@@ -573,7 +574,7 @@ void kore_vulkan_command_list_insert_debug_marker(kore_gpu_command_list *list, c
 	    .pLabelName = name,
 	    .color      = {0.0f, 0.0f, 1.0f, 1.0f},
 	};
-	vulkanCmdInsertDebugUtilsLabel(list->vulkan.command_buffer, &label_info);
+	vulkanCmdInsertDebugUtilsLabel(list->vulkan.command_buffers[list->vulkan.active_command_buffer], &label_info);
 }
 
 void kore_vulkan_command_list_begin_occlusion_query(kore_gpu_command_list *list, uint32_t query_index) {}

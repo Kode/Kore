@@ -934,24 +934,28 @@ void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	list->vulkan.presenting            = false;
 	list->vulkan.render_pass_status    = KORE_VULKAN_RENDER_PASS_STATUS_NONE;
 
-	const VkFenceCreateInfo fence_create_info = {
-	    .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-	    .pNext = NULL,
-	    .flags = 0,
-	};
+	for (uint32_t command_buffer_index = 0; command_buffer_index < KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT; ++command_buffer_index) {
+		const VkFenceCreateInfo fence_create_info = {
+		    .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+		    .pNext = NULL,
+		    .flags = VK_FENCE_CREATE_SIGNALED_BIT,
+		};
 
-	vkCreateFence(device->vulkan.device, &fence_create_info, NULL, &list->vulkan.fence);
+		vkCreateFence(device->vulkan.device, &fence_create_info, NULL, &list->vulkan.fences[command_buffer_index]);
 
-	const VkCommandBufferAllocateInfo allocate_info = {
-	    .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-	    .pNext              = NULL,
-	    .commandPool        = device->vulkan.command_pool,
-	    .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-	    .commandBufferCount = 1,
-	};
+		const VkCommandBufferAllocateInfo allocate_info = {
+		    .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+		    .pNext              = NULL,
+		    .commandPool        = device->vulkan.command_pool,
+		    .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+		    .commandBufferCount = 1,
+		};
 
-	VkResult result = vkAllocateCommandBuffers(device->vulkan.device, &allocate_info, &list->vulkan.command_buffer);
-	assert(result == VK_SUCCESS);
+		VkResult result = vkAllocateCommandBuffers(device->vulkan.device, &allocate_info, &list->vulkan.command_buffers[command_buffer_index]);
+		assert(result == VK_SUCCESS);
+	}
+
+	list->vulkan.active_command_buffer = 0;
 
 	const VkCommandBufferBeginInfo begin_info = {
 	    .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -960,7 +964,7 @@ void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	    .pInheritanceInfo = NULL,
 	};
 
-	vkBeginCommandBuffer(list->vulkan.command_buffer, &begin_info);
+	vkBeginCommandBuffer(list->vulkan.command_buffers[list->vulkan.active_command_buffer], &begin_info);
 }
 
 void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
@@ -1076,7 +1080,7 @@ kore_gpu_texture_format kore_vulkan_device_framebuffer_format(kore_gpu_device *d
 void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
 	kore_vulkan_texture_transition(list, &framebuffers[framebuffer_index], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
 
-	vkEndCommandBuffer(list->vulkan.command_buffer);
+	vkEndCommandBuffer(list->vulkan.command_buffers[list->vulkan.active_command_buffer]);
 
 	VkPipelineStageFlags stage_mask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
@@ -1087,7 +1091,7 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	    .pWaitSemaphores      = NULL,
 	    .pWaitDstStageMask    = &stage_mask,
 	    .commandBufferCount   = 1,
-	    .pCommandBuffers      = &list->vulkan.command_buffer,
+	    .pCommandBuffers      = &list->vulkan.command_buffers[list->vulkan.active_command_buffer],
 	    .signalSemaphoreCount = 0,
 	    .pSignalSemaphores    = NULL,
 	};
@@ -1097,7 +1101,10 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		submit_info.pWaitSemaphores    = get_framebuffer_available_semaphore();
 	}
 
-	VkResult result = vkQueueSubmit(device->vulkan.queue, 1, &submit_info, list->vulkan.fence);
+	VkResult result = vkResetFences(device->vulkan.device, 1, &list->vulkan.fences[list->vulkan.active_command_buffer]);
+	assert(result == VK_SUCCESS);
+
+	result = vkQueueSubmit(device->vulkan.queue, 1, &submit_info, list->vulkan.fences[list->vulkan.active_command_buffer]);
 	assert(result == VK_SUCCESS);
 
 	if (list->vulkan.presenting) {
@@ -1134,11 +1141,9 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 	list->vulkan.presenting = false;
 
-	// TODO: Use multiple command buffers to avoid waits
-	result = vkWaitForFences(device->vulkan.device, 1, &list->vulkan.fence, VK_TRUE, UINT64_MAX);
-	assert(result == VK_SUCCESS);
+	list->vulkan.active_command_buffer = (list->vulkan.active_command_buffer + 1) % KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT;
 
-	result = vkResetFences(device->vulkan.device, 1, &list->vulkan.fence);
+	result = vkWaitForFences(device->vulkan.device, 1, &list->vulkan.fences[list->vulkan.active_command_buffer], VK_TRUE, UINT64_MAX);
 	assert(result == VK_SUCCESS);
 
 	const VkCommandBufferBeginInfo begin_info = {
@@ -1148,7 +1153,7 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	    .pInheritanceInfo = NULL,
 	};
 
-	vkBeginCommandBuffer(list->vulkan.command_buffer, &begin_info);
+	vkBeginCommandBuffer(list->vulkan.command_buffers[list->vulkan.active_command_buffer], &begin_info);
 }
 
 void kore_vulkan_device_wait_until_idle(kore_gpu_device *device) {

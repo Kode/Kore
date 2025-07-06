@@ -24,12 +24,18 @@ typedef enum kore_vulkan_render_pass_status {
 	KORE_VULKAN_RENDER_PASS_STATUS_NONE,
 } kore_vulkan_render_pass_status;
 
+#define KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT 3
+
 typedef struct kore_vulkan_command_list {
-	VkDevice        device;
-	VkCommandPool   command_pool;
-	VkCommandBuffer command_buffer;
-	VkFence         fence;
-	bool            presenting;
+	VkDevice      device;
+	VkCommandPool command_pool;
+
+	// use multiple command buffers to avoid waits in kore_vulkan_device_execute_command_list
+	VkCommandBuffer command_buffers[KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT];
+	VkFence         fences[KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT];
+	uint32_t        active_command_buffer;
+
+	bool presenting;
 
 	kore_vulkan_render_pass_status  render_pass_status;
 	kore_gpu_render_pass_parameters current_render_pass;
