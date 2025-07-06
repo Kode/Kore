@@ -84,14 +84,14 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 #ifdef FRAMEBUFFER_TEXTURE
 	kore_gpu_texture_parameters texture_parameters = {
-		.format = framebuffer_format,
-		.width = kore_window_width(0),
-		.height = kore_window_height(0),
-		.dimension = KORE_GPU_TEXTURE_DIMENSION_2D,
-		.mip_level_count = 1,
-		.depth_or_array_layers = 1,
-		.sample_count = 1,
-		.usage = KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT | KORE_GPU_TEXTURE_USAGE_COPY_SRC | KORE_GPU_TEXTURE_USAGE_COPY_DST,
+	    .format                = framebuffer_format,
+	    .width                 = kore_window_width(0),
+	    .height                = kore_window_height(0),
+	    .dimension             = KORE_GPU_TEXTURE_DIMENSION_2D,
+	    .mip_level_count       = 1,
+	    .depth_or_array_layers = 1,
+	    .sample_count          = 1,
+	    .usage                 = KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT | KORE_GPU_TEXTURE_USAGE_COPY_SRC | KORE_GPU_TEXTURE_USAGE_COPY_DST,
 	};
 	kore_gpu_device_create_texture(device, &texture_parameters, &framebuffer_texture);
 #endif
@@ -322,36 +322,36 @@ void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 #ifdef FRAMEBUFFER_TEXTURE
 	if (list->webgpu.present) {
 		WGPUTexelCopyTextureInfo source_texture = {
-			.texture  = framebuffer_texture.webgpu.texture,
-			.mipLevel = 0,
-			.origin =
-				{
-					.x = 0,
-					.y = 0,
-					.z = 0,
-				},
-			.aspect = WGPUTextureAspect_All,
+		    .texture  = framebuffer_texture.webgpu.texture,
+		    .mipLevel = 0,
+		    .origin =
+		        {
+		            .x = 0,
+		            .y = 0,
+		            .z = 0,
+		        },
+		    .aspect = WGPUTextureAspect_All,
 		};
 
 		WGPUSurfaceTexture surface_texture;
 		wgpuSurfaceGetCurrentTexture(device->webgpu.surface, &surface_texture);
 
 		WGPUTexelCopyTextureInfo destination_texture = {
-			.texture  = surface_texture.texture,
-			.mipLevel = 0,
-			.origin =
-				{
-					.x = 0,
-					.y = 0,
-					.z = 0,
-				},
-			.aspect = WGPUTextureAspect_All,
+		    .texture  = surface_texture.texture,
+		    .mipLevel = 0,
+		    .origin =
+		        {
+		            .x = 0,
+		            .y = 0,
+		            .z = 0,
+		        },
+		    .aspect = WGPUTextureAspect_All,
 		};
 
 		WGPUExtent3D size = {
-			.width              = framebuffer_texture.width,
-			.height             = framebuffer_texture.height,
-			.depthOrArrayLayers = 1,
+		    .width              = framebuffer_texture.width,
+		    .height             = framebuffer_texture.height,
+		    .depthOrArrayLayers = 1,
 		};
 
 		wgpuCommandEncoderCopyTextureToTexture(list->webgpu.command_encoder, &source_texture, &destination_texture, &size);
