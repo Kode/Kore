@@ -16,10 +16,15 @@
 
 #include <assert.h>
 
+#define FRAMEBUFFER_TEXTURE
+
 static WGPUDevice              wgpu_device;
 WGPUInstance                   wgpu_instance;
 static WGPUAdapter             wgpu_adapter;
 static kore_gpu_texture_format framebuffer_format;
+#ifdef FRAMEBUFFER_TEXTURE
+static kore_gpu_texture framebuffer_texture;
+#endif
 
 static void error_callback(WGPUDevice const *device, WGPUErrorType type, WGPUStringView message, void *userdata1, void *userdata2) {
 	kore_log(KORE_LOG_LEVEL_ERROR, "%d: %s", type, message.data);
@@ -76,6 +81,20 @@ void kore_webgpu_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .presentMode = WGPUPresentMode_Fifo,
 	};
 	wgpuSurfaceConfigure(device->webgpu.surface, &surface_configuration);
+
+#ifdef FRAMEBUFFER_TEXTURE
+	kore_gpu_texture_parameters texture_parameters = {
+		.format = framebuffer_format,
+		.width = kore_window_width(0),
+		.height = kore_window_height(0),
+		.dimension = KORE_GPU_TEXTURE_DIMENSION_2D,
+		.mip_level_count = 1,
+		.depth_or_array_layers = 1,
+		.sample_count = 1,
+		.usage = KORE_GPU_TEXTURE_USAGE_RENDER_ATTACHMENT | KORE_GPU_TEXTURE_USAGE_COPY_SRC | KORE_GPU_TEXTURE_USAGE_COPY_DST,
+	};
+	kore_gpu_device_create_texture(device, &texture_parameters, &framebuffer_texture);
+#endif
 }
 
 void kore_webgpu_device_destroy(kore_gpu_device *device) {}
@@ -141,7 +160,7 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 		WGPUBufferDescriptor buffer_descriptor = {
 		    .size             = align_pow2(parameters->size, 4),
 		    .usage            = WGPUBufferUsage_MapWrite | WGPUBufferUsage_CopySrc,
-		    .mappedAtCreation = true,
+		    .mappedAtCreation = false,
 		};
 
 		buffer->webgpu.copy_buffer = wgpuDeviceCreateBuffer(device->webgpu.device, &buffer_descriptor);
@@ -156,7 +175,7 @@ void kore_webgpu_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	WGPUBufferDescriptor buffer_descriptor = {
 	    .size             = align_pow2(parameters->size, 4),
 	    .usage            = convert_buffer_usage(usage),
-	    .mappedAtCreation = ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) && !buffer->webgpu.has_copy_buffer,
+	    .mappedAtCreation = false,
 	};
 
 	buffer->webgpu.buffer = wgpuDeviceCreateBuffer(device->webgpu.device, &buffer_descriptor);
@@ -199,6 +218,8 @@ void kore_webgpu_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	list->webgpu.root_constants_offset = 0;
 
 	list->webgpu.compute_pipeline = NULL;
+
+	list->webgpu.present = false;
 }
 
 void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
@@ -247,6 +268,9 @@ void kore_webgpu_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 static kore_gpu_texture framebuffer;
 
 kore_gpu_texture *kore_webgpu_device_get_framebuffer(kore_gpu_device *device) {
+#ifdef FRAMEBUFFER_TEXTURE
+	return &framebuffer_texture;
+#else
 	WGPUSurfaceTexture surface_texture;
 	wgpuSurfaceGetCurrentTexture(device->webgpu.surface, &surface_texture);
 	framebuffer.webgpu.texture = surface_texture.texture;
@@ -256,6 +280,7 @@ kore_gpu_texture *kore_webgpu_device_get_framebuffer(kore_gpu_device *device) {
 	framebuffer.height = kore_window_height(0);
 
 	return &framebuffer;
+#endif
 }
 
 kore_gpu_texture_format kore_webgpu_device_framebuffer_format(kore_gpu_device *device) {
@@ -294,12 +319,53 @@ void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		scheduled_buffer_uploads_count = 0;
 	}
 
+#ifdef FRAMEBUFFER_TEXTURE
+	if (list->webgpu.present) {
+		WGPUTexelCopyTextureInfo source_texture = {
+			.texture  = framebuffer_texture.webgpu.texture,
+			.mipLevel = 0,
+			.origin =
+				{
+					.x = 0,
+					.y = 0,
+					.z = 0,
+				},
+			.aspect = WGPUTextureAspect_All,
+		};
+
+		WGPUSurfaceTexture surface_texture;
+		wgpuSurfaceGetCurrentTexture(device->webgpu.surface, &surface_texture);
+
+		WGPUTexelCopyTextureInfo destination_texture = {
+			.texture  = surface_texture.texture,
+			.mipLevel = 0,
+			.origin =
+				{
+					.x = 0,
+					.y = 0,
+					.z = 0,
+				},
+			.aspect = WGPUTextureAspect_All,
+		};
+
+		WGPUExtent3D size = {
+			.width              = framebuffer_texture.width,
+			.height             = framebuffer_texture.height,
+			.depthOrArrayLayers = 1,
+		};
+
+		wgpuCommandEncoderCopyTextureToTexture(list->webgpu.command_encoder, &source_texture, &destination_texture, &size);
+	}
+#endif
+
 	WGPUCommandBufferDescriptor command_buffer_descriptor = {0};
 	WGPUCommandBuffer           command_buffer            = wgpuCommandEncoderFinish(list->webgpu.command_encoder, &command_buffer_descriptor);
 	wgpuQueueSubmit(device->webgpu.queue, 1, &command_buffer);
 
 	WGPUCommandEncoderDescriptor command_encoder_descriptor = {0};
 	list->webgpu.command_encoder                            = wgpuDeviceCreateCommandEncoder(device->webgpu.device, &command_encoder_descriptor);
+
+	list->webgpu.present = false;
 }
 
 static bool work_done = false;

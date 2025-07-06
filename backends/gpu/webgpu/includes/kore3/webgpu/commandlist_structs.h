@@ -37,6 +37,8 @@ typedef struct kore_webgpu_command_list {
 	WGPUComputePipeline            compute_pipeline;
 	kore_webgpu_compute_bind_group compute_bind_groups[16];
 	uint32_t                       compute_bind_groups_count;
+
+	bool present;
 } kore_webgpu_command_list;
 
 #ifdef __cplusplus

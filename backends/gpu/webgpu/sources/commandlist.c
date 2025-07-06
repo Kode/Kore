@@ -135,7 +135,9 @@ void kore_webgpu_command_list_end_render_pass(kore_gpu_command_list *list) {
 	list->webgpu.render_pass_encoder = NULL;
 }
 
-void kore_webgpu_command_list_present(kore_gpu_command_list *list) {}
+void kore_webgpu_command_list_present(kore_gpu_command_list *list) {
+	list->webgpu.present = true;
+}
 
 void kore_webgpu_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
 	kore_webgpu_buffer_schedule_uploads(&buffer->webgpu);
