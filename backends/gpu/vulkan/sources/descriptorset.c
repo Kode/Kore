@@ -232,6 +232,10 @@ void kore_vulkan_descriptor_set_set_sampler(kore_gpu_device *device, kore_vulkan
 void kore_vulkan_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {}
 
 void kore_vulkan_descriptor_set_prepare_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view, bool writable) {
+	if (writable && texture_view->texture->vulkan.is_framebuffer) {
+		list->vulkan.framebuffer_access = true;
+	}
+
 	kore_vulkan_texture_transition(list, texture_view->texture, VK_IMAGE_LAYOUT_GENERAL, texture_view->base_array_layer, texture_view->array_layer_count,
 	                               texture_view->base_mip_level, texture_view->mip_level_count);
 }

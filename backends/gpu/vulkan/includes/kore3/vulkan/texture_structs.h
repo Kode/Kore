@@ -23,6 +23,8 @@ typedef struct kore_vulkan_texture {
 	kore_gpu_texture_format format;
 	uint32_t                mip_level_count;
 
+	bool is_framebuffer;
+
 	VkDevice device;
 } kore_vulkan_texture;
 

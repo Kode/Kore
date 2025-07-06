@@ -35,6 +35,7 @@ typedef struct kore_vulkan_command_list {
 	VkFence         fences[KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT];
 	uint32_t        active_command_buffer;
 
+	bool framebuffer_access;
 	bool presenting;
 
 	kore_vulkan_render_pass_status  render_pass_status;

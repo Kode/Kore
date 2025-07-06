@@ -86,7 +86,8 @@ static VKAPI_ATTR void VKAPI_CALL vulkan_free(void *pUserData, void *pMemory) {
 #endif
 
 static VkSemaphore framebuffer_availables[4];
-static uint32_t    framebuffer_available_index = 0;
+static uint32_t    framebuffer_available_index        = 0;
+static bool        framebuffer_available_triggered[4] = {0};
 
 static void init_framebuffer_availables(kore_gpu_device *device) {
 	const VkSemaphoreCreateInfo semaphore_create_info = {
@@ -102,11 +103,17 @@ static void init_framebuffer_availables(kore_gpu_device *device) {
 }
 
 static VkSemaphore *get_next_framebuffer_available_semaphore(void) {
-	framebuffer_available_index = (framebuffer_available_index + 1) % 4;
+	framebuffer_available_index                                  = (framebuffer_available_index + 1) % 4;
+	framebuffer_available_triggered[framebuffer_available_index] = false;
 	return &framebuffer_availables[framebuffer_available_index];
 }
 
 static VkSemaphore *get_framebuffer_available_semaphore(void) {
+	if (framebuffer_available_triggered[framebuffer_available_index]) {
+		return NULL;
+	}
+
+	framebuffer_available_triggered[framebuffer_available_index] = true;
 	return &framebuffer_availables[framebuffer_available_index];
 }
 
@@ -500,9 +507,10 @@ static void create_swapchain(kore_gpu_device *device) {
 		     image_layout_index < sizeof(framebuffers[i].vulkan.image_layouts) / sizeof(framebuffers[i].vulkan.image_layouts[0]); ++image_layout_index) {
 			framebuffers[i].vulkan.image_layouts[image_layout_index] = VK_IMAGE_LAYOUT_UNDEFINED;
 		}
-		framebuffers[i].width         = window_width;
-		framebuffers[i].height        = window_height;
-		framebuffers[i].vulkan.format = convert_from_vulkan_format(framebuffer_format);
+		framebuffers[i].width                 = window_width;
+		framebuffers[i].height                = window_height;
+		framebuffers[i].vulkan.format         = convert_from_vulkan_format(framebuffer_format);
+		framebuffers[i].vulkan.is_framebuffer = true;
 	}
 }
 
@@ -931,6 +939,7 @@ void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	list->vulkan.device                = device->vulkan.device;
 	list->vulkan.has_dynamic_rendering = device->vulkan.has_dynamic_rendering;
 	list->vulkan.command_pool          = device->vulkan.command_pool;
+	list->vulkan.framebuffer_access    = false;
 	list->vulkan.presenting            = false;
 	list->vulkan.render_pass_status    = KORE_VULKAN_RENDER_PASS_STATUS_NONE;
 
@@ -981,6 +990,7 @@ void kore_vulkan_device_create_texture(kore_gpu_device *device, const kore_gpu_t
 	texture->height                 = parameters->height;
 	texture->vulkan.format          = parameters->format;
 	texture->vulkan.mip_level_count = parameters->mip_level_count;
+	texture->vulkan.is_framebuffer  = false;
 
 	VkImageUsageFlags usage = 0;
 
@@ -1096,9 +1106,12 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 	    .pSignalSemaphores    = NULL,
 	};
 
-	if (list->vulkan.presenting) {
-		submit_info.waitSemaphoreCount = 1;
-		submit_info.pWaitSemaphores    = get_framebuffer_available_semaphore();
+	if (list->vulkan.framebuffer_access) {
+		VkSemaphore *wait_semaphore = get_framebuffer_available_semaphore();
+		if (wait_semaphore != NULL) {
+			submit_info.waitSemaphoreCount = 1;
+			submit_info.pWaitSemaphores    = wait_semaphore;
+		}
 	}
 
 	VkResult result = vkResetFences(device->vulkan.device, 1, &list->vulkan.fences[list->vulkan.active_command_buffer]);
@@ -1139,7 +1152,8 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		}
 	}
 
-	list->vulkan.presenting = false;
+	list->vulkan.framebuffer_access = false;
+	list->vulkan.presenting         = false;
 
 	list->vulkan.active_command_buffer = (list->vulkan.active_command_buffer + 1) % KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT;
 
