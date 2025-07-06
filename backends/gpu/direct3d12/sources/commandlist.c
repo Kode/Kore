@@ -85,9 +85,7 @@ void kore_d3d12_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	if (parameters->depth_stencil_attachment.texture != NULL) {
 		kore_gpu_texture *render_target = parameters->depth_stencil_attachment.texture;
 
-		if (render_target->d3d12.in_flight_frame_index > 0) {
-			list->d3d12.blocking_frame_index = render_target->d3d12.in_flight_frame_index;
-		}
+		assert(render_target->d3d12.in_flight_frame_index == 0);
 
 		if (render_target->d3d12.resource_states[0] != D3D12_RESOURCE_STATE_DEPTH_WRITE) {
 			D3D12_RESOURCE_BARRIER barrier;

@@ -243,6 +243,10 @@ void kore_d3d12_descriptor_set_prepare_srv_texture(kore_gpu_command_list *list, 
 }
 
 void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view) {
+	if (texture_view->texture->d3d12.in_flight_frame_index > 0) {
+		list->d3d12.blocking_frame_index = texture_view->texture->d3d12.in_flight_frame_index;
+	}
+
 	if (texture_view->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, texture_view->base_mip_level, 0)] !=
 	    D3D12_RESOURCE_STATE_UNORDERED_ACCESS) {
 		D3D12_RESOURCE_BARRIER barrier;
