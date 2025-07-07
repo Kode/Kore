@@ -7,9 +7,21 @@ extern "C" {
 
 #define KORE_METAL_FRAME_COUNT 2
 
+#define KORE_METAL_EXECUTION_FENCE_COUNT 8
+
+typedef struct kore_metal_execution_fence {
+	void *command_buffers[KORE_METAL_EXECUTION_FENCE_COUNT];
+	uint64_t commend_buffer_execution_indices[KORE_METAL_EXECUTION_FENCE_COUNT];
+
+	uint64_t next_execution_index;
+	uint64_t completed_index;
+} kore_metal_execution_fence;
+
 typedef struct kore_metal_device {
 	void *device;
 	void *library;
+	
+	kore_metal_execution_fence execution_fence;
 } kore_metal_device;
 
 typedef struct kore_metal_query_set {

@@ -10,11 +10,125 @@
 
 #include <assert.h>
 
+static void create_execution_fence(kore_gpu_device *device) {
+	kore_metal_execution_fence *execution_fence = &device->metal.execution_fence;
+
+	for (uint32_t fence_index = 0; fence_index < KORE_METAL_EXECUTION_FENCE_COUNT; ++fence_index) {
+		execution_fence->commend_buffer_execution_indices[fence_index] = 0;
+	}
+
+	execution_fence->completed_index      = 0;
+	execution_fence->next_execution_index = 1;
+}
+
+static uint64_t find_completed_execution(kore_gpu_device *device) {
+	kore_metal_execution_fence *execution_fence = &device->metal.execution_fence;
+
+	for (uint32_t fence_index = 0; fence_index < KORE_METAL_EXECUTION_FENCE_COUNT; ++fence_index) {
+		if (execution_fence->commend_buffer_execution_indices[fence_index] != 0) {
+			id<MTLCommandBuffer> command_buffer    = (__bridge id<MTLCommandBuffer>)execution_fence->command_buffers[fence_index];
+			if ([command_buffer status] == MTLCommandBufferStatusCompleted) {
+				if (execution_fence->commend_buffer_execution_indices[fence_index] > execution_fence->completed_index) {
+					execution_fence->completed_index = execution_fence->commend_buffer_execution_indices[fence_index];
+				}
+
+				CFRelease(execution_fence->command_buffers[fence_index]);
+				execution_fence->command_buffers[fence_index] = NULL;
+				
+				execution_fence->commend_buffer_execution_indices[fence_index] = 0;
+			}
+		}
+	}
+
+	return execution_fence->completed_index;
+}
+
+static void wait_for_execution(kore_gpu_device *device, uint64_t index) {
+	kore_metal_execution_fence *execution_fence = &device->metal.execution_fence;
+
+	uint64_t completed = execution_fence->completed_index;
+
+	if (completed >= index) {
+		return;
+	}
+
+	completed = find_completed_execution(device);
+
+	if (completed >= index) {
+		return;
+	}
+
+	bool fence_found = false;
+
+	for (uint32_t fence_index = 0; fence_index < KORE_METAL_EXECUTION_FENCE_COUNT; ++fence_index) {
+		uint64_t value = execution_fence->commend_buffer_execution_indices[fence_index];
+
+		if (value == index) {
+			id<MTLCommandBuffer> command_buffer    = (__bridge id<MTLCommandBuffer>)execution_fence->command_buffers[fence_index];
+			[command_buffer waitUntilCompleted];
+
+			CFRelease(execution_fence->command_buffers[fence_index]);
+			execution_fence->command_buffers[fence_index] = NULL;
+			
+			execution_fence->commend_buffer_execution_indices[fence_index] = 0;
+
+			execution_fence->completed_index = value;
+
+			fence_found = true;
+
+			break;
+		}
+	}
+
+	assert(fence_found);
+}
+
+static void set_next_fence(kore_gpu_device *device, void *fence) {
+	kore_metal_execution_fence *execution_fence = &device->metal.execution_fence;
+
+	for (uint32_t fence_index = 0; fence_index < KORE_METAL_EXECUTION_FENCE_COUNT; ++fence_index) {
+		uint64_t value = execution_fence->commend_buffer_execution_indices[fence_index];
+
+		if (value == 0) {
+			execution_fence->commend_buffer_execution_indices[fence_index] = execution_fence->next_execution_index;
+			++execution_fence->next_execution_index;
+
+			execution_fence->command_buffers[fence_index] = fence;
+			return;
+		}
+	}
+
+	uint64_t lowest_value = UINT64_MAX;
+	void *lowest_fence = NULL;
+	uint32_t lowest_fence_index = UINT32_MAX;
+
+	for (uint32_t fence_index = 0; fence_index < KORE_METAL_EXECUTION_FENCE_COUNT; ++fence_index) {
+		uint64_t value = execution_fence->commend_buffer_execution_indices[fence_index];
+
+		if (value < lowest_value) {
+			lowest_fence       = execution_fence->command_buffers[fence_index];
+			lowest_value       = value;
+			lowest_fence_index = fence_index;
+		}
+	}
+
+	id<MTLCommandBuffer> command_buffer    = (__bridge id<MTLCommandBuffer>)lowest_fence;
+	[command_buffer waitUntilCompleted];
+
+	CFRelease(lowest_fence);
+	execution_fence->command_buffers[lowest_fence_index] = fence;
+	
+	execution_fence->commend_buffer_execution_indices[lowest_fence_index] = execution_fence->next_execution_index;
+	++execution_fence->next_execution_index;
+}
+
 void kore_metal_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
 	id<MTLDevice> metal_device = MTLCreateSystemDefaultDevice();
 	getMetalLayer().device     = metal_device;
 	device->metal.device       = (__bridge_retained void *)metal_device;
 	device->metal.library      = (__bridge_retained void *)[metal_device newDefaultLibrary];
+	
+	create_execution_fence(device);
 }
 
 void kore_metal_device_destroy(kore_gpu_device *device) {}
@@ -125,8 +239,6 @@ kore_gpu_texture_format kore_metal_device_framebuffer_format(kore_gpu_device *de
 	return KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM;
 }
 
-static void *last_running_command_buffer = NULL;
-
 void kore_metal_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
 	kore_metal_command_list_end_compute_pass(list);
 	kore_metal_command_list_end_blit_pass(list);
@@ -134,26 +246,20 @@ void kore_metal_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 	[command_buffer commit];
 
-	last_running_command_buffer = (__bridge_retained void *)command_buffer;
-
 	id<MTLCommandQueue> command_queue = (__bridge id<MTLCommandQueue>)list->metal.command_queue;
 	command_buffer                    = [command_queue commandBuffer];
 	list->metal.command_buffer        = (__bridge_retained void *)[command_queue commandBuffer];
+	set_next_fence(device, list->metal.command_buffer);
 }
 
 void kore_metal_device_wait_until_idle(kore_gpu_device *device) {
-	if (last_running_command_buffer != NULL) {
-		id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)last_running_command_buffer;
-		[command_buffer waitUntilCompleted];
-		last_running_command_buffer = NULL;
-	}
+	wait_for_execution(device, device->metal.execution_fence.next_execution_index - 1);
 }
 
 void kore_metal_device_create_descriptor_set_buffer(kore_gpu_device *device, uint64_t encoded_length, kore_gpu_buffer *buffer) {
 	id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->metal.device;
 
-	MTLResourceOptions options = MTLResourceCPUCacheModeWriteCombined;
-	options |= MTLResourceStorageModeShared;
+	MTLResourceOptions options = MTLResourceCPUCacheModeWriteCombined | MTLResourceStorageModeShared;
 	id<MTLBuffer> metal_buffer = [metal_device newBufferWithLength:encoded_length options:options];
 	buffer->metal.buffer       = (__bridge_retained void *)metal_buffer;
 }
