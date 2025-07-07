@@ -134,4 +134,10 @@ static bool has_stencil(kore_gpu_texture_format format) {
 	}
 }
 
+struct kore_gpu_device;
+
+static uint64_t find_completed_execution(struct kore_gpu_device *device);
+
+static void wait_for_execution(struct kore_gpu_device *device, uint64_t index);
+
 #endif

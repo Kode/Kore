@@ -150,6 +150,9 @@ void kore_metal_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 #endif
 	id<MTLBuffer> metal_buffer = [metal_device newBufferWithLength:parameters->size options:options];
 	buffer->metal.buffer       = (__bridge_retained void *)metal_buffer;
+	buffer->metal.host_visible = (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0 || (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0;
+	buffer->metal.size = parameters->size;
+	buffer->metal.device = device;
 }
 
 void kore_metal_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
@@ -160,6 +163,7 @@ void kore_metal_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 	list->metal.render_command_encoder  = NULL;
 	list->metal.compute_command_encoder = NULL;
 	list->metal.blit_command_encoder    = NULL;
+	list->metal.queued_buffer_accesses_count = 0;
 }
 
 void kore_metal_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
@@ -239,17 +243,48 @@ kore_gpu_texture_format kore_metal_device_framebuffer_format(kore_gpu_device *de
 	return KORE_GPU_TEXTURE_FORMAT_BGRA8_UNORM;
 }
 
+static void clean_buffer_accesses(kore_metal_buffer *buffer, uint64_t finished_execution_index) {
+	kore_metal_buffer_range ranges[KORE_METAL_MAX_BUFFER_RANGES];
+	uint32_t                 ranges_count = 0;
+
+	for (uint32_t range_index = 0; range_index < buffer->ranges_count; ++range_index) {
+		if (buffer->ranges[range_index].execution_index > finished_execution_index) {
+			ranges[ranges_count] = buffer->ranges[range_index];
+			ranges_count += 1;
+		}
+	}
+
+	memcpy(&buffer->ranges, &ranges, sizeof(ranges));
+	buffer->ranges_count = ranges_count;
+}
+
 void kore_metal_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
 	kore_metal_command_list_end_compute_pass(list);
 	kore_metal_command_list_end_blit_pass(list);
+	
+	uint64_t execution_index = device->metal.execution_fence.next_execution_index;
+
+	for (uint32_t buffer_access_index = 0; buffer_access_index < list->metal.queued_buffer_accesses_count; ++buffer_access_index) {
+		kore_metal_buffer_access access = list->metal.queued_buffer_accesses[buffer_access_index];
+		kore_metal_buffer       *buffer = access.buffer;
+
+		clean_buffer_accesses(buffer, find_completed_execution(device));
+
+		assert(buffer->ranges_count < KORE_METAL_MAX_BUFFER_RANGES);
+		buffer->ranges[buffer->ranges_count].execution_index = execution_index;
+		buffer->ranges[buffer->ranges_count].offset          = access.offset;
+		buffer->ranges[buffer->ranges_count].size            = access.size;
+		buffer->ranges_count += 1;
+	}
+	list->metal.queued_buffer_accesses_count = 0;
 
 	id<MTLCommandBuffer> command_buffer = (__bridge id<MTLCommandBuffer>)list->metal.command_buffer;
 	[command_buffer commit];
+	set_next_fence(device, list->metal.command_buffer);
 
 	id<MTLCommandQueue> command_queue = (__bridge id<MTLCommandQueue>)list->metal.command_queue;
 	command_buffer                    = [command_queue commandBuffer];
 	list->metal.command_buffer        = (__bridge_retained void *)[command_queue commandBuffer];
-	set_next_fence(device, list->metal.command_buffer);
 }
 
 void kore_metal_device_wait_until_idle(kore_gpu_device *device) {

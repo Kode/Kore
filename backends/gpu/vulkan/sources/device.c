@@ -1081,6 +1081,7 @@ void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	}
 
 	list->vulkan.active_command_buffer = 0;
+	list->vulkan.queued_buffer_accesses_count = 0;
 
 	const VkCommandBufferBeginInfo begin_info = {
 	    .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
