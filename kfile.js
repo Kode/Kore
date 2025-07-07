@@ -302,12 +302,13 @@ else if (platform === Platform.Emscripten) {
 	addKincDefine('EMSCRIPTEN');
 	//project.addLib('websocket.js -sPROXY_POSIX_SOCKETS -sUSE_PTHREADS -sPROXY_TO_PTHREAD');
 	addBackend('System/Emscripten');
-	project.addLib('USE_GLFW=2');
+	project.addLinkerFlag('-sUSE_GLFW=2');
 	if (graphics === GraphicsApi.WebGPU) {
 		g4 = true;
 		g5 = true;
 		addBackend('Graphics5/WebGPU');
 		addKincDefine('WEBGPU');
+		project.addLinkerFlag('-sUSE_WEBGPU=1');
 	}
 	else if (graphics === GraphicsApi.OpenGL || graphics === GraphicsApi.Default) {
 		g4 = true;
