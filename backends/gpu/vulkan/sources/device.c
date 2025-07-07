@@ -405,10 +405,10 @@ static VkResult create_surface(VkInstance instance, int window_index, VkSurfaceK
 
 static void create_swapchain(kore_gpu_device *device) {
 	uint32_t window_width = kore_window_width(0);
-	window_width          = window_width > 4 ? window_width : window_width;
+	window_width          = window_width > 4 ? window_width : 4;
 
 	uint32_t window_height = kore_window_height(0);
-	window_height          = window_height > 4 ? window_height : window_height;
+	window_height          = window_height > 4 ? window_height : 4;
 
 	bool vsync = true; // kore_window_vsynced(0); // TODO
 
@@ -447,10 +447,10 @@ static void create_swapchain(kore_gpu_device *device) {
 
 	if (surface_capabilities.currentExtent.width != (uint32_t)-1) {
 		window_width = surface_capabilities.currentExtent.width;
-		window_width = window_width > 4 ? window_width : window_width;
+		window_width = window_width > 4 ? window_width : 4;
 
 		window_height = surface_capabilities.currentExtent.height;
-		window_height = window_height > 4 ? window_height : window_height;
+		window_height = window_height > 4 ? window_height : 4;
 	}
 
 	VkCompositeAlphaFlagBitsKHR composite_alpha;
@@ -532,6 +532,126 @@ static void create_descriptor_pool(kore_gpu_device *device) {
 
 	VkResult result = vkCreateDescriptorPool(device->vulkan.device, &pool_create_info, NULL, &device->vulkan.descriptor_pool);
 	assert(result == VK_SUCCESS);
+}
+
+static void create_execution_fence(kore_gpu_device *device) {
+	kore_vulkan_execution_fence *execution_fence = &device->vulkan.execution_fence;
+
+	for (uint32_t fence_index = 0; fence_index < KORE_VULKAN_EXECUTION_FENCE_COUNT; ++fence_index) {
+		const VkFenceCreateInfo fence_create_info = {
+		    .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+		    .pNext = NULL,
+		    .flags = 0,
+		};
+
+		vkCreateFence(device->vulkan.device, &fence_create_info, NULL, &execution_fence->fences[fence_index]);
+
+		execution_fence->fence_values[fence_index] = 0;
+	}
+
+	execution_fence->completed_index      = 0;
+	execution_fence->next_execution_index = 1;
+}
+
+static uint64_t find_completed_execution(kore_gpu_device *device) {
+	kore_vulkan_execution_fence *execution_fence = &device->vulkan.execution_fence;
+
+	for (uint32_t fence_index = 0; fence_index < KORE_VULKAN_EXECUTION_FENCE_COUNT; ++fence_index) {
+		if (execution_fence->fence_values[fence_index] != 0) {
+			VkResult result = vkGetFenceStatus(device->vulkan.device, execution_fence->fences[fence_index]);
+			if (result == VK_SUCCESS) {
+				if (execution_fence->fence_values[fence_index] > execution_fence->completed_index) {
+					execution_fence->completed_index = execution_fence->fence_values[fence_index];
+				}
+
+				VkResult result = vkResetFences(device->vulkan.device, 1, &execution_fence->fences[fence_index]);
+				assert(result == VK_SUCCESS);
+				execution_fence->fence_values[fence_index] = 0;
+			}
+		}
+	}
+
+	return execution_fence->completed_index;
+}
+
+static void wait_for_execution(kore_gpu_device *device, uint64_t index) {
+	kore_vulkan_execution_fence *execution_fence = &device->vulkan.execution_fence;
+
+	uint64_t completed = execution_fence->completed_index;
+
+	if (completed >= index) {
+		return;
+	}
+
+	completed = find_completed_execution(device);
+
+	if (completed >= index) {
+		return;
+	}
+
+	bool fence_found = false;
+
+	for (uint32_t fence_index = 0; fence_index < KORE_VULKAN_EXECUTION_FENCE_COUNT; ++fence_index) {
+		uint64_t value = execution_fence->fence_values[fence_index];
+
+		if (value == index) {
+			VkResult result = vkWaitForFences(device->vulkan.device, 1, &execution_fence->fences[fence_index], VK_TRUE, UINT64_MAX);
+			assert(result == VK_SUCCESS);
+
+			result = vkResetFences(device->vulkan.device, 1, &execution_fence->fences[fence_index]);
+			assert(result == VK_SUCCESS);
+
+			execution_fence->fence_values[fence_index] = 0;
+
+			execution_fence->completed_index = value;
+
+			fence_found = true;
+
+			break;
+		}
+	}
+
+	assert(fence_found);
+}
+
+static VkFence get_next_fence(kore_gpu_device *device) {
+	kore_vulkan_execution_fence *execution_fence = &device->vulkan.execution_fence;
+
+	for (uint32_t fence_index = 0; fence_index < KORE_VULKAN_EXECUTION_FENCE_COUNT; ++fence_index) {
+		uint64_t value = execution_fence->fence_values[fence_index];
+
+		if (value == 0) {
+			execution_fence->fence_values[fence_index] = execution_fence->next_execution_index;
+			++execution_fence->next_execution_index;
+
+			return execution_fence->fences[fence_index];
+		}
+	}
+
+	uint64_t lowest_value = UINT64_MAX;
+	VkFence  lowest_fence;
+	uint32_t lowest_fence_index = UINT32_MAX;
+
+	for (uint32_t fence_index = 0; fence_index < KORE_VULKAN_EXECUTION_FENCE_COUNT; ++fence_index) {
+		uint64_t value = execution_fence->fence_values[fence_index];
+
+		if (value < lowest_value) {
+			lowest_fence       = execution_fence->fences[fence_index];
+			lowest_value       = value;
+			lowest_fence_index = fence_index;
+		}
+	}
+
+	VkResult result = vkWaitForFences(device->vulkan.device, 1, &lowest_fence, VK_TRUE, UINT64_MAX);
+	assert(result == VK_SUCCESS);
+
+	result = vkResetFences(device->vulkan.device, 1, &lowest_fence);
+	assert(result == VK_SUCCESS);
+
+	execution_fence->fence_values[lowest_fence_index] = execution_fence->next_execution_index;
+	++execution_fence->next_execution_index;
+
+	return lowest_fence;
 }
 
 void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
@@ -830,6 +950,8 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	init_framebuffer_availables(device);
 
 	create_descriptor_pool(device);
+
+	create_execution_fence(device);
 }
 
 void kore_vulkan_device_destroy(kore_gpu_device *device) {
@@ -861,7 +983,7 @@ static bool memory_type_from_properties(kore_gpu_device *device, uint32_t type_b
 }
 
 void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
-	buffer->vulkan.device = device->vulkan.device;
+	buffer->vulkan.device = device;
 
 	buffer->vulkan.size = parameters->size;
 
@@ -910,14 +1032,14 @@ void kore_vulkan_device_create_buffer(kore_gpu_device *device, const kore_gpu_bu
 	    .allocationSize  = memory_requirements.size,
 	};
 
-	bool host_visible = false;
+	buffer->vulkan.host_visible = false;
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0 || (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0) {
-		host_visible = true;
+		buffer->vulkan.host_visible = true;
 	}
 
-	bool memory_type_found = memory_type_from_properties(device, memory_requirements.memoryTypeBits,
-	                                                     host_visible ? VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-	                                                     &memory_allocate_info.memoryTypeIndex);
+	bool memory_type_found = memory_type_from_properties(
+	    device, memory_requirements.memoryTypeBits, buffer->vulkan.host_visible ? VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+	    &memory_allocate_info.memoryTypeIndex);
 	assert(memory_type_found);
 
 #ifdef KORE_VKRT
@@ -944,14 +1066,6 @@ void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 	list->vulkan.render_pass_status    = KORE_VULKAN_RENDER_PASS_STATUS_NONE;
 
 	for (uint32_t command_buffer_index = 0; command_buffer_index < KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT; ++command_buffer_index) {
-		const VkFenceCreateInfo fence_create_info = {
-		    .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-		    .pNext = NULL,
-		    .flags = VK_FENCE_CREATE_SIGNALED_BIT,
-		};
-
-		vkCreateFence(device->vulkan.device, &fence_create_info, NULL, &list->vulkan.fences[command_buffer_index]);
-
 		const VkCommandBufferAllocateInfo allocate_info = {
 		    .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 		    .pNext              = NULL,
@@ -962,6 +1076,8 @@ void kore_vulkan_device_create_command_list(kore_gpu_device *device, kore_gpu_co
 
 		VkResult result = vkAllocateCommandBuffers(device->vulkan.device, &allocate_info, &list->vulkan.command_buffers[command_buffer_index]);
 		assert(result == VK_SUCCESS);
+
+		list->vulkan.command_buffer_execution_indices[command_buffer_index] = 0;
 	}
 
 	list->vulkan.active_command_buffer = 0;
@@ -1087,6 +1203,21 @@ kore_gpu_texture_format kore_vulkan_device_framebuffer_format(kore_gpu_device *d
 	return convert_from_vulkan_format(framebuffer_format);
 }
 
+static void clean_buffer_accesses(kore_vulkan_buffer *buffer, uint64_t finished_execution_index) {
+	kore_vulkan_buffer_range ranges[KORE_VULKAN_MAX_BUFFER_RANGES];
+	uint32_t                 ranges_count = 0;
+
+	for (uint32_t range_index = 0; range_index < buffer->ranges_count; ++range_index) {
+		if (buffer->ranges[range_index].execution_index > finished_execution_index) {
+			ranges[ranges_count] = buffer->ranges[range_index];
+			ranges_count += 1;
+		}
+	}
+
+	memcpy(&buffer->ranges, &ranges, sizeof(ranges));
+	buffer->ranges_count = ranges_count;
+}
+
 void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list) {
 	kore_vulkan_texture_transition(list, &framebuffers[framebuffer_index], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
 
@@ -1114,10 +1245,25 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 		}
 	}
 
-	VkResult result = vkResetFences(device->vulkan.device, 1, &list->vulkan.fences[list->vulkan.active_command_buffer]);
-	assert(result == VK_SUCCESS);
+	uint64_t execution_index = device->vulkan.execution_fence.next_execution_index;
 
-	result = vkQueueSubmit(device->vulkan.queue, 1, &submit_info, list->vulkan.fences[list->vulkan.active_command_buffer]);
+	for (uint32_t buffer_access_index = 0; buffer_access_index < list->vulkan.queued_buffer_accesses_count; ++buffer_access_index) {
+		kore_vulkan_buffer_access access = list->vulkan.queued_buffer_accesses[buffer_access_index];
+		kore_vulkan_buffer       *buffer = access.buffer;
+
+		clean_buffer_accesses(buffer, find_completed_execution(device));
+
+		assert(buffer->ranges_count < KORE_VULKAN_MAX_BUFFER_RANGES);
+		buffer->ranges[buffer->ranges_count].execution_index = execution_index;
+		buffer->ranges[buffer->ranges_count].offset          = access.offset;
+		buffer->ranges[buffer->ranges_count].size            = access.size;
+		buffer->ranges_count += 1;
+	}
+	list->vulkan.queued_buffer_accesses_count = 0;
+
+	list->vulkan.command_buffer_execution_indices[list->vulkan.active_command_buffer] = execution_index;
+
+	VkResult result = vkQueueSubmit(device->vulkan.queue, 1, &submit_info, get_next_fence(device));
 	assert(result == VK_SUCCESS);
 
 	if (list->vulkan.presenting) {
@@ -1157,8 +1303,9 @@ void kore_vulkan_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 	list->vulkan.active_command_buffer = (list->vulkan.active_command_buffer + 1) % KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT;
 
-	result = vkWaitForFences(device->vulkan.device, 1, &list->vulkan.fences[list->vulkan.active_command_buffer], VK_TRUE, UINT64_MAX);
-	assert(result == VK_SUCCESS);
+	if (list->vulkan.command_buffer_execution_indices[list->vulkan.active_command_buffer] != 0) {
+		wait_for_execution(device, list->vulkan.command_buffer_execution_indices[list->vulkan.active_command_buffer]);
+	}
 
 	const VkCommandBufferBeginInfo begin_info = {
 	    .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,

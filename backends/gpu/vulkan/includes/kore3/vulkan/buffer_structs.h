@@ -16,15 +16,27 @@ typedef enum kore_vulkan_buffer_usage {
 	KORE_VULKAN_BUFFER_USAGE_VERTEX = 0x00010000,
 } kore_vulkan_buffer_usage;
 
-typedef struct kore_vulkan_buffer {
-	VkDevice       device;
-	VkBuffer       buffer;
-	VkDeviceMemory memory;
-	uint64_t       size;
+#define KORE_VULKAN_MAX_BUFFER_RANGES 16
 
+typedef struct kore_vulkan_buffer_range {
+	uint64_t offset;
+	uint64_t size;
+	uint64_t execution_index;
+} kore_vulkan_buffer_range;
+
+typedef struct kore_vulkan_buffer {
+	struct kore_gpu_device *device;
+	VkBuffer                buffer;
+	VkDeviceMemory          memory;
+	uint64_t                size;
+
+	bool     host_visible;
 	void    *locked_data;
 	uint64_t locked_data_offset;
 	uint64_t locked_data_size;
+
+	kore_vulkan_buffer_range ranges[KORE_VULKAN_MAX_BUFFER_RANGES];
+	uint32_t                 ranges_count;
 } kore_vulkan_buffer;
 
 #ifdef __cplusplus

@@ -303,11 +303,19 @@ void kore_vulkan_command_list_present(kore_gpu_command_list *list) {
 void kore_vulkan_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
 	vkCmdBindIndexBuffer(list->vulkan.command_buffers[list->vulkan.active_command_buffer], buffer->vulkan.buffer, offset,
 	                     index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
+
+	if (buffer->vulkan.host_visible) {
+		kore_vulkan_command_list_queue_buffer_access(list, &buffer->vulkan, (uint32_t)offset, (uint32_t)(buffer->vulkan.size - offset));
+	}
 }
 
 void kore_vulkan_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_vulkan_buffer *buffer, uint64_t offset, uint64_t size,
                                                 uint64_t stride) {
 	vkCmdBindVertexBuffers(list->vulkan.command_buffers[list->vulkan.active_command_buffer], slot, 1, &buffer->buffer, &offset);
+
+	if (buffer->host_visible) {
+		kore_vulkan_command_list_queue_buffer_access(list, buffer, (uint32_t)offset, (uint32_t)size);
+	}
 }
 
 static kore_vulkan_render_pipeline  *current_render_pipeline  = NULL;
@@ -596,6 +604,14 @@ void kore_vulkan_command_list_draw_indexed_indirect(kore_gpu_command_list *list,
 
 void kore_vulkan_command_list_compute_indirect(kore_gpu_command_list *list, kore_gpu_buffer *indirect_buffer, uint64_t indirect_offset) {}
 
-void kore_vulkan_command_list_queue_buffer_access(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size) {}
+void kore_vulkan_command_list_queue_buffer_access(kore_gpu_command_list *list, kore_vulkan_buffer *buffer, uint32_t offset, uint32_t size) {
+	kore_vulkan_buffer_access access;
+	access.buffer = buffer;
+	access.offset = offset;
+	access.size   = size;
+
+	list->vulkan.queued_buffer_accesses[list->vulkan.queued_buffer_accesses_count] = access;
+	list->vulkan.queued_buffer_accesses_count += 1;
+}
 
 void kore_vulkan_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_vulkan_descriptor_set *descriptor_set) {}

@@ -229,7 +229,11 @@ void kore_vulkan_descriptor_set_set_sampler(kore_gpu_device *device, kore_vulkan
 	vkUpdateDescriptorSets(device->vulkan.device, 1, &write, 0, NULL);
 }
 
-void kore_vulkan_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {}
+void kore_vulkan_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint64_t offset, uint64_t size) {
+	if (buffer->vulkan.host_visible) {
+		kore_vulkan_command_list_queue_buffer_access(list, &buffer->vulkan, (uint32_t)offset, (uint32_t)size);
+	}
+}
 
 void kore_vulkan_descriptor_set_prepare_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view, bool writable) {
 	if (writable && texture_view->texture->vulkan.is_framebuffer) {

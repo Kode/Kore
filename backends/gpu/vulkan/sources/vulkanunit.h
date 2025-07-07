@@ -92,4 +92,10 @@ static void find_render_pass(VkDevice device, const render_pass_parameters *para
 static void find_framebuffer(VkDevice device, uint32_t width, uint32_t height, VkImageView image_views[9], uint32_t image_views_count, VkRenderPass render_pass,
                              VkFramebuffer *framebuffer);
 
+struct kore_gpu_device;
+
+static uint64_t find_completed_execution(struct kore_gpu_device *device);
+
+static void wait_for_execution(struct kore_gpu_device *device, uint64_t index);
+
 #endif
