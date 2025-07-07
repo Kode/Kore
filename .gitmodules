@@ -23,8 +23,8 @@
 	url = https://github.com/Kode/KoreTools_freebsd_x64.git
 	branch = main
 	shallow = true
-[submodule "tools/macos_x64"]
-	path = tools/macos_x64
+[submodule "Tools/macos_x64"]
+	path = Tools/macos_x64
 	url = https://github.com/Kode/KoreTools_macos_x64.git
 	branch = main
 	shallow = true
