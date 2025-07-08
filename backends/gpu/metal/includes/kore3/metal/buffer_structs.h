@@ -24,13 +24,13 @@ typedef struct kore_metal_buffer_range {
 typedef struct kore_metal_buffer {
 	void *buffer;
 	void *locked_data;
-	
+
 	uint64_t size;
-	bool host_visible;
-	
+	bool     host_visible;
+
 	kore_metal_buffer_range ranges[KORE_METAL_MAX_BUFFER_RANGES];
-	uint32_t                 ranges_count;
-	
+	uint32_t                ranges_count;
+
 	struct kore_gpu_device *device;
 } kore_metal_buffer;
 

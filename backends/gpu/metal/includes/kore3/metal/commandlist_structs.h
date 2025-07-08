@@ -15,8 +15,8 @@ struct kore_gpu_query_set;
 
 typedef struct kore_metal_buffer_access {
 	kore_metal_buffer *buffer;
-	uint64_t            offset;
-	uint64_t            size;
+	uint64_t           offset;
+	uint64_t           size;
 } kore_metal_buffer_access;
 
 #define KORE_METAL_COMMAND_LIST_MAX_QUEUED_BUFFER_ACCESSES 256
@@ -29,9 +29,9 @@ typedef struct kore_metal_command_list {
 	void *blit_command_encoder;
 	void *index_buffer;
 	bool  sixteen_bit_indices;
-	
+
 	kore_metal_buffer_access queued_buffer_accesses[KORE_METAL_COMMAND_LIST_MAX_QUEUED_BUFFER_ACCESSES];
-	uint32_t                  queued_buffer_accesses_count;
+	uint32_t                 queued_buffer_accesses_count;
 } kore_metal_command_list;
 
 #ifdef __cplusplus

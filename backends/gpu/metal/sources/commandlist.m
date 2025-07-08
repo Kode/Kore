@@ -146,7 +146,7 @@ static void kore_metal_command_list_end_compute_pass(kore_gpu_command_list *list
 void kore_metal_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
 	list->metal.index_buffer        = buffer->metal.buffer;
 	list->metal.sixteen_bit_indices = index_format == KORE_GPU_INDEX_FORMAT_UINT16 ? true : false;
-	
+
 	if (buffer->metal.host_visible) {
 		kore_metal_command_list_queue_buffer_access(list, &buffer->metal, (uint32_t)offset, (uint32_t)(buffer->metal.size - offset));
 	}
@@ -158,7 +158,7 @@ void kore_metal_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint
 	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 
 	[render_command_encoder setVertexBuffer:metal_buffer offset:offset atIndex:slot];
-	
+
 	if (buffer->host_visible) {
 		kore_metal_command_list_queue_buffer_access(list, buffer, (uint32_t)offset, (uint32_t)size);
 	}
@@ -423,6 +423,5 @@ void kore_metal_command_list_queue_buffer_access(kore_gpu_command_list *list, ko
 	list->metal.queued_buffer_accesses[list->metal.queued_buffer_accesses_count] = access;
 	list->metal.queued_buffer_accesses_count += 1;
 }
-
 
 void kore_metal_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, struct kore_metal_descriptor_set *descriptor_set) {}

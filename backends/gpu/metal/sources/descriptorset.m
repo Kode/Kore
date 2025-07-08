@@ -10,7 +10,7 @@ void kore_metal_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_
 	id<MTLBuffer>               metal_buffer           = (__bridge id<MTLBuffer>)buffer->metal.buffer;
 
 	[render_command_encoder useResource:metal_buffer usage:MTLResourceUsageRead stages:MTLRenderStageVertex | MTLRenderStageFragment];
-	
+
 	if (buffer->metal.host_visible) {
 		kore_metal_command_list_queue_buffer_access(list, &buffer->metal, (uint32_t)offset, (uint32_t)size);
 	}
