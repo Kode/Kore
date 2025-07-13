@@ -11,7 +11,11 @@
 extern "C" {
 #endif
 
+struct kore_gpu_device;
+
 typedef struct kore_d3d12_descriptor_set {
+	struct kore_gpu_device *device;
+
 	oa_allocation_t descriptor_allocation;
 	size_t          descriptor_count;
 
