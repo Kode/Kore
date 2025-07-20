@@ -28,6 +28,8 @@ typedef struct kore_d3d12_descriptor_set {
 	size_t          sampler_count;
 
 	uint64_t execution_index;
+
+	uint32_t reference_count;
 } kore_d3d12_descriptor_set;
 
 #ifdef __cplusplus

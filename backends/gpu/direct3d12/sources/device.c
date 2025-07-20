@@ -725,6 +725,10 @@ void kore_d3d12_device_wait_until_idle(kore_gpu_device *device) {
 
 void kore_d3d12_device_create_descriptor_set(kore_gpu_device *device, uint32_t descriptor_count, uint32_t dynamic_descriptor_count,
                                              uint32_t bindless_descriptor_count, uint32_t sampler_count, kore_d3d12_descriptor_set *set) {
+	set->descriptor_allocation.index          = OA_INVALID_INDEX;
+	set->bindless_descriptor_allocation.index = OA_INVALID_INDEX;
+	set->sampler_allocation.index             = OA_INVALID_INDEX;
+
 	if (descriptor_count > 0) {
 		oa_allocate(&device->d3d12.descriptor_heap_allocator, descriptor_count, &set->descriptor_allocation);
 	}
@@ -745,6 +749,8 @@ void kore_d3d12_device_create_descriptor_set(kore_gpu_device *device, uint32_t d
 	set->execution_index = 0;
 
 	set->device = device;
+
+	set->reference_count = 1;
 }
 
 static D3D12_TEXTURE_ADDRESS_MODE convert_address_mode(kore_gpu_address_mode mode) {
