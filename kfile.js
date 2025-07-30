@@ -196,6 +196,7 @@ else if (platform === Platform.OSX) {
 		addBackend('gpu/metal');
 		addKoreDefine('METAL');
 		project.addLib('Metal');
+		project.addLib('QuartzCore');
 	}
 	else if (graphics === GraphicsApi.OpenGL) {
 		addBackend('gpu/opengl');

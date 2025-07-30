@@ -1,4 +1,4 @@
-#import "BasicOpenGLView.h"
+#import <kore3/backend/BasicOpenGLView.h>
 
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
