@@ -429,7 +429,6 @@ static bool controlKeyMouseButton = false;
 	NSSize       size        = self.bounds.size;
 	NSSize		 backingSize = size;
 
-	printf("Updating drawable size: %f x %f\n", size.width, size.height);
 	backingSize      = [self convertSizeToBacking:size];
 
 	metalLayer.contentsScale = backingSize.height / size.height;
