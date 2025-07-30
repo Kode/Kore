@@ -1,12 +1,17 @@
 #import "BasicOpenGLView.h"
 
 #import <Cocoa/Cocoa.h>
+#import <CoreVideo/CoreVideo.h>
 
 #include <kore3/backend/HIDManager.h>
 #include <kore3/input/keyboard.h>
 #include <kore3/log.h>
 #include <kore3/system.h>
 #include <kore3/window.h>
+
+#ifdef KORE_METAL
+#include <kore3/threads/event.h>
+#endif
 
 bool withAutoreleasepool(bool (*f)(void)) {
 	@autoreleasepool {
@@ -41,6 +46,12 @@ static BasicOpenGLView   *view;
 static KoreAppDelegate   *delegate;
 static struct HIDManager *hidManager;
 
+#ifdef KORE_METAL
+static kore_event displayLinkEvent;
+static CVDisplayLinkRef displayLink;
+static int swapInterval = 0;
+#endif
+
 /*struct KoreWindow : public KoreWindowBase {
     NSWindow* handle;
     BasicOpenGLView* view;
@@ -55,6 +66,17 @@ static struct HIDManager *hidManager;
 CAMetalLayer *getMetalLayer(void) {
 	return [view metalLayer];
 }
+
+static CVReturn displayLinkCallback(CVDisplayLinkRef displayLink,
+ const CVTimeStamp* now,
+ const CVTimeStamp* outputTime,
+ CVOptionFlags flagsIn,
+ CVOptionFlags* flagsOut,
+ void* displayLinkContext) {
+
+	kore_event_signal(&displayLinkEvent);
+	return kCVReturnSuccess;
+}
 #endif
 
 bool kore_internal_handle_messages(void) {
@@ -68,15 +90,17 @@ bool kore_internal_handle_messages(void) {
 	}
 
 	// Sleep for a frame to limit the calls when the window is not visible.
-	if (!window.visible) {
-		[NSThread sleepForTimeInterval:1.0 / 60];
-	}
+	// if (!window.visible) {
+	// 	[NSThread sleepForTimeInterval:1.0 / 60];
+	// }
 	return true;
 }
 
 void swapBuffersMac(int windowId) {
 #ifndef KORE_METAL
 	[windows[windowId].view switchBuffers];
+#else
+	kore_event_wait(&displayLinkEvent);
 #endif
 }
 
@@ -90,6 +114,12 @@ static int createWindow(kore_window_parameters *parameters) {
 	if (parameters->window_features & KORE_WINDOW_FEATURE_MINIMIZABLE) {
 		styleMask |= NSWindowStyleMaskMiniaturizable;
 	}
+
+#ifdef KORE_METAL
+	CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+    CVDisplayLinkSetOutputCallback(displayLink, &displayLinkCallback, NULL);
+    CVDisplayLinkStart(displayLink);
+#endif
 
 	view = [[BasicOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
 	[view registerForDraggedTypes:[NSArray arrayWithObjects:NSPasteboardTypeURL, nil]];
@@ -192,6 +222,10 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 	// kore_g4_internal_init(); // TODO
 	// kore_g4_internal_init_window(windowId, frame->depth_bits, frame->stencil_bits, true); // TODO
 
+#ifdef KORE_METAL
+	kore_event_init(&displayLinkEvent, false);
+#endif
+
 	return 0;
 }
 
@@ -226,7 +260,16 @@ const char *kore_language(void) {
 	return language;
 }
 
-void kore_internal_shutdown(void) {}
+void kore_internal_shutdown(void) {
+#ifdef KORE_METAL
+	if (displayLink) {
+		CVDisplayLinkStop(displayLink);
+		CVDisplayLinkRelease(displayLink);
+		displayLink = NULL;
+	}
+	kore_event_destroy(&displayLinkEvent);
+#endif
+}
 
 static const char *getSavePath(void) {
 	NSArray  *paths        = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
