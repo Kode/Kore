@@ -115,12 +115,6 @@ static int createWindow(kore_window_parameters *parameters) {
 		styleMask |= NSWindowStyleMaskMiniaturizable;
 	}
 
-#ifdef KORE_METAL
-	CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
-    CVDisplayLinkSetOutputCallback(displayLink, &displayLinkCallback, NULL);
-    CVDisplayLinkStart(displayLink);
-#endif
-
 	view = [[BasicOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
 	[view registerForDraggedTypes:[NSArray arrayWithObjects:NSPasteboardTypeURL, nil]];
 	window   = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height) styleMask:styleMask backing:NSBackingStoreBuffered defer:TRUE];
@@ -224,6 +218,9 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 
 #ifdef KORE_METAL
 	kore_event_init(&displayLinkEvent, false);
+	CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+    CVDisplayLinkSetOutputCallback(displayLink, &displayLinkCallback, NULL);
+    CVDisplayLinkStart(displayLink);
 #endif
 
 	return 0;
