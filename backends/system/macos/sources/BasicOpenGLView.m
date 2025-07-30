@@ -444,6 +444,7 @@ static bool controlKeyMouseButton = false;
 	}
 
 	self.wantsLayer = YES;
+	self.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 
 	CAMetalLayer* metalLayer = (CAMetalLayer *)self.layer;
 	metalLayer.device = self->device;
