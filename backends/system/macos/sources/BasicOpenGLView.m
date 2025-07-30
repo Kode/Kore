@@ -427,14 +427,15 @@ static bool controlKeyMouseButton = false;
 - (void)updateDrawableSize { // This is the high DPI version of resize
 	CAMetalLayer *metalLayer = (CAMetalLayer *)self.layer;
 	NSSize       size        = self.bounds.size;
+	NSSize		 backingSize = size;
+
 
 	// TODO (DK) map [theEvent window] to window id instead of 0
 	NSWindow *window = [[NSApplication sharedApplication] mainWindow];
-	if(window != nil) {
-		NSSize backingSize = [self convertSizeToBacking:size];
-		metalLayer.drawableSize = NSSizeToCGSize(backingSize);
-		metalLayer.contentsScale = [window backingScaleFactor];
-	}
+	backSize         = [self convertSizeToBacking:size];
+
+	metalLayer.contentsScale = backingSize.height / size.height;
+	metalLayer.drawableSize  = NSSizeToCGSize(backingSize);
 }
 
 - (id)initWithFrame:(NSRect)frameRect {
