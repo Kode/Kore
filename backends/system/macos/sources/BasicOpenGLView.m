@@ -429,9 +429,7 @@ static bool controlKeyMouseButton = false;
 	NSSize       size        = self.bounds.size;
 	NSSize		 backingSize = size;
 
-
-	// TODO (DK) map [theEvent window] to window id instead of 0
-	NSWindow *window = [[NSApplication sharedApplication] mainWindow];
+	printf("Updating drawable size: %f x %f\n", size.width, size.height);
 	backingSize      = [self convertSizeToBacking:size];
 
 	metalLayer.contentsScale = backingSize.height / size.height;
