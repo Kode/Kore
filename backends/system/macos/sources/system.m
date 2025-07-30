@@ -49,7 +49,6 @@ static struct HIDManager *hidManager;
 #ifdef KORE_METAL
 static kore_event displayLinkEvent;
 static CVDisplayLinkRef displayLink;
-static int swapInterval = 0;
 #endif
 
 /*struct KoreWindow : public KoreWindowBase {
