@@ -475,16 +475,6 @@ static bool controlKeyMouseButton = false;
     return [CAMetalLayer layer];
 }
 
-- (void)viewDidChangeBackingProperties {
-    [super viewDidChangeBackingProperties];
-    [self updateDrawableSize];
-}
-
-- (void)setFrame:(NSRect)frame {
-    [super setFrame:frame];
-    [self updateDrawableSize];
-}
-
 - (CAMetalLayer *)metalLayer {
 	return (CAMetalLayer *)self.layer;
 }
