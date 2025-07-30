@@ -432,7 +432,7 @@ static bool controlKeyMouseButton = false;
 
 	// TODO (DK) map [theEvent window] to window id instead of 0
 	NSWindow *window = [[NSApplication sharedApplication] mainWindow];
-	backSize         = [self convertSizeToBacking:size];
+	backingSize      = [self convertSizeToBacking:size];
 
 	metalLayer.contentsScale = backingSize.height / size.height;
 	metalLayer.drawableSize  = NSSizeToCGSize(backingSize);
