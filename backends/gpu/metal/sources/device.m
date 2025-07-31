@@ -123,8 +123,12 @@ static void set_next_fence(kore_gpu_device *device, void *fence) {
 }
 
 void kore_metal_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
-	id<MTLDevice> metal_device = MTLCreateSystemDefaultDevice();
-	getMetalLayer().device     = metal_device;
+	id<MTLDevice> metal_device = getMetalLayer().device;
+
+	if(metal_device == nil) {
+		metal_device		   = MTLCreateSystemDefaultDevice();
+	}
+
 	device->metal.device       = (__bridge_retained void *)metal_device;
 	device->metal.library      = (__bridge_retained void *)[metal_device newDefaultLibrary];
 

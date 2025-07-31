@@ -5,7 +5,8 @@
 
 #include <assert.h>
 
-#import <MetalKit/MTKView.h>
+#include <Metal/Metal.h>
+#include <QuartzCore/CAMetalLayer.h>
 
 static id<CAMetalDrawable> drawable = nil;
 

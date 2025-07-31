@@ -1,4 +1,4 @@
-#import "BasicOpenGLView.h"
+#import <kore3/backend/BasicOpenGLView.h>
 
 #include <kore3/input/keyboard.h>
 #include <kore3/input/mouse.h>
@@ -6,6 +6,10 @@
 #include <kore3/system.h>
 
 #ifdef KORE_METAL
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSApplication.h>
+#import <AppKit/NSText.h>
+
 // #include <kore3/graphics5/graphics.h>
 #endif
 
@@ -404,6 +408,8 @@ static bool controlKeyMouseButton = false;
 - (void)update { // window resizes, moves and display changes (resize, depth and display config change)
 #ifdef KORE_OPENGL
 	[super update];
+#else
+	[self updateDrawableSize];
 #endif
 }
 
@@ -418,15 +424,29 @@ static bool controlKeyMouseButton = false;
 	return self;
 }
 #else
+- (void)updateDrawableSize { // This is the high DPI version of resize
+	CAMetalLayer *metalLayer = (CAMetalLayer *)self.layer;
+	NSSize       size        = self.bounds.size;
+	NSSize		 backingSize = size;
 
-static CAMetalLayer *metalLayer = NULL;
+	backingSize      = [self convertSizeToBacking:size];
+
+	metalLayer.contentsScale = backingSize.height / size.height;
+	metalLayer.drawableSize  = NSSizeToCGSize(backingSize);
+}
 
 - (id)initWithFrame:(NSRect)frameRect {
 	self = [super initWithFrame:frameRect];
 
-	metalLayer = (CAMetalLayer *)self.layer;
+	if(self->device == nil) {
+		self->device = MTLCreateSystemDefaultDevice();
+	}
 
-	// metalLayer.device = device;
+	self.wantsLayer = YES;
+	self.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+
+	CAMetalLayer* metalLayer = (CAMetalLayer *)self.layer;
+	metalLayer.device = self->device;
 	metalLayer.pixelFormat     = MTLPixelFormatBGRA8Unorm;
 	metalLayer.framebufferOnly = NO;
 	// metalLayer.presentsWithTransaction = YES;
@@ -434,7 +454,39 @@ static CAMetalLayer *metalLayer = NULL;
 	metalLayer.opaque          = YES;
 	metalLayer.backgroundColor = nil;
 
+	[self updateDrawableSize];
 	return self;
+}
+
++ (Class)layerClass {
+    return [CAMetalLayer class];
+}
+
+- (void)setBounds:(NSRect)bounds {
+    [super setBounds:bounds];
+    [self updateDrawableSize];
+}
+
+- (BOOL)wantsUpdateLayer {
+    return YES;
+}
+
+- (CALayer *)makeBackingLayer {
+    return [CAMetalLayer layer];
+}
+
+- (void)viewDidChangeBackingProperties {
+    [super viewDidChangeBackingProperties];
+    [self updateDrawableSize];
+}
+
+- (void)setFrame:(NSRect)frame {
+    [super setFrame:frame];
+    [self updateDrawableSize];
+}
+
+- (CAMetalLayer *)metalLayer {
+	return (CAMetalLayer *)self.layer;
 }
 #endif
 
@@ -453,12 +505,6 @@ static CAMetalLayer *metalLayer = NULL;
 - (void)resize:(NSSize)size {
 	[self setFrameSize:size];
 }
-
-#ifdef KORE_METAL
-- (CAMetalLayer *)metalLayer {
-	return (CAMetalLayer *)self.layer;
-}
-#endif
 
 @end
 

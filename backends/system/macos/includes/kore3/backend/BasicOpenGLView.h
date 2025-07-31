@@ -1,5 +1,8 @@
 #ifdef KORE_METAL
-#import <MetalKit/MTKView.h>
+#import <AppKit/NSView.h>
+#import <Metal/Metal.h>
+#import <QuartzCore/CAMetalLayer.h>
+#import <QuartzCore/QuartzCore.h>
 #else
 #import <Cocoa/Cocoa.h>
 #import <OpenGL/CGLContext.h>
@@ -13,7 +16,7 @@
 
 struct kore_g5_render_target;
 
-@interface BasicOpenGLView : MTKView {
+@interface BasicOpenGLView : NSView {
 @private
 	id<MTLDevice>       device;
 	id<MTLCommandQueue> commandQueue;
@@ -34,6 +37,8 @@ struct kore_g5_render_target;
 
 #ifdef KORE_METAL
 - (CAMetalLayer *)metalLayer;
+
+- (void)updateDrawableSize;
 #else
 - (void)prepareOpenGL;
 - (void)switchBuffers;
