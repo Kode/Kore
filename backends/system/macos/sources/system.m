@@ -47,7 +47,7 @@ static KoreAppDelegate   *delegate;
 static struct HIDManager *hidManager;
 
 #ifdef KORE_METAL
-static kore_event displayLinkEvent;
+static kore_event       displayLinkEvent;
 static CVDisplayLinkRef displayLink;
 #endif
 
@@ -66,12 +66,8 @@ CAMetalLayer *getMetalLayer(void) {
 	return [view metalLayer];
 }
 
-static CVReturn displayLinkCallback(CVDisplayLinkRef displayLink,
- const CVTimeStamp* now,
- const CVTimeStamp* outputTime,
- CVOptionFlags flagsIn,
- CVOptionFlags* flagsOut,
- void* displayLinkContext) {
+static CVReturn displayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now, const CVTimeStamp *outputTime, CVOptionFlags flagsIn,
+                                    CVOptionFlags *flagsOut, void *displayLinkContext) {
 
 	kore_event_signal(&displayLinkEvent);
 	return kCVReturnSuccess;
@@ -218,8 +214,8 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 #ifdef KORE_METAL
 	kore_event_init(&displayLinkEvent, false);
 	CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
-    CVDisplayLinkSetOutputCallback(displayLink, &displayLinkCallback, NULL);
-    CVDisplayLinkStart(displayLink);
+	CVDisplayLinkSetOutputCallback(displayLink, &displayLinkCallback, NULL);
+	CVDisplayLinkStart(displayLink);
 #endif
 
 	return 0;
