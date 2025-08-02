@@ -6,9 +6,9 @@
 #include <kore3/system.h>
 
 #ifdef KORE_METAL
-#import <AppKit/NSWindow.h>
 #import <AppKit/NSApplication.h>
 #import <AppKit/NSText.h>
+#import <AppKit/NSWindow.h>
 
 // #include <kore3/graphics5/graphics.h>
 #endif
@@ -425,11 +425,11 @@ static bool controlKeyMouseButton = false;
 }
 #else
 - (void)updateDrawableSize { // This is the high DPI version of resize
-	CAMetalLayer *metalLayer = (CAMetalLayer *)self.layer;
-	NSSize       size        = self.bounds.size;
-	NSSize		 backingSize = size;
+	CAMetalLayer *metalLayer  = (CAMetalLayer *)self.layer;
+	NSSize        size        = self.bounds.size;
+	NSSize        backingSize = size;
 
-	backingSize      = [self convertSizeToBacking:size];
+	backingSize = [self convertSizeToBacking:size];
 
 	metalLayer.contentsScale = backingSize.height / size.height;
 	metalLayer.drawableSize  = NSSizeToCGSize(backingSize);
@@ -438,15 +438,15 @@ static bool controlKeyMouseButton = false;
 - (id)initWithFrame:(NSRect)frameRect {
 	self = [super initWithFrame:frameRect];
 
-	if(self->device == nil) {
+	if (self->device == nil) {
 		self->device = MTLCreateSystemDefaultDevice();
 	}
 
-	self.wantsLayer = YES;
+	self.wantsLayer       = YES;
 	self.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 
-	CAMetalLayer* metalLayer = (CAMetalLayer *)self.layer;
-	metalLayer.device = self->device;
+	CAMetalLayer *metalLayer   = (CAMetalLayer *)self.layer;
+	metalLayer.device          = self->device;
 	metalLayer.pixelFormat     = MTLPixelFormatBGRA8Unorm;
 	metalLayer.framebufferOnly = NO;
 	// metalLayer.presentsWithTransaction = YES;
@@ -459,30 +459,30 @@ static bool controlKeyMouseButton = false;
 }
 
 + (Class)layerClass {
-    return [CAMetalLayer class];
+	return [CAMetalLayer class];
 }
 
 - (void)setBounds:(NSRect)bounds {
-    [super setBounds:bounds];
-    [self updateDrawableSize];
+	[super setBounds:bounds];
+	[self updateDrawableSize];
 }
 
 - (BOOL)wantsUpdateLayer {
-    return YES;
+	return YES;
 }
 
 - (CALayer *)makeBackingLayer {
-    return [CAMetalLayer layer];
+	return [CAMetalLayer layer];
 }
 
 - (void)viewDidChangeBackingProperties {
-    [super viewDidChangeBackingProperties];
-    [self updateDrawableSize];
+	[super viewDidChangeBackingProperties];
+	[self updateDrawableSize];
 }
 
 - (void)setFrame:(NSRect)frame {
-    [super setFrame:frame];
-    [self updateDrawableSize];
+	[super setFrame:frame];
+	[self updateDrawableSize];
 }
 
 - (CAMetalLayer *)metalLayer {
