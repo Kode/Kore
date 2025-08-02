@@ -58,7 +58,7 @@ static void wait_for_execution(kore_gpu_device *device, uint64_t index) {
 		return;
 	}
 
-	bool fence_found = false;
+	bool fence_found __attribute__((unused)) = false;
 
 	for (uint32_t fence_index = 0; fence_index < KORE_METAL_EXECUTION_FENCE_COUNT; ++fence_index) {
 		uint64_t value = execution_fence->commend_buffer_execution_indices[fence_index];

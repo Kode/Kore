@@ -26,9 +26,16 @@ void kore_metal_descriptor_set_prepare_texture(kore_gpu_command_list *list, void
 		                             stages:MTLRenderStageVertex | MTLRenderStageFragment];
 	}
 	else if (list->metal.compute_command_encoder != NULL) {
-		id<MTLComputeCommandEncoder> compute_command_encoder = (__bridge id<MTLComputeCommandEncoder>)list->metal.compute_command_encoder;
-		[compute_command_encoder useResource:metal_texture usage:writable ? MTLResourceUsageWrite : MTLResourceUsageSample];
-	}
+	if (@available(macOS 13.0, *)) {
+		[compute_command_encoder useResource:metal_texture
+			usage:writable ? MTLResourceUsageWrite : MTLResourceUsageRead];
+	} else {
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+		[compute_command_encoder useResource:metal_texture
+			usage:writable ? MTLResourceUsageWrite : MTLResourceUsageSample];
+		#pragma clang diagnostic pop
+	}}
 	else {
 		assert(false);
 	}
