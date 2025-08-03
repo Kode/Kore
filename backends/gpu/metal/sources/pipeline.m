@@ -190,7 +190,7 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 
 	MTLVertexDescriptor *vertex_descriptor = [[MTLVertexDescriptor alloc] init];
 
-	uint32_t bindings_count   = 0;
+	uint32_t bindings_count = 0;
 	for (int i = 0; i < parameters->vertex.buffers_count; ++i) {
 		++bindings_count;
 	}

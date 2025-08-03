@@ -30,13 +30,15 @@ void kore_metal_descriptor_set_prepare_texture(kore_gpu_command_list *list, void
 
 		if (@available(macOS 13.0, *)) {
 			[compute_command_encoder useResource:metal_texture usage:writable ? MTLResourceUsageWrite : MTLResourceUsageRead];
-		} else {
-			#pragma clang diagnostic push
-			#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-			[compute_command_encoder useResource:metal_texture usage:writable ? MTLResourceUsageWrite : MTLResourceUsageSample];
-			#pragma clang diagnostic pop
 		}
-	}else {
+		else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+			[compute_command_encoder useResource:metal_texture usage:writable ? MTLResourceUsageWrite : MTLResourceUsageSample];
+#pragma clang diagnostic pop
+		}
+	}
+	else {
 		assert(false);
 	}
 }
