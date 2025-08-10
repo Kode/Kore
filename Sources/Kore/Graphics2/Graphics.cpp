@@ -1,6 +1,10 @@
 #include "Graphics.h"
 
+#ifdef KINC_G4
+#include <Kore/Graphics4/Graphics.h>
+#else
 #include <Kore/Graphics3/Graphics.h>
+#endif
 #include <Kore/IO/FileReader.h>
 #include <Kore/Simd/float32x4.h>
 
