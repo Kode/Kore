@@ -313,10 +313,6 @@ void kinc_g5_command_list_set_pipeline(struct kinc_g5_command_list *list, kinc_g
 	list->impl._commandList->SetPipelineState(pipeline->impl.pso);
 	compute_pipeline_set = false;
 
-	for (int i = 0; i < KINC_INTERNAL_G5_TEXTURE_COUNT; ++i) {
-		list->impl.currentRenderTargets[i] = NULL;
-		list->impl.currentTextures[i] = NULL;
-	}
 	kinc_g5_internal_setConstants(list, list->impl._currentPipeline);
 }
 
