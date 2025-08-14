@@ -451,7 +451,7 @@ void KoreAndroidVideoInit() {
 	JNIEnv *env;
 	(*kinc_android_get_activity()->vm)->AttachCurrentThread(kinc_android_get_activity()->vm, &env, NULL);
 
-	jclass clazz = kinc_android_find_class(env, "tech.kinc.KincMoviePlayer");
+	jclass clazz = kinc_android_find_class(env, "tech.kore.KoreMoviePlayer");
 
 	// String path, Surface surface, int id
 	JNINativeMethod methodTable[] = {{"nativeCreate", "(Ljava/lang/String;Landroid/view/Surface;I)V", (void *)Java_tech_kinc_KincMoviePlayer_nativeCreate}};
@@ -460,7 +460,7 @@ void KoreAndroidVideoInit() {
 
 	int failure = (*env)->RegisterNatives(env, clazz, methodTable, methodTableSize);
 	if (failure != 0) {
-		kinc_log(KINC_LOG_LEVEL_WARNING, "Failed to register KincMoviePlayer.nativeCreate");
+		kinc_log(KINC_LOG_LEVEL_WARNING, "Failed to register KoreMoviePlayer.nativeCreate");
 	}
 
 	(*kinc_android_get_activity()->vm)->DetachCurrentThread(kinc_android_get_activity()->vm);
@@ -479,7 +479,7 @@ void kinc_video_init(kinc_video_t *video, const char *filename) {
 
 	JNIEnv *env = NULL;
 	(*kinc_android_get_activity()->vm)->AttachCurrentThread(kinc_android_get_activity()->vm, &env, NULL);
-	jclass koreMoviePlayerClass = kinc_android_find_class(env, "tech.kinc.KincMoviePlayer");
+	jclass koreMoviePlayerClass = kinc_android_find_class(env, "tech.kore.KoreMoviePlayer");
 	jmethodID constructor = (*env)->GetMethodID(env, koreMoviePlayerClass, "<init>", "(Ljava/lang/String;)V");
 	jobject object = (*env)->NewObject(env, koreMoviePlayerClass, constructor, (*env)->NewStringUTF(env, filename));
 

@@ -1,16 +1,16 @@
-package tech.kinc
+package tech.kore
 
 import java.util.ArrayList
 
 import android.view.Surface
 
-class KincMoviePlayer(var path: String) {
+class KoreMoviePlayer(var path: String) {
 	companion object {
-		var players = ArrayList<KincMoviePlayer?>()
+		var players = ArrayList<KoreMoviePlayer?>()
 
 		@JvmStatic
 		fun updateAll() {
-			for (player in KincMoviePlayer.players) {
+			for (player in KoreMoviePlayer.players) {
 				player!!.update()
 			}
 		}
@@ -20,7 +20,7 @@ class KincMoviePlayer(var path: String) {
 		}
 	}
 
-	private var movieTexture: KincMovieTexture? = null
+	private var movieTexture: KoreMovieTexture? = null
 	var id: Int = players.size
 
 	init {
@@ -28,13 +28,13 @@ class KincMoviePlayer(var path: String) {
 	}
 	
 	fun init() {
-		movieTexture = KincMovieTexture()
+		movieTexture = KoreMovieTexture()
 		val surface = Surface(movieTexture!!.surfaceTexture)
 		nativeCreate(path, surface, id)
 		surface.release()
 	}
 
-	fun getMovieTexture(): KincMovieTexture? {
+	fun getMovieTexture(): KoreMovieTexture? {
 		return movieTexture
 	}
 

@@ -1,10 +1,10 @@
-package tech.kinc
+package tech.kore
 
 import android.graphics.SurfaceTexture
 import android.graphics.SurfaceTexture.OnFrameAvailableListener
 import android.opengl.GLES20
 
-class KincMovieTexture: OnFrameAvailableListener {
+class KoreMovieTexture: OnFrameAvailableListener {
 	private val GL_TEXTURE_EXTERNAL_OES: Int = 0x8D65
 
 	var textureId: Int = 0

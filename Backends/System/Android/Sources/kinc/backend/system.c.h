@@ -876,7 +876,7 @@ static uint16_t unicode_stack[UNICODE_STACK_SIZE];
 static int unicode_stack_index = 0;
 static kinc_mutex_t unicode_mutex;
 
-JNIEXPORT void JNICALL Java_tech_kinc_KincActivity_nativeKincKeyPress(JNIEnv *env, jobject jobj, jstring chars) {
+JNIEXPORT void JNICALL Java_tech_kinc_KoreActivity_nativeKoreKeyPress(JNIEnv *env, jobject jobj, jstring chars) {
 	const jchar *text = (*env)->GetStringChars(env, chars, NULL);
 	const jsize length = (*env)->GetStringLength(env, chars);
 
@@ -893,16 +893,16 @@ void KincAndroidKeyboardInit() {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
 
-	jclass clazz = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass clazz = kinc_android_find_class(env, "tech.kore.KoreActivity");
 
 	// String chars
-	JNINativeMethod methodTable[] = {{"nativeKincKeyPress", "(Ljava/lang/String;)V", (void *)Java_tech_kinc_KincActivity_nativeKincKeyPress}};
+	JNINativeMethod methodTable[] = {{"nativeKoreKeyPress", "(Ljava/lang/String;)V", (void *)Java_tech_kore_KoreActivity_nativeKoreKeyPress}};
 
 	int methodTableSize = sizeof(methodTable) / sizeof(methodTable[0]);
 
 	int failure = (*env)->RegisterNatives(env, clazz, methodTable, methodTableSize);
 	if (failure != 0) {
-		kinc_log(KINC_LOG_LEVEL_WARNING, "Failed to register KincActivity.nativeKincKeyPress");
+		kinc_log(KINC_LOG_LEVEL_WARNING, "Failed to register KoreActivity.nativeKoreKeyPress");
 	}
 
 	(*activity->vm)->DetachCurrentThread(activity->vm);
@@ -914,7 +914,7 @@ void kinc_keyboard_show() {
 	keyboard_active = true;
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kinc_android_find_class(env, "tech.kore.KoreActivity");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "showKeyboard", "()V"));
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -923,7 +923,7 @@ void kinc_keyboard_hide() {
 	keyboard_active = false;
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kinc_android_find_class(env, "tech.kore.KoreActivity");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "hideKeyboard", "()V"));
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -935,7 +935,7 @@ bool kinc_keyboard_active() {
 void kinc_load_url(const char *url) {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kinc_android_find_class(env, "tech.kore.KoreActivity");
 	jstring jurl = (*env)->NewStringUTF(env, url);
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "loadURL", "(Ljava/lang/String;)V"), jurl);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
@@ -944,7 +944,7 @@ void kinc_load_url(const char *url) {
 void kinc_vibrate(int ms) {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kinc_android_find_class(env, "tech.kore.KoreActivity");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, (*env)->GetStaticMethodID(env, koreActivityClass, "vibrate", "(I)V"), ms);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
 }
@@ -952,7 +952,7 @@ void kinc_vibrate(int ms) {
 const char *kinc_language() {
 	JNIEnv *env;
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kinc_android_find_class(env, "tech.kore.KoreActivity");
 	jstring s = (jstring)(*env)->CallStaticObjectMethod(env, koreActivityClass,
 	                                                    (*env)->GetStaticMethodID(env, koreActivityClass, "getLanguage", "()Ljava/lang/String;"));
 	const char *str = (*env)->GetStringUTFChars(env, s, 0);
@@ -1165,7 +1165,7 @@ void android_main(struct android_app *application) {
 	JNIEnv *env = NULL;
 	(*kinc_android_get_activity()->vm)->AttachCurrentThread(kinc_android_get_activity()->vm, &env, NULL);
 
-	jclass koreMoviePlayerClass = kinc_android_find_class(env, "tech.kinc.KincMoviePlayer");
+	jclass koreMoviePlayerClass = kinc_android_find_class(env, "tech.kore.KoreMoviePlayer");
 	jmethodID updateAll = (*env)->GetStaticMethodID(env, koreMoviePlayerClass, "updateAll", "()V");
 
 	while (!started) {
@@ -1176,7 +1176,7 @@ void android_main(struct android_app *application) {
 	kickstart(0, NULL);
 
 	(*activity->vm)->AttachCurrentThread(activity->vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kinc.KincActivity");
+	jclass koreActivityClass = kinc_android_find_class(env, "tech.kore.KoreActivity");
 	jmethodID FinishHim = (*env)->GetStaticMethodID(env, koreActivityClass, "stop", "()V");
 	(*env)->CallStaticVoidMethod(env, koreActivityClass, FinishHim);
 	(*activity->vm)->DetachCurrentThread(activity->vm);
