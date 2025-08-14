@@ -876,7 +876,7 @@ static uint16_t unicode_stack[UNICODE_STACK_SIZE];
 static int unicode_stack_index = 0;
 static kinc_mutex_t unicode_mutex;
 
-JNIEXPORT void JNICALL Java_tech_kinc_KoreActivity_nativeKoreKeyPress(JNIEnv *env, jobject jobj, jstring chars) {
+JNIEXPORT void JNICALL Java_tech_kore_KoreActivity_nativeKoreKeyPress(JNIEnv *env, jobject jobj, jstring chars) {
 	const jchar *text = (*env)->GetStringChars(env, chars, NULL);
 	const jsize length = (*env)->GetStringLength(env, chars);
 
