@@ -80,6 +80,10 @@ GL_APICALL void (*GL_APIENTRY glesEndQuery)(GLenum target);
 GL_APICALL void (*GL_APIENTRY glesGetQueryObjectuiv)(GLuint id, GLenum pname, GLuint *params);
 #endif
 
+#if defined(KINC_OPENGL_ES)
+GL_APICALL void (*GL_APIENTRY glesDrawElementsBaseVertex)(GLenum mode, GLsizei count, GLenum type, void *indices, GLint basevertex) = NULL;
+#endif
+
 #if defined(KINC_WINDOWS) && !defined(NDEBUG)
 static void __stdcall debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
 	kinc_log(KINC_LOG_LEVEL_INFO, "OpenGL: %s", message);
@@ -268,6 +272,10 @@ void kinc_g4_internal_init_window(int windowId, int depthBufferBits, int stencil
 	glesBeginQuery = (void *)eglGetProcAddress("glBeginQuery");
 	glesEndQuery = (void *)eglGetProcAddress("glEndQuery");
 	glesGetQueryObjectuiv = (void *)eglGetProcAddress("glGetQueryObjectuiv");
+#endif
+
+#if defined(KONC_OPENGL_ES)
+	glesDrawElementsBaseVertex = (void *)eglGetProcAddress("glDrawElementsBaseVertex");
 #endif
 
 #if defined(KINC_WINDOWS) && !defined(NDEBUG)
@@ -469,7 +477,15 @@ void kinc_g4_draw_indexed_vertices_from_to_from(int start, int count, int vertex
 	GLenum type = sixteen ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 	void *_start = sixteen ? (void *)(start * sizeof(uint16_t)) : (void *)(start * sizeof(uint32_t));
 #ifdef KINC_OPENGL_ES
-	glDrawElements(GL_TRIANGLES, count, type, _start);
+	if (glesDrawElementsBaseVertex != NULL) {
+		glesDrawElementsBaseVertex(GL_TRIANGLES, count, type, _start, vertex_offset);
+	}
+	else {
+		if (vertex_offset != 0) {
+			kinc_log(KINC_LOG_LEVEL_WARNING, "BaseVertex used but not supported");
+		}
+		glDrawElements(GL_TRIANGLES, count, type, _start);
+	}
 	glCheckErrors();
 #else
 	if (Kinc_Internal_ProgramUsesTessellation) {
