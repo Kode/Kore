@@ -274,7 +274,7 @@ void kinc_g4_internal_init_window(int windowId, int depthBufferBits, int stencil
 	glesGetQueryObjectuiv = (void *)eglGetProcAddress("glGetQueryObjectuiv");
 #endif
 
-#if defined(KONC_OPENGL_ES) && defined(KINC_ANDROID)
+#if defined(KINC_OPENGL_ES) && defined(KINC_ANDROID)
 	glesDrawElementsBaseVertex = (void *)eglGetProcAddress("glDrawElementsBaseVertex");
 #endif
 
@@ -487,7 +487,7 @@ void kinc_g4_draw_indexed_vertices_from_to_from(int start, int count, int vertex
 			kinc_log(KINC_LOG_LEVEL_WARNING, "BaseVertex used but not supported");
 		}
 		glDrawElements(GL_TRIANGLES, count, type, _start);
-if defined(KINC_ANDROID)
+#ifdef KINC_ANDROID
 	}
 #endif
 	glCheckErrors();
