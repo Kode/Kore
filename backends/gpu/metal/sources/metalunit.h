@@ -11,6 +11,10 @@
 static id<CAMetalDrawable> drawable = nil;
 
 CAMetalLayer *getMetalLayer(void);
+id getMetalDevice(void);
+id getMetalLibrary(void);
+
+id kore_metal_create_library(id<MTLDevice> device);
 
 static MTLPixelFormat convert_format(kore_gpu_texture_format format) {
 	switch (format) {

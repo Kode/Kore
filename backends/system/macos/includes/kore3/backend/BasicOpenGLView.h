@@ -37,6 +37,8 @@ struct kore_g5_render_target;
 
 #ifdef KORE_METAL
 - (CAMetalLayer *)metalLayer;
+- (id<MTLDevice>)metalDevice;
+- (id<MTLLibrary>)metalLibrary;
 
 - (void)updateDrawableSize;
 #else
