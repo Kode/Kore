@@ -129,7 +129,9 @@ void kore_metal_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		metal_device = MTLCreateSystemDefaultDevice();
 	}
 
-	device->metal.device = (__bridge_retained void *)metal_device;
+	device->metal.device  = (__bridge_retained void *)metal_device;
+	device->metal.library = (__bridge_retained void *)[metal_device newDefaultLibrary];
+
 	create_execution_fence(device);
 }
 
