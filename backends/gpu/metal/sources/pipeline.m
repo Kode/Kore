@@ -145,6 +145,11 @@ static MTLCompareFunction convert_compare(kore_gpu_compare_function func) {
 void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_render_pipeline *pipe, const kore_metal_render_pipeline_parameters *parameters) {
 	id<MTLLibrary> library = (__bridge id<MTLLibrary>)device->library;
 
+	if(library == nil) {
+		device->library = (__bridge_retained void *)[device->device newDefaultLibrary];
+		library = (__bridge id<MTLLibrary>)device->library;
+	}
+
 	id vertex_function   = [library newFunctionWithName:[NSString stringWithCString:parameters->vertex.shader.function_name encoding:NSUTF8StringEncoding]];
 	id fragment_function = [library newFunctionWithName:[NSString stringWithCString:parameters->fragment.shader.function_name encoding:NSUTF8StringEncoding]];
 
