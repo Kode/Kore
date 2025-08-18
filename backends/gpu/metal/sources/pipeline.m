@@ -146,7 +146,8 @@ void kore_metal_render_pipeline_init(kore_metal_device *device, kore_metal_rende
 	id<MTLLibrary> library = (__bridge id<MTLLibrary>)device->library;
 
 	if(library == nil) {
-		device->library = (__bridge_retained void *)[device->device newDefaultLibrary];
+		id<MTLDevice> metal_device = (__bridge id<MTLDevice>)device->device;
+		device->library = (__bridge_retained void *)[metal_device newDefaultLibrary];
 		library = (__bridge id<MTLLibrary>)device->library;
 	}
 
