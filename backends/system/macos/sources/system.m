@@ -66,6 +66,14 @@ CAMetalLayer *getMetalLayer(void) {
 	return [view metalLayer];
 }
 
+id getMetalDevice(void) {
+	return [view metalDevice];
+}
+
+id getMetalLibrary(void) {
+	return [view metalLibrary];
+}
+
 static CVReturn displayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now, const CVTimeStamp *outputTime, CVOptionFlags flagsIn,
                                     CVOptionFlags *flagsOut, void *displayLinkContext) {
 

@@ -440,6 +440,7 @@ static bool controlKeyMouseButton = false;
 
 	if (self->device == nil) {
 		self->device = MTLCreateSystemDefaultDevice();
+		self->library = [self->device newDefaultLibrary];
 	}
 
 	self.wantsLayer       = YES;
@@ -487,6 +488,14 @@ static bool controlKeyMouseButton = false;
 
 - (CAMetalLayer *)metalLayer {
 	return (CAMetalLayer *)self.layer;
+}
+
+- (id<MTLDevice>)metalDevice {
+	return device;
+}
+
+- (id<MTLLibrary>)metalLibrary {
+	return library;
 }
 #endif
 
