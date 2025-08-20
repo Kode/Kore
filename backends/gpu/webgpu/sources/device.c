@@ -370,7 +370,7 @@ void kore_webgpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 static bool work_done = false;
 
-static void work_done_callback(WGPUQueueWorkDoneStatus status, void *userdata1, void *userdata2) {
+static void work_done_callback(WGPUQueueWorkDoneStatus status, WGPUStringView view, void *userdata1, void *userdata2) {
 	work_done = true;
 }
 
