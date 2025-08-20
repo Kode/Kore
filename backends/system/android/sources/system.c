@@ -1059,7 +1059,7 @@ bool kore_internal_handle_messages(void) {
 	int                         events;
 	struct android_poll_source *source;
 
-	while ((ident = ALooper_pollAll(paused ? -1 : 0, NULL, &events, (void **)&source)) >= 0) {
+	while ((ident = ALooper_pollOnce(paused ? -1 : 0, NULL, &events, (void **)&source)) >= 0) {
 		if (source != NULL) {
 			source->process(app, source);
 		}
