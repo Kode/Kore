@@ -439,7 +439,7 @@ static bool controlKeyMouseButton = false;
 	self = [super initWithFrame:frameRect];
 
 	if (self->device == nil) {
-		self->device = MTLCreateSystemDefaultDevice();
+		self->device  = MTLCreateSystemDefaultDevice();
 		self->library = [self->device newDefaultLibrary];
 	}
 
