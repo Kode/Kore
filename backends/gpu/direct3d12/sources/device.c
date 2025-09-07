@@ -730,19 +730,22 @@ void kore_d3d12_device_create_descriptor_set(kore_gpu_device *device, uint32_t d
 	set->sampler_allocation.index             = OA_INVALID_INDEX;
 
 	if (descriptor_count > 0) {
-		oa_allocate(&device->d3d12.descriptor_heap_allocator, descriptor_count, &set->descriptor_allocation);
+		int result = oa_allocate(&device->d3d12.descriptor_heap_allocator, descriptor_count, &set->descriptor_allocation);
+		assert(result == 0);
 	}
 	set->descriptor_count = descriptor_count;
 
 	set->dynamic_descriptor_count = dynamic_descriptor_count;
 
 	if (bindless_descriptor_count > 0) {
-		oa_allocate(&device->d3d12.descriptor_heap_allocator, bindless_descriptor_count, &set->bindless_descriptor_allocation);
+		int result = oa_allocate(&device->d3d12.descriptor_heap_allocator, bindless_descriptor_count, &set->bindless_descriptor_allocation);
+		assert(result == 0);
 	}
 	set->bindless_descriptor_count = bindless_descriptor_count;
 
 	if (sampler_count > 0) {
-		oa_allocate(&device->d3d12.sampler_heap_allocator, sampler_count, &set->sampler_allocation);
+		int result = oa_allocate(&device->d3d12.sampler_heap_allocator, sampler_count, &set->sampler_allocation);
+		assert(result == 0);
 	}
 	set->sampler_count = sampler_count;
 
