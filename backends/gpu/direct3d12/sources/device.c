@@ -749,11 +749,10 @@ void kore_d3d12_device_create_descriptor_set(kore_gpu_device *device, uint32_t d
 	}
 	set->sampler_count = sampler_count;
 
-	set->execution_index = 0;
-
 	set->device = device;
 
-	set->reference_count = 1;
+	set->execution_index              = 0;
+	set->command_list_reference_count = 0;
 }
 
 static D3D12_TEXTURE_ADDRESS_MODE convert_address_mode(kore_gpu_address_mode mode) {

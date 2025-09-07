@@ -270,15 +270,6 @@ void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, 
 	}
 }
 
-void kore_d3d12_descriptor_set_remove_reference(kore_d3d12_descriptor_set *set) {
-	--set->reference_count;
-	if (set->reference_count == 0) {
-		oa_free(&set->device->d3d12.descriptor_heap_allocator, &set->descriptor_allocation);
-		oa_free(&set->device->d3d12.descriptor_heap_allocator, &set->bindless_descriptor_allocation);
-		oa_free(&set->device->d3d12.sampler_heap_allocator, &set->sampler_allocation);
-	}
-}
-
 bool kore_d3d312_desciptor_set_is_in_use(kore_d3d12_descriptor_set *set) {
-	return false;
+	return set->command_list_reference_count > 0 || set->execution_index > COM_CALL0(set->device->d3d12.execution_fence, GetCompletedValue);
 }

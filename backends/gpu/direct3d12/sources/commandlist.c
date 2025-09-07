@@ -235,6 +235,8 @@ void kore_d3d12_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t 
 
 void kore_d3d12_command_list_set_descriptor_table(kore_gpu_command_list *list, uint32_t table_index, kore_d3d12_descriptor_set *set,
                                                   kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {
+	kore_d3d12_command_list_queue_descriptor_set_access(list, set);
+
 	if (set->descriptor_count > 0) {
 		D3D12_GPU_DESCRIPTOR_HANDLE gpu_descriptor;
 		COM_CALL0RET(list->d3d12.device->descriptor_heap, GetGPUDescriptorHandleForHeapStart, gpu_descriptor);
@@ -793,16 +795,25 @@ void kore_d3d12_command_list_compute_indirect(kore_gpu_command_list *list, kore_
 }
 
 void kore_d3d12_command_list_queue_buffer_access(kore_gpu_command_list *list, kore_d3d12_buffer *buffer, uint32_t offset, uint32_t size) {
-	kore_d3d12_buffer_access access;
-	access.buffer = buffer;
-	access.offset = offset;
-	access.size   = size;
+	kore_d3d12_buffer_access access = {
+	    .buffer = buffer,
+	    .offset = offset,
+	    .size   = size,
+	};
 
 	list->d3d12.queued_buffer_accesses[list->d3d12.queued_buffer_accesses_count] = access;
 	list->d3d12.queued_buffer_accesses_count += 1;
 }
 
 void kore_d3d12_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_d3d12_descriptor_set *descriptor_set) {
+	for (uint32_t access_index = 0; access_index < list->d3d12.queued_descriptor_set_accesses_count; ++access_index) {
+		if (descriptor_set == list->d3d12.queued_descriptor_set_accesses[access_index]) {
+			return;
+		}
+	}
+
+	descriptor_set->command_list_reference_count += 1;
+
 	list->d3d12.queued_descriptor_set_accesses[list->d3d12.queued_descriptor_set_accesses_count] = descriptor_set;
 	list->d3d12.queued_descriptor_set_accesses_count += 1;
 }
