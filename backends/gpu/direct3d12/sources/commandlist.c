@@ -237,10 +237,10 @@ void kore_d3d12_command_list_set_descriptor_table(kore_gpu_command_list *list, u
                                                   kore_gpu_buffer **dynamic_buffers, uint32_t *dynamic_offsets, uint32_t *dynamic_sizes) {
 	kore_d3d12_command_list_queue_descriptor_set_access(list, set);
 
-	if (set->descriptor_count > 0) {
+	if (set->allocations[set->current_allocation_index].descriptor_count > 0) {
 		D3D12_GPU_DESCRIPTOR_HANDLE gpu_descriptor;
 		COM_CALL0RET(list->d3d12.device->descriptor_heap, GetGPUDescriptorHandleForHeapStart, gpu_descriptor);
-		gpu_descriptor.ptr += set->descriptor_allocation.offset * list->d3d12.device->cbv_srv_uav_increment;
+		gpu_descriptor.ptr += set->allocations[set->current_allocation_index].descriptor_allocation.offset * list->d3d12.device->cbv_srv_uav_increment;
 
 		if (list->d3d12.compute_pipe != NULL || list->d3d12.ray_pipe != NULL) {
 			COM_CALL2(list->d3d12.list, SetComputeRootDescriptorTable, table_index, gpu_descriptor);
@@ -252,11 +252,11 @@ void kore_d3d12_command_list_set_descriptor_table(kore_gpu_command_list *list, u
 		table_index += 1;
 	}
 
-	if (set->dynamic_descriptor_count > 0) {
+	if (set->allocations[set->current_allocation_index].dynamic_descriptor_count > 0) {
 		uint32_t offset = list->d3d12.dynamic_descriptor_allocations[list->d3d12.current_allocator_index].offset +
 		                  list->d3d12.dynamic_descriptor_offsets[list->d3d12.current_allocator_index];
 
-		for (uint32_t descriptor_index = 0; descriptor_index < set->dynamic_descriptor_count; ++descriptor_index) {
+		for (uint32_t descriptor_index = 0; descriptor_index < set->allocations[set->current_allocation_index].dynamic_descriptor_count; ++descriptor_index) {
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc = {0};
 
 			D3D12_GPU_VIRTUAL_ADDRESS address = COM_CALL0(dynamic_buffers[descriptor_index]->d3d12.resource, GetGPUVirtualAddress);
@@ -280,16 +280,17 @@ void kore_d3d12_command_list_set_descriptor_table(kore_gpu_command_list *list, u
 			COM_CALL2(list->d3d12.list, SetGraphicsRootDescriptorTable, table_index, gpu_descriptor);
 		}
 
-		list->d3d12.dynamic_descriptor_offsets[list->d3d12.current_allocator_index] += (uint32_t)set->dynamic_descriptor_count;
+		list->d3d12.dynamic_descriptor_offsets[list->d3d12.current_allocator_index] +=
+		    (uint32_t)set->allocations[set->current_allocation_index].dynamic_descriptor_count;
 
 		table_index += 1;
 	}
 
-	if (set->bindless_descriptor_count > 0) {
+	if (set->allocations[set->current_allocation_index].bindless_descriptor_count > 0) {
 		D3D12_GPU_DESCRIPTOR_HANDLE gpu_descriptor;
 		COM_CALL0RET(list->d3d12.device->descriptor_heap, GetGPUDescriptorHandleForHeapStart, gpu_descriptor);
 
-		gpu_descriptor.ptr += set->bindless_descriptor_allocation.offset * list->d3d12.device->cbv_srv_uav_increment;
+		gpu_descriptor.ptr += set->allocations[set->current_allocation_index].bindless_descriptor_allocation.offset * list->d3d12.device->cbv_srv_uav_increment;
 		if (list->d3d12.compute_pipe != NULL || list->d3d12.ray_pipe != NULL) {
 			COM_CALL2(list->d3d12.list, SetComputeRootDescriptorTable, table_index, gpu_descriptor);
 		}
@@ -299,10 +300,10 @@ void kore_d3d12_command_list_set_descriptor_table(kore_gpu_command_list *list, u
 		table_index += 1;
 	}
 
-	if (set->sampler_count > 0) {
+	if (set->allocations[set->current_allocation_index].sampler_count > 0) {
 		D3D12_GPU_DESCRIPTOR_HANDLE gpu_descriptor;
 		COM_CALL0RET(list->d3d12.device->sampler_heap, GetGPUDescriptorHandleForHeapStart, gpu_descriptor);
-		gpu_descriptor.ptr += set->sampler_allocation.offset * list->d3d12.device->sampler_increment;
+		gpu_descriptor.ptr += set->allocations[set->current_allocation_index].sampler_allocation.offset * list->d3d12.device->sampler_increment;
 
 		if (list->d3d12.compute_pipe != NULL || list->d3d12.ray_pipe != NULL) {
 			COM_CALL2(list->d3d12.list, SetComputeRootDescriptorTable, table_index, gpu_descriptor);
@@ -812,7 +813,7 @@ void kore_d3d12_command_list_queue_descriptor_set_access(kore_gpu_command_list *
 		}
 	}
 
-	descriptor_set->command_list_reference_count += 1;
+	descriptor_set->allocations[descriptor_set->current_allocation_index].command_list_reference_count += 1;
 
 	list->d3d12.queued_descriptor_set_accesses[list->d3d12.queued_descriptor_set_accesses_count] = descriptor_set;
 	list->d3d12.queued_descriptor_set_accesses_count += 1;

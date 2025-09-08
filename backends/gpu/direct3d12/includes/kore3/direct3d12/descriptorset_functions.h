@@ -29,8 +29,7 @@ void kore_d3d12_descriptor_set_prepare_uav_buffer(kore_gpu_command_list *list, k
 void kore_d3d12_descriptor_set_prepare_srv_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view);
 void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view);
 
-void kore_d3d12_descriptor_set_remove_reference(kore_d3d12_descriptor_set *set);
-bool kore_d3d312_desciptor_set_is_in_use(kore_d3d12_descriptor_set *set);
+void kore_d3d312_desciptor_set_use_free_allocation(kore_d3d12_descriptor_set *set);
 
 #ifdef __cplusplus
 }

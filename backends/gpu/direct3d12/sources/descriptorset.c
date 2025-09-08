@@ -3,6 +3,7 @@
 
 #include <kore3/direct3d12/texture_functions.h>
 
+#include <kore3/error.h>
 #include <kore3/util/align.h>
 
 void kore_d3d12_descriptor_set_set_buffer_view_cbv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index) {
@@ -12,7 +13,7 @@ void kore_d3d12_descriptor_set_set_buffer_view_cbv(kore_gpu_device *device, kore
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
 	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
-	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
+	descriptor_handle.ptr += (set->allocations[set->current_allocation_index].descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
 
 	COM_CALL2(device->d3d12.device, CreateConstantBufferView, &desc, descriptor_handle);
 }
@@ -29,7 +30,7 @@ void kore_d3d12_descriptor_set_set_buffer_view_srv(kore_gpu_device *device, kore
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
 	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
-	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
+	descriptor_handle.ptr += (set->allocations[set->current_allocation_index].descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
 
 	COM_CALL3(device->d3d12.device, CreateShaderResourceView, buffer->d3d12.resource, &desc, descriptor_handle);
 }
@@ -46,7 +47,7 @@ void kore_d3d12_descriptor_set_set_buffer_view_uav(kore_gpu_device *device, kore
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
 	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
-	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
+	descriptor_handle.ptr += (set->allocations[set->current_allocation_index].descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
 
 	COM_CALL4(device->d3d12.device, CreateUnorderedAccessView, buffer->d3d12.resource, NULL, &desc, descriptor_handle);
 }
@@ -60,7 +61,7 @@ void kore_d3d12_descriptor_set_set_bvh_view_srv(kore_gpu_device *device, kore_d3
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
 	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
-	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
+	descriptor_handle.ptr += (set->allocations[set->current_allocation_index].descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
 
 	COM_CALL3(device->d3d12.device, CreateShaderResourceView, NULL, &desc, descriptor_handle);
 }
@@ -118,7 +119,7 @@ void kore_d3d12_descriptor_set_set_texture_array_view_srv(kore_gpu_device *devic
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
 	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
-	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
+	descriptor_handle.ptr += (set->allocations[set->current_allocation_index].descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
 
 	COM_CALL3(device->d3d12.device, CreateShaderResourceView, texture_view->texture->d3d12.resource, &desc, descriptor_handle);
 }
@@ -145,7 +146,7 @@ void kore_d3d12_descriptor_set_set_texture_cube_view_srv(kore_gpu_device *device
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
 	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
-	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
+	descriptor_handle.ptr += (set->allocations[set->current_allocation_index].descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
 
 	COM_CALL3(device->d3d12.device, CreateShaderResourceView, texture_view->texture->d3d12.resource, &desc, descriptor_handle);
 }
@@ -160,7 +161,7 @@ void kore_d3d12_descriptor_set_set_texture_view_uav(kore_gpu_device *device, kor
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
 	COM_CALL0RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
-	descriptor_handle.ptr += (set->descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
+	descriptor_handle.ptr += (set->allocations[set->current_allocation_index].descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
 
 	COM_CALL4(device->d3d12.device, CreateUnorderedAccessView, texture_view->texture->d3d12.resource, NULL, &desc, descriptor_handle);
 }
@@ -172,7 +173,7 @@ void kore_d3d12_descriptor_set_set_sampler(kore_gpu_device *device, kore_d3d12_d
 
 	D3D12_CPU_DESCRIPTOR_HANDLE dst_handle;
 	COM_CALL0RET(device->d3d12.sampler_heap, GetCPUDescriptorHandleForHeapStart, dst_handle);
-	dst_handle.ptr += (set->sampler_allocation.offset + index) * device->d3d12.sampler_increment;
+	dst_handle.ptr += (set->allocations[set->current_allocation_index].sampler_allocation.offset + index) * device->d3d12.sampler_increment;
 
 	COM_CALL4(device->d3d12.device, CopyDescriptorsSimple, 1, dst_handle, src_handle, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 }
@@ -270,6 +271,37 @@ void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, 
 	}
 }
 
-bool kore_d3d312_desciptor_set_is_in_use(kore_d3d12_descriptor_set *set) {
-	return set->command_list_reference_count > 0 || set->execution_index > COM_CALL0(set->device->d3d12.execution_fence, GetCompletedValue);
+void kore_d3d312_desciptor_set_use_free_allocation(kore_d3d12_descriptor_set *set) {
+	for (uint32_t allocation_index = 0; allocation_index < KORE_D3D12_ALLOCATIONS_PER_DESCRIPTORSET; ++allocation_index) {
+		kore_d3d12_descriptor_set_allocation *allocation = &set->allocations[allocation_index];
+
+		if (allocation->command_list_reference_count == 0 && allocation->execution_index <= COM_CALL0(set->device->d3d12.execution_fence, GetCompletedValue)) {
+			set->current_allocation_index = allocation_index;
+			return;
+		}
+	}
+
+	uint32_t oldest_allocation_index           = UINT32_MAX;
+	uint64_t oldest_allocation_execution_index = UINT64_MAX;
+
+	for (uint32_t allocation_index = 0; allocation_index < KORE_D3D12_ALLOCATIONS_PER_DESCRIPTORSET; ++allocation_index) {
+		kore_d3d12_descriptor_set_allocation *allocation = &set->allocations[allocation_index];
+
+		if (allocation->command_list_reference_count == 0) {
+			if (allocation->execution_index < oldest_allocation_execution_index) {
+				oldest_allocation_index           = allocation_index;
+				oldest_allocation_execution_index = allocation->execution_index;
+			}
+		}
+	}
+
+	if (oldest_allocation_index == UINT32_MAX) {
+		kore_error_message("Descriptor set stall");
+	}
+
+	{
+		kore_d3d12_descriptor_set_allocation *allocation = &set->allocations[oldest_allocation_index];
+		wait_for_fence(set->device, set->device->d3d12.execution_fence, set->device->d3d12.execution_event, allocation->execution_index);
+		set->current_allocation_index = oldest_allocation_index;
+	}
 }

@@ -669,7 +669,8 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 	for (uint32_t set_access_index = 0; set_access_index < list->d3d12.queued_descriptor_set_accesses_count; ++set_access_index) {
 		kore_d3d12_descriptor_set *set = list->d3d12.queued_descriptor_set_accesses[set_access_index];
 
-		set->execution_index = device->d3d12.execution_index;
+		set->allocations[set->current_allocation_index].execution_index = device->d3d12.execution_index;
+		set->allocations[set->current_allocation_index].command_list_reference_count -= 1;
 	}
 	list->d3d12.queued_descriptor_set_accesses_count = 0;
 
@@ -725,34 +726,38 @@ void kore_d3d12_device_wait_until_idle(kore_gpu_device *device) {
 
 void kore_d3d12_device_create_descriptor_set(kore_gpu_device *device, uint32_t descriptor_count, uint32_t dynamic_descriptor_count,
                                              uint32_t bindless_descriptor_count, uint32_t sampler_count, kore_d3d12_descriptor_set *set) {
-	set->descriptor_allocation.index          = OA_INVALID_INDEX;
-	set->bindless_descriptor_allocation.index = OA_INVALID_INDEX;
-	set->sampler_allocation.index             = OA_INVALID_INDEX;
+	for (uint32_t allocation_index = 0; allocation_index < KORE_D3D12_ALLOCATIONS_PER_DESCRIPTORSET; ++allocation_index) {
+		kore_d3d12_descriptor_set_allocation *allocation = &set->allocations[allocation_index];
 
-	if (descriptor_count > 0) {
-		int result = oa_allocate(&device->d3d12.descriptor_heap_allocator, descriptor_count, &set->descriptor_allocation);
-		assert(result == 0);
+		allocation->descriptor_allocation.index          = OA_INVALID_INDEX;
+		allocation->bindless_descriptor_allocation.index = OA_INVALID_INDEX;
+		allocation->sampler_allocation.index             = OA_INVALID_INDEX;
+
+		if (descriptor_count > 0) {
+			int result = oa_allocate(&device->d3d12.descriptor_heap_allocator, descriptor_count, &allocation->descriptor_allocation);
+			assert(result == 0);
+		}
+		allocation->descriptor_count = descriptor_count;
+
+		allocation->dynamic_descriptor_count = dynamic_descriptor_count;
+
+		if (bindless_descriptor_count > 0) {
+			int result = oa_allocate(&device->d3d12.descriptor_heap_allocator, bindless_descriptor_count, &allocation->bindless_descriptor_allocation);
+			assert(result == 0);
+		}
+		allocation->bindless_descriptor_count = bindless_descriptor_count;
+
+		if (sampler_count > 0) {
+			int result = oa_allocate(&device->d3d12.sampler_heap_allocator, sampler_count, &allocation->sampler_allocation);
+			assert(result == 0);
+		}
+		allocation->sampler_count = sampler_count;
+
+		allocation->execution_index              = 0;
+		allocation->command_list_reference_count = 0;
 	}
-	set->descriptor_count = descriptor_count;
-
-	set->dynamic_descriptor_count = dynamic_descriptor_count;
-
-	if (bindless_descriptor_count > 0) {
-		int result = oa_allocate(&device->d3d12.descriptor_heap_allocator, bindless_descriptor_count, &set->bindless_descriptor_allocation);
-		assert(result == 0);
-	}
-	set->bindless_descriptor_count = bindless_descriptor_count;
-
-	if (sampler_count > 0) {
-		int result = oa_allocate(&device->d3d12.sampler_heap_allocator, sampler_count, &set->sampler_allocation);
-		assert(result == 0);
-	}
-	set->sampler_count = sampler_count;
 
 	set->device = device;
-
-	set->execution_index              = 0;
-	set->command_list_reference_count = 0;
 }
 
 static D3D12_TEXTURE_ADDRESS_MODE convert_address_mode(kore_gpu_address_mode mode) {
