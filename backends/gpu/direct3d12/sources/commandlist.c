@@ -20,13 +20,7 @@
 #endif
 
 void kore_d3d12_command_list_destroy(kore_gpu_command_list *list) {
-	for (int i = 0; i < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++i) {
-		COM_CALL0(list->d3d12.allocator[i], Release);
-	}
-	COM_CALL0(list->d3d12.list, Release);
-
-	COM_CALL0(list->d3d12.rtv_descriptors, Release);
-	COM_CALL0(list->d3d12.dsv_descriptor, Release);
+	kore_d3d12_device_destroy_command_list(list->d3d12.device, list);
 }
 
 void kore_d3d12_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {

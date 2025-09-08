@@ -5,6 +5,8 @@
 #include <kore3/gpu/device.h>
 #include <kore3/util/align.h>
 
+#include <kore3/direct3d12/pipeline_functions.h>
+
 #include <kore3/backend/microsoft.h>
 #include <kore3/backend/windows.h>
 
@@ -142,6 +144,8 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		kore_microsoft_affirm(COM_CALL3(dxgi_factory, CreateSwapChain, (IUnknown *)device->d3d12.graphics_queue, &desc, &device->d3d12.swap_chain));
 	}
 
+	COM_CALL0(dxgi_factory, Release);
+
 	device->d3d12.cbv_srv_uav_increment = COM_CALL1(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	device->d3d12.sampler_increment     = COM_CALL1(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 
@@ -208,9 +212,132 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 
 		oa_create(&device->d3d12.sampler_heap_allocator, sampler_count, 4096);
 	}
+
+	device->d3d12.render_pipelines_count = 0;
+}
+
+void kore_d3d12_device_destroy_buffer(kore_gpu_device *device, kore_gpu_buffer *buffer) {
+	if (!kore_d3d12_buffer_in_use(buffer)) {
+		COM_CALL0(buffer->d3d12.resource, Release);
+		return;
+	}
+
+	for (size_t buffer_index = 0; buffer_index < KORE_D3D12_GARBAGE_SIZE; ++buffer_index) {
+		kore_gpu_buffer *buffer = device->d3d12.garbage_buffers[buffer_index];
+
+		if (buffer == NULL) {
+			device->d3d12.garbage_buffers[buffer_index] = buffer;
+			return;
+		}
+	}
+
+	assert(false);
+}
+
+void kore_d3d12_device_add_render_pipeline(kore_d3d12_device *device, kore_d3d12_render_pipeline *pipeline) {
+	device->render_pipelines[device->render_pipelines_count] = pipeline;
+	device->render_pipelines_count += 1;
+}
+
+void kore_d3d12_device_destroy_command_list(kore_d3d12_device *device, kore_gpu_command_list *list) {
+	bool completed = true;
+	for (uint32_t allocator_index = 0; allocator_index < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++allocator_index) {
+		completed &= check_for_fence(device->execution_fence, list->d3d12.allocator_execution_index[allocator_index]);
+	}
+
+	if (completed) {
+		for (int i = 0; i < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++i) {
+			COM_CALL0(list->d3d12.allocator[i], Release);
+		}
+		COM_CALL0(list->d3d12.list, Release);
+
+		COM_CALL0(list->d3d12.rtv_descriptors, Release);
+		COM_CALL0(list->d3d12.dsv_descriptor, Release);
+
+		return;
+	}
+
+	for (size_t list_index = 0; list_index < KORE_D3D12_GARBAGE_SIZE; ++list_index) {
+		kore_gpu_command_list *list = device->garbage_command_lists[list_index];
+
+		if (list == NULL) {
+			device->garbage_command_lists[list_index] = list;
+			return;
+		}
+	}
+
+	assert(false);
+}
+
+static void collect_garbage(kore_gpu_device *device, bool force) {
+	for (size_t buffer_index = 0; buffer_index < KORE_D3D12_GARBAGE_SIZE; ++buffer_index) {
+		kore_gpu_buffer *buffer = device->d3d12.garbage_buffers[buffer_index];
+
+		if (buffer != NULL) {
+			if (force) {
+				kore_d3d12_buffer_wait_until_not_in_use(buffer);
+				COM_CALL0(buffer->d3d12.resource, Release);
+				device->d3d12.garbage_buffers[buffer_index] = NULL;
+			}
+			else {
+				if (!kore_d3d12_buffer_in_use(buffer)) {
+					COM_CALL0(buffer->d3d12.resource, Release);
+					device->d3d12.garbage_buffers[buffer_index] = NULL;
+				}
+			}
+		}
+	}
+
+	for (size_t list_index = 0; list_index < KORE_D3D12_GARBAGE_SIZE; ++list_index) {
+		kore_gpu_command_list *list = device->d3d12.garbage_command_lists[list_index];
+
+		if (list != NULL) {
+			bool completed = true;
+			for (uint32_t allocator_index = 0; allocator_index < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++allocator_index) {
+				if (force) {
+					wait_for_fence(device, device->d3d12.execution_fence, device->d3d12.execution_event,
+					               list->d3d12.allocator_execution_index[allocator_index]);
+				}
+				else {
+					completed &= check_for_fence(device->d3d12.execution_fence, list->d3d12.allocator_execution_index[allocator_index]);
+				}
+			}
+
+			if (completed) {
+				for (int i = 0; i < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++i) {
+					COM_CALL0(list->d3d12.allocator[i], Release);
+				}
+				COM_CALL0(list->d3d12.list, Release);
+
+				COM_CALL0(list->d3d12.rtv_descriptors, Release);
+				COM_CALL0(list->d3d12.dsv_descriptor, Release);
+
+				device->d3d12.garbage_command_lists[list_index] = NULL;
+			}
+		}
+	}
 }
 
 void kore_d3d12_device_destroy(kore_gpu_device *device) {
+	collect_garbage(device, true);
+
+	for (size_t pipeline_index = 0; pipeline_index < device->d3d12.render_pipelines_count; ++pipeline_index) {
+		kore_d3d12_render_pipeline_destroy(device->d3d12.render_pipelines[pipeline_index]);
+	}
+
+	COM_CALL0(device->d3d12.graphics_queue, Release);
+	COM_CALL0(device->d3d12.compute_queue, Release);
+	COM_CALL0(device->d3d12.copy_queue, Release);
+	COM_CALL0(device->d3d12.descriptor_heap, Release);
+	COM_CALL0(device->d3d12.sampler_heap, Release);
+	COM_CALL0(device->d3d12.frame_fence, Release);
+	COM_CALL0(device->d3d12.execution_fence, Release);
+	COM_CALL0(device->d3d12.all_samplers, Release);
+	COM_CALL0(device->d3d12.swap_chain, Release);
+
+	CloseHandle(device->d3d12.frame_event);
+	CloseHandle(device->d3d12.execution_event);
+
 	COM_CALL0(device->d3d12.device, Release);
 }
 
@@ -716,6 +843,8 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 
 		list->d3d12.presenting = false;
 	}
+
+	collect_garbage(device, false);
 
 	device->d3d12.execution_index += 1;
 }

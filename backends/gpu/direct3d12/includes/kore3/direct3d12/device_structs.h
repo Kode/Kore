@@ -16,7 +16,13 @@ struct ID3D12CommandAllocator;
 struct ID3D12DescriptorHeap;
 struct ID3D12QueryHeap;
 
+struct kore_d3d12_render_pipeline;
+
 #define KORE_D3D12_FRAME_COUNT 2
+
+#define KORE_D3D12_GARBAGE_SIZE 256
+
+#define KORE_D3D12_MAX_PIPELINES 1024
 
 typedef struct kore_d3d12_device {
 	struct ID3D12Device5      *device;
@@ -49,6 +55,12 @@ typedef struct kore_d3d12_device {
 	kore_index_allocator         sampler_index_allocator;
 
 	kore_gpu_command_list management_list;
+
+	struct kore_d3d12_render_pipeline *render_pipelines[KORE_D3D12_MAX_PIPELINES];
+	size_t                             render_pipelines_count;
+
+	kore_gpu_buffer       *garbage_buffers[KORE_D3D12_GARBAGE_SIZE];
+	kore_gpu_command_list *garbage_command_lists[KORE_D3D12_GARBAGE_SIZE];
 } kore_d3d12_device;
 
 typedef struct kore_d3d12_query_set {

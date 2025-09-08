@@ -11,6 +11,8 @@
 extern "C" {
 #endif
 
+struct kore_d3d12_render_pipeline;
+
 void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist);
 
 void kore_d3d12_device_destroy(kore_gpu_device *device);
@@ -51,6 +53,12 @@ uint32_t kore_d3d12_device_align_texture_row_bytes(kore_gpu_device *device, uint
 void kore_d3d12_device_signal(kore_gpu_device *device, kore_gpu_command_list_type list_type, kore_gpu_fence *fence, uint64_t value);
 
 void kore_d3d12_device_wait(kore_gpu_device *device, kore_gpu_command_list_type list_type, kore_gpu_fence *fence, uint64_t value);
+
+void kore_d3d12_device_destroy_buffer(kore_gpu_device *device, kore_gpu_buffer *buffer);
+
+void kore_d3d12_device_destroy_command_list(kore_d3d12_device *device, kore_gpu_command_list *list);
+
+void kore_d3d12_device_add_render_pipeline(kore_d3d12_device *device, struct kore_d3d12_render_pipeline *pipeline);
 
 #ifdef __cplusplus
 }

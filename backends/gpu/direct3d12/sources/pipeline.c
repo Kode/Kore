@@ -363,13 +363,15 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 
 	COM_CALL4(device->device, CreateCommandSignature, &command_signature_desc, pipe->root_signature, &IID_ID3D12CommandSignature,
 	          &pipe->draw_indexed_command_signature);
+
+	kore_d3d12_device_add_render_pipeline(device, pipe);
 }
 
 void kore_d3d12_render_pipeline_destroy(kore_d3d12_render_pipeline *pipe) {
-	if (pipe->pipe != NULL) {
-		COM_CALL0(pipe->pipe, Release);
-		pipe->pipe = NULL;
-	}
+	// COM_CALL0(pipe->draw_command_signature, Release);
+	// COM_CALL0(pipe->draw_indexed_command_signature, Release);
+	COM_CALL0(pipe->root_signature, Release);
+	COM_CALL0(pipe->pipe, Release);
 }
 
 void kore_d3d12_compute_pipeline_init(kore_d3d12_device *device, kore_d3d12_compute_pipeline *pipe, const kore_d3d12_compute_pipeline_parameters *parameters) {

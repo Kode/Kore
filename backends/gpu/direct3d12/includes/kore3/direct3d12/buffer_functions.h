@@ -21,6 +21,10 @@ void *kore_d3d12_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t 
 
 void kore_d3d12_buffer_unlock(kore_gpu_buffer *buffer);
 
+bool kore_d3d12_buffer_in_use(kore_gpu_buffer *buffer);
+
+void kore_d3d12_buffer_wait_until_not_in_use(kore_gpu_buffer *buffer);
+
 #ifdef __cplusplus
 }
 #endif

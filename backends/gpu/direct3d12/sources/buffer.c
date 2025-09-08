@@ -2,6 +2,8 @@
 
 #include <kore3/gpu/buffer.h>
 
+#include <kore3/direct3d12/device_functions.h>
+
 #include <kore3/backend/microsoft.h>
 
 static uint64_t find_max_execution_index_all(kore_gpu_buffer *buffer) {
@@ -42,7 +44,16 @@ void kore_d3d12_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {
 }
 
 void kore_d3d12_buffer_destroy(kore_gpu_buffer *buffer) {
-	COM_CALL0(buffer->d3d12.resource, Release);
+	kore_d3d12_device_destroy_buffer(buffer->d3d12.device, buffer);
+}
+
+bool kore_d3d12_buffer_in_use(kore_gpu_buffer *buffer) {
+	return !check_for_fence(buffer->d3d12.device->d3d12.execution_fence, find_max_execution_index_all(buffer));
+}
+
+void kore_d3d12_buffer_wait_until_not_in_use(kore_gpu_buffer *buffer) {
+	wait_for_fence(buffer->d3d12.device, buffer->d3d12.device->d3d12.execution_fence, buffer->d3d12.device->d3d12.execution_event,
+	               find_max_execution_index_all(buffer));
 }
 
 void *kore_d3d12_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
