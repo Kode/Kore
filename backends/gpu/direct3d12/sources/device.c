@@ -333,6 +333,10 @@ void kore_d3d12_device_destroy(kore_gpu_device *device) {
 	COM_CALL0(device->d3d12.frame_fence, Release);
 	COM_CALL0(device->d3d12.execution_fence, Release);
 	COM_CALL0(device->d3d12.all_samplers, Release);
+
+	for (int i = 0; i < KORE_D3D12_FRAME_COUNT; ++i) {
+		COM_CALL0(device->d3d12.framebuffer_textures[i].d3d12.resource, Release);
+	}
 	COM_CALL0(device->d3d12.swap_chain, Release);
 
 	CloseHandle(device->d3d12.frame_event);
