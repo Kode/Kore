@@ -305,3 +305,7 @@ void kore_d3d312_desciptor_set_use_free_allocation(kore_d3d12_descriptor_set *se
 		set->current_allocation_index = oldest_allocation_index;
 	}
 }
+
+void kore_d3d12_descriptor_set_destroy(kore_d3d12_descriptor_set *set) {
+	kore_d3d12_device_destroy_descriptor_set(set->device, set);
+}

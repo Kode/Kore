@@ -214,6 +214,10 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	}
 
 	device->d3d12.render_pipelines_count = 0;
+
+	memset(&device->d3d12.garbage_buffers, 0, sizeof(device->d3d12.garbage_buffers));
+	memset(&device->d3d12.garbage_buffers, 0, sizeof(device->d3d12.garbage_command_lists));
+	memset(&device->d3d12.garbage_buffers, 0, sizeof(device->d3d12.garbage_descriptor_sets));
 }
 
 void kore_d3d12_device_destroy_buffer(kore_gpu_device *device, kore_gpu_buffer *buffer) {
@@ -269,6 +273,33 @@ void kore_d3d12_device_destroy_command_list(kore_d3d12_device *device, kore_gpu_
 	assert(false);
 }
 
+void kore_d3d12_device_destroy_descriptor_set(kore_gpu_device *device, kore_d3d12_descriptor_set *set) {
+	for (uint32_t allocation_index = 0; allocation_index < KORE_D3D12_ALLOCATIONS_PER_DESCRIPTORSET; ++allocation_index) {
+		kore_d3d12_descriptor_set_allocation *allocation = &set->allocations[allocation_index];
+
+		if (allocation->command_list_reference_count == 0 && allocation->execution_index <= COM_CALL0(set->device->d3d12.execution_fence, GetCompletedValue)) {
+			oa_free(&device->d3d12.descriptor_heap_allocator, &allocation->descriptor_allocation);
+			oa_free(&device->d3d12.descriptor_heap_allocator, &allocation->bindless_descriptor_allocation);
+			oa_free(&device->d3d12.sampler_heap_allocator, &allocation->sampler_allocation);
+
+			allocation->descriptor_allocation.index          = OA_INVALID_INDEX;
+			allocation->bindless_descriptor_allocation.index = OA_INVALID_INDEX;
+			allocation->sampler_allocation.index             = OA_INVALID_INDEX;
+		}
+	}
+
+	for (size_t set_index = 0; set_index < KORE_D3D12_GARBAGE_SIZE; ++set_index) {
+		kore_d3d12_descriptor_set *set = device->d3d12.garbage_descriptor_sets[set_index];
+
+		if (set == NULL) {
+			device->d3d12.garbage_descriptor_sets[set_index] = set;
+			return;
+		}
+	}
+
+	assert(false);
+}
+
 static void collect_garbage(kore_gpu_device *device, bool force) {
 	for (size_t buffer_index = 0; buffer_index < KORE_D3D12_GARBAGE_SIZE; ++buffer_index) {
 		kore_gpu_buffer *buffer = device->d3d12.garbage_buffers[buffer_index];
@@ -313,6 +344,40 @@ static void collect_garbage(kore_gpu_device *device, bool force) {
 				COM_CALL0(list->d3d12.dsv_descriptor, Release);
 
 				device->d3d12.garbage_command_lists[list_index] = NULL;
+			}
+		}
+	}
+
+	for (size_t set_index = 0; set_index < KORE_D3D12_GARBAGE_SIZE; ++set_index) {
+		kore_d3d12_descriptor_set *set = device->d3d12.garbage_descriptor_sets[set_index];
+
+		if (set != NULL) {
+			for (uint32_t allocation_index = 0; allocation_index < KORE_D3D12_ALLOCATIONS_PER_DESCRIPTORSET; ++allocation_index) {
+				kore_d3d12_descriptor_set_allocation *allocation = &set->allocations[allocation_index];
+
+				if (force) {
+					wait_for_fence(device, device->d3d12.execution_fence, device->d3d12.execution_event, allocation->execution_index);
+
+					oa_free(&device->d3d12.descriptor_heap_allocator, &allocation->descriptor_allocation);
+					oa_free(&device->d3d12.descriptor_heap_allocator, &allocation->bindless_descriptor_allocation);
+					oa_free(&device->d3d12.sampler_heap_allocator, &allocation->sampler_allocation);
+
+					allocation->descriptor_allocation.index          = OA_INVALID_INDEX;
+					allocation->bindless_descriptor_allocation.index = OA_INVALID_INDEX;
+					allocation->sampler_allocation.index             = OA_INVALID_INDEX;
+				}
+				else {
+					if (allocation->command_list_reference_count == 0 &&
+					    allocation->execution_index <= COM_CALL0(set->device->d3d12.execution_fence, GetCompletedValue)) {
+						oa_free(&device->d3d12.descriptor_heap_allocator, &allocation->descriptor_allocation);
+						oa_free(&device->d3d12.descriptor_heap_allocator, &allocation->bindless_descriptor_allocation);
+						oa_free(&device->d3d12.sampler_heap_allocator, &allocation->sampler_allocation);
+
+						allocation->descriptor_allocation.index          = OA_INVALID_INDEX;
+						allocation->bindless_descriptor_allocation.index = OA_INVALID_INDEX;
+						allocation->sampler_allocation.index             = OA_INVALID_INDEX;
+					}
+				}
 			}
 		}
 	}

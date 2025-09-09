@@ -58,6 +58,8 @@ void kore_d3d12_device_destroy_buffer(kore_gpu_device *device, kore_gpu_buffer *
 
 void kore_d3d12_device_destroy_command_list(kore_d3d12_device *device, kore_gpu_command_list *list);
 
+void kore_d3d12_device_destroy_descriptor_set(kore_gpu_device *device, kore_d3d12_descriptor_set *set);
+
 void kore_d3d12_device_add_render_pipeline(kore_d3d12_device *device, struct kore_d3d12_render_pipeline *pipeline);
 
 #ifdef __cplusplus

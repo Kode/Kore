@@ -31,6 +31,8 @@ void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, 
 
 void kore_d3d312_desciptor_set_use_free_allocation(kore_d3d12_descriptor_set *set);
 
+void kore_d3d12_descriptor_set_destroy(kore_d3d12_descriptor_set *set);
+
 #ifdef __cplusplus
 }
 #endif
