@@ -185,9 +185,9 @@ void kore_d3d12_command_list_set_index_buffer(kore_gpu_command_list *list, kore_
 
 	COM_CALL1(list->d3d12.list, IASetIndexBuffer, &view);
 
-	if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
-		kore_d3d12_command_list_queue_buffer_access(list, &buffer->d3d12, (uint32_t)offset, (uint32_t)(buffer->d3d12.size - offset));
-	}
+	// if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
+	kore_d3d12_command_list_queue_buffer_access(list, &buffer->d3d12, (uint32_t)offset, (uint32_t)(buffer->d3d12.size - offset));
+	//}
 }
 
 void kore_d3d12_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_d3d12_buffer *buffer, uint64_t offset, uint64_t size,
@@ -202,9 +202,9 @@ void kore_d3d12_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint
 
 	COM_CALL3(list->d3d12.list, IASetVertexBuffers, slot, 1, &view);
 
-	if (buffer->cpu_read || buffer->cpu_write) {
-		kore_d3d12_command_list_queue_buffer_access(list, buffer, (uint32_t)offset, (uint32_t)size);
-	}
+	// if (buffer->cpu_read || buffer->cpu_write) {
+	kore_d3d12_command_list_queue_buffer_access(list, buffer, (uint32_t)offset, (uint32_t)size);
+	//}
 }
 
 void kore_d3d12_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_d3d12_render_pipeline *pipeline) {
@@ -798,6 +798,11 @@ void kore_d3d12_command_list_queue_buffer_access(kore_gpu_command_list *list, ko
 
 	list->d3d12.queued_buffer_accesses[list->d3d12.queued_buffer_accesses_count] = access;
 	list->d3d12.queued_buffer_accesses_count += 1;
+}
+
+void kore_d3d12_command_list_queue_texture_access(kore_gpu_command_list *list, kore_d3d12_texture *texture) {
+	list->d3d12.queued_texture_accesses[list->d3d12.queued_buffer_accesses_count] = texture;
+	list->d3d12.queued_texture_accesses_count += 1;
 }
 
 void kore_d3d12_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_d3d12_descriptor_set *descriptor_set) {

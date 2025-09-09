@@ -61,6 +61,7 @@ typedef struct kore_d3d12_device {
 	size_t                             render_pipelines_count;
 
 	kore_gpu_buffer                  *garbage_buffers[KORE_D3D12_GARBAGE_SIZE];
+	kore_gpu_texture                 *garbage_textures[KORE_D3D12_GARBAGE_SIZE];
 	kore_gpu_command_list            *garbage_command_lists[KORE_D3D12_GARBAGE_SIZE];
 	struct kore_d3d12_descriptor_set *garbage_descriptor_sets[KORE_D3D12_GARBAGE_SIZE];
 } kore_d3d12_device;

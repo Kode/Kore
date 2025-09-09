@@ -193,9 +193,9 @@ void kore_d3d12_descriptor_set_prepare_cbv_buffer(kore_gpu_command_list *list, k
 		buffer->d3d12.resource_state = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
 	}
 
-	if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
-		kore_d3d12_command_list_queue_buffer_access(list, &buffer->d3d12, offset, size);
-	}
+	// if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
+	kore_d3d12_command_list_queue_buffer_access(list, &buffer->d3d12, offset, size);
+	//}
 }
 
 void kore_d3d12_descriptor_set_prepare_uav_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size) {
@@ -213,9 +213,9 @@ void kore_d3d12_descriptor_set_prepare_uav_buffer(kore_gpu_command_list *list, k
 		buffer->d3d12.resource_state = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 	}
 
-	if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
-		kore_d3d12_command_list_queue_buffer_access(list, &buffer->d3d12, offset, size);
-	}
+	// if (buffer->d3d12.cpu_read || buffer->d3d12.cpu_write) {
+	kore_d3d12_command_list_queue_buffer_access(list, &buffer->d3d12, offset, size);
+	//}
 }
 
 void kore_d3d12_descriptor_set_prepare_srv_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view) {
@@ -241,6 +241,8 @@ void kore_d3d12_descriptor_set_prepare_srv_texture(kore_gpu_command_list *list, 
 			}
 		}
 	}
+
+	kore_d3d12_command_list_queue_texture_access(list, &texture_view->texture->d3d12);
 }
 
 void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view) {
@@ -269,6 +271,8 @@ void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, 
 		texture_view->texture->d3d12.resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, texture_view->base_mip_level, 0)] =
 		    D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 	}
+
+	kore_d3d12_command_list_queue_texture_access(list, &texture_view->texture->d3d12);
 }
 
 void kore_d3d312_desciptor_set_use_free_allocation(kore_d3d12_descriptor_set *set) {

@@ -15,5 +15,14 @@ void kore_d3d12_texture_set_name(kore_gpu_texture *texture, const char *name) {
 }
 
 void kore_d3d12_texture_destroy(kore_gpu_texture *texture) {
-	COM_CALL0(texture->d3d12.resource, Release);
+	kore_d3d12_device_destroy_texture(texture->d3d12.device, texture);
+}
+
+bool kore_d3d12_texture_in_use(kore_gpu_texture *texture) {
+	return !check_for_fence(texture->d3d12.device->d3d12.execution_fence, texture->d3d12.execution_index);
+}
+
+void kore_d3d12_texture_wait_until_not_in_use(kore_gpu_texture *texture) {
+	wait_for_fence(texture->d3d12.device, texture->d3d12.device->d3d12.execution_fence, texture->d3d12.device->d3d12.execution_event,
+	               texture->d3d12.execution_index);
 }

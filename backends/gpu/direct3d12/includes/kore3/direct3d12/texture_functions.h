@@ -13,6 +13,10 @@ void kore_d3d12_texture_destroy(kore_gpu_texture *texture);
 
 uint32_t kore_d3d12_texture_resource_state_index(kore_gpu_texture *texture, uint32_t mip_level, uint32_t array_layer);
 
+bool kore_d3d12_texture_in_use(kore_gpu_texture *texture);
+
+void kore_d3d12_texture_wait_until_not_in_use(kore_gpu_texture *texture);
+
 #ifdef __cplusplus
 }
 #endif

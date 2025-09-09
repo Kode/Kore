@@ -15,6 +15,8 @@ typedef enum kore_d3d12_texture_usage {
 } kore_d3d12_texture_usage;
 
 typedef struct kore_d3d12_texture {
+	struct kore_gpu_device *device;
+
 	struct ID3D12Resource *resource;
 
 	uint32_t depth_or_array_layers;
@@ -25,6 +27,8 @@ typedef struct kore_d3d12_texture {
 
 	// used for framebuffer-synchronization
 	uint64_t in_flight_frame_index;
+
+	uint64_t execution_index;
 } kore_d3d12_texture;
 
 #ifdef __cplusplus

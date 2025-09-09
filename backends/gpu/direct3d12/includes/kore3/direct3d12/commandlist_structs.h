@@ -27,6 +27,8 @@ struct ID3D12Fence;
 
 #define KORE_D3D12_COMMAND_LIST_MAX_QUEUED_BUFFER_ACCESSES 256
 
+#define KORE_D3D12_COMMAND_LIST_MAX_QUEUED_TEXTURE_ACCESSES 256
+
 #define KORE_D3D12_COMMAND_LIST_MAX_QUEUED_DESCRIPTOR_SET_ACCESSES 256
 
 typedef struct kore_d3d12_buffer_access {
@@ -72,6 +74,9 @@ typedef struct kore_d3d12_command_list {
 
 	kore_d3d12_buffer_access queued_buffer_accesses[KORE_D3D12_COMMAND_LIST_MAX_QUEUED_BUFFER_ACCESSES];
 	uint32_t                 queued_buffer_accesses_count;
+
+	kore_d3d12_texture *queued_texture_accesses[KORE_D3D12_COMMAND_LIST_MAX_QUEUED_TEXTURE_ACCESSES];
+	uint32_t            queued_texture_accesses_count;
 
 	struct kore_d3d12_descriptor_set *queued_descriptor_set_accesses[KORE_D3D12_COMMAND_LIST_MAX_QUEUED_DESCRIPTOR_SET_ACCESSES];
 	uint32_t                          queued_descriptor_set_accesses_count;

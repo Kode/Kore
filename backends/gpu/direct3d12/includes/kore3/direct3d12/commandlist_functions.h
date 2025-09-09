@@ -100,6 +100,8 @@ void kore_d3d12_command_list_compute_indirect(kore_gpu_command_list *list, kore_
 
 void kore_d3d12_command_list_queue_buffer_access(kore_gpu_command_list *list, kore_d3d12_buffer *buffer, uint32_t offset, uint32_t size);
 
+void kore_d3d12_command_list_queue_texture_access(kore_gpu_command_list *list, kore_d3d12_texture *texture);
+
 void kore_d3d12_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_d3d12_descriptor_set *descriptor_set);
 
 #ifdef __cplusplus

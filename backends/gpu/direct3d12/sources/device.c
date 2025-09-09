@@ -216,8 +216,9 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	device->d3d12.render_pipelines_count = 0;
 
 	memset(&device->d3d12.garbage_buffers, 0, sizeof(device->d3d12.garbage_buffers));
-	memset(&device->d3d12.garbage_buffers, 0, sizeof(device->d3d12.garbage_command_lists));
-	memset(&device->d3d12.garbage_buffers, 0, sizeof(device->d3d12.garbage_descriptor_sets));
+	memset(&device->d3d12.garbage_textures, 0, sizeof(device->d3d12.garbage_textures));
+	memset(&device->d3d12.garbage_command_lists, 0, sizeof(device->d3d12.garbage_command_lists));
+	memset(&device->d3d12.garbage_descriptor_sets, 0, sizeof(device->d3d12.garbage_descriptor_sets));
 }
 
 void kore_d3d12_device_destroy_buffer(kore_gpu_device *device, kore_gpu_buffer *buffer) {
@@ -231,6 +232,24 @@ void kore_d3d12_device_destroy_buffer(kore_gpu_device *device, kore_gpu_buffer *
 
 		if (buffer == NULL) {
 			device->d3d12.garbage_buffers[buffer_index] = buffer;
+			return;
+		}
+	}
+
+	assert(false);
+}
+
+void kore_d3d12_device_destroy_texture(kore_gpu_device *device, kore_gpu_texture *texture) {
+	if (!kore_d3d12_texture_in_use(texture)) {
+		COM_CALL0(texture->d3d12.resource, Release);
+		return;
+	}
+
+	for (size_t texture_index = 0; texture_index < KORE_D3D12_GARBAGE_SIZE; ++texture_index) {
+		kore_gpu_texture *texture = device->d3d12.garbage_textures[texture_index];
+
+		if (texture == NULL) {
+			device->d3d12.garbage_textures[texture_index] = texture;
 			return;
 		}
 	}
@@ -314,6 +333,24 @@ static void collect_garbage(kore_gpu_device *device, bool force) {
 				if (!kore_d3d12_buffer_in_use(buffer)) {
 					COM_CALL0(buffer->d3d12.resource, Release);
 					device->d3d12.garbage_buffers[buffer_index] = NULL;
+				}
+			}
+		}
+	}
+
+	for (size_t texture_index = 0; texture_index < KORE_D3D12_GARBAGE_SIZE; ++texture_index) {
+		kore_gpu_texture *texture = device->d3d12.garbage_textures[texture_index];
+
+		if (texture != NULL) {
+			if (force) {
+				kore_d3d12_texture_wait_until_not_in_use(texture);
+				COM_CALL0(texture->d3d12.resource, Release);
+				device->d3d12.garbage_textures[texture_index] = NULL;
+			}
+			else {
+				if (!kore_d3d12_texture_in_use(texture)) {
+					COM_CALL0(texture->d3d12.resource, Release);
+					device->d3d12.garbage_textures[texture_index] = NULL;
 				}
 			}
 		}
@@ -559,8 +596,8 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 
 	list->d3d12.blocking_frame_index = 0;
 
-	list->d3d12.queued_buffer_accesses_count = 0;
-
+	list->d3d12.queued_buffer_accesses_count         = 0;
+	list->d3d12.queued_texture_accesses_count        = 0;
 	list->d3d12.queued_descriptor_set_accesses_count = 0;
 
 	list->d3d12.presenting = false;
@@ -679,6 +716,8 @@ static D3D12_RESOURCE_DIMENSION convert_texture_dimension(kore_gpu_texture_dimen
 }
 
 void kore_d3d12_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {
+	texture->d3d12.device = device;
+
 	DXGI_FORMAT format = convert_texture_format(parameters->format);
 
 	D3D12_HEAP_PROPERTIES heap_properties;
@@ -738,6 +777,7 @@ void kore_d3d12_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 	texture->d3d12.mip_level_count       = parameters->mip_level_count;
 
 	texture->d3d12.in_flight_frame_index = 0;
+	texture->d3d12.execution_index       = 0;
 
 	for (uint32_t array_layer = 0; array_layer < parameters->depth_or_array_layers; ++array_layer) {
 		for (uint32_t mip_level = 0; mip_level < parameters->mip_level_count; ++mip_level) {
@@ -862,10 +902,19 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 	}
 	list->d3d12.queued_buffer_accesses_count = 0;
 
+	for (uint32_t texture_access_index = 0; texture_access_index < list->d3d12.queued_buffer_accesses_count; ++texture_access_index) {
+		kore_d3d12_texture *access = list->d3d12.queued_texture_accesses[texture_access_index];
+		access->execution_index    = device->d3d12.execution_index > access->execution_index ? device->d3d12.execution_index : access->execution_index;
+	}
+	list->d3d12.queued_texture_accesses_count = 0;
+
 	for (uint32_t set_access_index = 0; set_access_index < list->d3d12.queued_descriptor_set_accesses_count; ++set_access_index) {
 		kore_d3d12_descriptor_set *set = list->d3d12.queued_descriptor_set_accesses[set_access_index];
 
-		set->allocations[set->current_allocation_index].execution_index = device->d3d12.execution_index;
+		set->allocations[set->current_allocation_index].execution_index =
+		    device->d3d12.execution_index > set->allocations[set->current_allocation_index].execution_index
+		        ? device->d3d12.execution_index
+		        : set->allocations[set->current_allocation_index].execution_index;
 		set->allocations[set->current_allocation_index].command_list_reference_count -= 1;
 	}
 	list->d3d12.queued_descriptor_set_accesses_count = 0;
