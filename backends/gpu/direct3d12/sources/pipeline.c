@@ -396,13 +396,14 @@ void kore_d3d12_compute_pipeline_init(kore_d3d12_device *device, kore_d3d12_comp
 
 	COM_CALL4(device->device, CreateCommandSignature, &command_signature_desc, pipe->root_signature, &IID_ID3D12CommandSignature,
 	          &pipe->compute_command_signature);
+
+	kore_d3d12_device_add_compute_pipeline(device, pipe);
 }
 
 void kore_d3d12_compute_pipeline_destroy(kore_d3d12_compute_pipeline *pipe) {
-	if (pipe->pipe != NULL) {
-		COM_CALL0(pipe->pipe, Release);
-		pipe->pipe = NULL;
-	}
+	// COM_CALL0(pipe->compute_command_signature, Release);
+	COM_CALL0(pipe->root_signature, Release);
+	COM_CALL0(pipe->pipe, Release);
 }
 
 #ifndef KONG_HAS_NO_RAY_SHADERS

@@ -17,6 +17,7 @@ struct ID3D12DescriptorHeap;
 struct ID3D12QueryHeap;
 
 struct kore_d3d12_render_pipeline;
+struct kore_d3d12_compute_pipeline;
 struct kore_d3d12_descriptor_set;
 
 #define KORE_D3D12_FRAME_COUNT 2
@@ -59,6 +60,9 @@ typedef struct kore_d3d12_device {
 
 	struct kore_d3d12_render_pipeline *render_pipelines[KORE_D3D12_MAX_PIPELINES];
 	size_t                             render_pipelines_count;
+
+	struct kore_d3d12_compute_pipeline *compute_pipelines[KORE_D3D12_MAX_PIPELINES];
+	size_t                              compute_pipelines_count;
 
 	kore_gpu_buffer                  *garbage_buffers[KORE_D3D12_GARBAGE_SIZE];
 	kore_gpu_texture                 *garbage_textures[KORE_D3D12_GARBAGE_SIZE];

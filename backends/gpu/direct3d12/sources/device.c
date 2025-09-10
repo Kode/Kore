@@ -262,6 +262,11 @@ void kore_d3d12_device_add_render_pipeline(kore_d3d12_device *device, kore_d3d12
 	device->render_pipelines_count += 1;
 }
 
+void kore_d3d12_device_add_compute_pipeline(kore_d3d12_device *device, kore_d3d12_compute_pipeline *pipeline) {
+	device->compute_pipelines[device->compute_pipelines_count] = pipeline;
+	device->compute_pipelines_count += 1;
+}
+
 void kore_d3d12_device_destroy_command_list(kore_d3d12_device *device, kore_gpu_command_list *list) {
 	bool completed = true;
 	for (uint32_t allocator_index = 0; allocator_index < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++allocator_index) {
@@ -423,8 +428,14 @@ static void collect_garbage(kore_gpu_device *device, bool force) {
 void kore_d3d12_device_destroy(kore_gpu_device *device) {
 	collect_garbage(device, true);
 
+	kore_gpu_device_wait_until_idle(device);
+
 	for (size_t pipeline_index = 0; pipeline_index < device->d3d12.render_pipelines_count; ++pipeline_index) {
 		kore_d3d12_render_pipeline_destroy(device->d3d12.render_pipelines[pipeline_index]);
+	}
+
+	for (size_t pipeline_index = 0; pipeline_index < device->d3d12.compute_pipelines_count; ++pipeline_index) {
+		kore_d3d12_compute_pipeline_destroy(device->d3d12.compute_pipelines[pipeline_index]);
 	}
 
 	COM_CALL0(device->d3d12.graphics_queue, Release);
