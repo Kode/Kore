@@ -71,6 +71,8 @@ void kore_d3d12_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 		render_target_view.ptr += render_target_index * list->d3d12.rtv_increment;
 
 		COM_CALL3(list->d3d12.device->device, CreateRenderTargetView, render_target->d3d12.resource, &desc, render_target_view);
+
+		kore_d3d12_command_list_queue_texture_access(list, &render_target->d3d12);
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE depth_stencil_view;
@@ -100,6 +102,8 @@ void kore_d3d12_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 		desc.ViewDimension                 = D3D12_DSV_DIMENSION_TEXTURE2D;
 
 		COM_CALL3(list->d3d12.device->device, CreateDepthStencilView, render_target->d3d12.resource, &desc, depth_stencil_view);
+
+		kore_d3d12_command_list_queue_texture_access(list, &render_target->d3d12);
 	}
 
 	if (parameters->color_attachments_count > 0) {
