@@ -6,6 +6,7 @@
 #include <kore3/util/align.h>
 
 #include <kore3/direct3d12/pipeline_functions.h>
+#include <kore3/direct3d12/raytracing_functions.h>
 
 #include <kore3/backend/microsoft.h>
 #include <kore3/backend/windows.h>
@@ -213,10 +214,14 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		oa_create(&device->d3d12.sampler_heap_allocator, sampler_count, 4096);
 	}
 
-	device->d3d12.render_pipelines_count = 0;
+	device->d3d12.render_pipelines_count  = 0;
+	device->d3d12.compute_pipelines_count = 0;
+	device->d3d12.ray_pipelines_count     = 0;
 
 	memset(&device->d3d12.garbage_buffers, 0, sizeof(device->d3d12.garbage_buffers));
 	memset(&device->d3d12.garbage_textures, 0, sizeof(device->d3d12.garbage_textures));
+	memset(&device->d3d12.garbage_raytracing_hierarchies, 0, sizeof(device->d3d12.garbage_raytracing_hierarchies));
+	memset(&device->d3d12.garbage_raytracing_volumes, 0, sizeof(device->d3d12.garbage_raytracing_volumes));
 	memset(&device->d3d12.garbage_command_lists, 0, sizeof(device->d3d12.garbage_command_lists));
 	memset(&device->d3d12.garbage_descriptor_sets, 0, sizeof(device->d3d12.garbage_descriptor_sets));
 }
@@ -228,9 +233,7 @@ void kore_d3d12_device_destroy_buffer(kore_gpu_device *device, kore_gpu_buffer *
 	}
 
 	for (size_t buffer_index = 0; buffer_index < KORE_D3D12_GARBAGE_SIZE; ++buffer_index) {
-		kore_gpu_buffer *buffer = device->d3d12.garbage_buffers[buffer_index];
-
-		if (buffer == NULL) {
+		if (device->d3d12.garbage_buffers[buffer_index] == NULL) {
 			device->d3d12.garbage_buffers[buffer_index] = buffer;
 			return;
 		}
@@ -246,10 +249,44 @@ void kore_d3d12_device_destroy_texture(kore_gpu_device *device, kore_gpu_texture
 	}
 
 	for (size_t texture_index = 0; texture_index < KORE_D3D12_GARBAGE_SIZE; ++texture_index) {
-		kore_gpu_texture *texture = device->d3d12.garbage_textures[texture_index];
-
-		if (texture == NULL) {
+		if (device->d3d12.garbage_textures[texture_index] == NULL) {
 			device->d3d12.garbage_textures[texture_index] = texture;
+			return;
+		}
+	}
+
+	assert(false);
+}
+
+void kore_d3d12_device_destroy_raytracing_volume(kore_gpu_device *device, kore_gpu_raytracing_volume *volume) {
+	if (!kore_d3d12_raytracing_volume_in_use(volume)) {
+		COM_CALL0(volume->d3d12.scratch_buffer.d3d12.resource, Release);
+		COM_CALL0(volume->d3d12.acceleration_structure.d3d12.resource, Release);
+		return;
+	}
+
+	for (size_t volume_index = 0; volume_index < KORE_D3D12_GARBAGE_SIZE; ++volume_index) {
+		if (device->d3d12.garbage_raytracing_volumes[volume_index] == NULL) {
+			device->d3d12.garbage_raytracing_volumes[volume_index] = volume;
+			return;
+		}
+	}
+
+	assert(false);
+}
+
+void kore_d3d12_device_destroy_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_hierarchy *hierarchy) {
+	if (!kore_d3d12_raytracing_hierarchy_in_use(hierarchy)) {
+		COM_CALL0(hierarchy->d3d12.instances.d3d12.resource, Release);
+		COM_CALL0(hierarchy->d3d12.scratch_buffer.d3d12.resource, Release);
+		COM_CALL0(hierarchy->d3d12.update_scratch_buffer.d3d12.resource, Release);
+		COM_CALL0(hierarchy->d3d12.acceleration_structure.d3d12.resource, Release);
+		return;
+	}
+
+	for (size_t hierarchy_index = 0; hierarchy_index < KORE_D3D12_GARBAGE_SIZE; ++hierarchy_index) {
+		if (device->d3d12.garbage_raytracing_hierarchies[hierarchy_index] == NULL) {
+			device->d3d12.garbage_raytracing_hierarchies[hierarchy_index] = hierarchy;
 			return;
 		}
 	}
@@ -265,6 +302,11 @@ void kore_d3d12_device_add_render_pipeline(kore_d3d12_device *device, kore_d3d12
 void kore_d3d12_device_add_compute_pipeline(kore_d3d12_device *device, kore_d3d12_compute_pipeline *pipeline) {
 	device->compute_pipelines[device->compute_pipelines_count] = pipeline;
 	device->compute_pipelines_count += 1;
+}
+
+void kore_d3d12_device_add_ray_pipeline(kore_d3d12_device *device, struct kore_d3d12_ray_pipeline *pipeline) {
+	device->ray_pipelines[device->ray_pipelines_count] = pipeline;
+	device->ray_pipelines_count += 1;
 }
 
 void kore_d3d12_device_destroy_command_list(kore_d3d12_device *device, kore_gpu_command_list *list) {
@@ -286,9 +328,7 @@ void kore_d3d12_device_destroy_command_list(kore_d3d12_device *device, kore_gpu_
 	}
 
 	for (size_t list_index = 0; list_index < KORE_D3D12_GARBAGE_SIZE; ++list_index) {
-		kore_gpu_command_list *list = device->garbage_command_lists[list_index];
-
-		if (list == NULL) {
+		if (device->garbage_command_lists[list_index] == NULL) {
 			device->garbage_command_lists[list_index] = list;
 			return;
 		}
@@ -313,9 +353,7 @@ void kore_d3d12_device_destroy_descriptor_set(kore_gpu_device *device, kore_d3d1
 	}
 
 	for (size_t set_index = 0; set_index < KORE_D3D12_GARBAGE_SIZE; ++set_index) {
-		kore_d3d12_descriptor_set *set = device->d3d12.garbage_descriptor_sets[set_index];
-
-		if (set == NULL) {
+		if (device->d3d12.garbage_descriptor_sets[set_index] == NULL) {
 			device->d3d12.garbage_descriptor_sets[set_index] = set;
 			return;
 		}
@@ -356,6 +394,56 @@ static void collect_garbage(kore_gpu_device *device, bool force) {
 				if (!kore_d3d12_texture_in_use(texture)) {
 					COM_CALL0(texture->d3d12.resource, Release);
 					device->d3d12.garbage_textures[texture_index] = NULL;
+				}
+			}
+		}
+	}
+
+	for (size_t volume_index = 0; volume_index < KORE_D3D12_GARBAGE_SIZE; ++volume_index) {
+		kore_gpu_raytracing_volume *volume = device->d3d12.garbage_raytracing_volumes[volume_index];
+
+		if (volume != NULL) {
+			if (force) {
+				kore_d3d12_raytracing_volume_wait_until_not_in_use(volume);
+
+				COM_CALL0(volume->d3d12.scratch_buffer.d3d12.resource, Release);
+				COM_CALL0(volume->d3d12.acceleration_structure.d3d12.resource, Release);
+
+				device->d3d12.garbage_raytracing_volumes[volume_index] = NULL;
+			}
+			else {
+				if (!kore_d3d12_raytracing_volume_in_use(volume)) {
+					COM_CALL0(volume->d3d12.scratch_buffer.d3d12.resource, Release);
+					COM_CALL0(volume->d3d12.acceleration_structure.d3d12.resource, Release);
+
+					device->d3d12.garbage_raytracing_volumes[volume_index] = NULL;
+				}
+			}
+		}
+	}
+
+	for (size_t hierarchy_index = 0; hierarchy_index < KORE_D3D12_GARBAGE_SIZE; ++hierarchy_index) {
+		kore_gpu_raytracing_hierarchy *hierarchy = device->d3d12.garbage_raytracing_hierarchies[hierarchy_index];
+
+		if (hierarchy != NULL) {
+			if (force) {
+				kore_d3d12_raytracing_hierarchy_wait_until_not_in_use(hierarchy);
+
+				COM_CALL0(hierarchy->d3d12.instances.d3d12.resource, Release);
+				COM_CALL0(hierarchy->d3d12.scratch_buffer.d3d12.resource, Release);
+				COM_CALL0(hierarchy->d3d12.update_scratch_buffer.d3d12.resource, Release);
+				COM_CALL0(hierarchy->d3d12.acceleration_structure.d3d12.resource, Release);
+
+				device->d3d12.garbage_raytracing_hierarchies[hierarchy_index] = NULL;
+			}
+			else {
+				if (!kore_d3d12_raytracing_hierarchy_in_use(hierarchy)) {
+					COM_CALL0(hierarchy->d3d12.instances.d3d12.resource, Release);
+					COM_CALL0(hierarchy->d3d12.scratch_buffer.d3d12.resource, Release);
+					COM_CALL0(hierarchy->d3d12.update_scratch_buffer.d3d12.resource, Release);
+					COM_CALL0(hierarchy->d3d12.acceleration_structure.d3d12.resource, Release);
+
+					device->d3d12.garbage_raytracing_hierarchies[hierarchy_index] = NULL;
 				}
 			}
 		}
@@ -436,6 +524,10 @@ void kore_d3d12_device_destroy(kore_gpu_device *device) {
 
 	for (size_t pipeline_index = 0; pipeline_index < device->d3d12.compute_pipelines_count; ++pipeline_index) {
 		kore_d3d12_compute_pipeline_destroy(device->d3d12.compute_pipelines[pipeline_index]);
+	}
+
+	for (size_t pipeline_index = 0; pipeline_index < device->d3d12.ray_pipelines_count; ++pipeline_index) {
+		kore_d3d12_ray_pipeline_destroy(device->d3d12.ray_pipelines[pipeline_index]);
 	}
 
 	COM_CALL0(device->d3d12.graphics_queue, Release);
@@ -607,9 +699,11 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 
 	list->d3d12.blocking_frame_index = 0;
 
-	list->d3d12.queued_buffer_accesses_count         = 0;
-	list->d3d12.queued_texture_accesses_count        = 0;
-	list->d3d12.queued_descriptor_set_accesses_count = 0;
+	list->d3d12.queued_buffer_accesses_count               = 0;
+	list->d3d12.queued_texture_accesses_count              = 0;
+	list->d3d12.queued_raytracing_volume_accesses_count    = 0;
+	list->d3d12.queued_raytracing_hierarchy_accesses_count = 0;
+	list->d3d12.queued_descriptor_set_accesses_count       = 0;
 
 	list->d3d12.presenting = false;
 
@@ -913,11 +1007,23 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 	}
 	list->d3d12.queued_buffer_accesses_count = 0;
 
-	for (uint32_t texture_access_index = 0; texture_access_index < list->d3d12.queued_buffer_accesses_count; ++texture_access_index) {
+	for (uint32_t texture_access_index = 0; texture_access_index < list->d3d12.queued_texture_accesses_count; ++texture_access_index) {
 		kore_d3d12_texture *access = list->d3d12.queued_texture_accesses[texture_access_index];
 		access->execution_index    = device->d3d12.execution_index > access->execution_index ? device->d3d12.execution_index : access->execution_index;
 	}
 	list->d3d12.queued_texture_accesses_count = 0;
+
+	for (uint32_t volume_access_index = 0; volume_access_index < list->d3d12.queued_raytracing_volume_accesses_count; ++volume_access_index) {
+		kore_d3d12_raytracing_volume *access = list->d3d12.queued_raytracing_volume_accesses[volume_access_index];
+		access->execution_index = device->d3d12.execution_index > access->execution_index ? device->d3d12.execution_index : access->execution_index;
+	}
+	list->d3d12.queued_raytracing_volume_accesses_count = 0;
+
+	for (uint32_t hierarchy_access_index = 0; hierarchy_access_index < list->d3d12.queued_raytracing_hierarchy_accesses_count; ++hierarchy_access_index) {
+		kore_d3d12_raytracing_hierarchy *access = list->d3d12.queued_raytracing_hierarchy_accesses[hierarchy_access_index];
+		access->execution_index = device->d3d12.execution_index > access->execution_index ? device->d3d12.execution_index : access->execution_index;
+	}
+	list->d3d12.queued_raytracing_hierarchy_accesses_count = 0;
 
 	for (uint32_t set_access_index = 0; set_access_index < list->d3d12.queued_descriptor_set_accesses_count; ++set_access_index) {
 		kore_d3d12_descriptor_set *set = list->d3d12.queued_descriptor_set_accesses[set_access_index];
@@ -1057,6 +1163,9 @@ void kore_d3d12_device_create_sampler(kore_gpu_device *device, const kore_gpu_sa
 
 void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
                                                 uint32_t index_count, kore_gpu_raytracing_volume *volume) {
+	volume->d3d12.device          = device;
+	volume->d3d12.execution_index = 0;
+
 	volume->d3d12.vertex_buffer = vertex_buffer;
 	volume->d3d12.vertex_count  = vertex_count;
 	volume->d3d12.index_buffer  = index_buffer;
@@ -1090,7 +1199,7 @@ void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gp
 	kore_gpu_buffer_parameters scratch_params;
 	scratch_params.size        = prebuild_info.ScratchDataSizeInBytes;
 	scratch_params.usage_flags = KORE_D3D12_BUFFER_USAGE_UAV;
-	kore_gpu_device_create_buffer(device, &scratch_params, &volume->d3d12.scratch_buffer); // TODO: delete later
+	kore_gpu_device_create_buffer(device, &scratch_params, &volume->d3d12.scratch_buffer); // TODO: delete once not needed
 
 	kore_gpu_buffer_parameters as_params;
 	as_params.size        = prebuild_info.ResultDataMaxSizeInBytes;
@@ -1100,6 +1209,9 @@ void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gp
 
 void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kore_matrix4x4 *volume_transforms,
                                                    uint32_t volumes_count, kore_gpu_raytracing_hierarchy *hierarchy) {
+	hierarchy->d3d12.device          = device;
+	hierarchy->d3d12.execution_index = 0;
+
 	hierarchy->d3d12.volumes_count = volumes_count;
 
 	kore_gpu_buffer_parameters instances_params;
@@ -1109,6 +1221,8 @@ void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore
 
 	D3D12_RAYTRACING_INSTANCE_DESC *descs = (D3D12_RAYTRACING_INSTANCE_DESC *)kore_gpu_buffer_lock_all(&hierarchy->d3d12.instances);
 	for (uint32_t volume_index = 0; volume_index < hierarchy->d3d12.volumes_count; ++volume_index) {
+		hierarchy->d3d12.volumes[volume_index] = &volumes[volume_index]->d3d12;
+
 		memset(&descs[volume_index], 0, sizeof(D3D12_RAYTRACING_INSTANCE_DESC));
 		descs[volume_index].InstanceID            = volume_index;
 		descs[volume_index].InstanceMask          = 1;
@@ -1148,7 +1262,7 @@ void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore
 	kore_gpu_buffer_parameters scratch_params;
 	scratch_params.size        = prebuild_info.ScratchDataSizeInBytes;
 	scratch_params.usage_flags = KORE_D3D12_BUFFER_USAGE_UAV;
-	kore_gpu_device_create_buffer(device, &scratch_params, &hierarchy->d3d12.scratch_buffer); // TODO: delete later
+	kore_gpu_device_create_buffer(device, &scratch_params, &hierarchy->d3d12.scratch_buffer); // TODO: delete once not needed
 
 	kore_gpu_buffer_parameters update_scratch_params;
 	update_scratch_params.size =

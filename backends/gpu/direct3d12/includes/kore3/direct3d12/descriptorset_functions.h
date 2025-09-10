@@ -28,6 +28,7 @@ void kore_d3d12_descriptor_set_prepare_cbv_buffer(kore_gpu_command_list *list, k
 void kore_d3d12_descriptor_set_prepare_uav_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint32_t offset, uint32_t size);
 void kore_d3d12_descriptor_set_prepare_srv_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view);
 void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view);
+void kore_d3d12_descriptor_set_prepare_raytracing_hierarchy(kore_gpu_command_list *list, kore_gpu_raytracing_hierarchy *hierarchy);
 
 void kore_d3d312_desciptor_set_use_free_allocation(kore_d3d12_descriptor_set *set);
 

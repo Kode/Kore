@@ -64,9 +64,15 @@ void kore_d3d12_device_destroy_texture(kore_gpu_device *device, kore_gpu_texture
 
 void kore_d3d12_device_destroy_descriptor_set(kore_gpu_device *device, kore_d3d12_descriptor_set *set);
 
+void kore_d3d12_device_destroy_raytracing_volume(kore_gpu_device *device, kore_gpu_raytracing_volume *volume);
+
+void kore_d3d12_device_destroy_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_hierarchy *hierarchy);
+
 void kore_d3d12_device_add_render_pipeline(kore_d3d12_device *device, struct kore_d3d12_render_pipeline *pipeline);
 
 void kore_d3d12_device_add_compute_pipeline(kore_d3d12_device *device, struct kore_d3d12_compute_pipeline *pipeline);
+
+void kore_d3d12_device_add_ray_pipeline(kore_d3d12_device *device, struct kore_d3d12_ray_pipeline *pipeline);
 
 #ifdef __cplusplus
 }

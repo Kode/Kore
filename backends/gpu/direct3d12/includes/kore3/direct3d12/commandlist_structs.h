@@ -15,6 +15,8 @@ struct kore_d3d12_compute_pipeline;
 struct kore_d3d12_ray_pipeline;
 struct kore_d3d12_rendery_pipeline;
 struct kore_d3d12_descriptor_set;
+struct kore_d3d12_raytracing_volume;
+struct kore_d3d12_raytracing_hierarchy;
 struct kore_gpu_query_set;
 
 struct ID3D12Fence;
@@ -77,6 +79,12 @@ typedef struct kore_d3d12_command_list {
 
 	kore_d3d12_texture *queued_texture_accesses[KORE_D3D12_COMMAND_LIST_MAX_QUEUED_TEXTURE_ACCESSES];
 	uint32_t            queued_texture_accesses_count;
+
+	struct kore_d3d12_raytracing_volume *queued_raytracing_volume_accesses[KORE_D3D12_COMMAND_LIST_MAX_QUEUED_TEXTURE_ACCESSES];
+	uint32_t                             queued_raytracing_volume_accesses_count;
+
+	struct kore_d3d12_raytracing_hierarchy *queued_raytracing_hierarchy_accesses[KORE_D3D12_COMMAND_LIST_MAX_QUEUED_TEXTURE_ACCESSES];
+	uint32_t                                queued_raytracing_hierarchy_accesses_count;
 
 	struct kore_d3d12_descriptor_set *queued_descriptor_set_accesses[KORE_D3D12_COMMAND_LIST_MAX_QUEUED_DESCRIPTOR_SET_ACCESSES];
 	uint32_t                          queued_descriptor_set_accesses_count;

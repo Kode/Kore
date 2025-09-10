@@ -621,6 +621,8 @@ void kore_d3d12_command_list_prepare_raytracing_volume(kore_gpu_command_list *li
 	barrier.UAV.pResource          = volume->d3d12.acceleration_structure.d3d12.resource;
 
 	COM_CALL2(list->d3d12.list, ResourceBarrier, 1, &barrier);
+
+	kore_d3d12_command_list_queue_raytracing_volume_access(list, &volume->d3d12);
 }
 
 void kore_d3d12_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list *list, kore_gpu_raytracing_hierarchy *hierarchy) {
@@ -643,6 +645,8 @@ void kore_d3d12_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list 
 	barrier.UAV.pResource          = hierarchy->d3d12.acceleration_structure.d3d12.resource;
 
 	COM_CALL2(list->d3d12.list, ResourceBarrier, 1, &barrier);
+
+	kore_d3d12_command_list_queue_raytracing_hierarchy_access(list, &hierarchy->d3d12);
 }
 
 void kore_d3d12_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kore_matrix4x4 *volume_transforms, uint32_t volumes_count,
@@ -689,6 +693,8 @@ void kore_d3d12_command_list_update_raytracing_hierarchy(kore_gpu_command_list *
 	barrier.UAV.pResource          = hierarchy->d3d12.acceleration_structure.d3d12.resource;
 
 	COM_CALL2(list->d3d12.list, ResourceBarrier, 1, &barrier);
+
+	kore_d3d12_command_list_queue_raytracing_hierarchy_access(list, &hierarchy->d3d12);
 }
 
 void kore_d3d12_command_list_set_ray_pipeline(kore_gpu_command_list *list, kore_d3d12_ray_pipeline *pipeline) {
@@ -820,8 +826,22 @@ void kore_d3d12_command_list_queue_buffer_access(kore_gpu_command_list *list, ko
 }
 
 void kore_d3d12_command_list_queue_texture_access(kore_gpu_command_list *list, kore_d3d12_texture *texture) {
-	list->d3d12.queued_texture_accesses[list->d3d12.queued_buffer_accesses_count] = texture;
+	list->d3d12.queued_texture_accesses[list->d3d12.queued_texture_accesses_count] = texture;
 	list->d3d12.queued_texture_accesses_count += 1;
+}
+
+void kore_d3d12_command_list_queue_raytracing_hierarchy_access(kore_gpu_command_list *list, kore_d3d12_raytracing_hierarchy *hierarchy) {
+	list->d3d12.queued_raytracing_hierarchy_accesses[list->d3d12.queued_raytracing_hierarchy_accesses_count] = hierarchy;
+	list->d3d12.queued_raytracing_hierarchy_accesses_count += 1;
+
+	for (uint32_t volume_index = 0; volume_index < hierarchy->volumes_count; ++volume_index) {
+		kore_d3d12_command_list_queue_raytracing_volume_access(list, hierarchy->volumes[volume_index]);
+	}
+}
+
+void kore_d3d12_command_list_queue_raytracing_volume_access(kore_gpu_command_list *list, kore_d3d12_raytracing_volume *volume) {
+	list->d3d12.queued_raytracing_volume_accesses[list->d3d12.queued_raytracing_volume_accesses_count] = volume;
+	list->d3d12.queued_raytracing_volume_accesses_count += 1;
 }
 
 void kore_d3d12_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_d3d12_descriptor_set *descriptor_set) {

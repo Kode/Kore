@@ -102,6 +102,10 @@ void kore_d3d12_command_list_queue_buffer_access(kore_gpu_command_list *list, ko
 
 void kore_d3d12_command_list_queue_texture_access(kore_gpu_command_list *list, kore_d3d12_texture *texture);
 
+void kore_d3d12_command_list_queue_raytracing_hierarchy_access(kore_gpu_command_list *list, kore_d3d12_raytracing_hierarchy *hierarchy);
+
+void kore_d3d12_command_list_queue_raytracing_volume_access(kore_gpu_command_list *list, kore_d3d12_raytracing_volume *volume);
+
 void kore_d3d12_command_list_queue_descriptor_set_access(kore_gpu_command_list *list, kore_d3d12_descriptor_set *descriptor_set);
 
 #ifdef __cplusplus

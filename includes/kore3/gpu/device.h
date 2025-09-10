@@ -9,6 +9,7 @@
 #include "buffer.h"
 #include "commandlist.h"
 #include "fence.h"
+#include "raytracing.h"
 #include "sampler.h"
 #include "textureformat.h"
 
@@ -165,14 +166,6 @@ KORE_FUNC void kore_gpu_device_create_fence(kore_gpu_device *device, kore_gpu_fe
 KORE_FUNC void kore_gpu_device_execute_command_list(kore_gpu_device *device, kore_gpu_command_list *list);
 
 KORE_FUNC void kore_gpu_device_wait_until_idle(kore_gpu_device *device);
-
-typedef struct kore_gpu_raytracing_volume {
-	KORE_GPU_IMPL(raytracing_volume);
-} kore_gpu_raytracing_volume;
-
-typedef struct kore_gpu_raytracing_hierarchy {
-	KORE_GPU_IMPL(raytracing_hierarchy);
-} kore_gpu_raytracing_hierarchy;
 
 KORE_FUNC void kore_gpu_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count,
                                                         kore_gpu_buffer *index_buffer, uint32_t index_count, kore_gpu_raytracing_volume *volume);

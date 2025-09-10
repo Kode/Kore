@@ -275,6 +275,10 @@ void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, 
 	kore_d3d12_command_list_queue_texture_access(list, &texture_view->texture->d3d12);
 }
 
+void kore_d3d12_descriptor_set_prepare_raytracing_hierarchy(kore_gpu_command_list *list, kore_gpu_raytracing_hierarchy *hierarchy) {
+	kore_d3d12_command_list_queue_raytracing_hierarchy_access(list, &hierarchy->d3d12);
+}
+
 void kore_d3d312_desciptor_set_use_free_allocation(kore_d3d12_descriptor_set *set) {
 	for (uint32_t allocation_index = 0; allocation_index < KORE_D3D12_ALLOCATIONS_PER_DESCRIPTORSET; ++allocation_index) {
 		kore_d3d12_descriptor_set_allocation *allocation = &set->allocations[allocation_index];

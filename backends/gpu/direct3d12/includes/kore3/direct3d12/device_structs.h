@@ -4,6 +4,7 @@
 #include "d3d12mini.h"
 
 #include <kore3/gpu/commandlist.h>
+#include <kore3/gpu/raytracing.h>
 #include <kore3/gpu/texture.h>
 #include <kore3/libs/offalloc/offalloc.h>
 #include <kore3/util/indexallocator.h>
@@ -64,35 +65,21 @@ typedef struct kore_d3d12_device {
 	struct kore_d3d12_compute_pipeline *compute_pipelines[KORE_D3D12_MAX_PIPELINES];
 	size_t                              compute_pipelines_count;
 
+	struct kore_d3d12_ray_pipeline *ray_pipelines[KORE_D3D12_MAX_PIPELINES];
+	size_t                          ray_pipelines_count;
+
 	kore_gpu_buffer                  *garbage_buffers[KORE_D3D12_GARBAGE_SIZE];
 	kore_gpu_texture                 *garbage_textures[KORE_D3D12_GARBAGE_SIZE];
 	kore_gpu_command_list            *garbage_command_lists[KORE_D3D12_GARBAGE_SIZE];
 	struct kore_d3d12_descriptor_set *garbage_descriptor_sets[KORE_D3D12_GARBAGE_SIZE];
+	kore_gpu_raytracing_volume       *garbage_raytracing_volumes[KORE_D3D12_GARBAGE_SIZE];
+	kore_gpu_raytracing_hierarchy    *garbage_raytracing_hierarchies[KORE_D3D12_GARBAGE_SIZE];
 } kore_d3d12_device;
 
 typedef struct kore_d3d12_query_set {
 	struct ID3D12QueryHeap *query_heap;
 	uint8_t                 query_type;
 } kore_d3d12_query_set;
-
-typedef struct kore_d3d12_raytracing_volume {
-	kore_gpu_buffer *vertex_buffer;
-	uint64_t         vertex_count;
-	kore_gpu_buffer *index_buffer;
-	uint32_t         index_count;
-
-	kore_gpu_buffer scratch_buffer;
-	kore_gpu_buffer acceleration_structure;
-} kore_d3d12_raytracing_volume;
-
-typedef struct kore_d3d12_raytracing_hierarchy {
-	uint32_t        volumes_count;
-	kore_gpu_buffer instances;
-
-	kore_gpu_buffer scratch_buffer;
-	kore_gpu_buffer update_scratch_buffer;
-	kore_gpu_buffer acceleration_structure;
-} kore_d3d12_raytracing_hierarchy;
 
 #ifdef __cplusplus
 }

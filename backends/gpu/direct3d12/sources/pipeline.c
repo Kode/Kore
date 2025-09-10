@@ -494,12 +494,13 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 	COM_CALL0(props, Release);
 
 	pipe->root_signature = root_signature;
+
+	kore_d3d12_device_add_ray_pipeline(&device->d3d12, pipe);
 }
 
 void kore_d3d12_ray_pipeline_destroy(kore_d3d12_ray_pipeline *pipe) {
-	if (pipe->pipe != NULL) {
-		COM_CALL0(pipe->pipe, Release);
-		pipe->pipe = NULL;
-	}
+	COM_CALL0(pipe->root_signature, Release);
+	COM_CALL0(pipe->pipe, Release);
+	COM_CALL0(pipe->shader_ids.d3d12.resource, Release);
 }
 #endif

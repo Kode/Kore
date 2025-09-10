@@ -78,5 +78,6 @@ static D3D12_FILTER convert_filter(kore_gpu_filter_mode minification, kore_gpu_f
 #include "descriptorset.c"
 #include "device.c"
 #include "pipeline.c"
+#include "raytracing.c"
 #include "sampler.c"
 #include "texture.c"
