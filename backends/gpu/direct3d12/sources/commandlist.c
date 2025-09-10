@@ -348,6 +348,9 @@ void kore_d3d12_command_list_copy_buffer_to_buffer(kore_gpu_command_list *list, 
 	}
 
 	COM_CALL5(list->d3d12.list, CopyBufferRegion, destination->d3d12.resource, destination_offset, source->d3d12.resource, source_offset, size);
+
+	kore_d3d12_command_list_queue_buffer_access(list, &source->d3d12, (uint32_t)source_offset, (uint32_t)size);
+	kore_d3d12_command_list_queue_buffer_access(list, &destination->d3d12, (uint32_t)destination_offset, (uint32_t)size);
 }
 
 void kore_d3d12_command_list_copy_buffer_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_buffer *source,
@@ -414,6 +417,10 @@ void kore_d3d12_command_list_copy_buffer_to_texture(kore_gpu_command_list *list,
 
 	COM_CALL6(list->d3d12.list, CopyTextureRegion, &dst, destination->origin_x, destination->origin_y, 0, &src,
 	          &source_box); // Set DstZ to zero because it has already been selected via dst.SubresourceIndex
+
+	kore_d3d12_command_list_queue_buffer_access(list, &source->buffer->d3d12, (uint32_t)source->offset,
+	                                            (uint32_t)(source->bytes_per_row * source->rows_per_image * depth_or_array_layers));
+	kore_d3d12_command_list_queue_texture_access(list, &destination->texture->d3d12);
 }
 
 void kore_d3d12_command_list_copy_texture_to_buffer(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
@@ -479,6 +486,10 @@ void kore_d3d12_command_list_copy_texture_to_buffer(kore_gpu_command_list *list,
 	dst.PlacedFootprint.Footprint.Depth    = depth_or_array_layers;
 
 	COM_CALL6(list->d3d12.list, CopyTextureRegion, &dst, 0, 0, 0, &src, &source_box);
+
+	kore_d3d12_command_list_queue_texture_access(list, &source->texture->d3d12);
+	kore_d3d12_command_list_queue_buffer_access(list, &destination->buffer->d3d12, (uint32_t)destination->offset,
+	                                            (uint32_t)(destination->bytes_per_row * destination->rows_per_image * depth_or_array_layers));
 }
 
 void kore_d3d12_command_list_copy_texture_to_texture(kore_gpu_command_list *list, const kore_gpu_image_copy_texture *source,
@@ -547,12 +558,16 @@ void kore_d3d12_command_list_copy_texture_to_texture(kore_gpu_command_list *list
 	                                            destination->texture->d3d12.depth_or_array_layers);
 
 	COM_CALL6(list->d3d12.list, CopyTextureRegion, &dst, destination->origin_x, destination->origin_y, destination->origin_z, &src, &source_box);
+
+	kore_d3d12_command_list_queue_texture_access(list, &source->texture->d3d12);
+	kore_d3d12_command_list_queue_texture_access(list, &destination->texture->d3d12);
 }
 
 void kore_d3d12_command_list_clear_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, size_t offset, uint64_t size) {
 	UINT values[4] = {0};
 	// TODO
 	// list->d3d12.list->ClearUnorderedAccessViewUint(a, b, buffer->d3d12.resource, values, 0, NULL);
+	kore_d3d12_command_list_queue_buffer_access(list, &buffer->d3d12, (uint32_t)offset, (uint32_t)offset);
 }
 
 void kore_d3d12_command_list_set_compute_pipeline(kore_gpu_command_list *list, kore_d3d12_compute_pipeline *pipeline) {
