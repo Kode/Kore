@@ -19,3 +19,7 @@
 void kore_gpu_sampler_set_name(kore_gpu_sampler *sampler, const char *name) {
 	KORE_GPU_CALL2(sampler_set_name, sampler, name);
 }
+
+void kore_gpu_sampler_destroy(kore_gpu_sampler *sampler) {
+	KORE_GPU_CALL1(sampler_destroy, sampler);
+}
