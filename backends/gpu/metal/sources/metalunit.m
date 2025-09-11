@@ -6,4 +6,5 @@
 #include "device.m"
 #include "pipeline.m"
 #include "sampler.m"
+#include "raytracing.m"
 #include "texture.m"

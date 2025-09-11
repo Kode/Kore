@@ -28,14 +28,6 @@ typedef struct kore_metal_query_set {
 	int nothing;
 } kore_metal_query_set;
 
-typedef struct kore_metal_raytracing_volume {
-	int nothing;
-} kore_metal_raytracing_volume;
-
-typedef struct kore_metal_raytracing_hierarchy {
-	int nothing;
-} kore_metal_raytracing_hierarchy;
-
 #ifdef __cplusplus
 }
 #endif
