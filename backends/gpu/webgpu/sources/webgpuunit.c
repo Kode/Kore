@@ -9,8 +9,8 @@
 #include "descriptorset.c"
 #include "device.c"
 #include "pipeline.c"
-#include "sampler.c"
 #include "raytracing.c"
+#include "sampler.c"
 #include "texture.c"
 
 static WGPUCompareFunction convert_compare(kore_gpu_compare_function func) {
