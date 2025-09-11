@@ -19,14 +19,6 @@ typedef struct kore_d3d11_query_set {
 	int nothing;
 } kore_d3d11_query_set;
 
-typedef struct kore_d3d11_raytracing_volume {
-	int nothing;
-} kore_d3d11_raytracing_volume;
-
-typedef struct kore_d3d11_raytracing_hierarchy {
-	int nothing;
-} kore_d3d11_raytracing_hierarchy;
-
 #ifdef __cplusplus
 }
 #endif

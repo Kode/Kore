@@ -9,5 +9,6 @@
 #include "descriptorset.c"
 #include "device.c"
 #include "pipeline.c"
+#include "raytracing.c"
 #include "sampler.c"
 #include "texture.c"
