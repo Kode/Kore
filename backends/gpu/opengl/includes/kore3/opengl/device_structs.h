@@ -16,14 +16,6 @@ typedef struct kore_opengl_query_set {
 	int nothing;
 } kore_opengl_query_set;
 
-typedef struct kore_opengl_raytracing_volume {
-	int nothing;
-} kore_opengl_raytracing_volume;
-
-typedef struct kore_opengl_raytracing_hierarchy {
-	int nothing;
-} kore_opengl_raytracing_hierarchy;
-
 #ifdef __cplusplus
 }
 #endif

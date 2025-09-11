@@ -11,6 +11,7 @@
 #include "device.c"
 #include "flip.c"
 #include "pipeline.c"
+#include "raytracing.c"
 #include "sampler.c"
 #include "texture.c"
 
