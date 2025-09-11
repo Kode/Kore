@@ -4,11 +4,11 @@
 
 #include <kore3/gpu/device.h>
 
-void kore_d3d12_raytracing_volume_destroy(struct kore_gpu_raytracing_volume *volume) {
+void kore_d3d12_raytracing_volume_destroy(kore_gpu_raytracing_volume *volume) {
 	kore_d3d12_device_destroy_raytracing_volume(volume->d3d12.device, volume);
 }
 
-void kore_d3d12_raytracing_hierarchy_destroy(struct kore_gpu_raytracing_hierarchy *hierarchy) {
+void kore_d3d12_raytracing_hierarchy_destroy(kore_gpu_raytracing_hierarchy *hierarchy) {
 	kore_d3d12_device_destroy_raytracing_hierarchy(hierarchy->d3d12.device, hierarchy);
 }
 
