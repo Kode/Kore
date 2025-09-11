@@ -497,10 +497,10 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 
 	kore_d3d12_device_add_ray_pipeline(&device->d3d12, pipe);
 }
+#endif
 
 void kore_d3d12_ray_pipeline_destroy(kore_d3d12_ray_pipeline *pipe) {
 	COM_CALL0(pipe->root_signature, Release);
 	COM_CALL0(pipe->pipe, Release);
 	COM_CALL0(pipe->shader_ids.d3d12.resource, Release);
 }
-#endif
