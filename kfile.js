@@ -558,6 +558,9 @@ if (plugin) {
 	else if (platform === Platform.PS5) {
 		backend = 'PlayStation5'
 	}
+	else if (platform === Platform.Switch2) {
+		backend = 'Switch2';
+	}
 
 	let ancestor = project;
 	while (ancestor.parent != null) {
