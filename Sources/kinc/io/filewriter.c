@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#if defined(KORE_PS4) || defined(KORE_SWITCH)
+#if defined(KORE_PS4) || defined(KORE_SWITCH) || defined(KORE_SWITCH2)
 #define MOUNT_SAVES
 bool mountSaveData(bool);
 void unmountSaveData();

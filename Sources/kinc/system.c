@@ -221,7 +221,7 @@ int kinc_height() {
 void kinc_memory_emergency() {}
 #endif
 
-#if !defined(KORE_SONY) && !defined(KORE_SWITCH)
+#if !defined(KORE_SONY) && !defined(KORE_SWITCH) && !defined(KORE_SWITCH2)
 static float safe_zone = 0.9f;
 
 float kinc_safe_zone(void) {

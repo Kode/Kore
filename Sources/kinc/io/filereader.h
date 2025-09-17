@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(KORE_SONY) || defined(KORE_SWITCH)
+#if defined(KORE_SONY) || defined(KORE_SWITCH) || defined(KORE_SWITCH2)
 #include <Kore/FileReaderImpl.h>
 #endif
 
@@ -40,7 +40,7 @@ typedef struct kinc_file_reader {
 	int type;
 	int mode;
 	bool mounted;
-#if defined(KORE_SONY) || defined(KORE_SWITCH)
+#if defined(KORE_SONY) || defined(KORE_SWITCH) || defined(KORE_SWITCH2)
 	kinc_file_reader_impl_t impl;
 #endif
 } kinc_file_reader_t;

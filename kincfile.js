@@ -419,6 +419,9 @@ if (plugin) {
 	else if (platform === Platform.Switch) {
 		backend = 'Switch';
 	}
+	else if (platform === Platform.Switch2) {
+		backend = 'Switch2';
+	}
 	else if (platform === Platform.XboxScarlett) {
 		backend = 'XboxScarlett';
 	}
