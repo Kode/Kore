@@ -610,7 +610,7 @@ int kinc_height(void) {
 void kinc_memory_emergency(void) {}
 #endif
 
-#if !defined(KINC_SONY) && !defined(KINC_SWITCH)
+#if !defined(KINC_SONY) && !defined(KINC_NINTENDO)
 static float safe_zone = 0.9f;
 
 float kinc_safe_zone(void) {
