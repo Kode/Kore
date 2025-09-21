@@ -58,6 +58,28 @@ jobs:
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
 
+    - name: Clone Switch 2 Samples
+      run: git clone https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Switch2.git
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+    - name: Get Kore-Submodule
+      working-directory: Kore-Samples-Switch2
+      run: git submodule update --init --remote Kore
+    - name: Checkout Kore
+      working-directory: Kore-Samples-Switch2/Kore
+      run: git checkout v2
+    - name: Add Kore
+      working-directory: Kore-Samples-Switch2
+      run: git add Kore
+    - name: Commit
+      working-directory: Kore-Samples-Switch2
+      run: git commit -m "Update Kore"
+    - name: Push
+      working-directory: Kore-Samples-Switch2
+      run: git push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Switch2.git
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+
     - name: Clone PS4 Samples
       run: git clone https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-PS4.git
       env:
