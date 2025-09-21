@@ -31,13 +31,22 @@ void kinc_g5_internal_init_window(int window, int depthBufferBits, int stencilBu
 	device = emscripten_webgpu_get_device();
 	queue = wgpuDeviceGetQueue(device);
 
-	WGPUSurfaceDescriptorFromCanvasHTMLSelector canvasDesc;
-	memset(&canvasDesc, 0, sizeof(canvasDesc));
-	canvasDesc.selector = "canvas";
+	WGPUEmscriptenSurfaceSourceCanvasHTMLSelector canvasSelector = {
+	    .selector =
+	        {
+	            .data   = "#canvas",
+	            .length = 7,
+	        },
+	    .chain =
+	        {
+	            .sType = WGPUSType_EmscriptenSurfaceSourceCanvasHTMLSelector,
+	        },
+	};
 
-	WGPUSurfaceDescriptor surfDesc;
-	memset(&surfDesc, 0, sizeof(surfDesc));
-	surfDesc.nextInChain = &canvasDesc;
+	WGPUSurfaceDescriptor surfDesc = {
+	    .nextInChain = (WGPUChainedStruct *)&canvasSelector,
+	};
+
 	WGPUInstance instance = 0;
 	WGPUSurface surface = wgpuInstanceCreateSurface(instance, &surfDesc);
 
