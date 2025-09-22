@@ -37,7 +37,7 @@ void kinc_g5_internal_init_window(int window, int depthBufferBits, int stencilBu
 
 	WGPUSurfaceDescriptor surfDesc;
 	memset(&surfDesc, 0, sizeof(surfDesc));
-	surfDesc.nextInChain = &canvasDesc;
+	surfDesc.nextInChain = (WGPUChainedStruct *)&canvasDesc;
 	WGPUInstance instance = 0;
 	WGPUSurface surface = wgpuInstanceCreateSurface(instance, &surfDesc);
 

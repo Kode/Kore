@@ -12,7 +12,7 @@ void kinc_g5_shader_init(kinc_g5_shader_t *shader, const void *source, size_t le
 	smSpirvDesc.code = source;
 	WGPUShaderModuleDescriptor smDesc;
 	memset(&smDesc, 0, sizeof(smDesc));
-	smDesc.nextInChain = &smSpirvDesc;
+	smDesc.nextInChain = (WGPUChainedStruct *)&smSpirvDesc;
 	shader->impl.module = wgpuDeviceCreateShaderModule(device, &smDesc);
 }
 
