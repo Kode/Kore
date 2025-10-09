@@ -23,5 +23,8 @@ namespace Kore {
 		kinc_file_reader_t reader;
 		FileType type;
 		void *readdata;
+
+	private:
+		bool fileOpen;
 	};
 }
