@@ -9,7 +9,7 @@
 
 using namespace Kore;
 
-FileReader::FileReader() : readdata(nullptr) {}
+FileReader::FileReader() : readdata(nullptr), fileOpen(false) {}
 
 FileReader::FileReader(const char *filename, FileType type) : readdata(nullptr) {
 	if (!open(filename, type)) {
@@ -18,7 +18,8 @@ FileReader::FileReader(const char *filename, FileType type) : readdata(nullptr) 
 }
 
 bool FileReader::open(const char *filename, FileType type) {
-	return kinc_file_reader_open(&reader, filename, (int)type);
+	fileOpen = kinc_file_reader_open(&reader, filename, (int)type);
+	return fileOpen;
 }
 
 size_t FileReader::read(void *data, size_t size) {
@@ -45,7 +46,9 @@ void FileReader::close() {
 }
 
 FileReader::~FileReader() {
-	close();
+	if (fileOpen) {
+		close();
+	}
 }
 
 size_t FileReader::pos() {
