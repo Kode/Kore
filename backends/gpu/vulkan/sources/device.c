@@ -1323,6 +1323,8 @@ void kore_vulkan_device_wait_until_idle(kore_gpu_device *device) {
 }
 
 void kore_vulkan_device_create_descriptor_set(kore_gpu_device *device, VkDescriptorSetLayout *descriptor_set_layout, kore_vulkan_descriptor_set *set) {
+	set->device = device;
+
 	VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
 	    .sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 	    .pNext              = NULL,

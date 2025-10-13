@@ -8,7 +8,8 @@ extern "C" {
 #endif
 
 typedef struct kore_vulkan_descriptor_set {
-	VkDescriptorSet descriptor_set;
+	struct kore_gpu_device *device;
+	VkDescriptorSet         descriptor_set;
 } kore_vulkan_descriptor_set;
 
 #ifdef __cplusplus
