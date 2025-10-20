@@ -11,7 +11,7 @@
 
 // Maximum number of devices supported
 // Corresponds to size of Kore::Gamepad array
-static const int KORE_MAX_HID_DEVICES = 12;
+#define KORE_MAX_HID_DEVICES 12
 
 // Slots to hold details on connected devices
 struct HIDManagerDeviceRecord {
