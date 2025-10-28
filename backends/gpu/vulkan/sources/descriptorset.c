@@ -243,3 +243,5 @@ void kore_vulkan_descriptor_set_prepare_texture(kore_gpu_command_list *list, con
 	kore_vulkan_texture_transition(list, texture_view->texture, VK_IMAGE_LAYOUT_GENERAL, texture_view->base_array_layer, texture_view->array_layer_count,
 	                               texture_view->base_mip_level, texture_view->mip_level_count);
 }
+
+void kore_vulkan_desciptor_set_use_free_allocation(kore_vulkan_descriptor_set *set) {}

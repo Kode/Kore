@@ -955,8 +955,8 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 }
 
 void kore_vulkan_device_destroy(kore_gpu_device *device) {
-	vkDestroyCommandPool(device->vulkan.device, device->vulkan.command_pool, NULL);
-	vkDestroyDevice(device->vulkan.device, NULL);
+	// vkDestroyCommandPool(device->vulkan.device, device->vulkan.command_pool, NULL);
+	// vkDestroyDevice(device->vulkan.device, NULL);
 }
 
 void kore_vulkan_device_set_name(kore_gpu_device *device, const char *name) {

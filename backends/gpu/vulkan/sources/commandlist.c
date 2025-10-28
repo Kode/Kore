@@ -14,7 +14,7 @@
 #include <assert.h>
 
 void kore_vulkan_command_list_destroy(kore_gpu_command_list *list) {
-	vkFreeCommandBuffers(list->vulkan.device, list->vulkan.command_pool, KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT, list->vulkan.command_buffers);
+	// vkFreeCommandBuffers(list->vulkan.device, list->vulkan.command_pool, KORE_VULKAN_INTERNAL_COMMAND_BUFFER_COUNT, list->vulkan.command_buffers);
 }
 
 VkAttachmentLoadOp convert_load_op(kore_gpu_load_op op) {

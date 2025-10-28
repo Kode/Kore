@@ -28,6 +28,8 @@ void kore_vulkan_descriptor_set_set_sampler(kore_gpu_device *device, kore_vulkan
 void kore_vulkan_descriptor_set_prepare_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, uint64_t offset, uint64_t size);
 void kore_vulkan_descriptor_set_prepare_texture(kore_gpu_command_list *list, const kore_gpu_texture_view *texture_view, bool writable);
 
+void kore_vulkan_desciptor_set_use_free_allocation(kore_vulkan_descriptor_set *set);
+
 #ifdef __cplusplus
 }
 #endif

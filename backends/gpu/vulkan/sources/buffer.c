@@ -44,8 +44,8 @@ void kore_vulkan_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {
 }
 
 void kore_vulkan_buffer_destroy(kore_gpu_buffer *buffer) {
-	vkFreeMemory(buffer->vulkan.device->vulkan.device, buffer->vulkan.memory, NULL);
-	vkDestroyBuffer(buffer->vulkan.device->vulkan.device, buffer->vulkan.buffer, NULL);
+	// vkFreeMemory(buffer->vulkan.device->vulkan.device, buffer->vulkan.memory, NULL);
+	// vkDestroyBuffer(buffer->vulkan.device->vulkan.device, buffer->vulkan.buffer, NULL);
 }
 
 void *kore_vulkan_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
