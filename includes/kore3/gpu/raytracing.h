@@ -17,6 +17,8 @@
 #include <kore3/vulkan/raytracing_structs.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/raytracing_structs.h>
+#elif defined(KORE_CONSOLE)
+#include <kore3/console/raytracing_structs.h>
 #else
 #error("Unknown GPU backend")
 #endif

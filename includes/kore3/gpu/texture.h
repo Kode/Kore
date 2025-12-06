@@ -18,6 +18,8 @@
 #include <kore3/vulkan/texture_structs.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/texture_structs.h>
+#elif defined(KORE_CONSOLE)
+#include <kore3/console/texture_structs.h>
 #else
 #error("Unknown GPU backend")
 #endif

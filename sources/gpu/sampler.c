@@ -12,6 +12,8 @@
 #include <kore3/vulkan/sampler_functions.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/sampler_functions.h>
+#elif defined(KORE_CONSOLE)
+#include <kore3/console/sampler_functions.h>
 #else
 #error("Unknown GPU backend")
 #endif
