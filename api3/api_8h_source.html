@@ -230,13 +230,25 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span><span class="preprocessor">#define KORE_GPU_CALL6(name, arg0, arg1, arg2, arg3, arg4, arg5)       kore_webgpu_##name(arg0, arg1, arg2, arg3, arg4, arg5)</span></div>
 <div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span><span class="preprocessor">#define KORE_GPU_CALL7(name, arg0, arg1, arg2, arg3, arg4, arg5, arg6) kore_webgpu_##name(arg0, arg1, arg2, arg3, arg4, arg5, arg6)</span></div>
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span><span class="preprocessor">#elif defined(KORE_CONSOLE)</span></div>
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span> </div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>}</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span> </div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span><span class="preprocessor">#define KORE_GPU_IMPL(name)                                            kore_console_##name webgpu</span></div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span><span class="preprocessor">#define KORE_GPU_CALL(name)                                            kore_console_##name()</span></div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span><span class="preprocessor">#define KORE_GPU_CALL1(name, arg0)                                     kore_console_##name(arg0)</span></div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span><span class="preprocessor">#define KORE_GPU_CALL2(name, arg0, arg1)                               kore_console_##name(arg0, arg1)</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="preprocessor">#define KORE_GPU_CALL3(name, arg0, arg1, arg2)                         kore_console_##name(arg0, arg1, arg2)</span></div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="preprocessor">#define KORE_GPU_CALL4(name, arg0, arg1, arg2, arg3)                   kore_console_##name(arg0, arg1, arg2, arg3)</span></div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span><span class="preprocessor">#define KORE_GPU_CALL5(name, arg0, arg1, arg2, arg3, arg4)             kore_console_##name(arg0, arg1, arg2, arg3, arg4)</span></div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span><span class="preprocessor">#define KORE_GPU_CALL6(name, arg0, arg1, arg2, arg3, arg4, arg5)       kore_console_##name(arg0, arg1, arg2, arg3, arg4, arg5)</span></div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span><span class="preprocessor">#define KORE_GPU_CALL7(name, arg0, arg1, arg2, arg3, arg4, arg5, arg6) kore_console_##name(arg0, arg1, arg2, arg3, arg4, arg5, arg6)</span></div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>}</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span><span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

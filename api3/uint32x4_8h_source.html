@@ -143,7 +143,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>}</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="keyword">static</span> <span class="keyword">inline</span> <a class="code hl_struct" href="structkore__uint32x4.html">kore_uint32x4</a> kore_uint32x4_mul(<a class="code hl_struct" href="structkore__uint32x4.html">kore_uint32x4</a> a, <a class="code hl_struct" href="structkore__uint32x4.html">kore_uint32x4</a> b) {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">#ifdef KORE_SSE4_1</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">#if defined(KORE_SSE4_1) &amp;&amp; !defined(KORE_SONY)</span></div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordflow">return</span> _mm_mullo_epi32(a, b);</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="comment">// via https://fgiesen.wordpress.com/2016/04/03/sse-mind-the-gap</span></div>
