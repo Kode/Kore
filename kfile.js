@@ -468,16 +468,19 @@ else {
 if (plugin) {
 	let backend = 'Unknown';
 	if (platform === Platform.PS4) {
-		backend = 'PlayStation4';
+		backend = 'ps4';
 	}
 	else if (platform === Platform.PS5) {
-		backend = 'PlayStation5'
+		backend = 'ps5'
 	}
 	else if (platform === Platform.XboxOne || platform === Platform.XboxSeries) {
-		backend = 'Xbox';
+		backend = 'xbox';
 	}
 	else if (platform === Platform.Switch) {
-		backend = 'Switch';
+		backend = 'switch';
+	}
+	else if (platform === Platform.Switch2) {
+		backend = 'switch2';
 	}
 
 	let ancestor = project;
