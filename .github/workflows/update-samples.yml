@@ -42,9 +42,9 @@ jobs:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     - name: Get Kore-Submodule
       working-directory: Kore-Samples-PS5
-      run: git submodule update --init --remote Kore
+      run: git submodule update --init --remote kore
     - name: Checkout Kore
-      working-directory: Kore-Samples-PS5/Kore
+      working-directory: Kore-Samples-PS5/kore
       run: git checkout main
     - name: Add Kore
       working-directory: Kore-Samples-PS5
