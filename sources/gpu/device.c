@@ -12,6 +12,8 @@
 #include <kore3/vulkan/device_functions.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/device_functions.h>
+#elif defined(KORE_CONSOLE)
+#include <kore3/console/device_functions.h>
 #else
 #error("Unknown GPU backend")
 #endif

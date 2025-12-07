@@ -146,6 +146,18 @@ typedef enum kore_gpu_api {
 #define KORE_GPU_CALL6(name, arg0, arg1, arg2, arg3, arg4, arg5)       kore_webgpu_##name(arg0, arg1, arg2, arg3, arg4, arg5)
 #define KORE_GPU_CALL7(name, arg0, arg1, arg2, arg3, arg4, arg5, arg6) kore_webgpu_##name(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
 
+#elif defined(KORE_CONSOLE)
+
+#define KORE_GPU_IMPL(name)                                            kore_console_##name console
+#define KORE_GPU_CALL(name)                                            kore_console_##name()
+#define KORE_GPU_CALL1(name, arg0)                                     kore_console_##name(arg0)
+#define KORE_GPU_CALL2(name, arg0, arg1)                               kore_console_##name(arg0, arg1)
+#define KORE_GPU_CALL3(name, arg0, arg1, arg2)                         kore_console_##name(arg0, arg1, arg2)
+#define KORE_GPU_CALL4(name, arg0, arg1, arg2, arg3)                   kore_console_##name(arg0, arg1, arg2, arg3)
+#define KORE_GPU_CALL5(name, arg0, arg1, arg2, arg3, arg4)             kore_console_##name(arg0, arg1, arg2, arg3, arg4)
+#define KORE_GPU_CALL6(name, arg0, arg1, arg2, arg3, arg4, arg5)       kore_console_##name(arg0, arg1, arg2, arg3, arg4, arg5)
+#define KORE_GPU_CALL7(name, arg0, arg1, arg2, arg3, arg4, arg5, arg6) kore_console_##name(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+
 #endif
 
 #ifdef __cplusplus
