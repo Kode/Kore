@@ -104,7 +104,7 @@ jobs:
 
     
     - name: Clone PS5 Samples
-      run: git clone https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-PS5.git
+      run: git clone --branch v2 https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-PS5.git
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     - name: Get Kore-Submodule
