@@ -48,7 +48,7 @@ jobs:
       run: git checkout main
     - name: Add Kore
       working-directory: Kore-Samples-PS5
-      run: git add Kore
+      run: git add kore
     - name: Commit
       working-directory: Kore-Samples-PS5
       run: git commit -m "Update Kore"
