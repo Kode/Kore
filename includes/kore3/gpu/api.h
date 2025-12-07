@@ -148,7 +148,7 @@ typedef enum kore_gpu_api {
 
 #elif defined(KORE_CONSOLE)
 
-#define KORE_GPU_IMPL(name)                                            kore_console_##name webgpu
+#define KORE_GPU_IMPL(name)                                            kore_console_##name console
 #define KORE_GPU_CALL(name)                                            kore_console_##name()
 #define KORE_GPU_CALL1(name, arg0)                                     kore_console_##name(arg0)
 #define KORE_GPU_CALL2(name, arg0, arg1)                               kore_console_##name(arg0, arg1)
