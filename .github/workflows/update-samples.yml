@@ -81,7 +81,7 @@ jobs:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
 
     - name: Clone PS4 Samples
-      run: git clone https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-PS4.git
+      run: git clone --branch v2 https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-PS4.git
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     - name: Get Kore-Submodule
