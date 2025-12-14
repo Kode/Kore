@@ -234,7 +234,7 @@ int kore_height(void) {
 void kore_memory_emergency(void) {}
 #endif
 
-#if !defined(KORE_SONY) && !defined(KORE_SWITCH)
+#if !defined(KORE_SONY) && !defined(KORE_NINTENDO)
 static float safe_zone = 0.9f;
 
 float kore_safe_zone(void) {
