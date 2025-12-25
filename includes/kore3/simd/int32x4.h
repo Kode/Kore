@@ -63,7 +63,7 @@ static inline kore_int32x4 kore_int32x4_sub(kore_int32x4 a, kore_int32x4 b) {
 }
 
 static inline kore_int32x4 kore_int32x4_mul(kore_int32x4 a, kore_int32x4 b) {
-#if defined(KORE_SSE4_1) && !defined(KORE_SONY)
+#if defined(KORE_SSE4_1) && !defined(KORE_CONSOLE)
 	return _mm_mullo_epi32(a, b);
 #else
 	// via https://fgiesen.wordpress.com/2016/04/03/sse-mind-the-gap
