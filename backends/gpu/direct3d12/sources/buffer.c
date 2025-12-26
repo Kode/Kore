@@ -40,7 +40,7 @@ static uint64_t find_max_execution_index(kore_gpu_buffer *buffer, uint64_t offse
 void kore_d3d12_buffer_set_name(kore_gpu_buffer *buffer, const char *name) {
 	wchar_t wstr[1024];
 	kore_microsoft_convert_string(wstr, name, 1024);
-	COM_CALL1(buffer->d3d12.resource, SetName, wstr);
+	COM_CALL(buffer->d3d12.resource, SetName, wstr);
 }
 
 void kore_d3d12_buffer_destroy(kore_gpu_buffer *buffer) {
@@ -61,7 +61,7 @@ void *kore_d3d12_buffer_try_to_lock_all(kore_gpu_buffer *buffer) {
 		buffer->d3d12.locked_data_offset = 0;
 		buffer->d3d12.locked_data_size   = UINT64_MAX;
 
-		COM_CALL3(buffer->d3d12.resource, Map, 0, NULL, &buffer->d3d12.locked_data);
+		COM_CALL(buffer->d3d12.resource, Map, 0, NULL, &buffer->d3d12.locked_data);
 		return buffer->d3d12.locked_data;
 	}
 	else {
@@ -76,7 +76,7 @@ void *kore_d3d12_buffer_lock_all(kore_gpu_buffer *buffer) {
 	buffer->d3d12.locked_data_offset = 0;
 	buffer->d3d12.locked_data_size   = UINT64_MAX;
 
-	COM_CALL3(buffer->d3d12.resource, Map, 0, NULL, &buffer->d3d12.locked_data);
+	COM_CALL(buffer->d3d12.resource, Map, 0, NULL, &buffer->d3d12.locked_data);
 	return buffer->d3d12.locked_data;
 }
 
@@ -95,7 +95,7 @@ void *kore_d3d12_buffer_try_to_lock(kore_gpu_buffer *buffer, uint64_t offset, ui
 		buffer->d3d12.locked_data_size   = size;
 
 		uint8_t *data = NULL;
-		COM_CALL3(buffer->d3d12.resource, Map, 0, read_range_pointer, (void **)&data);
+		COM_CALL(buffer->d3d12.resource, Map, 0, read_range_pointer, (void **)&data);
 		buffer->d3d12.locked_data = data + offset;
 		return buffer->d3d12.locked_data;
 	}
@@ -120,7 +120,7 @@ void *kore_d3d12_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t 
 	buffer->d3d12.locked_data_size   = size;
 
 	uint8_t *data = NULL;
-	COM_CALL3(buffer->d3d12.resource, Map, 0, read_range_pointer, (void **)&data);
+	COM_CALL(buffer->d3d12.resource, Map, 0, read_range_pointer, (void **)&data);
 	buffer->d3d12.locked_data = data + offset;
 	return buffer->d3d12.locked_data;
 }
@@ -134,5 +134,5 @@ void kore_d3d12_buffer_unlock(kore_gpu_buffer *buffer) {
 		written.End   = buffer->d3d12.locked_data_offset + buffer->d3d12.locked_data_size;
 	}
 
-	COM_CALL2(buffer->d3d12.resource, Unmap, 0, written_pointer);
+	COM_CALL(buffer->d3d12.resource, Unmap, 0, written_pointer);
 }

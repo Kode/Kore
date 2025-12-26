@@ -337,10 +337,10 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 
 	desc.pRootSignature = NULL;
 
-	kore_microsoft_affirm(COM_CALL3(device->device, CreateGraphicsPipelineState, &desc, &IID_ID3D12PipelineState, &pipe->pipe));
+	kore_microsoft_affirm(COM_CREATE(device->device, CreateGraphicsPipelineState, ID3D12PipelineState, &pipe->pipe, &desc));
 
 	kore_microsoft_affirm(
-	    COM_CALL5(device->device, CreateRootSignature, 0, desc.VS.pShaderBytecode, desc.VS.BytecodeLength, &IID_ID3D12RootSignature, &pipe->root_signature));
+	    COM_CREATE(device->device, CreateRootSignature, ID3D12RootSignature, &pipe->root_signature, 0, desc.VS.pShaderBytecode, desc.VS.BytecodeLength));
 
 	D3D12_INDIRECT_ARGUMENT_DESC indirect_args[2];
 	indirect_args[0].Type                             = D3D12_INDIRECT_ARGUMENT_TYPE_CONSTANT;
@@ -354,15 +354,14 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 	command_signature_desc.NumArgumentDescs = 2;
 	command_signature_desc.pArgumentDescs   = indirect_args;
 
-	COM_CALL4(device->device, CreateCommandSignature, &command_signature_desc, pipe->root_signature, &IID_ID3D12CommandSignature,
-	          &pipe->draw_command_signature);
+	COM_CREATE(device->device, CreateCommandSignature, ID3D12CommandSignature, &pipe->draw_command_signature, &command_signature_desc, pipe->root_signature);
 
 	indirect_args[1].Type = D3D12_INDIRECT_ARGUMENT_TYPE_DRAW_INDEXED;
 
 	command_signature_desc.ByteStride = sizeof(kore_gpu_draw_indexed_arguments);
 
-	COM_CALL4(device->device, CreateCommandSignature, &command_signature_desc, pipe->root_signature, &IID_ID3D12CommandSignature,
-	          &pipe->draw_indexed_command_signature);
+	COM_CREATE(device->device, CreateCommandSignature, ID3D12CommandSignature, &pipe->draw_indexed_command_signature, &command_signature_desc,
+	           pipe->root_signature);
 
 	kore_d3d12_device_add_render_pipeline(device, pipe);
 }
@@ -370,8 +369,8 @@ void kore_d3d12_render_pipeline_init(kore_d3d12_device *device, kore_d3d12_rende
 void kore_d3d12_render_pipeline_destroy(kore_d3d12_render_pipeline *pipe) {
 	// COM_CALL0(pipe->draw_command_signature, Release);
 	// COM_CALL0(pipe->draw_indexed_command_signature, Release);
-	COM_CALL0(pipe->root_signature, Release);
-	COM_CALL0(pipe->pipe, Release);
+	COM_CALL_VOID(pipe->root_signature, Release);
+	COM_CALL_VOID(pipe->pipe, Release);
 }
 
 void kore_d3d12_compute_pipeline_init(kore_d3d12_device *device, kore_d3d12_compute_pipeline *pipe, const kore_d3d12_compute_pipeline_parameters *parameters) {
@@ -381,10 +380,10 @@ void kore_d3d12_compute_pipeline_init(kore_d3d12_device *device, kore_d3d12_comp
 	desc.CS.BytecodeLength  = parameters->shader.size;
 	desc.pRootSignature     = NULL;
 
-	kore_microsoft_affirm(COM_CALL3(device->device, CreateComputePipelineState, &desc, &IID_ID3D12PipelineState, &pipe->pipe));
+	kore_microsoft_affirm(COM_CREATE(device->device, CreateComputePipelineState, ID3D12PipelineState, &pipe->pipe, &desc));
 
 	kore_microsoft_affirm(
-	    COM_CALL5(device->device, CreateRootSignature, 0, desc.CS.pShaderBytecode, desc.CS.BytecodeLength, &IID_ID3D12RootSignature, &pipe->root_signature));
+	    COM_CREATE(device->device, CreateRootSignature, ID3D12RootSignature, &pipe->root_signature, 0, desc.CS.pShaderBytecode, desc.CS.BytecodeLength));
 
 	D3D12_INDIRECT_ARGUMENT_DESC indirect_args[2];
 	indirect_args[0].Type = D3D12_INDIRECT_ARGUMENT_TYPE_DISPATCH;
@@ -394,16 +393,15 @@ void kore_d3d12_compute_pipeline_init(kore_d3d12_device *device, kore_d3d12_comp
 	command_signature_desc.NumArgumentDescs = 1;
 	command_signature_desc.pArgumentDescs   = indirect_args;
 
-	COM_CALL4(device->device, CreateCommandSignature, &command_signature_desc, pipe->root_signature, &IID_ID3D12CommandSignature,
-	          &pipe->compute_command_signature);
+	COM_CREATE(device->device, CreateCommandSignature, ID3D12CommandSignature, &pipe->compute_command_signature, &command_signature_desc, pipe->root_signature);
 
 	kore_d3d12_device_add_compute_pipeline(device, pipe);
 }
 
 void kore_d3d12_compute_pipeline_destroy(kore_d3d12_compute_pipeline *pipe) {
 	// COM_CALL0(pipe->compute_command_signature, Release);
-	COM_CALL0(pipe->root_signature, Release);
-	COM_CALL0(pipe->pipe, Release);
+	COM_CALL_VOID(pipe->root_signature, Release);
+	COM_CALL_VOID(pipe->pipe, Release);
 }
 
 #ifndef KONG_HAS_NO_RAY_SHADERS
@@ -500,7 +498,7 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 #endif
 
 void kore_d3d12_ray_pipeline_destroy(kore_d3d12_ray_pipeline *pipe) {
-	COM_CALL0(pipe->root_signature, Release);
-	COM_CALL0(pipe->pipe, Release);
-	COM_CALL0(pipe->shader_ids.d3d12.resource, Release);
+	COM_CALL_VOID(pipe->root_signature, Release);
+	COM_CALL_VOID(pipe->pipe, Release);
+	COM_CALL_VOID(pipe->shader_ids.d3d12.resource, Release);
 }

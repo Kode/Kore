@@ -9,14 +9,20 @@
 #include <kore3/direct3d12/raytracing_functions.h>
 
 #include <kore3/backend/microsoft.h>
+#ifdef KORE_WINDOWS
 #include <kore3/backend/windows.h>
+#endif
 
 #include <kore3/log.h>
 #include <kore3/window.h>
 
 #include <assert.h>
 
+#ifdef KORE_WINDOWS
 #include <dxgi1_4.h>
+#else
+extern "C" void kore_d3d12_create_d3d12_device(ID3D12Device5 **device);
+#endif
 
 #if defined(KORE_NVAPI) && !defined(NDEBUG)
 
@@ -40,11 +46,12 @@ static void __stdcall nvidia_raytracing_validation_message_callback(void *pUserD
 void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
 #ifndef NDEBUG
 	ID3D12Debug *debug = NULL;
-	if (D3D12GetDebugInterface(&IID_ID3D12Debug, &debug) == S_OK) {
-		COM_CALL0(debug, EnableDebugLayer);
+	if (D3D12GetDebugInterface(COM_OUT(ID3D12Debug, &debug)) == S_OK) {
+		COM_CALL_VOID(debug, EnableDebugLayer);
 	}
 #endif
 
+#ifdef KORE_WINDOWS
 	IDXGIFactory4 *dxgi_factory = NULL;
 	kore_microsoft_affirm(CreateDXGIFactory1(&IID_IDXGIFactory4, &dxgi_factory));
 
@@ -98,6 +105,9 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	}
 
 	assert(result == S_OK);
+#else
+	kore_d3d12_create_d3d12_device(&device->d3d12.device);
+#endif
 
 #if defined(KORE_NVAPI) && !defined(NDEBUG)
 	NvAPI_Initialize();
@@ -111,7 +121,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.Flags                    = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		desc.Type                     = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
-		kore_microsoft_affirm(COM_CALL3(device->d3d12.device, CreateCommandQueue, &desc, &IID_ID3D12CommandQueue, &device->d3d12.graphics_queue));
+		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommandQueue, ID3D12CommandQueue, &device->d3d12.graphics_queue, &desc));
 	}
 
 	{
@@ -119,7 +129,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.Flags                    = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		desc.Type                     = D3D12_COMMAND_LIST_TYPE_COMPUTE;
 
-		kore_microsoft_affirm(COM_CALL3(device->d3d12.device, CreateCommandQueue, &desc, &IID_ID3D12CommandQueue, &device->d3d12.compute_queue));
+		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommandQueue, ID3D12CommandQueue, &device->d3d12.compute_queue, &desc));
 	}
 
 	{
@@ -127,9 +137,10 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.Flags                    = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		desc.Type                     = D3D12_COMMAND_LIST_TYPE_COPY;
 
-		kore_microsoft_affirm(COM_CALL3(device->d3d12.device, CreateCommandQueue, &desc, &IID_ID3D12CommandQueue, &device->d3d12.copy_queue));
+		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommandQueue, ID3D12CommandQueue, &device->d3d12.copy_queue, &desc));
 	}
 
+#ifdef KORE_WINDOWS
 	{
 		DXGI_SWAP_CHAIN_DESC desc = {0};
 		desc.BufferCount          = 2;
@@ -146,22 +157,27 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	}
 
 	COM_CALL0(dxgi_factory, Release);
+#else
 
-	device->d3d12.cbv_srv_uav_increment = COM_CALL1(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	device->d3d12.sampler_increment     = COM_CALL1(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
+#endif
+
+	device->d3d12.cbv_srv_uav_increment = COM_CALL(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	device->d3d12.sampler_increment     = COM_CALL(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC desc = {0};
 		desc.NumDescriptors             = KORE_INDEX_ALLOCATOR_SIZE;
 		desc.Type                       = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
 		desc.Flags                      = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		kore_microsoft_affirm(COM_CALL3(device->d3d12.device, CreateDescriptorHeap, &desc, &IID_ID3D12DescriptorHeap, &device->d3d12.all_samplers));
+		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateDescriptorHeap, ID3D12DescriptorHeap, &device->d3d12.all_samplers, &desc));
 
 		kore_index_allocator_init(&device->d3d12.sampler_index_allocator);
 	}
 
 	for (int i = 0; i < KORE_D3D12_FRAME_COUNT; ++i) {
+#ifdef KORE_WINDOWS
 		COM_CALL3(device->d3d12.swap_chain, GetBuffer, i, &IID_ID3D12Resource, &device->d3d12.framebuffer_textures[i].d3d12.resource);
+#endif
 
 		device->d3d12.framebuffer_textures[i].width                       = kore_window_width(0);
 		device->d3d12.framebuffer_textures[i].height                      = kore_window_height(0);
@@ -182,11 +198,11 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 
 	device->d3d12.framebuffer_index = 0;
 
-	COM_CALL4(device->d3d12.device, CreateFence, 0, D3D12_FENCE_FLAG_NONE, &IID_ID3D12Fence, &device->d3d12.frame_fence);
+	COM_CREATE_FENCE(device->d3d12.device, 0, D3D12_FENCE_FLAG_NONE, &device->d3d12.frame_fence);
 	device->d3d12.frame_event         = CreateEvent(NULL, FALSE, FALSE, NULL);
 	device->d3d12.current_frame_index = 1;
 
-	COM_CALL4(device->d3d12.device, CreateFence, 0, D3D12_FENCE_FLAG_NONE, &IID_ID3D12Fence, &device->d3d12.execution_fence);
+	COM_CREATE_FENCE(device->d3d12.device, 0, D3D12_FENCE_FLAG_NONE, &device->d3d12.execution_fence);
 	device->d3d12.execution_event = CreateEvent(NULL, FALSE, FALSE, NULL);
 	device->d3d12.execution_index = 1;
 
@@ -197,7 +213,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.NumDescriptors             = descriptor_count;
 		desc.Type                       = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		desc.Flags                      = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		kore_microsoft_affirm(COM_CALL3(device->d3d12.device, CreateDescriptorHeap, &desc, &IID_ID3D12DescriptorHeap, &device->d3d12.descriptor_heap));
+		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateDescriptorHeap, ID3D12DescriptorHeap, &device->d3d12.descriptor_heap, &desc));
 
 		oa_create(&device->d3d12.descriptor_heap_allocator, descriptor_count, 4096);
 	}
@@ -209,7 +225,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.NumDescriptors             = sampler_count;
 		desc.Type                       = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
 		desc.Flags                      = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		kore_microsoft_affirm(COM_CALL3(device->d3d12.device, CreateDescriptorHeap, &desc, &IID_ID3D12DescriptorHeap, &device->d3d12.sampler_heap));
+		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateDescriptorHeap, ID3D12DescriptorHeap, &device->d3d12.sampler_heap, &desc));
 
 		oa_create(&device->d3d12.sampler_heap_allocator, sampler_count, 4096);
 	}
@@ -228,7 +244,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 
 void kore_d3d12_device_destroy_buffer(kore_gpu_device *device, kore_gpu_buffer *buffer) {
 	if (!kore_d3d12_buffer_in_use(buffer)) {
-		COM_CALL0(buffer->d3d12.resource, Release);
+		COM_CALL_VOID(buffer->d3d12.resource, Release);
 		return;
 	}
 
@@ -244,7 +260,7 @@ void kore_d3d12_device_destroy_buffer(kore_gpu_device *device, kore_gpu_buffer *
 
 void kore_d3d12_device_destroy_texture(kore_gpu_device *device, kore_gpu_texture *texture) {
 	if (!kore_d3d12_texture_in_use(texture)) {
-		COM_CALL0(texture->d3d12.resource, Release);
+		COM_CALL_VOID(texture->d3d12.resource, Release);
 		return;
 	}
 
@@ -260,8 +276,8 @@ void kore_d3d12_device_destroy_texture(kore_gpu_device *device, kore_gpu_texture
 
 void kore_d3d12_device_destroy_raytracing_volume(kore_gpu_device *device, kore_gpu_raytracing_volume *volume) {
 	if (!kore_d3d12_raytracing_volume_in_use(volume)) {
-		COM_CALL0(volume->d3d12.scratch_buffer.d3d12.resource, Release);
-		COM_CALL0(volume->d3d12.acceleration_structure.d3d12.resource, Release);
+		COM_CALL_VOID(volume->d3d12.scratch_buffer.d3d12.resource, Release);
+		COM_CALL_VOID(volume->d3d12.acceleration_structure.d3d12.resource, Release);
 		return;
 	}
 
@@ -277,10 +293,10 @@ void kore_d3d12_device_destroy_raytracing_volume(kore_gpu_device *device, kore_g
 
 void kore_d3d12_device_destroy_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_hierarchy *hierarchy) {
 	if (!kore_d3d12_raytracing_hierarchy_in_use(hierarchy)) {
-		COM_CALL0(hierarchy->d3d12.instances.d3d12.resource, Release);
-		COM_CALL0(hierarchy->d3d12.scratch_buffer.d3d12.resource, Release);
-		COM_CALL0(hierarchy->d3d12.update_scratch_buffer.d3d12.resource, Release);
-		COM_CALL0(hierarchy->d3d12.acceleration_structure.d3d12.resource, Release);
+		COM_CALL_VOID(hierarchy->d3d12.instances.d3d12.resource, Release);
+		COM_CALL_VOID(hierarchy->d3d12.scratch_buffer.d3d12.resource, Release);
+		COM_CALL_VOID(hierarchy->d3d12.update_scratch_buffer.d3d12.resource, Release);
+		COM_CALL_VOID(hierarchy->d3d12.acceleration_structure.d3d12.resource, Release);
 		return;
 	}
 
@@ -317,12 +333,12 @@ void kore_d3d12_device_destroy_command_list(kore_d3d12_device *device, kore_gpu_
 
 	if (completed) {
 		for (int i = 0; i < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++i) {
-			COM_CALL0(list->d3d12.allocator[i], Release);
+			COM_CALL_VOID(list->d3d12.allocator[i], Release);
 		}
-		COM_CALL0(list->d3d12.list, Release);
+		COM_CALL_VOID(list->d3d12.list, Release);
 
-		COM_CALL0(list->d3d12.rtv_descriptors, Release);
-		COM_CALL0(list->d3d12.dsv_descriptor, Release);
+		COM_CALL_VOID(list->d3d12.rtv_descriptors, Release);
+		COM_CALL_VOID(list->d3d12.dsv_descriptor, Release);
 
 		return;
 	}
@@ -341,7 +357,8 @@ void kore_d3d12_device_destroy_descriptor_set(kore_gpu_device *device, kore_d3d1
 	for (uint32_t allocation_index = 0; allocation_index < KORE_D3D12_ALLOCATIONS_PER_DESCRIPTORSET; ++allocation_index) {
 		kore_d3d12_descriptor_set_allocation *allocation = &set->allocations[allocation_index];
 
-		if (allocation->command_list_reference_count == 0 && allocation->execution_index <= COM_CALL0(set->device->d3d12.execution_fence, GetCompletedValue)) {
+		if (allocation->command_list_reference_count == 0 &&
+		    allocation->execution_index <= COM_CALL_VOID(set->device->d3d12.execution_fence, GetCompletedValue)) {
 			oa_free(&device->d3d12.descriptor_heap_allocator, &allocation->descriptor_allocation);
 			oa_free(&device->d3d12.descriptor_heap_allocator, &allocation->bindless_descriptor_allocation);
 			oa_free(&device->d3d12.sampler_heap_allocator, &allocation->sampler_allocation);
@@ -369,12 +386,12 @@ static void collect_garbage(kore_gpu_device *device, bool force) {
 		if (buffer != NULL) {
 			if (force) {
 				kore_d3d12_buffer_wait_until_not_in_use(buffer);
-				COM_CALL0(buffer->d3d12.resource, Release);
+				COM_CALL_VOID(buffer->d3d12.resource, Release);
 				device->d3d12.garbage_buffers[buffer_index] = NULL;
 			}
 			else {
 				if (!kore_d3d12_buffer_in_use(buffer)) {
-					COM_CALL0(buffer->d3d12.resource, Release);
+					COM_CALL_VOID(buffer->d3d12.resource, Release);
 					device->d3d12.garbage_buffers[buffer_index] = NULL;
 				}
 			}
@@ -387,12 +404,12 @@ static void collect_garbage(kore_gpu_device *device, bool force) {
 		if (texture != NULL) {
 			if (force) {
 				kore_d3d12_texture_wait_until_not_in_use(texture);
-				COM_CALL0(texture->d3d12.resource, Release);
+				COM_CALL_VOID(texture->d3d12.resource, Release);
 				device->d3d12.garbage_textures[texture_index] = NULL;
 			}
 			else {
 				if (!kore_d3d12_texture_in_use(texture)) {
-					COM_CALL0(texture->d3d12.resource, Release);
+					COM_CALL_VOID(texture->d3d12.resource, Release);
 					device->d3d12.garbage_textures[texture_index] = NULL;
 				}
 			}
@@ -406,15 +423,15 @@ static void collect_garbage(kore_gpu_device *device, bool force) {
 			if (force) {
 				kore_d3d12_raytracing_volume_wait_until_not_in_use(volume);
 
-				COM_CALL0(volume->d3d12.scratch_buffer.d3d12.resource, Release);
-				COM_CALL0(volume->d3d12.acceleration_structure.d3d12.resource, Release);
+				COM_CALL_VOID(volume->d3d12.scratch_buffer.d3d12.resource, Release);
+				COM_CALL_VOID(volume->d3d12.acceleration_structure.d3d12.resource, Release);
 
 				device->d3d12.garbage_raytracing_volumes[volume_index] = NULL;
 			}
 			else {
 				if (!kore_d3d12_raytracing_volume_in_use(volume)) {
-					COM_CALL0(volume->d3d12.scratch_buffer.d3d12.resource, Release);
-					COM_CALL0(volume->d3d12.acceleration_structure.d3d12.resource, Release);
+					COM_CALL_VOID(volume->d3d12.scratch_buffer.d3d12.resource, Release);
+					COM_CALL_VOID(volume->d3d12.acceleration_structure.d3d12.resource, Release);
 
 					device->d3d12.garbage_raytracing_volumes[volume_index] = NULL;
 				}
@@ -429,19 +446,19 @@ static void collect_garbage(kore_gpu_device *device, bool force) {
 			if (force) {
 				kore_d3d12_raytracing_hierarchy_wait_until_not_in_use(hierarchy);
 
-				COM_CALL0(hierarchy->d3d12.instances.d3d12.resource, Release);
-				COM_CALL0(hierarchy->d3d12.scratch_buffer.d3d12.resource, Release);
-				COM_CALL0(hierarchy->d3d12.update_scratch_buffer.d3d12.resource, Release);
-				COM_CALL0(hierarchy->d3d12.acceleration_structure.d3d12.resource, Release);
+				COM_CALL_VOID(hierarchy->d3d12.instances.d3d12.resource, Release);
+				COM_CALL_VOID(hierarchy->d3d12.scratch_buffer.d3d12.resource, Release);
+				COM_CALL_VOID(hierarchy->d3d12.update_scratch_buffer.d3d12.resource, Release);
+				COM_CALL_VOID(hierarchy->d3d12.acceleration_structure.d3d12.resource, Release);
 
 				device->d3d12.garbage_raytracing_hierarchies[hierarchy_index] = NULL;
 			}
 			else {
 				if (!kore_d3d12_raytracing_hierarchy_in_use(hierarchy)) {
-					COM_CALL0(hierarchy->d3d12.instances.d3d12.resource, Release);
-					COM_CALL0(hierarchy->d3d12.scratch_buffer.d3d12.resource, Release);
-					COM_CALL0(hierarchy->d3d12.update_scratch_buffer.d3d12.resource, Release);
-					COM_CALL0(hierarchy->d3d12.acceleration_structure.d3d12.resource, Release);
+					COM_CALL_VOID(hierarchy->d3d12.instances.d3d12.resource, Release);
+					COM_CALL_VOID(hierarchy->d3d12.scratch_buffer.d3d12.resource, Release);
+					COM_CALL_VOID(hierarchy->d3d12.update_scratch_buffer.d3d12.resource, Release);
+					COM_CALL_VOID(hierarchy->d3d12.acceleration_structure.d3d12.resource, Release);
 
 					device->d3d12.garbage_raytracing_hierarchies[hierarchy_index] = NULL;
 				}
@@ -466,12 +483,12 @@ static void collect_garbage(kore_gpu_device *device, bool force) {
 
 			if (completed) {
 				for (int i = 0; i < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++i) {
-					COM_CALL0(list->d3d12.allocator[i], Release);
+					COM_CALL_VOID(list->d3d12.allocator[i], Release);
 				}
-				COM_CALL0(list->d3d12.list, Release);
+				COM_CALL_VOID(list->d3d12.list, Release);
 
-				COM_CALL0(list->d3d12.rtv_descriptors, Release);
-				COM_CALL0(list->d3d12.dsv_descriptor, Release);
+				COM_CALL_VOID(list->d3d12.rtv_descriptors, Release);
+				COM_CALL_VOID(list->d3d12.dsv_descriptor, Release);
 
 				device->d3d12.garbage_command_lists[list_index] = NULL;
 			}
@@ -498,7 +515,7 @@ static void collect_garbage(kore_gpu_device *device, bool force) {
 				}
 				else {
 					if (allocation->command_list_reference_count == 0 &&
-					    allocation->execution_index <= COM_CALL0(set->device->d3d12.execution_fence, GetCompletedValue)) {
+					    allocation->execution_index <= COM_CALL_VOID(set->device->d3d12.execution_fence, GetCompletedValue)) {
 						oa_free(&device->d3d12.descriptor_heap_allocator, &allocation->descriptor_allocation);
 						oa_free(&device->d3d12.descriptor_heap_allocator, &allocation->bindless_descriptor_allocation);
 						oa_free(&device->d3d12.sampler_heap_allocator, &allocation->sampler_allocation);
@@ -530,30 +547,32 @@ void kore_d3d12_device_destroy(kore_gpu_device *device) {
 		kore_d3d12_ray_pipeline_destroy(device->d3d12.ray_pipelines[pipeline_index]);
 	}
 
-	COM_CALL0(device->d3d12.graphics_queue, Release);
-	COM_CALL0(device->d3d12.compute_queue, Release);
-	COM_CALL0(device->d3d12.copy_queue, Release);
-	COM_CALL0(device->d3d12.descriptor_heap, Release);
-	COM_CALL0(device->d3d12.sampler_heap, Release);
-	COM_CALL0(device->d3d12.frame_fence, Release);
-	COM_CALL0(device->d3d12.execution_fence, Release);
-	COM_CALL0(device->d3d12.all_samplers, Release);
+	COM_CALL_VOID(device->d3d12.graphics_queue, Release);
+	COM_CALL_VOID(device->d3d12.compute_queue, Release);
+	COM_CALL_VOID(device->d3d12.copy_queue, Release);
+	COM_CALL_VOID(device->d3d12.descriptor_heap, Release);
+	COM_CALL_VOID(device->d3d12.sampler_heap, Release);
+	COM_CALL_VOID(device->d3d12.frame_fence, Release);
+	COM_CALL_VOID(device->d3d12.execution_fence, Release);
+	COM_CALL_VOID(device->d3d12.all_samplers, Release);
 
 	for (int i = 0; i < KORE_D3D12_FRAME_COUNT; ++i) {
-		COM_CALL0(device->d3d12.framebuffer_textures[i].d3d12.resource, Release);
+		COM_CALL_VOID(device->d3d12.framebuffer_textures[i].d3d12.resource, Release);
 	}
+#ifdef KORE_WINDOWS
 	COM_CALL0(device->d3d12.swap_chain, Release);
+#endif
 
 	CloseHandle(device->d3d12.frame_event);
 	CloseHandle(device->d3d12.execution_event);
 
-	COM_CALL0(device->d3d12.device, Release);
+	COM_CALL_VOID(device->d3d12.device, Release);
 }
 
 void kore_d3d12_device_set_name(kore_gpu_device *device, const char *name) {
 	wchar_t wstr[1024];
 	kore_microsoft_convert_string(wstr, name, 1024);
-	COM_CALL1(device->d3d12.device, SetName, wstr);
+	COM_CALL(device->d3d12.device, SetName, wstr);
 }
 
 void kore_d3d12_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
@@ -615,8 +634,8 @@ void kore_d3d12_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 	buffer->d3d12.cpu_read  = (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_READ) != 0;
 	buffer->d3d12.cpu_write = (parameters->usage_flags & KORE_GPU_BUFFER_USAGE_CPU_WRITE) != 0;
 
-	kore_microsoft_affirm(COM_CALL7(device->d3d12.device, CreateCommittedResource, &props, D3D12_HEAP_FLAG_NONE, &desc,
-	                                (D3D12_RESOURCE_STATES)buffer->d3d12.resource_state, NULL, &IID_ID3D12Resource, &buffer->d3d12.resource));
+	kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommittedResource, ID3D12Resource, &buffer->d3d12.resource, &props, D3D12_HEAP_FLAG_NONE,
+	                                 &desc, (D3D12_RESOURCE_STATES)buffer->d3d12.resource_state, NULL));
 }
 
 static uint8_t command_list_oldest_allocator(kore_gpu_command_list *list) {
@@ -653,7 +672,7 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 	list->d3d12.list_type = list_type;
 
 	for (int i = 0; i < KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT; ++i) {
-		kore_microsoft_affirm(COM_CALL3(device->d3d12.device, CreateCommandAllocator, list_type, &IID_ID3D12CommandAllocator, &list->d3d12.allocator[i]));
+		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommandAllocator, ID3D12CommandAllocator, &list->d3d12.allocator[i], list_type));
 		list->d3d12.allocator_execution_index[i] = 0;
 
 		oa_allocate(&device->d3d12.descriptor_heap_allocator, KORE_D3D12_COMMAND_LIST_DYNAMIC_DESCRIPTORS_COUNT,
@@ -663,8 +682,8 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 
 	list->d3d12.current_allocator_index = 0;
 
-	kore_microsoft_affirm(COM_CALL6(device->d3d12.device, CreateCommandList, 0, list_type, list->d3d12.allocator[list->d3d12.current_allocator_index], NULL,
-	                                &IID_ID3D12GraphicsCommandList4, &list->d3d12.list));
+	kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommandList, ID3D12GraphicsCommandList4, &list->d3d12.list, 0, list_type,
+	                                 list->d3d12.allocator[list->d3d12.current_allocator_index], NULL));
 
 	list->d3d12.compute_pipe = NULL;
 	list->d3d12.ray_pipe     = NULL;
@@ -675,9 +694,9 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 		desc.NumDescriptors             = D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT;
 		desc.Type                       = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 		desc.Flags                      = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		kore_microsoft_affirm(COM_CALL3(device->d3d12.device, CreateDescriptorHeap, &desc, &IID_ID3D12DescriptorHeap, &list->d3d12.rtv_descriptors));
+		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateDescriptorHeap, ID3D12DescriptorHeap, &list->d3d12.rtv_descriptors, &desc));
 
-		list->d3d12.rtv_increment = COM_CALL1(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		list->d3d12.rtv_increment = COM_CALL(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	}
 
 	{
@@ -685,9 +704,9 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 		desc.NumDescriptors             = 1;
 		desc.Type                       = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 		desc.Flags                      = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		kore_microsoft_affirm(COM_CALL3(device->d3d12.device, CreateDescriptorHeap, &desc, &IID_ID3D12DescriptorHeap, &list->d3d12.dsv_descriptor));
+		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateDescriptorHeap, ID3D12DescriptorHeap, &list->d3d12.dsv_descriptor, &desc));
 
-		list->d3d12.dsv_increment = COM_CALL1(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+		list->d3d12.dsv_increment = COM_CALL(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	}
 
 	list->d3d12.occlusion_query_set           = NULL;
@@ -708,7 +727,7 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 	list->d3d12.presenting = false;
 
 	ID3D12DescriptorHeap *heaps[] = {list->d3d12.device->descriptor_heap, list->d3d12.device->sampler_heap};
-	COM_CALL2(list->d3d12.list, SetDescriptorHeaps, 2, heaps);
+	COM_CALL(list->d3d12.list, SetDescriptorHeaps, 2, heaps);
 }
 
 static DXGI_FORMAT convert_texture_format(kore_gpu_texture_format format) {
@@ -871,8 +890,8 @@ void kore_d3d12_device_create_texture(kore_gpu_device *device, const kore_gpu_te
 		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	}
 
-	kore_microsoft_affirm(COM_CALL7(device->d3d12.device, CreateCommittedResource, &heap_properties, D3D12_HEAP_FLAG_NONE, &desc,
-	                                D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, optimizedClearValuePointer, &IID_ID3D12Resource, &texture->d3d12.resource));
+	kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommittedResource, ID3D12Resource, &texture->d3d12.resource, &heap_properties,
+	                                 D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, optimizedClearValuePointer));
 
 	texture->d3d12.format = format;
 
@@ -905,6 +924,7 @@ kore_gpu_texture *kore_d3d12_device_get_framebuffer(kore_gpu_device *device) {
 		window_height = 8;
 	}
 
+#ifdef KORE_WINDOWS
 	if (framebuffer->width != window_width || framebuffer->height != window_height) {
 		kore_gpu_device_wait_until_idle(device);
 
@@ -925,13 +945,14 @@ kore_gpu_texture *kore_d3d12_device_get_framebuffer(kore_gpu_device *device) {
 		device->d3d12.framebuffer_index = 0;
 		framebuffer                     = &device->d3d12.framebuffer_textures[device->d3d12.framebuffer_index];
 	}
+#endif
 
 	return framebuffer;
 }
 
 static void wait_for_fence(kore_gpu_device *device, ID3D12Fence *fence, HANDLE event, UINT64 completion_value) {
-	if (COM_CALL0(fence, GetCompletedValue) < completion_value) {
-		kore_microsoft_affirm(COM_CALL2(fence, SetEventOnCompletion, completion_value, event));
+	if (COM_CALL_VOID(fence, GetCompletedValue) < completion_value) {
+		kore_microsoft_affirm(COM_CALL(fence, SetEventOnCompletion, completion_value, event));
 		WaitForSingleObject(event, INFINITE);
 
 #if defined(KORE_NVAPI) && !defined(NDEBUG)
@@ -946,7 +967,7 @@ kore_gpu_texture_format kore_d3d12_device_framebuffer_format(kore_gpu_device *de
 
 static bool check_for_fence(ID3D12Fence *fence, UINT64 completion_value) {
 	// kore_log(KORE_LOG_LEVEL_INFO, "Done: %llu Check: %llu", fence->GetCompletedValue(), completion_value);
-	return COM_CALL0(fence, GetCompletedValue) >= completion_value;
+	return COM_CALL_VOID(fence, GetCompletedValue) >= completion_value;
 }
 
 static void wait_for_frame(kore_gpu_device *device, uint64_t frame_index) {
@@ -980,7 +1001,7 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 			barrier.Transition.StateAfter  = D3D12_RESOURCE_STATE_PRESENT;
 			barrier.Transition.Subresource = 0;
 
-			COM_CALL2(list->d3d12.list, ResourceBarrier, 1, &barrier);
+			COM_CALL(list->d3d12.list, ResourceBarrier, 1, &barrier);
 
 			framebuffer->d3d12.resource_states[0] = D3D12_RESOURCE_STATE_PRESENT;
 		}
@@ -991,13 +1012,13 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 		list->d3d12.blocking_frame_index = 0;
 	}
 
-	COM_CALL0(list->d3d12.list, Close);
+	COM_CALL_VOID(list->d3d12.list, Close);
 
 	for (uint32_t buffer_access_index = 0; buffer_access_index < list->d3d12.queued_buffer_accesses_count; ++buffer_access_index) {
 		kore_d3d12_buffer_access access = list->d3d12.queued_buffer_accesses[buffer_access_index];
 		kore_d3d12_buffer       *buffer = access.buffer;
 
-		clean_buffer_accesses(buffer, COM_CALL0(device->d3d12.execution_fence, GetCompletedValue));
+		clean_buffer_accesses(buffer, COM_CALL_VOID(device->d3d12.execution_fence, GetCompletedValue));
 
 		assert(buffer->ranges_count < KORE_D3D12_MAX_BUFFER_RANGES);
 		buffer->ranges[buffer->ranges_count].execution_index = device->d3d12.execution_index;
@@ -1040,16 +1061,16 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 
 	ID3D12CommandList *lists[] = {(ID3D12CommandList *)list->d3d12.list};
 	if (list->d3d12.list_type == D3D12_COMMAND_LIST_TYPE_DIRECT) {
-		COM_CALL2(device->d3d12.graphics_queue, ExecuteCommandLists, 1, lists);
-		COM_CALL2(device->d3d12.graphics_queue, Signal, device->d3d12.execution_fence, device->d3d12.execution_index);
+		COM_CALL(device->d3d12.graphics_queue, ExecuteCommandLists, 1, lists);
+		COM_CALL(device->d3d12.graphics_queue, Signal, device->d3d12.execution_fence, device->d3d12.execution_index);
 	}
 	else if (list->d3d12.list_type == D3D12_COMMAND_LIST_TYPE_COMPUTE) {
-		COM_CALL2(device->d3d12.compute_queue, ExecuteCommandLists, 1, lists);
-		COM_CALL2(device->d3d12.compute_queue, Signal, device->d3d12.execution_fence, device->d3d12.execution_index);
+		COM_CALL(device->d3d12.compute_queue, ExecuteCommandLists, 1, lists);
+		COM_CALL(device->d3d12.compute_queue, Signal, device->d3d12.execution_fence, device->d3d12.execution_index);
 	}
 	else if (list->d3d12.list_type == D3D12_COMMAND_LIST_TYPE_COPY) {
-		COM_CALL2(device->d3d12.copy_queue, ExecuteCommandLists, 1, lists);
-		COM_CALL2(device->d3d12.copy_queue, Signal, device->d3d12.execution_fence, device->d3d12.execution_index);
+		COM_CALL(device->d3d12.copy_queue, ExecuteCommandLists, 1, lists);
+		COM_CALL(device->d3d12.copy_queue, Signal, device->d3d12.execution_fence, device->d3d12.execution_index);
 	}
 
 	uint8_t allocator_index             = command_list_oldest_allocator(list);
@@ -1059,19 +1080,21 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 	wait_for_fence(device, device->d3d12.execution_fence, device->d3d12.execution_event, allocator_execution_index);
 
 	list->d3d12.dynamic_descriptor_offsets[allocator_index] = 0;
-	COM_CALL0(list->d3d12.allocator[allocator_index], Reset);
-	COM_CALL2(list->d3d12.list, Reset, list->d3d12.allocator[allocator_index], NULL);
+	COM_CALL_VOID(list->d3d12.allocator[allocator_index], Reset);
+	COM_CALL(list->d3d12.list, Reset, list->d3d12.allocator[allocator_index], NULL);
 
 	ID3D12DescriptorHeap *heaps[] = {list->d3d12.device->descriptor_heap, list->d3d12.device->sampler_heap};
-	COM_CALL2(list->d3d12.list, SetDescriptorHeaps, 2, heaps);
+	COM_CALL(list->d3d12.list, SetDescriptorHeaps, 2, heaps);
 
 	if (list->d3d12.list_type == D3D12_COMMAND_LIST_TYPE_DIRECT && list->d3d12.presenting) {
 		kore_gpu_texture *framebuffer            = kore_d3d12_device_get_framebuffer(device);
 		framebuffer->d3d12.in_flight_frame_index = device->d3d12.current_frame_index;
 
+#ifdef KORE_WINDOWS
 		kore_microsoft_affirm(COM_CALL2(device->d3d12.swap_chain, Present, 1, 0));
+#endif
 
-		COM_CALL2(device->d3d12.graphics_queue, Signal, device->d3d12.frame_fence, device->d3d12.current_frame_index);
+		COM_CALL(device->d3d12.graphics_queue, Signal, device->d3d12.frame_fence, device->d3d12.current_frame_index);
 
 		device->d3d12.current_frame_index += 1;
 		device->d3d12.framebuffer_index = (device->d3d12.framebuffer_index + 1) % KORE_D3D12_FRAME_COUNT;
@@ -1155,10 +1178,10 @@ void kore_d3d12_device_create_sampler(kore_gpu_device *device, const kore_gpu_sa
 	    parameters->compare == KORE_GPU_COMPARE_FUNCTION_UNDEFINED ? D3D12_COMPARISON_FUNC_ALWAYS : convert_compare_function(parameters->compare);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
-	COM_CALL0RET(device->d3d12.all_samplers, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
+	descriptor_handle = COM_CALL_VOID(device->d3d12.all_samplers, GetCPUDescriptorHandleForHeapStart);
 	descriptor_handle.ptr += sampler->d3d12.sampler_index * device->d3d12.sampler_increment;
 
-	COM_CALL2(device->d3d12.device, CreateSampler, &desc, descriptor_handle);
+	COM_CALL(device->d3d12.device, CreateSampler, &desc, descriptor_handle);
 }
 
 void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
@@ -1182,8 +1205,9 @@ void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gp
 	geometry_desc.Triangles.VertexFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 	geometry_desc.Triangles.IndexCount   = volume->d3d12.index_count;
 	geometry_desc.Triangles.VertexCount  = (UINT)volume->d3d12.vertex_count;
-	geometry_desc.Triangles.IndexBuffer  = volume->d3d12.index_buffer != NULL ? COM_CALL0(volume->d3d12.index_buffer->d3d12.resource, GetGPUVirtualAddress) : 0;
-	geometry_desc.Triangles.VertexBuffer.StartAddress  = COM_CALL0(volume->d3d12.vertex_buffer->d3d12.resource, GetGPUVirtualAddress);
+	geometry_desc.Triangles.IndexBuffer =
+	    volume->d3d12.index_buffer != NULL ? COM_CALL_VOID(volume->d3d12.index_buffer->d3d12.resource, GetGPUVirtualAddress) : 0;
+	geometry_desc.Triangles.VertexBuffer.StartAddress  = COM_CALL_VOID(volume->d3d12.vertex_buffer->d3d12.resource, GetGPUVirtualAddress);
 	geometry_desc.Triangles.VertexBuffer.StrideInBytes = sizeof(float) * 3;
 
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs = {0};
@@ -1194,7 +1218,7 @@ void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gp
 	inputs.pGeometryDescs                                       = &geometry_desc;
 
 	D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO prebuild_info = {0};
-	COM_CALL2(device->d3d12.device, GetRaytracingAccelerationStructurePrebuildInfo, &inputs, &prebuild_info);
+	COM_CALL(device->d3d12.device, GetRaytracingAccelerationStructurePrebuildInfo, &inputs, &prebuild_info);
 
 	kore_gpu_buffer_parameters scratch_params;
 	scratch_params.size        = prebuild_info.ScratchDataSizeInBytes;
@@ -1226,7 +1250,7 @@ void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore
 		memset(&descs[volume_index], 0, sizeof(D3D12_RAYTRACING_INSTANCE_DESC));
 		descs[volume_index].InstanceID            = volume_index;
 		descs[volume_index].InstanceMask          = 1;
-		descs[volume_index].AccelerationStructure = COM_CALL0(volumes[volume_index]->d3d12.acceleration_structure.d3d12.resource, GetGPUVirtualAddress);
+		descs[volume_index].AccelerationStructure = COM_CALL_VOID(volumes[volume_index]->d3d12.acceleration_structure.d3d12.resource, GetGPUVirtualAddress);
 	}
 
 	for (uint32_t volume_index = 0; volume_index < hierarchy->d3d12.volumes_count; ++volume_index) {
@@ -1254,10 +1278,10 @@ void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore
 	inputs.Flags                                                = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_UPDATE;
 	inputs.NumDescs                                             = hierarchy->d3d12.volumes_count;
 	inputs.DescsLayout                                          = D3D12_ELEMENTS_LAYOUT_ARRAY;
-	inputs.InstanceDescs                                        = COM_CALL0(hierarchy->d3d12.instances.d3d12.resource, GetGPUVirtualAddress);
+	inputs.InstanceDescs                                        = COM_CALL_VOID(hierarchy->d3d12.instances.d3d12.resource, GetGPUVirtualAddress);
 
 	D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO prebuild_info = {0};
-	COM_CALL2(device->d3d12.device, GetRaytracingAccelerationStructurePrebuildInfo, &inputs, &prebuild_info);
+	COM_CALL(device->d3d12.device, GetRaytracingAccelerationStructurePrebuildInfo, &inputs, &prebuild_info);
 
 	kore_gpu_buffer_parameters scratch_params;
 	scratch_params.size        = prebuild_info.ScratchDataSizeInBytes;
@@ -1283,7 +1307,7 @@ void kore_d3d12_device_create_query_set(kore_gpu_device *device, const kore_gpu_
 	desc.NodeMask              = 0;
 
 	query_set->d3d12.query_type = (uint8_t)parameters->type;
-	COM_CALL3(device->d3d12.device, CreateQueryHeap, &desc, &IID_ID3D12QueryHeap, &query_set->d3d12.query_heap);
+	COM_CREATE(device->d3d12.device, CreateQueryHeap, ID3D12QueryHeap, &query_set->d3d12.query_heap, &desc);
 }
 
 uint32_t kore_d3d12_device_align_texture_row_bytes(kore_gpu_device *device, uint32_t row_bytes) {
@@ -1291,19 +1315,19 @@ uint32_t kore_d3d12_device_align_texture_row_bytes(kore_gpu_device *device, uint
 }
 
 void kore_d3d12_device_create_fence(kore_gpu_device *device, kore_gpu_fence *fence) {
-	COM_CALL4(device->d3d12.device, CreateFence, 0, D3D12_FENCE_FLAG_NONE, &IID_ID3D12Fence, &fence->d3d12.fence);
+	COM_CREATE_FENCE(device->d3d12.device, 0, D3D12_FENCE_FLAG_NONE, &fence->d3d12.fence);
 }
 
 void kore_d3d12_device_signal(kore_gpu_device *device, kore_gpu_command_list_type list_type, kore_gpu_fence *fence, uint64_t value) {
 	switch (list_type) {
 	case KORE_GPU_COMMAND_LIST_TYPE_GRAPHICS:
-		COM_CALL2(device->d3d12.graphics_queue, Signal, fence->d3d12.fence, value);
+		COM_CALL(device->d3d12.graphics_queue, Signal, fence->d3d12.fence, value);
 		break;
 	case KORE_GPU_COMMAND_LIST_TYPE_COMPUTE:
-		COM_CALL2(device->d3d12.compute_queue, Signal, fence->d3d12.fence, value);
+		COM_CALL(device->d3d12.compute_queue, Signal, fence->d3d12.fence, value);
 		break;
 	case KORE_GPU_COMMAND_LIST_TYPE_COPY:
-		COM_CALL2(device->d3d12.copy_queue, Signal, fence->d3d12.fence, value);
+		COM_CALL(device->d3d12.copy_queue, Signal, fence->d3d12.fence, value);
 		break;
 	}
 }
@@ -1311,13 +1335,13 @@ void kore_d3d12_device_signal(kore_gpu_device *device, kore_gpu_command_list_typ
 void kore_d3d12_device_wait(kore_gpu_device *device, kore_gpu_command_list_type list_type, kore_gpu_fence *fence, uint64_t value) {
 	switch (list_type) {
 	case KORE_GPU_COMMAND_LIST_TYPE_GRAPHICS:
-		COM_CALL2(device->d3d12.graphics_queue, Wait, fence->d3d12.fence, value);
+		COM_CALL(device->d3d12.graphics_queue, Wait, fence->d3d12.fence, value);
 		break;
 	case KORE_GPU_COMMAND_LIST_TYPE_COMPUTE:
-		COM_CALL2(device->d3d12.compute_queue, Wait, fence->d3d12.fence, value);
+		COM_CALL(device->d3d12.compute_queue, Wait, fence->d3d12.fence, value);
 		break;
 	case KORE_GPU_COMMAND_LIST_TYPE_COPY:
-		COM_CALL2(device->d3d12.copy_queue, Wait, fence->d3d12.fence, value);
+		COM_CALL(device->d3d12.copy_queue, Wait, fence->d3d12.fence, value);
 		break;
 	}
 }

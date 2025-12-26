@@ -32,7 +32,9 @@ typedef struct kore_d3d12_device {
 	struct ID3D12CommandQueue *graphics_queue;
 	struct ID3D12CommandQueue *compute_queue;
 	struct ID3D12CommandQueue *copy_queue;
-	struct IDXGISwapChain     *swap_chain;
+#ifdef KORE_WINDOWS
+	struct IDXGISwapChain *swap_chain;
+#endif
 
 	uint32_t cbv_srv_uav_increment;
 	uint32_t sampler_increment;

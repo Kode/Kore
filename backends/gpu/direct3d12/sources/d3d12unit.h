@@ -1,6 +1,7 @@
 #ifndef KORE_D3D12_UNIT_HEADER
 #define KORE_D3D12_UNIT_HEADER
 
+#ifdef KORE_WINDOWS
 // Windows 7
 #define WINVER 0x0601
 #ifdef _WIN32_WINNT
@@ -56,32 +57,28 @@
 #include <d3d12.h>
 #include <dxgi.h>
 
-#include <stdbool.h>
+#else
 
-#ifndef IID_GRAPHICS_PPV_ARGS
-#define IID_GRAPHICS_PPV_ARGS(x) IID_PPV_ARGS(x)
+#include <kore3/backend/d3d12_turbo_chapmion_edition.h>
+
 #endif
 
+#include <stdbool.h>
+
 #ifdef __cplusplus
-#define COM_CALL0(object, method)                                           object->method()
-#define COM_CALL0RET(object, method, ret)                                   ret = object->method()
-#define COM_CALL1(object, method, arg0)                                     object->method(arg0)
-#define COM_CALL2(object, method, arg0, arg1)                               object->method(arg0, arg1)
-#define COM_CALL3(object, method, arg0, arg1, arg2)                         object->method(arg0, arg1, arg2)
-#define COM_CALL4(object, method, arg0, arg1, arg2, arg3)                   object->method(arg0, arg1, arg2, arg3)
-#define COM_CALL5(object, method, arg0, arg1, arg2, arg3, arg4)             object->method(arg0, arg1, arg2, arg3, arg4)
-#define COM_CALL6(object, method, arg0, arg1, arg2, arg3, arg4, arg5)       object->method(arg0, arg1, arg2, arg3, arg4, arg5)
-#define COM_CALL7(object, method, arg0, arg1, arg2, arg3, arg4, arg5, arg6) object->method(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+#define COM_CALL_VOID(object, method) object->method()
+#define COM_CALL(object, method, ...) object->method(__VA_ARGS__)
+#define COM_OUT(id, out)              __uuidof(**(out)), (static_cast<IGraphicsUnknown *>(*(out)), reinterpret_cast<void **>(out))
+#define COM_CREATE(object, method, id, out, ...) \
+	object->method(__VA_ARGS__, __uuidof(**(out)), (static_cast<IGraphicsUnknown *>(*(out)), reinterpret_cast<void **>(out)))
+#define COM_CREATE_FENCE(object, arg0, arg1, out) \
+	object->CreateFence(arg0, arg1, __uuidof(**(out)), (static_cast<IGraphicsUnknown *>(*(out)), reinterpret_cast<void **>(out)))
 #else
-#define COM_CALL0(object, method)                                           object->lpVtbl->method(object)
-#define COM_CALL0RET(object, method, ret)                                   object->lpVtbl->method(object, &ret)
-#define COM_CALL1(object, method, arg0)                                     object->lpVtbl->method(object, arg0)
-#define COM_CALL2(object, method, arg0, arg1)                               object->lpVtbl->method(object, arg0, arg1)
-#define COM_CALL3(object, method, arg0, arg1, arg2)                         object->lpVtbl->method(object, arg0, arg1, arg2)
-#define COM_CALL4(object, method, arg0, arg1, arg2, arg3)                   object->lpVtbl->method(object, arg0, arg1, arg2, arg3)
-#define COM_CALL5(object, method, arg0, arg1, arg2, arg3, arg4)             object->lpVtbl->method(object, arg0, arg1, arg2, arg3, arg4)
-#define COM_CALL6(object, method, arg0, arg1, arg2, arg3, arg4, arg5)       object->lpVtbl->method(object, arg0, arg1, arg2, arg3, arg4, arg5)
-#define COM_CALL7(object, method, arg0, arg1, arg2, arg3, arg4, arg5, arg6) object->lpVtbl->method(object, arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+#define COM_CALL_VOID(object, method)             object->lpVtbl->method(object)
+#define COM_CALL(object, method, ...)             object->lpVtbl->method(object, __VA_ARGS__)
+#define COM_OUT(id, out)                          &IID_##id, out
+#define COM_CREATE(object, method, desc, id, out) object->lpVtbl->method(object, desc, &IID_##id, out)
+#define COM_CREATE_FENCE(object, arg0, arg1, out) object->lpVtbl->CreateFence(object, arg0, arg1, &IID_ID3D12Fence, out)
 #endif
 
 // https://learn.microsoft.com/en-us/windows/win32/direct3d12/subresources

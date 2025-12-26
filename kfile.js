@@ -44,13 +44,22 @@ else {
 
 project.addFile('sources/libs/offalloc/*');
 
-function addBackend(name) {
+function addBackendBase(name) {
 	project.addIncludeDir('backends/' + name + '/includes');
 	project.addFile('backends/' + name + '/includes/**');
 	project.addFile('backends/' + name + '/sources/*', {nocompile: true});
+}
+
+function addBackend(name) {
+	addBackendBase(name);
 	project.addFile('backends/' + name + '/sources/*unit.c*');
 	project.addFile('backends/' + name + '/sources/*unit.winrt.c*');
 	project.addFile('backends/' + name + '/sources/*unit.m');
+}
+
+function addCBackend(name) {
+	addBackendBase(name);
+	project.addFile('backends/' + name + '/sources/*unit.c');
 }
 
 function addSimpleBackend(name) {
@@ -99,7 +108,7 @@ if (platform === Platform.Windows) {
 		project.addLib('d3d11');
 	}
 	else if (graphics === GraphicsApi.Direct3D12 || graphics === GraphicsApi.Default) {
-		addBackend('gpu/direct3d12');
+		addCBackend('gpu/direct3d12');
 		addKoreDefine('DIRECT3D');
 		addKoreDefine('DIRECT3D12');
 		project.addLib('dxgi');
