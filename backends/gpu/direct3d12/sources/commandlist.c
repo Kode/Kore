@@ -28,7 +28,7 @@ void kore_d3d12_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	list->d3d12.ray_pipe     = NULL;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE render_target_views;
-	render_target_views = COM_CALL_VOID(list->d3d12.rtv_descriptors, GetCPUDescriptorHandleForHeapStart);
+	COM_CALL_VOID_RET(list->d3d12.rtv_descriptors, GetCPUDescriptorHandleForHeapStart, render_target_views);
 
 	for (size_t render_target_index = 0; render_target_index < parameters->color_attachments_count; ++render_target_index) {
 		kore_gpu_texture *render_target = parameters->color_attachments[render_target_index].texture.texture;
@@ -76,7 +76,7 @@ void kore_d3d12_command_list_begin_render_pass(kore_gpu_command_list *list, cons
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE depth_stencil_view;
-	depth_stencil_view = COM_CALL_VOID(list->d3d12.dsv_descriptor, GetCPUDescriptorHandleForHeapStart);
+	COM_CALL_VOID_RET(list->d3d12.dsv_descriptor, GetCPUDescriptorHandleForHeapStart, depth_stencil_view);
 
 	if (parameters->depth_stencil_attachment.texture != NULL) {
 		kore_gpu_texture *render_target = parameters->depth_stencil_attachment.texture;
@@ -237,7 +237,7 @@ void kore_d3d12_command_list_set_descriptor_table(kore_gpu_command_list *list, u
 
 	if (set->allocations[set->current_allocation_index].descriptor_count > 0) {
 		D3D12_GPU_DESCRIPTOR_HANDLE gpu_descriptor;
-		gpu_descriptor = COM_CALL_VOID(list->d3d12.device->descriptor_heap, GetGPUDescriptorHandleForHeapStart);
+		COM_CALL_VOID_RET(list->d3d12.device->descriptor_heap, GetGPUDescriptorHandleForHeapStart, gpu_descriptor);
 		gpu_descriptor.ptr += set->allocations[set->current_allocation_index].descriptor_allocation.offset * list->d3d12.device->cbv_srv_uav_increment;
 
 		if (list->d3d12.compute_pipe != NULL || list->d3d12.ray_pipe != NULL) {
@@ -263,13 +263,13 @@ void kore_d3d12_command_list_set_descriptor_table(kore_gpu_command_list *list, u
 			desc.SizeInBytes    = (UINT)dynamic_sizes[descriptor_index];
 
 			D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
-			descriptor_handle = COM_CALL_VOID(list->d3d12.device->descriptor_heap, GetCPUDescriptorHandleForHeapStart);
+			COM_CALL_VOID_RET(list->d3d12.device->descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
 			descriptor_handle.ptr += (offset + descriptor_index) * list->d3d12.device->cbv_srv_uav_increment;
 			COM_CALL(list->d3d12.device->device, CreateConstantBufferView, &desc, descriptor_handle);
 		}
 
 		D3D12_GPU_DESCRIPTOR_HANDLE gpu_descriptor;
-		gpu_descriptor = COM_CALL_VOID(list->d3d12.device->descriptor_heap, GetGPUDescriptorHandleForHeapStart);
+		COM_CALL_VOID_RET(list->d3d12.device->descriptor_heap, GetGPUDescriptorHandleForHeapStart, gpu_descriptor);
 		gpu_descriptor.ptr += offset * list->d3d12.device->cbv_srv_uav_increment;
 		if (list->d3d12.compute_pipe != NULL || list->d3d12.ray_pipe != NULL) {
 			COM_CALL(list->d3d12.list, SetComputeRootDescriptorTable, table_index, gpu_descriptor);
@@ -286,7 +286,7 @@ void kore_d3d12_command_list_set_descriptor_table(kore_gpu_command_list *list, u
 
 	if (set->allocations[set->current_allocation_index].bindless_descriptor_count > 0) {
 		D3D12_GPU_DESCRIPTOR_HANDLE gpu_descriptor;
-		gpu_descriptor = COM_CALL_VOID(list->d3d12.device->descriptor_heap, GetGPUDescriptorHandleForHeapStart);
+		COM_CALL_VOID_RET(list->d3d12.device->descriptor_heap, GetGPUDescriptorHandleForHeapStart, gpu_descriptor);
 
 		gpu_descriptor.ptr += set->allocations[set->current_allocation_index].bindless_descriptor_allocation.offset * list->d3d12.device->cbv_srv_uav_increment;
 		if (list->d3d12.compute_pipe != NULL || list->d3d12.ray_pipe != NULL) {
@@ -300,7 +300,7 @@ void kore_d3d12_command_list_set_descriptor_table(kore_gpu_command_list *list, u
 
 	if (set->allocations[set->current_allocation_index].sampler_count > 0) {
 		D3D12_GPU_DESCRIPTOR_HANDLE gpu_descriptor;
-		gpu_descriptor = COM_CALL_VOID(list->d3d12.device->sampler_heap, GetGPUDescriptorHandleForHeapStart);
+		COM_CALL_VOID_RET(list->d3d12.device->sampler_heap, GetGPUDescriptorHandleForHeapStart, gpu_descriptor);
 		gpu_descriptor.ptr += set->allocations[set->current_allocation_index].sampler_allocation.offset * list->d3d12.device->sampler_increment;
 
 		if (list->d3d12.compute_pipe != NULL || list->d3d12.ray_pipe != NULL) {
