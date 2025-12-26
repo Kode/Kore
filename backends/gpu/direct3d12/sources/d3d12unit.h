@@ -68,10 +68,10 @@
 #include <stdbool.h>
 
 #ifdef __cplusplus
-#define COM_CALL_VOID(object, method)     object->method()
-#define COM_CALL_VOID_RET(object, method) ret = object->method()
-#define COM_CALL(object, method, ...)     object->method(__VA_ARGS__)
-#define COM_OUT(id, out)                  __uuidof(**(out)), (static_cast<IGraphicsUnknown *>(*(out)), reinterpret_cast<void **>(out))
+#define COM_CALL_VOID(object, method)          object->method()
+#define COM_CALL_VOID_RET(object, method, ret) ret = object->method()
+#define COM_CALL(object, method, ...)          object->method(__VA_ARGS__)
+#define COM_OUT(id, out)                       __uuidof(**(out)), (static_cast<IGraphicsUnknown *>(*(out)), reinterpret_cast<void **>(out))
 #define COM_CREATE(object, method, id, out, ...) \
 	object->method(__VA_ARGS__, __uuidof(**(out)), (static_cast<IGraphicsUnknown *>(*(out)), reinterpret_cast<void **>(out)))
 #else
