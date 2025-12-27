@@ -68,18 +68,18 @@
 #include <stdbool.h>
 
 #ifdef __cplusplus
-#define COM_CALL_VOID(object, method)          object->method()
-#define COM_CALL_VOID_RET(object, method, ret) ret = object->method()
-#define COM_CALL(object, method, ...)          object->method(__VA_ARGS__)
-#define COM_OUT(id, out)                       __uuidof(**(out)), (static_cast<IGraphicsUnknown *>(*(out)), reinterpret_cast<void **>(out))
+#define COM_CALL_VOID(object, method)          (object)->method()
+#define COM_CALL_VOID_RET(object, method, ret) ret = (object)->method()
+#define COM_CALL(object, method, ...)          (object)->method(__VA_ARGS__)
+#define COM_OUT(id, out)                       __uuidof(id), (static_cast<IGraphicsUnknown *>(*(out)), reinterpret_cast<void **>(out))
 #define COM_CREATE(object, method, id, out, ...) \
-	object->method(__VA_ARGS__, __uuidof(**(out)), (static_cast<IGraphicsUnknown *>(*(out)), reinterpret_cast<void **>(out)))
+	(object)->method(__VA_ARGS__, __uuidof(id), (static_cast<IGraphicsUnknown *>(*(out)), reinterpret_cast<void **>(out)))
 #else
-#define COM_CALL_VOID(object, method)            object->lpVtbl->method(object)
-#define COM_CALL_VOID_RET(object, method, ret)   object->lpVtbl->method(object, &ret)
-#define COM_CALL(object, method, ...)            object->lpVtbl->method(object, __VA_ARGS__)
-#define COM_OUT(id, out)                         &IID_##id, out
-#define COM_CREATE(object, method, id, out, ...) object->lpVtbl->method(object, __VA_ARGS__, &IID_##id, out)
+#define COM_CALL_VOID(object, method)            (object)->lpVtbl->method(object)
+#define COM_CALL_VOID_RET(object, method, ret)   (object)->lpVtbl->method((object), &ret)
+#define COM_CALL(object, method, ...)            (object)->lpVtbl->method((object), __VA_ARGS__)
+#define COM_OUT(id, out)                         &IID_##id, (void **)(out)
+#define COM_CREATE(object, method, id, out, ...) (object)->lpVtbl->method((object), __VA_ARGS__, &IID_##id, (void **)(out))
 #endif
 
 // https://learn.microsoft.com/en-us/windows/win32/direct3d12/subresources
