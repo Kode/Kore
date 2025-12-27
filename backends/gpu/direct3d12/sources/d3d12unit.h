@@ -61,7 +61,7 @@
 
 #else
 
-#include <kore3/backend/d3d12_turbo_chapmion_edition.h>
+#include <kore3/backend/d3d12_turbo_champion_edition.h>
 
 #endif
 
