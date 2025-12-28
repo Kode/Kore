@@ -21,7 +21,9 @@
 #ifdef KORE_WINDOWS
 #include <dxgi1_4.h>
 #else
-extern "C" void kore_d3d12_create_d3d12_device(ID3D12Device5 **device);
+extern "C" void kore_d3d12_turbo_create_device(ID3D12Device5 **device);
+extern "C" void kore_d3d12_turbo_create_framebuffer(ID3D12Device5 *device, ID3D12Resource **framebuffer);
+extern "C" void kore_d3d12_turbo_present(ID3D12CommandQueue *queue, ID3D12Resource *framebuffer);
 #endif
 
 #if defined(KORE_NVAPI) && !defined(NDEBUG)
@@ -106,7 +108,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 
 	assert(result == S_OK);
 #else
-	kore_d3d12_create_d3d12_device(&device->d3d12.device);
+	kore_d3d12_turbo_create_device(&device->d3d12.device);
 #endif
 
 #if defined(KORE_NVAPI) && !defined(NDEBUG)
@@ -157,8 +159,6 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	}
 
 	COM_CALL(dxgi_factory, Release);
-#else
-
 #endif
 
 	device->d3d12.cbv_srv_uav_increment = COM_CALL(device->d3d12.device, GetDescriptorHandleIncrementSize, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -177,6 +177,8 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	for (int i = 0; i < KORE_D3D12_FRAME_COUNT; ++i) {
 #ifdef KORE_WINDOWS
 		COM_CALL(device->d3d12.swap_chain, GetBuffer, i, &IID_ID3D12Resource, &device->d3d12.framebuffer_textures[i].d3d12.resource);
+#else
+		kore_d3d12_turbo_create_framebuffer(device->d3d12.device, &device->d3d12.framebuffer_textures[i].d3d12.resource);
 #endif
 
 		device->d3d12.framebuffer_textures[i].width                       = kore_window_width(0);
@@ -1092,6 +1094,8 @@ void kore_d3d12_device_execute_command_list(kore_gpu_device *device, kore_gpu_co
 
 #ifdef KORE_WINDOWS
 		kore_microsoft_affirm(COM_CALL(device->d3d12.swap_chain, Present, 1, 0));
+#else
+		kore_d3d12_turbo_present(device->d3d12.graphics_queue, framebuffer->d3d12.resource);
 #endif
 
 		COM_CALL(device->d3d12.graphics_queue, Signal, device->d3d12.frame_fence, device->d3d12.current_frame_index);
