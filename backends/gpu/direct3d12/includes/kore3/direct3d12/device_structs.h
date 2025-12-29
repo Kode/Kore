@@ -28,7 +28,11 @@ struct kore_d3d12_descriptor_set;
 #define KORE_D3D12_MAX_PIPELINES 1024
 
 typedef struct kore_d3d12_device {
-	struct ID3D12Device3      *device;
+#ifdef KORE_D3D12_NO_RAYTRACING
+	struct ID3D12Device3 *device;
+#else
+	struct ID3D12Device5 *device;
+#endif
 	struct ID3D12CommandQueue *graphics_queue;
 	struct ID3D12CommandQueue *compute_queue;
 	struct ID3D12CommandQueue *copy_queue;

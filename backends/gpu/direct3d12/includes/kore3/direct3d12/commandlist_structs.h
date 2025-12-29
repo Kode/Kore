@@ -50,7 +50,11 @@ typedef struct kore_d3d12_command_list {
 	uint32_t                       dynamic_descriptor_offsets[KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT];
 	uint8_t                        current_allocator_index;
 
+#ifdef KORE_D3D12_NO_RAYTRACING
 	struct ID3D12GraphicsCommandList3 *list;
+#else
+	struct ID3D12GraphicsCommandList4 *list;
+#endif
 
 	struct ID3D12DescriptorHeap *rtv_descriptors;
 	uint32_t                     rtv_increment;
