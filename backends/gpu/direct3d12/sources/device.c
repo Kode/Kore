@@ -683,7 +683,7 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 	list->d3d12.current_allocator_index = 0;
 
 #ifdef KORE_D3D12_NO_RAYTRACING
-	kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommandList, ID3D12GraphicsCommandList3, &list->d3d12.list, 0, list_type,
+	kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommandList, ID3D12GraphicsCommandList2, &list->d3d12.list, 0, list_type,
 	                                 list->d3d12.allocator[list->d3d12.current_allocator_index], NULL));
 #else
 	kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommandList, ID3D12GraphicsCommandList4, &list->d3d12.list, 0, list_type,

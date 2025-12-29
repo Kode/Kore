@@ -51,7 +51,7 @@ typedef struct kore_d3d12_command_list {
 	uint8_t                        current_allocator_index;
 
 #ifdef KORE_D3D12_NO_RAYTRACING
-	struct ID3D12GraphicsCommandList3 *list;
+	struct ID3D12GraphicsCommandList2 *list;
 #else
 	struct ID3D12GraphicsCommandList4 *list;
 #endif
