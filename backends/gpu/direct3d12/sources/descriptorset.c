@@ -53,6 +53,7 @@ void kore_d3d12_descriptor_set_set_buffer_view_uav(kore_gpu_device *device, kore
 }
 
 void kore_d3d12_descriptor_set_set_bvh_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_raytracing_hierarchy *bvh, uint32_t index) {
+#ifndef KORE_D3D12_NO_RAYTRACING
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc          = {0};
 	desc.ViewDimension                            = D3D12_SRV_DIMENSION_RAYTRACING_ACCELERATION_STRUCTURE;
 	desc.Shader4ComponentMapping                  = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -64,6 +65,7 @@ void kore_d3d12_descriptor_set_set_bvh_view_srv(kore_gpu_device *device, kore_d3
 	descriptor_handle.ptr += (set->allocations[set->current_allocation_index].descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
 
 	COM_CALL(device->d3d12.device, CreateShaderResourceView, NULL, &desc, descriptor_handle);
+#endif
 }
 
 void kore_d3d12_descriptor_set_set_texture_view_srv(kore_gpu_device *device, uint32_t offset, const kore_gpu_texture_view *texture_view) {

@@ -587,6 +587,7 @@ void kore_d3d12_command_list_compute(kore_gpu_command_list *list, uint32_t workg
 }
 
 void kore_d3d12_command_list_prepare_raytracing_volume(kore_gpu_command_list *list, kore_gpu_raytracing_volume *volume) {
+#ifndef KORE_D3D12_NO_RAYTRACING
 	D3D12_RAYTRACING_GEOMETRY_DESC geometry_desc = {0};
 
 	geometry_desc.Type  = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
@@ -624,9 +625,11 @@ void kore_d3d12_command_list_prepare_raytracing_volume(kore_gpu_command_list *li
 	COM_CALL(list->d3d12.list, ResourceBarrier, 1, &barrier);
 
 	kore_d3d12_command_list_queue_raytracing_volume_access(list, &volume->d3d12);
+#endif
 }
 
 void kore_d3d12_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list *list, kore_gpu_raytracing_hierarchy *hierarchy) {
+#ifndef KORE_D3D12_NO_RAYTRACING
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs = {0};
 	inputs.Type                                                 = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL;
 	inputs.Flags                                                = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_UPDATE;
@@ -648,10 +651,12 @@ void kore_d3d12_command_list_prepare_raytracing_hierarchy(kore_gpu_command_list 
 	COM_CALL(list->d3d12.list, ResourceBarrier, 1, &barrier);
 
 	kore_d3d12_command_list_queue_raytracing_hierarchy_access(list, &hierarchy->d3d12);
+#endif
 }
 
 void kore_d3d12_command_list_update_raytracing_hierarchy(kore_gpu_command_list *list, kore_matrix4x4 *volume_transforms, uint32_t volumes_count,
                                                          kore_gpu_raytracing_hierarchy *hierarchy) {
+#ifndef KORE_D3D12_NO_RAYTRACING
 	D3D12_RAYTRACING_INSTANCE_DESC *descs = (D3D12_RAYTRACING_INSTANCE_DESC *)kore_gpu_buffer_lock_all(&hierarchy->d3d12.instances);
 
 	for (uint32_t volume_index = 0; volume_index < hierarchy->d3d12.volumes_count; ++volume_index) {
@@ -696,17 +701,21 @@ void kore_d3d12_command_list_update_raytracing_hierarchy(kore_gpu_command_list *
 	COM_CALL(list->d3d12.list, ResourceBarrier, 1, &barrier);
 
 	kore_d3d12_command_list_queue_raytracing_hierarchy_access(list, &hierarchy->d3d12);
+#endif
 }
 
 void kore_d3d12_command_list_set_ray_pipeline(kore_gpu_command_list *list, kore_d3d12_ray_pipeline *pipeline) {
+#ifndef KORE_D3D12_NO_RAYTRACING
 	COM_CALL(list->d3d12.list, SetPipelineState1, pipeline->pipe);
 	COM_CALL(list->d3d12.list, SetComputeRootSignature, pipeline->root_signature);
 	list->d3d12.ray_pipe     = pipeline;
 	list->d3d12.compute_pipe = NULL;
 	list->d3d12.render_pipe  = NULL;
+#endif
 }
 
 void kore_d3d12_command_list_trace_rays(kore_gpu_command_list *list, uint32_t width, uint32_t height, uint32_t depth) {
+#ifndef KORE_D3D12_NO_RAYTRACING
 	D3D12_DISPATCH_RAYS_DESC desc               = {0};
 	desc.RayGenerationShaderRecord.StartAddress = COM_CALL_VOID(list->d3d12.ray_pipe->shader_ids.d3d12.resource, GetGPUVirtualAddress);
 	desc.RayGenerationShaderRecord.SizeInBytes  = D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES;
@@ -722,6 +731,7 @@ void kore_d3d12_command_list_trace_rays(kore_gpu_command_list *list, uint32_t wi
 	desc.Depth  = depth;
 
 	COM_CALL(list->d3d12.list, DispatchRays, &desc);
+#endif
 }
 
 void kore_d3d12_command_list_set_viewport(kore_gpu_command_list *list, float x, float y, float width, float height, float min_depth, float max_depth) {

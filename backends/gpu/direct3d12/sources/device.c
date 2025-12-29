@@ -20,10 +20,6 @@
 
 #ifdef KORE_WINDOWS
 #include <dxgi1_4.h>
-#else
-extern "C" void kore_d3d12_turbo_create_device(ID3D12Device5 **device);
-extern "C" void kore_d3d12_turbo_create_framebuffer(ID3D12Device5 *device, ID3D12Resource **framebuffer);
-extern "C" void kore_d3d12_turbo_present(ID3D12Device *device, ID3D12CommandQueue *queue, ID3D12Resource *framebuffer);
 #endif
 
 #if defined(KORE_NVAPI) && !defined(NDEBUG)
@@ -624,10 +620,12 @@ void kore_d3d12_device_create_buffer(kore_gpu_device *device, const kore_gpu_buf
 		buffer->d3d12.resource_state = D3D12_RESOURCE_STATE_GENERIC_READ;
 	}
 
+#ifndef KORE_D3D12_NO_RAYTRACING
 	if ((parameters->usage_flags & KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME) != 0) {
 		buffer->d3d12.resource_state = D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE;
 		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	}
+#endif
 
 	buffer->d3d12.device = device;
 
@@ -684,7 +682,7 @@ void kore_d3d12_device_create_command_list(kore_gpu_device *device, kore_gpu_com
 
 	list->d3d12.current_allocator_index = 0;
 
-	kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommandList, ID3D12GraphicsCommandList4, &list->d3d12.list, 0, list_type,
+	kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateCommandList, ID3D12GraphicsCommandList3, &list->d3d12.list, 0, list_type,
 	                                 list->d3d12.allocator[list->d3d12.current_allocator_index], NULL));
 
 	list->d3d12.compute_pipe = NULL;
@@ -1190,6 +1188,7 @@ void kore_d3d12_device_create_sampler(kore_gpu_device *device, const kore_gpu_sa
 
 void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gpu_buffer *vertex_buffer, uint64_t vertex_count, kore_gpu_buffer *index_buffer,
                                                 uint32_t index_count, kore_gpu_raytracing_volume *volume) {
+#ifndef KORE_D3D12_NO_RAYTRACING
 	volume->d3d12.device          = device;
 	volume->d3d12.execution_index = 0;
 
@@ -1233,10 +1232,12 @@ void kore_d3d12_device_create_raytracing_volume(kore_gpu_device *device, kore_gp
 	as_params.size        = prebuild_info.ResultDataMaxSizeInBytes;
 	as_params.usage_flags = (uint32_t)KORE_D3D12_BUFFER_USAGE_UAV | (uint32_t)KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
 	kore_gpu_device_create_buffer(device, &as_params, &volume->d3d12.acceleration_structure);
+#endif
 }
 
 void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore_gpu_raytracing_volume **volumes, kore_matrix4x4 *volume_transforms,
                                                    uint32_t volumes_count, kore_gpu_raytracing_hierarchy *hierarchy) {
+#ifndef KORE_D3D12_NO_RAYTRACING
 	hierarchy->d3d12.device          = device;
 	hierarchy->d3d12.execution_index = 0;
 
@@ -1302,6 +1303,7 @@ void kore_d3d12_device_create_raytracing_hierarchy(kore_gpu_device *device, kore
 	as_params.size        = prebuild_info.ResultDataMaxSizeInBytes;
 	as_params.usage_flags = (uint32_t)KORE_D3D12_BUFFER_USAGE_UAV | (uint32_t)KORE_GPU_BUFFER_USAGE_RAYTRACING_VOLUME;
 	kore_gpu_device_create_buffer(device, &as_params, &hierarchy->d3d12.acceleration_structure);
+#endif
 }
 
 void kore_d3d12_device_create_query_set(kore_gpu_device *device, const kore_gpu_query_set_parameters *parameters, kore_gpu_query_set *query_set) {

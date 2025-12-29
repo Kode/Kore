@@ -498,7 +498,9 @@ void kore_d3d12_ray_pipeline_init(kore_gpu_device *device, kore_d3d12_ray_pipeli
 #endif
 
 void kore_d3d12_ray_pipeline_destroy(kore_d3d12_ray_pipeline *pipe) {
+#ifndef KORE_D3D12_NO_RAYTRACING
 	COM_CALL_VOID(pipe->root_signature, Release);
 	COM_CALL_VOID(pipe->pipe, Release);
 	COM_CALL_VOID(pipe->shader_ids.d3d12.resource, Release);
+#endif
 }
