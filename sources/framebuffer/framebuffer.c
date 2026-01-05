@@ -16,12 +16,12 @@ uint8_t *kore_framebuffer_pixels;
 
 #define MMIO_BASE 0xffffffff00000000
 
-#define FB_ADDR 0x0
+#define FB_ADDR   0x0
 #define FB_STRIDE 0x08
-#define FB_WIDTH 0x0c
+#define FB_WIDTH  0x0c
 #define FB_HEIGHT 0x10
 #define FB_FORMAT 0x14
-#define PRESENT 0x18
+#define PRESENT   0x18
 
 static uint8_t *mmio;
 
@@ -35,12 +35,12 @@ void kore_fb_begin(void) {
 	kore_framebuffer_stride = *(uint32_t *)&mmio[FB_STRIDE];
 
 	uint64_t kore_framebuffer_pixels_address = *(uint64_t *)&mmio[FB_ADDR];
-	kore_framebuffer_pixels = (uint8_t *)kore_framebuffer_pixels_address;
+	kore_framebuffer_pixels                  = (uint8_t *)kore_framebuffer_pixels_address;
 }
 
 void kore_fb_end(void) {
 	uint8_t *present = &mmio[PRESENT];
-	*present = 1;
+	*present         = 1;
 }
 
 #else
@@ -53,9 +53,9 @@ void kore_fb_init() {
 	kore_gpu_device_wishlist wishlist = {0};
 	kore_gpu_device_create(&framebuffer_device, &wishlist);
 
-	kore_framebuffer_width  = kore_window_width();
-	kore_framebuffer_height = kore_window_height();
-	kore_framebuffer_stride = kore_gpu_device_align_texture_row_bytes(&framebuffer_device, width * 4);
+	kore_framebuffer_width  = kore_window_width(0);
+	kore_framebuffer_height = kore_window_height(0);
+	kore_framebuffer_stride = kore_gpu_device_align_texture_row_bytes(&framebuffer_device, kore_framebuffer_width * 4);
 
 	kong_init(&framebuffer_device);
 
