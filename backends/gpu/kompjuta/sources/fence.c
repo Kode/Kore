@@ -1,4 +1,4 @@
-#include "fence_functions.h"
+#include <kore3/kompjuta/fence_functions.h>
 
 #include <kore3/gpu/fence.h>
 

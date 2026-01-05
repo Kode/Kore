@@ -8,6 +8,7 @@
 #include "commandlist.c"
 #include "descriptorset.c"
 #include "device.c"
+#include "fence.c"
 #include "pipeline.c"
 #include "raytracing.c"
 #include "sampler.c"
