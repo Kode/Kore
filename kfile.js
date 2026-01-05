@@ -470,6 +470,12 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 	project.addDefine('_POSIX_C_SOURCE=200112L');
 	project.addDefine('_XOPEN_SOURCE=600');
 }
+else if (platform === Platform.Kompjuta) {
+	addKoreDefine('KOMPJUTA');
+	addBackend('system/kompjuta');
+	project.addIncludeDir('miniclib');
+	project.addFile('miniclib/**');
+}
 else {
 	plugin = true;
 }
