@@ -8,12 +8,13 @@
 extern "C" {
 #endif
 
-void kore_kompjuta_render_pipeline_init(kore_kompjuta_device *device, kore_kompjuta_render_pipeline *pipe, const kore_kompjuta_render_pipeline_parameters *parameters);
+void kore_kompjuta_render_pipeline_init(kore_kompjuta_device *device, kore_kompjuta_render_pipeline *pipe,
+                                        const kore_kompjuta_render_pipeline_parameters *parameters);
 
 void kore_kompjuta_render_pipeline_destroy(kore_kompjuta_render_pipeline *pipe);
 
 void kore_kompjuta_compute_pipeline_init(kore_kompjuta_device *device, kore_kompjuta_compute_pipeline *pipe,
-                                       const kore_kompjuta_compute_pipeline_parameters *parameters);
+                                         const kore_kompjuta_compute_pipeline_parameters *parameters);
 
 void kore_kompjuta_compute_pipeline_destroy(kore_kompjuta_compute_pipeline *pipe);
 

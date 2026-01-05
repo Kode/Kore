@@ -27,15 +27,11 @@ void kore_window_resize(int window_index, int width, int height) {}
 
 void kore_window_move(int window_index, int x, int y) {}
 
-void kore_window_change_framebuffer(int window_index, kore_framebuffer_parameters *frame) {
-
-}
+void kore_window_change_framebuffer(int window_index, kore_framebuffer_parameters *frame) {}
 
 void kore_window_change_features(int window_index, int features) {}
 
-void kore_window_change_mode(int window_index, kore_window_mode mode) {
-
-}
+void kore_window_change_mode(int window_index, kore_window_mode mode) {}
 
 void kore_window_destroy(int window_index) {}
 
