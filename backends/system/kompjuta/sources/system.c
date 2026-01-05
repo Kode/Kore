@@ -35,11 +35,7 @@ double kore_frequency(void) {
 }
 
 kore_ticks kore_timestamp(void) {
-	return (kore_ticks)(js_time());
-}
-
-double kore_time(void) {
-	return js_time() / 1000.0;
+	return 0;
 }
 
 int kore_cpu_cores(void) {
@@ -51,6 +47,10 @@ int kore_hardware_threads(void) {
 }
 
 void kore_internal_shutdown(void) {}
+
+const char *kore_internal_save_path() {
+	return "";
+}
 
 extern int kickstart(int argc, char **argv);
 

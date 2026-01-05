@@ -473,6 +473,7 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 else if (platform === Platform.Kompjuta) {
 	addKoreDefine('KOMPJUTA');
 	addBackend('system/kompjuta');
+	addBackend('gpu/kompjuta');
 	project.addIncludeDir('miniclib');
 	project.addFile('miniclib/**');
 }

@@ -123,6 +123,8 @@ typedef struct kore_gpu_compute_arguments {
 #include <kore3/vulkan/commandlist_structs.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/commandlist_structs.h>
+#elif defined(KORE_KOMPJUTA)
+#include <kore3/kompjuta/commandlist_structs.h>
 #elif defined(KORE_CONSOLE)
 #include <kore3/console/commandlist_structs.h>
 #else

@@ -12,6 +12,8 @@
 #include <kore3/vulkan/raytracing_functions.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/raytracing_functions.h>
+#elif defined(KORE_KOMPJUTA)
+#include <kore3/kompjuta/raytracing_functions.h>
 #elif defined(KORE_CONSOLE)
 #include <kore3/console/raytracing_functions.h>
 #else

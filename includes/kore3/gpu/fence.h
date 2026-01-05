@@ -17,6 +17,8 @@
 #include <kore3/vulkan/fence_structs.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/fence_structs.h>
+#elif defined(KORE_KOMPJUTA)
+#include <kore3/kompjuta/fence_structs.h>
 #elif defined(KORE_CONSOLE)
 #include <kore3/console/fence_structs.h>
 #else

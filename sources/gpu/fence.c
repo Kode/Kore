@@ -12,6 +12,10 @@
 #include <kore3/vulkan/fence_functions.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/fence_functions.h>
+#elif defined(KORE_KOMPJUTA)
+#include <kore3/kompjuta/fence_functions.h>
+#elif defined(KORE_CONSOLE)
+#include <kore3/console/fence_functions.h>
 #else
 #error("Unknown GPU backend")
 #endif

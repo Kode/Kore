@@ -12,6 +12,8 @@
 #include <kore3/vulkan/buffer_functions.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/buffer_functions.h>
+#elif defined(KORE_KOMPJUTA)
+#include <kore3/kompjuta/buffer_functions.h>
 #elif defined(KORE_CONSOLE)
 #include <kore3/console/buffer_functions.h>
 #else

@@ -1,0 +1,4 @@
+#ifndef KORE_KOMPJUTA_UNIT_HEADER
+#define KORE_KOMPJUTA_UNIT_HEADER
+
+#endif

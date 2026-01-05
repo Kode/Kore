@@ -25,6 +25,8 @@
 #include <kore3/vulkan/device_structs.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/device_structs.h>
+#elif defined(KORE_KOMPJUTA)
+#include <kore3/kompjuta/device_structs.h>
 #elif defined(KORE_CONSOLE)
 #include <kore3/console/device_structs.h>
 #else

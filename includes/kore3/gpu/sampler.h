@@ -17,6 +17,8 @@
 #include <kore3/vulkan/sampler_structs.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/sampler_structs.h>
+#elif defined(KORE_KOMPJUTA)
+#include <kore3/kompjuta/sampler_structs.h>
 #elif defined(KORE_CONSOLE)
 #include <kore3/console/sampler_structs.h>
 #else

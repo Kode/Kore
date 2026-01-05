@@ -12,6 +12,8 @@
 #include <kore3/vulkan/commandlist_functions.h>
 #elif defined(KORE_WEBGPU)
 #include <kore3/webgpu/commandlist_functions.h>
+#elif defined(KORE_KOMPJUTA)
+#include <kore3/kompjuta/commandlist_functions.h>
 #elif defined(KORE_CONSOLE)
 #include <kore3/console/commandlist_functions.h>
 #else
