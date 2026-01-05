@@ -9,6 +9,7 @@
 #include "copy.c"
 #include "descriptorset.c"
 #include "device.c"
+#include "fence.c"
 #include "flip.c"
 #include "pipeline.c"
 #include "raytracing.c"

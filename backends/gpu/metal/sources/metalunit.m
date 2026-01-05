@@ -4,6 +4,7 @@
 #include "commandlist.m"
 #include "descriptorset.m"
 #include "device.m"
+#include "fence.m"
 #include "pipeline.m"
 #include "raytracing.m"
 #include "sampler.m"
