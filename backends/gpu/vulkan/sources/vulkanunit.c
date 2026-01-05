@@ -197,6 +197,7 @@ static kore_gpu_texture_format convert_from_vulkan_format(VkFormat format) {
 #include "commandlist.c"
 #include "descriptorset.c"
 #include "device.c"
+#include "fence.c"
 #include "pipeline.c"
 #include "raytracing.c"
 #include "renderpasses.c"
