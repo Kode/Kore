@@ -1,230 +1,96 @@
 #include <kore3/framebuffer/framebuffer.h>
 
-#if 0
+#include <kore3/gpu/buffer.h>
+#include <kore3/gpu/device.h>
 
-#include <kore3/graphics4/graphics.h>
-#include <kore3/graphics4/indexbuffer.h>
-#include <kore3/graphics4/pipeline.h>
-#include <kore3/graphics4/shader.h>
-#include <kore3/graphics4/texture.h>
-#include <kore3/graphics4/vertexbuffer.h>
-#include <kore3/io/filereader.h>
-#include <kore3/log.h>
-
-#if 0
-
-#ifdef KORE_KONG
 #include <kong.h>
-#endif
 
-#ifndef KORE_KONG
-static kore_g4_shader_t vertexShader;
-static kore_g4_shader_t fragmentShader;
-static kore_g4_pipeline_t pipeline;
-static kore_g4_texture_unit_t tex;
-kore_g1_texture_filter_t kore_internal_g1_texture_filter_min = KORE_G1_TEXTURE_FILTER_LINEAR;
-kore_g1_texture_filter_t kore_internal_g1_texture_filter_mag = KORE_G1_TEXTURE_FILTER_LINEAR;
-kore_g1_mipmap_filter_t kore_internal_g1_mipmap_filter = KORE_G1_MIPMAP_FILTER_NONE;
-#endif
-static kore_g4_vertex_buffer_t vb;
-static kore_g4_index_buffer_t ib;
-static kore_g4_texture_t texture;
+static kore_gpu_device       framebuffer_device;
+static kore_gpu_command_list framebuffer_list;
+static kore_gpu_buffer       framebuffer_buffer;
 
-uint32_t *kore_internal_g1_image;
-int kore_internal_g1_w, kore_internal_g1_h, kore_internal_g1_tex_width;
+uint32_t kore_framebuffer_width;
+uint32_t kore_framebuffer_height;
+uint32_t kore_framebuffer_stride;
 
-void kore_g1_begin(void) {
-	kore_g4_begin(0);
-	kore_internal_g1_image = (uint32_t *)kore_g4_texture_lock(&texture);
+uint8_t *kore_framebuffer_pixels;
+
+void kore_fb_init(uint32_t width, uint32_t height) {
+	kore_gpu_device_wishlist wishlist = {0};
+	kore_gpu_device_create(&framebuffer_device, &wishlist);
+
+	kore_framebuffer_width  = width;
+	kore_framebuffer_height = height;
+	kore_framebuffer_stride = kore_gpu_device_align_texture_row_bytes(&framebuffer_device, width * 4);
+
+	kong_init(&framebuffer_device);
+
+	kore_gpu_device_create_command_list(&framebuffer_device, KORE_GPU_COMMAND_LIST_TYPE_GRAPHICS, &framebuffer_list);
+
+	kore_gpu_buffer_parameters parameters = {
+	    .size        = kore_framebuffer_height * kore_framebuffer_stride,
+	    .usage_flags = KORE_GPU_BUFFER_USAGE_CPU_WRITE | KORE_GPU_BUFFER_USAGE_COPY_SRC,
+	};
+	kore_gpu_device_create_buffer(&framebuffer_device, &parameters, &framebuffer_buffer);
 }
 
-static inline kore_g4_texture_filter_t map_texture_filter(kore_g1_texture_filter_t filter) {
-	switch (filter) {
-	case KORE_G1_TEXTURE_FILTER_POINT:
-		return KORE_G4_TEXTURE_FILTER_POINT;
-	case KORE_G1_TEXTURE_FILTER_LINEAR:
-		return KORE_G4_TEXTURE_FILTER_LINEAR;
-	case KORE_G1_TEXTURE_FILTER_ANISOTROPIC:
-		return KORE_G4_TEXTURE_FILTER_ANISOTROPIC;
-	}
-
-	kore_log(KORE_LOG_LEVEL_WARNING, "unhandled kore_g1_texture_filter_t (%i)", filter);
-	return KORE_G4_TEXTURE_FILTER_LINEAR;
+void kore_fb_begin(void) {
+	kore_framebuffer_pixels = (uint8_t *)kore_gpu_buffer_lock_all(&framebuffer_buffer);
 }
 
-static inline kore_g4_mipmap_filter_t map_mipmap_filter(kore_g1_mipmap_filter_t filter) {
-	switch (filter) {
-	case KORE_G1_MIPMAP_FILTER_NONE:
-		return KORE_G4_MIPMAP_FILTER_NONE;
-	case KORE_G1_MIPMAP_FILTER_POINT:
-		return KORE_G4_MIPMAP_FILTER_POINT;
-	case KORE_G1_MIPMAP_FILTER_LINEAR:
-		return KORE_G4_MIPMAP_FILTER_LINEAR;
-	}
+void kore_fb_end(void) {
+	kore_gpu_buffer_unlock(&framebuffer_buffer);
 
-	kore_log(KORE_LOG_LEVEL_WARNING, "unhandled kore_g1_mipmap_filter_t (%i)", filter);
-	return KORE_G4_MIPMAP_FILTER_NONE;
+	kore_gpu_texture *gpu_framebuffer = kore_gpu_device_get_framebuffer(&framebuffer_device);
+
+	kore_gpu_color clear_color = {
+	    .r = 0.0f,
+	    .g = 0.0f,
+	    .b = 0.0f,
+	    .a = 1.0f,
+	};
+
+	kore_gpu_render_pass_parameters parameters = {
+	    .color_attachments_count = 1,
+	    .color_attachments =
+	        {
+	            {
+	                .load_op     = KORE_GPU_LOAD_OP_CLEAR,
+	                .clear_value = clear_color,
+	                .texture =
+	                    {
+	                        .texture           = gpu_framebuffer,
+	                        .array_layer_count = 1,
+	                        .mip_level_count   = 1,
+	                        .format            = kore_gpu_device_framebuffer_format(&framebuffer_device),
+	                        .dimension         = KORE_GPU_TEXTURE_VIEW_DIMENSION_2D,
+	                    },
+	            },
+	        },
+	};
+	kore_gpu_command_list_begin_render_pass(&framebuffer_list, &parameters);
+
+	kore_gpu_command_list_end_render_pass(&framebuffer_list);
+
+	kore_gpu_image_copy_buffer copy_buffer = {
+	    .buffer         = &framebuffer_buffer,
+	    .bytes_per_row  = kore_framebuffer_stride,
+	    .offset         = 0,
+	    .rows_per_image = kore_framebuffer_height,
+	};
+
+	kore_gpu_image_copy_texture copy_texture = {
+	    .texture   = gpu_framebuffer,
+	    .origin_x  = 0,
+	    .origin_y  = 0,
+	    .origin_z  = 0,
+	    .mip_level = 0,
+	    .aspect    = KORE_GPU_IMAGE_COPY_ASPECT_ALL,
+	};
+
+	kore_gpu_command_list_copy_buffer_to_texture(&framebuffer_list, &copy_buffer, &copy_texture, kore_framebuffer_width, kore_framebuffer_height, 1);
+
+	kore_gpu_command_list_present(&framebuffer_list);
+
+	kore_gpu_device_execute_command_list(&framebuffer_device, &framebuffer_list);
 }
-
-void kore_g1_end(void) {
-	kore_internal_g1_image = NULL;
-	kore_g4_texture_unlock(&texture);
-
-	kore_g4_clear(KORE_G4_CLEAR_COLOR, 0xff000000, 0.0f, 0);
-
-#ifdef KORE_KONG
-	kore_g4_set_pipeline(&kore_g1_pipeline);
-#else
-	kore_g4_set_pipeline(&pipeline);
-#endif
-
-#ifndef KORE_KONG
-	kore_g4_set_texture(tex, &texture);
-	kore_g4_set_texture_minification_filter(tex, map_texture_filter(kore_internal_g1_texture_filter_min));
-	kore_g4_set_texture_magnification_filter(tex, map_texture_filter(kore_internal_g1_texture_filter_mag));
-	kore_g4_set_texture_mipmap_filter(tex, map_mipmap_filter(kore_internal_g1_mipmap_filter));
-#endif
-	kore_g4_set_vertex_buffer(&vb);
-	kore_g4_set_index_buffer(&ib);
-	kore_g4_draw_indexed_vertices();
-
-	kore_g4_end(0);
-	kore_g4_swap_buffers();
-}
-
-void kore_g1_init(int width, int height) {
-	kore_internal_g1_w = width;
-	kore_internal_g1_h = height;
-
-#ifndef KORE_KONG
-	{
-		kore_file_reader_t file;
-		kore_file_reader_open(&file, "g1.vert", KORE_FILE_TYPE_ASSET);
-		void *data = malloc(kore_file_reader_size(&file));
-		kore_file_reader_read(&file, data, kore_file_reader_size(&file));
-		kore_file_reader_close(&file);
-		kore_g4_shader_init(&vertexShader, data, kore_file_reader_size(&file), KORE_G4_SHADER_TYPE_VERTEX);
-		free(data);
-	}
-
-	{
-		kore_file_reader_t file;
-		kore_file_reader_open(&file, "g1.frag", KORE_FILE_TYPE_ASSET);
-		void *data = malloc(kore_file_reader_size(&file));
-		kore_file_reader_read(&file, data, kore_file_reader_size(&file));
-		kore_file_reader_close(&file);
-		kore_g4_shader_init(&fragmentShader, data, kore_file_reader_size(&file), KORE_G4_SHADER_TYPE_FRAGMENT);
-		free(data);
-	}
-
-	kore_g4_vertex_structure_t structure;
-	kore_g4_vertex_structure_init(&structure);
-	kore_g4_vertex_structure_add(&structure, "pos", KORE_G4_VERTEX_DATA_F32_3X);
-	kore_g4_vertex_structure_add(&structure, "tex", KORE_G4_VERTEX_DATA_F32_2X);
-	kore_g4_pipeline_init(&pipeline);
-	pipeline.input_layout[0] = &structure;
-	pipeline.input_layout[1] = NULL;
-	pipeline.vertex_shader = &vertexShader;
-	pipeline.fragment_shader = &fragmentShader;
-	kore_g4_pipeline_compile(&pipeline);
-
-	tex = kore_g4_pipeline_get_texture_unit(&pipeline, "texy");
-#endif
-
-	kore_g4_texture_init(&texture, width, height, KORE_IMAGE_FORMAT_RGBA32);
-	kore_internal_g1_tex_width = texture.tex_width;
-
-	kore_internal_g1_image = (uint32_t *)kore_g4_texture_lock(&texture);
-	int stride = kore_g4_texture_stride(&texture) / 4;
-	for (int y = 0; y < texture.tex_height; ++y) {
-		for (int x = 0; x < texture.tex_width; ++x) {
-			kore_internal_g1_image[y * stride + x] = 0;
-		}
-	}
-	kore_g4_texture_unlock(&texture);
-
-	// Correct for the difference between the texture's desired size and the actual power of 2 size
-	float xAspect = (float)width / texture.tex_width;
-	float yAspect = (float)height / texture.tex_height;
-
-#ifdef KORE_KONG
-	kore_g4_vertex_buffer_init(&vb, 4, &kore_g1_vertex_in_structure, KORE_G4_USAGE_STATIC, 0);
-#else
-	kore_g4_vertex_buffer_init(&vb, 4, &structure, KORE_G4_USAGE_STATIC, 0);
-#endif
-	float *v = kore_g4_vertex_buffer_lock_all(&vb);
-	{
-		int i = 0;
-		v[i++] = -1;
-		v[i++] = 1;
-		v[i++] = 0.5;
-		v[i++] = 0;
-		v[i++] = 0;
-		v[i++] = 1;
-		v[i++] = 1;
-		v[i++] = 0.5;
-		v[i++] = xAspect;
-		v[i++] = 0;
-		v[i++] = 1;
-		v[i++] = -1;
-		v[i++] = 0.5;
-		v[i++] = xAspect;
-		v[i++] = yAspect;
-		v[i++] = -1;
-		v[i++] = -1;
-		v[i++] = 0.5;
-		v[i++] = 0;
-		v[i++] = yAspect;
-	}
-	kore_g4_vertex_buffer_unlock_all(&vb);
-
-	kore_g4_index_buffer_init(&ib, 6, KORE_G4_INDEX_BUFFER_FORMAT_32BIT, KORE_G4_USAGE_STATIC);
-	uint32_t *ii = (uint32_t *)kore_g4_index_buffer_lock_all(&ib);
-	{
-		int i = 0;
-		ii[i++] = 0;
-		ii[i++] = 1;
-		ii[i++] = 3;
-		ii[i++] = 1;
-		ii[i++] = 2;
-		ii[i++] = 3;
-	}
-	kore_g4_index_buffer_unlock_all(&ib);
-}
-
-#if defined(KORE_DYNAMIC_COMPILE) || defined(KORE_DYNAMIC)
-
-void kore_g1_set_pixel(int x, int y, float red, float green, float blue) {
-	if (x < 0 || x >= kore_internal_g1_w || y < 0 || y >= kore_internal_g1_h)
-		return;
-	int r = (int)(red * 255);
-	int g = (int)(green * 255);
-	int b = (int)(blue * 255);
-	kore_internal_g1_image[y * kore_internal_g1_tex_width + x] = 0xff << 24 | b << 16 | g << 8 | r;
-}
-
-int kore_g1_width() {
-	return kore_internal_g1_w;
-}
-
-int kore_g1_height() {
-	return kore_internal_g1_h;
-}
-
-void kore_g1_set_texture_magnification_filter(kore_g1_texture_filter_t filter) {
-	kore_internal_g1_texture_filter_mag = filter;
-}
-
-void kore_g1_set_texture_minification_filter(kore_g1_texture_filter_t filter) {
-	kore_internal_g1_texture_filter_min = filter;
-}
-
-void kore_g1_set_texture_mipmap_filter(kore_g1_mipmap_filter_t filter) {
-	kore_internal_g1_mipmap_filter = filter;
-}
-
-#endif
-
-#endif
-
-#endif

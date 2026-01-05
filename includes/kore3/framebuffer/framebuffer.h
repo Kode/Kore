@@ -32,7 +32,7 @@ typedef enum {
 /// </summary>
 /// <param name="width">The width to be used by the G1-API - typically the window-width</param>
 /// <param name="height">The height to be used by the G1-API - typically the window-height</param>
-KORE_FUNC void kore_fb_init(int width, int height);
+KORE_FUNC void kore_fb_init(uint32_t width, uint32_t height);
 
 /// <summary>
 /// Typically called once per frame before other G1-functions are called.
@@ -45,11 +45,11 @@ KORE_FUNC void kore_fb_begin(void);
 /// </summary>
 KORE_FUNC void kore_fb_end(void);
 
-extern uint32_t *kore_internal_fb_image;
+extern uint32_t kore_framebuffer_width;
+extern uint32_t kore_framebuffer_height;
+extern uint32_t kore_framebuffer_stride;
 
-extern int kore_internal_fb_w;
-extern int kore_internal_fb_h;
-extern int kore_internal_fb_tex_width;
+extern uint8_t *kore_framebuffer_pixels;
 
 extern kore_fb_texture_filter kore_internal_fb_texture_filter_min;
 extern kore_fb_texture_filter kore_internal_fb_texture_filter_mag;
@@ -65,7 +65,7 @@ extern kore_fb_mipmap_filter  kore_internal_fb_mipmap_filter;
 /// <param name="red">The red-component between 0 and 1</param>
 /// <param name="green">The green-component between 0 and 1</param>
 /// <param name="blue">The blue-component between 0 and 1</param>
-KORE_FUNC void kore_fb_set_pixel(int x, int y, float red, float green, float blue);
+KORE_FUNC void kore_fb_set_pixel(uint32_t x, uint32_t y, uint8_t red, uint8_t green, uint8_t blue);
 
 /// <summary>
 /// Returns the width used by G1.
@@ -104,20 +104,20 @@ KORE_FUNC void kore_fb_set_texture_mipmap_filter(kore_fb_mipmap_filter_t filter)
 
 // implementation moved to the header to allow easy inlining
 
-static inline void kore_fb_set_pixel(int x, int y, float red, float green, float blue) {
-	assert(x >= 0 && x < kore_internal_fb_w && y >= 0 && y < kore_internal_fb_h);
-	int r                                                      = (int)(red * 255);
-	int g                                                      = (int)(green * 255);
-	int b                                                      = (int)(blue * 255);
-	kore_internal_fb_image[y * kore_internal_fb_tex_width + x] = 0xff << 24 | b << 16 | g << 8 | r;
+static inline void kore_fb_set_pixel(uint32_t x, uint32_t y, uint8_t red, uint8_t green, uint8_t blue) {
+	assert(x < kore_framebuffer_width && y < kore_framebuffer_height);
+	kore_framebuffer_pixels[y * kore_framebuffer_stride + x * 4 + 0] = red;
+	kore_framebuffer_pixels[y * kore_framebuffer_stride + x * 4 + 1] = green;
+	kore_framebuffer_pixels[y * kore_framebuffer_stride + x * 4 + 2] = blue;
+	kore_framebuffer_pixels[y * kore_framebuffer_stride + x * 4 + 3] = 255;
 }
 
-static inline int kore_fb_width(void) {
-	return kore_internal_fb_w;
+static inline uint32_t kore_fb_width(void) {
+	return kore_framebuffer_width;
 }
 
-static inline int kore_fb_height(void) {
-	return kore_internal_fb_h;
+static inline uint32_t kore_fb_height(void) {
+	return kore_framebuffer_height;
 }
 
 static inline void kore_fb_set_texture_magnification_filter(kore_fb_texture_filter filter) {
