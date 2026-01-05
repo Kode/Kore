@@ -101,3 +101,49 @@ jobs:
       run: git push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Switch2.git
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+
+
+    - name: Clone Switch Samples
+      run: git clone https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Switch.git
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+    - name: Get Kore-Submodule
+      working-directory: Kore-Samples-Switch
+      run: git submodule update --init --remote kore
+    - name: Checkout Kore
+      working-directory: Kore-Samples-Switch/kore
+      run: git checkout main
+    - name: Add Kore
+      working-directory: Kore-Samples-Switch
+      run: git add kore
+    - name: Commit
+      working-directory: Kore-Samples-Switch
+      run: git commit -m "Update Kore"
+    - name: Push
+      working-directory: Kore-Samples-Switch
+      run: git push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Switch.git
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+
+
+    - name: Clone Xbox Samples
+      run: git clone https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Xbox.git
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+    - name: Get Kore-Submodule
+      working-directory: Kore-Samples-Xbox
+      run: git submodule update --init --remote kore
+    - name: Checkout Kore
+      working-directory: Kore-Samples-Xbox/kore
+      run: git checkout main
+    - name: Add Kore
+      working-directory: Kore-Samples-Xbox
+      run: git add kore
+    - name: Commit
+      working-directory: Kore-Samples-Xbox
+      run: git commit -m "Update Kore"
+    - name: Push
+      working-directory: Kore-Samples-Xbox
+      run: git push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Xbox.git
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
