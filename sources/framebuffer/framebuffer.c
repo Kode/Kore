@@ -6,6 +6,8 @@
 
 #include <kong.h>
 
+#include <stdlib.h>
+
 uint32_t kore_framebuffer_width;
 uint32_t kore_framebuffer_height;
 uint32_t kore_framebuffer_stride;
@@ -27,16 +29,18 @@ static uint8_t *mmio;
 
 void kore_fb_init() {
 	mmio = (uint8_t *)MMIO_BASE;
-}
 
-void kore_fb_begin(void) {
 	kore_framebuffer_width  = *(uint32_t *)&mmio[FB_WIDTH];
 	kore_framebuffer_height = *(uint32_t *)&mmio[FB_HEIGHT];
 	kore_framebuffer_stride = *(uint32_t *)&mmio[FB_STRIDE];
 
-	uint64_t kore_framebuffer_pixels_address = *(uint64_t *)&mmio[FB_ADDR];
-	kore_framebuffer_pixels                  = (uint8_t *)kore_framebuffer_pixels_address;
+	kore_framebuffer_pixels = (uint8_t *)malloc(kore_framebuffer_width * kore_framebuffer_stride);
+
+	uint64_t *kore_framebuffer_pixels_address = (uint64_t *)&mmio[FB_ADDR];
+	*kore_framebuffer_pixels_address = (uint64_t)kore_framebuffer_pixels;
 }
+
+void kore_fb_begin(void) {}
 
 void kore_fb_end(void) {
 	uint8_t *present = &mmio[PRESENT];

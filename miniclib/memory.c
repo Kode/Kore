@@ -1,5 +1,9 @@
 #include "stdlib.h"
 
+#ifdef KORE_KOMPJUTA
+#include <stdint.h>
+#endif
+
 #ifdef KORE_WASM
 __attribute__((import_module("imports"), import_name("js_fprintf"))) void js_fprintf(const char *format);
 
@@ -8,12 +12,21 @@ static unsigned char heap[HEAP_SIZE];
 static size_t        heap_top = 4;
 #endif
 
+#ifdef KORE_KOMPJUTA
+extern uint8_t __heap_base[];
+extern uint8_t __heap_end[];
+static uint64_t heap_position;
+
+void kore_kompjuta_init_heap(void) {
+	heap_position = (uint64_t)__heap_base;
+}
+#endif
+
 #ifdef KORE_WASM
 __attribute__((export_name("malloc")))
 #endif
-void *
-malloc(size_t size) {
-#ifdef KORE_WASM
+void *malloc(size_t size) {
+#if defined(KORE_WASM)
 	// Align to 4 bytes to make js typed arrays work
 	if (size % 4 != 0) {
 		size += 4 - size % 4;
@@ -24,8 +37,16 @@ malloc(size_t size) {
 		js_fprintf("malloc: out of memory");
 	}
 	return &heap[old_top];
-#endif
+#elif defined(KORE_KOMPJUTA)
+	if (heap_position + size > (uint64_t)__heap_end) {
+		return NULL;
+	}
+	uint64_t pointer = heap_position;
+	heap_position += size;
+	return (void *)pointer;
+#else
 	return NULL;
+#endif
 }
 
 void *alloca(size_t size) {
