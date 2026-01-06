@@ -1,16 +1,18 @@
 #ifndef KORE_KOMPJUTA_COMMANDLIST_STRUCTS_HEADER
 #define KORE_KOMPJUTA_COMMANDLIST_STRUCTS_HEADER
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct kore_kompjuta_compute_bind_group {
-	int nothing;
-} kore_kompjuta_compute_bind_group;
+#include <kore3/backend/mmio.h>
 
 typedef struct kore_kompjuta_command_list {
-	int nothing;
+	kompjuta_gpu_command *commands;
+	uint32_t commands_count;
+	uint32_t current_command;
 } kore_kompjuta_command_list;
 
 #ifdef __cplusplus

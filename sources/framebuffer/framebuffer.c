@@ -16,19 +16,10 @@ uint8_t *kore_framebuffer_pixels;
 
 #ifdef KORE_KOMPJUTA
 
-#define MMIO_BASE 0xffffffff00000000
-
-#define FB_ADDR   0x0
-#define FB_STRIDE 0x08
-#define FB_WIDTH  0x0c
-#define FB_HEIGHT 0x10
-#define FB_FORMAT 0x14
-#define PRESENT   0x18
-
-static uint8_t *mmio;
+#include <kore3/backend/mmio.h>
 
 void kore_fb_init() {
-	mmio = (uint8_t *)MMIO_BASE;
+	uint8_t *mmio = (uint8_t *)MMIO_BASE;
 
 	kore_framebuffer_width  = *(uint32_t *)&mmio[FB_WIDTH];
 	kore_framebuffer_height = *(uint32_t *)&mmio[FB_HEIGHT];
@@ -43,6 +34,8 @@ void kore_fb_init() {
 void kore_fb_begin(void) {}
 
 void kore_fb_end(void) {
+	uint8_t *mmio = (uint8_t *)MMIO_BASE;
+
 	uint8_t *present = &mmio[PRESENT];
 	*present         = 1;
 }
