@@ -42,7 +42,7 @@ void kore_kompjuta_device_execute_command_list(kore_gpu_device *device, kore_gpu
 	*list_address = (uint64_t)list->kompjuta.commands;
 
 	uint32_t *list_size = (uint32_t *)&mmio[COMMAND_LIST_SIZE];
-	*list_size = list->kompjuta.commands_count;
+	*list_size = list->kompjuta.current_command;
 
 	uint8_t *execute = &mmio[EXECUTE_COMMAND_LIST];
 	*execute         = 1;
