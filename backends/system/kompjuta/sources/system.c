@@ -54,7 +54,6 @@ const char *kore_internal_save_path() {
 
 extern int kickstart(int argc, char **argv);
 
-
 void kore_kompjuta_init_heap(void);
 
 void start(void) {
@@ -64,11 +63,8 @@ void start(void) {
 
 extern uint8_t __stack_top[];
 
-__attribute__((naked, noreturn))
-void _start(void) {
-	__asm__ volatile(
-		"la sp, __stack_top\n"
-		"call start\n"
-		"1: j 1b\n"
-    );
+__attribute__((naked, noreturn)) void _start(void) {
+	__asm__ volatile("la sp, __stack_top\n"
+	                 "call start\n"
+	                 "1: j 1b\n");
 }

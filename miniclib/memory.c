@@ -13,8 +13,8 @@ static size_t        heap_top = 4;
 #endif
 
 #ifdef KORE_KOMPJUTA
-extern uint8_t __heap_base[];
-extern uint8_t __heap_end[];
+extern uint8_t  __heap_base[];
+extern uint8_t  __heap_end[];
 static uint64_t heap_position;
 
 void kore_kompjuta_init_heap(void) {
@@ -25,7 +25,8 @@ void kore_kompjuta_init_heap(void) {
 #ifdef KORE_WASM
 __attribute__((export_name("malloc")))
 #endif
-void *malloc(size_t size) {
+void *
+malloc(size_t size) {
 #if defined(KORE_WASM)
 	// Align to 4 bytes to make js typed arrays work
 	if (size % 4 != 0) {

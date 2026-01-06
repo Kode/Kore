@@ -37,7 +37,7 @@ void kore_fb_init() {
 	kore_framebuffer_pixels = (uint8_t *)malloc(kore_framebuffer_width * kore_framebuffer_stride);
 
 	uint64_t *kore_framebuffer_pixels_address = (uint64_t *)&mmio[FB_ADDR];
-	*kore_framebuffer_pixels_address = (uint64_t)kore_framebuffer_pixels;
+	*kore_framebuffer_pixels_address          = (uint64_t)kore_framebuffer_pixels;
 }
 
 void kore_fb_begin(void) {}
