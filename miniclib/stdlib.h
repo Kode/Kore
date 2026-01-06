@@ -7,7 +7,6 @@
 extern "C" {
 #endif
 
-typedef unsigned long size_t;
 #define EXIT_FAILURE 1
 
 void *malloc(size_t size);
