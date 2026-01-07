@@ -7,7 +7,7 @@ extern "C" {
 
 #define NULL 0
 typedef unsigned long long size_t;
-typedef __WCHAR_TYPE__ wchar_t;
+typedef __WCHAR_TYPE__     wchar_t;
 
 #ifdef __cplusplus
 }

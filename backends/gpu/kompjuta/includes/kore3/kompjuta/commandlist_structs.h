@@ -11,8 +11,8 @@ extern "C" {
 
 typedef struct kore_kompjuta_command_list {
 	kompjuta_gpu_command *commands;
-	uint32_t commands_count;
-	uint32_t current_command;
+	uint32_t              commands_count;
+	uint32_t              current_command;
 } kore_kompjuta_command_list;
 
 #ifdef __cplusplus
