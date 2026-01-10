@@ -62,8 +62,7 @@ typedef struct kore_kompjuta_vertex_buffer_layout {
 } kore_kompjuta_vertex_buffer_layout;
 
 typedef struct kore_kompjuta_shader {
-	const char *data;
-	size_t      size;
+	void *function;
 } kore_kompjuta_shader;
 
 #define KORE_KOMPJUTA_MAX_VERTEX_BUFFERS 16
