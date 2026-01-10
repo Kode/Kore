@@ -20,8 +20,8 @@ void kore_kompjuta_device_set_name(kore_gpu_device *device, const char *name) {}
 void kore_kompjuta_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {}
 
 void kore_kompjuta_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
-	list->kompjuta.commands_count = 1024;
-	list->kompjuta.commands = malloc(sizeof(kompjuta_gpu_command) * list->kompjuta.commands_count);
+	list->kompjuta.commands_count  = 1024;
+	list->kompjuta.commands        = malloc(sizeof(kompjuta_gpu_command) * list->kompjuta.commands_count);
 	list->kompjuta.current_command = 0;
 }
 
@@ -39,10 +39,10 @@ void kore_kompjuta_device_execute_command_list(kore_gpu_device *device, kore_gpu
 	uint8_t *mmio = (uint8_t *)MMIO_BASE;
 
 	uint64_t *list_address = (uint64_t *)&mmio[COMMAND_LIST_ADDR];
-	*list_address = (uint64_t)list->kompjuta.commands;
+	*list_address          = (uint64_t)list->kompjuta.commands;
 
 	uint32_t *list_size = (uint32_t *)&mmio[COMMAND_LIST_SIZE];
-	*list_size = list->kompjuta.current_command;
+	*list_size          = list->kompjuta.current_command;
 
 	uint8_t *execute = &mmio[EXECUTE_COMMAND_LIST];
 	*execute         = 1;

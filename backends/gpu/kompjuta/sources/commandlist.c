@@ -16,11 +16,11 @@ void kore_kompjuta_command_list_destroy(kore_gpu_command_list *list) {}
 void kore_kompjuta_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
 	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
-	command->kind = KOMPJUTA_GPU_COMMAND_CLEAR;
-	command->data.clear.r = parameters->color_attachments[0].clear_value.r;
-	command->data.clear.g = parameters->color_attachments[0].clear_value.g;
-	command->data.clear.b = parameters->color_attachments[0].clear_value.b;
-	command->data.clear.a = parameters->color_attachments[0].clear_value.a;
+	command->kind                 = KOMPJUTA_GPU_COMMAND_CLEAR;
+	command->data.clear.r         = parameters->color_attachments[0].clear_value.r;
+	command->data.clear.g         = parameters->color_attachments[0].clear_value.g;
+	command->data.clear.b         = parameters->color_attachments[0].clear_value.b;
+	command->data.clear.a         = parameters->color_attachments[0].clear_value.a;
 	++list->kompjuta.current_command;
 }
 
@@ -29,7 +29,7 @@ void kore_kompjuta_command_list_end_render_pass(kore_gpu_command_list *list) {}
 void kore_kompjuta_command_list_present(kore_gpu_command_list *list) {
 	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
 	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
-	command->kind = KOMPJUTA_GPU_COMMAND_PRESENT;
+	command->kind                 = KOMPJUTA_GPU_COMMAND_PRESENT;
 	++list->kompjuta.current_command;
 }
 
