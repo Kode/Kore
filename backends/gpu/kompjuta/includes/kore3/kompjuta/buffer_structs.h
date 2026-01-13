@@ -18,7 +18,7 @@ typedef enum kore_kompjuta_buffer_usage {
 } kore_kompjuta_buffer_usage;
 
 typedef struct kore_kompjuta_buffer {
-	int nothing;
+	void *data;
 } kore_kompjuta_buffer;
 
 #ifdef __cplusplus

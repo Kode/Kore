@@ -17,7 +17,9 @@ void kore_kompjuta_device_destroy(kore_gpu_device *device) {}
 
 void kore_kompjuta_device_set_name(kore_gpu_device *device, const char *name) {}
 
-void kore_kompjuta_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {}
+void kore_kompjuta_device_create_buffer(kore_gpu_device *device, const kore_gpu_buffer_parameters *parameters, kore_gpu_buffer *buffer) {
+	buffer->kompjuta.data = malloc(parameters->size);
+}
 
 void kore_kompjuta_device_create_command_list(kore_gpu_device *device, kore_gpu_command_list_type type, kore_gpu_command_list *list) {
 	list->kompjuta.commands_count  = 1024;
