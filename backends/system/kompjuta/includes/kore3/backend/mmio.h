@@ -1,6 +1,8 @@
 #ifndef KOMPJUTA_MMIO_HEADER
 #define KOMPJUTA_MMIO_HEADER
 
+#include <kore3/gpu/commandlist.h>
+
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -21,6 +23,10 @@ extern "C" {
 
 typedef enum kompjuta_gpu_command_kind {
 	KOMPJUTA_GPU_COMMAND_CLEAR,
+	KOMPJUTA_GPU_COMMAND_SET_INDEX_BUFFER,
+	KOMPJUTA_GPU_COMMAND_SET_VERTEX_BUFFER,
+	KOMPJUTA_GPU_COMMAND_SET_RENDER_PIPELINE,
+	KOMPJUTA_GPU_COMMAND_DRAW_INDEXED,
 	KOMPJUTA_GPU_COMMAND_PRESENT,
 } kompjuta_gpu_command_kind;
 
@@ -33,6 +39,25 @@ typedef struct kompjuta_gpu_command {
 			float b;
 			float a;
 		} clear;
+		struct {
+			void *data;
+			kore_gpu_index_format index_format;
+		} set_index_buffer;
+		struct {
+			void *data;
+			uint64_t stride;
+		} set_vertex_buffer;
+		struct {
+			void *vertex_shader;
+			void *fragment_shader;
+		} set_render_pipeline;
+		struct {
+			uint32_t index_count;
+			uint32_t instance_count;
+			uint32_t first_index;
+            int32_t base_vertex;
+			uint32_t first_instance;
+		} draw_indexed;
 	} data;
 } kompjuta_gpu_command;
 

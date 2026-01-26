@@ -15,12 +15,14 @@ void kore_kompjuta_command_list_destroy(kore_gpu_command_list *list) {}
 
 void kore_kompjuta_command_list_begin_render_pass(kore_gpu_command_list *list, const kore_gpu_render_pass_parameters *parameters) {
 	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
+
 	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
 	command->kind                 = KOMPJUTA_GPU_COMMAND_CLEAR;
 	command->data.clear.r         = parameters->color_attachments[0].clear_value.r;
 	command->data.clear.g         = parameters->color_attachments[0].clear_value.g;
 	command->data.clear.b         = parameters->color_attachments[0].clear_value.b;
 	command->data.clear.a         = parameters->color_attachments[0].clear_value.a;
+
 	++list->kompjuta.current_command;
 }
 
@@ -28,23 +30,70 @@ void kore_kompjuta_command_list_end_render_pass(kore_gpu_command_list *list) {}
 
 void kore_kompjuta_command_list_present(kore_gpu_command_list *list) {
 	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
+
 	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
 	command->kind                 = KOMPJUTA_GPU_COMMAND_PRESENT;
+
 	++list->kompjuta.current_command;
 }
 
-void kore_kompjuta_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {}
+void kore_kompjuta_command_list_set_index_buffer(kore_gpu_command_list *list, kore_gpu_buffer *buffer, kore_gpu_index_format index_format, uint64_t offset) {
+	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
+
+	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
+	command->kind = KOMPJUTA_GPU_COMMAND_SET_INDEX_BUFFER;
+
+	uint8_t *data = (uint8_t *)buffer->kompjuta.data;
+	command->data.set_index_buffer.data   = &data[offset];
+	
+	command->data.set_index_buffer.index_format = index_format;
+	
+	++list->kompjuta.current_command;
+}
 
 void kore_kompjuta_command_list_set_vertex_buffer(kore_gpu_command_list *list, uint32_t slot, kore_kompjuta_buffer *buffer, uint64_t offset, uint64_t size,
-                                                  uint64_t stride) {}
+                                                  uint64_t stride) {
+	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
 
-void kore_kompjuta_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_kompjuta_render_pipeline *pipeline) {}
+	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
+	command->kind = KOMPJUTA_GPU_COMMAND_SET_VERTEX_BUFFER;
+
+	uint8_t *data = (uint8_t *)buffer->data;
+	command->data.set_vertex_buffer.data   = &data[offset];
+	
+	command->data.set_vertex_buffer.stride = stride;
+	
+	++list->kompjuta.current_command;
+}
+
+void kore_kompjuta_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_kompjuta_render_pipeline *pipeline) {
+	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
+
+	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
+	command->kind = KOMPJUTA_GPU_COMMAND_SET_RENDER_PIPELINE;
+	command->data.set_render_pipeline.vertex_shader   = pipeline->vertex_shader.function;
+	command->data.set_render_pipeline.fragment_shader = pipeline->fragment_shader.function;
+	
+	++list->kompjuta.current_command;
+}
 
 void kore_kompjuta_command_list_draw(kore_gpu_command_list *list, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,
                                      uint32_t first_instance) {}
 
 void kore_kompjuta_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t index_count, uint32_t instance_count, uint32_t first_index,
-                                             int32_t base_vertex, uint32_t first_instance) {}
+                                             int32_t base_vertex, uint32_t first_instance) {
+	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
+
+	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
+	command->kind = KOMPJUTA_GPU_COMMAND_DRAW_INDEXED;
+	command->data.draw_indexed.index_count = index_count;
+	command->data.draw_indexed.instance_count = instance_count;
+	command->data.draw_indexed.first_index = first_index;
+	command->data.draw_indexed.base_vertex = base_vertex;
+	command->data.draw_indexed.first_instance = first_instance;
+	
+	++list->kompjuta.current_command;
+}
 
 void kore_kompjuta_command_list_set_bind_group(kore_gpu_command_list *list, uint32_t index, kore_kompjuta_descriptor_set *set, uint32_t dynamic_count,
                                                uint32_t *dynamic_offsets) {}

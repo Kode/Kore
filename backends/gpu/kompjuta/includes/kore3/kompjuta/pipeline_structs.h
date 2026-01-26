@@ -196,7 +196,8 @@ typedef struct kore_kompjuta_render_pipeline_parameters {
 } kore_kompjuta_render_pipeline_parameters;
 
 typedef struct kore_kompjuta_render_pipeline {
-	int nothing;
+	kore_kompjuta_shader vertex_shader;
+	kore_kompjuta_shader fragment_shader;
 } kore_kompjuta_render_pipeline;
 
 typedef struct kore_kompjuta_compute_pipeline_parameters {

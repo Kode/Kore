@@ -4,7 +4,10 @@
 #include <kore3/log.h>
 
 void kore_kompjuta_render_pipeline_init(kore_kompjuta_device *device, kore_kompjuta_render_pipeline *pipe,
-                                        const kore_kompjuta_render_pipeline_parameters *parameters) {}
+                                        const kore_kompjuta_render_pipeline_parameters *parameters) {
+	pipe->vertex_shader   = parameters->vertex.shader;
+	pipe->fragment_shader = parameters->fragment.shader;
+}
 
 void kore_kompjuta_render_pipeline_destroy(kore_kompjuta_render_pipeline *pipe) {}
 
