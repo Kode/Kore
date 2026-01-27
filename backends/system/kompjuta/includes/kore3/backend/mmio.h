@@ -40,11 +40,11 @@ typedef struct kompjuta_gpu_command {
 			float a;
 		} clear;
 		struct {
-			void *data;
+			void                 *data;
 			kore_gpu_index_format index_format;
 		} set_index_buffer;
 		struct {
-			void *data;
+			void    *data;
 			uint64_t stride;
 		} set_vertex_buffer;
 		struct {
@@ -55,7 +55,7 @@ typedef struct kompjuta_gpu_command {
 			uint32_t index_count;
 			uint32_t instance_count;
 			uint32_t first_index;
-            int32_t base_vertex;
+			int32_t  base_vertex;
 			uint32_t first_instance;
 		} draw_indexed;
 	} data;

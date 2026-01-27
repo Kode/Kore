@@ -41,13 +41,13 @@ void kore_kompjuta_command_list_set_index_buffer(kore_gpu_command_list *list, ko
 	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
 
 	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
-	command->kind = KOMPJUTA_GPU_COMMAND_SET_INDEX_BUFFER;
+	command->kind                 = KOMPJUTA_GPU_COMMAND_SET_INDEX_BUFFER;
 
-	uint8_t *data = (uint8_t *)buffer->kompjuta.data;
-	command->data.set_index_buffer.data   = &data[offset];
-	
+	uint8_t *data                       = (uint8_t *)buffer->kompjuta.data;
+	command->data.set_index_buffer.data = &data[offset];
+
 	command->data.set_index_buffer.index_format = index_format;
-	
+
 	++list->kompjuta.current_command;
 }
 
@@ -56,24 +56,24 @@ void kore_kompjuta_command_list_set_vertex_buffer(kore_gpu_command_list *list, u
 	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
 
 	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
-	command->kind = KOMPJUTA_GPU_COMMAND_SET_VERTEX_BUFFER;
+	command->kind                 = KOMPJUTA_GPU_COMMAND_SET_VERTEX_BUFFER;
 
-	uint8_t *data = (uint8_t *)buffer->data;
-	command->data.set_vertex_buffer.data   = &data[offset];
-	
+	uint8_t *data                        = (uint8_t *)buffer->data;
+	command->data.set_vertex_buffer.data = &data[offset];
+
 	command->data.set_vertex_buffer.stride = stride;
-	
+
 	++list->kompjuta.current_command;
 }
 
 void kore_kompjuta_command_list_set_render_pipeline(kore_gpu_command_list *list, kore_kompjuta_render_pipeline *pipeline) {
 	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
 
-	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
-	command->kind = KOMPJUTA_GPU_COMMAND_SET_RENDER_PIPELINE;
+	kompjuta_gpu_command *command                     = &list->kompjuta.commands[list->kompjuta.current_command];
+	command->kind                                     = KOMPJUTA_GPU_COMMAND_SET_RENDER_PIPELINE;
 	command->data.set_render_pipeline.vertex_shader   = pipeline->vertex_shader.function;
 	command->data.set_render_pipeline.fragment_shader = pipeline->fragment_shader.function;
-	
+
 	++list->kompjuta.current_command;
 }
 
@@ -84,14 +84,14 @@ void kore_kompjuta_command_list_draw_indexed(kore_gpu_command_list *list, uint32
                                              int32_t base_vertex, uint32_t first_instance) {
 	assert(list->kompjuta.current_command < list->kompjuta.commands_count);
 
-	kompjuta_gpu_command *command = &list->kompjuta.commands[list->kompjuta.current_command];
-	command->kind = KOMPJUTA_GPU_COMMAND_DRAW_INDEXED;
-	command->data.draw_indexed.index_count = index_count;
+	kompjuta_gpu_command *command             = &list->kompjuta.commands[list->kompjuta.current_command];
+	command->kind                             = KOMPJUTA_GPU_COMMAND_DRAW_INDEXED;
+	command->data.draw_indexed.index_count    = index_count;
 	command->data.draw_indexed.instance_count = instance_count;
-	command->data.draw_indexed.first_index = first_index;
-	command->data.draw_indexed.base_vertex = base_vertex;
+	command->data.draw_indexed.first_index    = first_index;
+	command->data.draw_indexed.base_vertex    = base_vertex;
 	command->data.draw_indexed.first_instance = first_instance;
-	
+
 	++list->kompjuta.current_command;
 }
 
