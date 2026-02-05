@@ -25,6 +25,9 @@ void kore_kompjuta_device_create_command_list(kore_gpu_device *device, kore_gpu_
 	list->kompjuta.commands_count  = 1024;
 	list->kompjuta.commands        = malloc(sizeof(kompjuta_gpu_command) * list->kompjuta.commands_count);
 	list->kompjuta.current_command = 0;
+
+	list->kompjuta.shader_stack_size = 1024;
+	list->kompjuta.shader_stack      = malloc(list->kompjuta.shader_stack_size);
 }
 
 void kore_kompjuta_device_create_texture(kore_gpu_device *device, const kore_gpu_texture_parameters *parameters, kore_gpu_texture *texture) {}

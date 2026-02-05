@@ -91,6 +91,7 @@ void kore_kompjuta_command_list_draw_indexed(kore_gpu_command_list *list, uint32
 	command->data.draw_indexed.first_index    = first_index;
 	command->data.draw_indexed.base_vertex    = base_vertex;
 	command->data.draw_indexed.first_instance = first_instance;
+	command->data.draw_indexed.shader_stack   = list->kompjuta.shader_stack;
 
 	++list->kompjuta.current_command;
 }

@@ -13,6 +13,8 @@ typedef struct kore_kompjuta_command_list {
 	kompjuta_gpu_command *commands;
 	uint32_t              commands_count;
 	uint32_t              current_command;
+	void                 *shader_stack;
+	uint32_t              shader_stack_size;
 } kore_kompjuta_command_list;
 
 #ifdef __cplusplus
