@@ -57,7 +57,8 @@ typedef struct kompjuta_gpu_command {
 			uint32_t first_index;
 			int32_t  base_vertex;
 			uint32_t first_instance;
-			void     *shader_stack;
+			void    *shader_stack;
+			void    *vertex_output;
 		} draw_indexed;
 	} data;
 } kompjuta_gpu_command;

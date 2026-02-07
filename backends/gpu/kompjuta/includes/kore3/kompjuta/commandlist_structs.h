@@ -15,6 +15,8 @@ typedef struct kore_kompjuta_command_list {
 	uint32_t              current_command;
 	void                 *shader_stack;
 	uint32_t              shader_stack_size;
+	void                 *vertex_cache;
+	uint32_t              vertex_cache_size;
 } kore_kompjuta_command_list;
 
 #ifdef __cplusplus
