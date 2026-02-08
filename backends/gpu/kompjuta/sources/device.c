@@ -1,5 +1,6 @@
 #include <kore3/kompjuta/device_functions.h>
 
+#include <kore3/framebuffer/framebuffer.h>
 #include <kore3/gpu/commandlist.h>
 #include <kore3/gpu/device.h>
 #include <kore3/util/align.h>
@@ -11,7 +12,9 @@
 
 #include <kore3/backend/mmio.h>
 
-void kore_kompjuta_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {}
+void kore_kompjuta_device_create(kore_gpu_device *device, const kore_gpu_device_wishlist *wishlist) {
+	kore_fb_init();
+}
 
 void kore_kompjuta_device_destroy(kore_gpu_device *device) {}
 
