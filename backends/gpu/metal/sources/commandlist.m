@@ -385,7 +385,10 @@ void kore_metal_command_list_trace_rays(kore_gpu_command_list *list, uint32_t wi
 
 void kore_metal_command_list_set_viewport(kore_gpu_command_list *list, float x, float y, float width, float height, float min_depth, float max_depth) {}
 
-void kore_metal_command_list_set_scissor_rect(kore_gpu_command_list *list, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {}
+void kore_metal_command_list_set_scissor_rect(kore_gpu_command_list *list, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+		id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
+		[render_command_encoder setScissorRect:(MTLScissorRect){x, y, width, height}];
+}
 
 void kore_metal_command_list_set_blend_constant(kore_gpu_command_list *list, kore_gpu_color color) {}
 
