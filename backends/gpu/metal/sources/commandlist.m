@@ -189,7 +189,7 @@ void kore_metal_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t 
 	                                   indexCount:index_count
 	                                    indexType:list->metal.sixteen_bit_indices ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32
 	                                  indexBuffer:index_buffer
-	                            indexBufferOffset:first_index
+	                            indexBufferOffset:first_index * (list->metal.sixteen_bit_indices ? sizeof(uint16_t) : sizeof(uint32_t))
 	                                instanceCount:instance_count
 	                                   baseVertex:base_vertex
 	                                 baseInstance:first_instance];
