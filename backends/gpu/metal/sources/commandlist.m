@@ -185,14 +185,14 @@ void kore_metal_command_list_draw_indexed(kore_gpu_command_list *list, uint32_t 
 
 	id<MTLRenderCommandEncoder> render_command_encoder = (__bridge id<MTLRenderCommandEncoder>)list->metal.render_command_encoder;
 
-	[render_command_encoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
-	                                   indexCount:index_count
-	                                    indexType:list->metal.sixteen_bit_indices ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32
-	                                  indexBuffer:index_buffer
-	                            indexBufferOffset:first_index * (list->metal.sixteen_bit_indices ? sizeof(uint16_t) : sizeof(uint32_t))
-	                                instanceCount:instance_count
-	                                   baseVertex:base_vertex
-	                                 baseInstance:first_instance];
+	[render_command_encoder
+	    drawIndexedPrimitives:MTLPrimitiveTypeTriangle
+	               indexCount:index_count
+	                indexType:list->metal.sixteen_bit_indices ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32
+	              indexBuffer:index_buffer
+	        indexBufferOffset:first_index * (list->metal.sixteen_bit_indices ? sizeof(uint16_t) : sizeof(uint32_t))instanceCount:instance_count
+	               baseVertex:base_vertex
+	             baseInstance:first_instance];
 }
 
 void kore_metal_command_list_set_descriptor_set(kore_gpu_command_list *list, uint32_t vertex_table_index, uint32_t fragment_table_index,
