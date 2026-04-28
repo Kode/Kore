@@ -78,6 +78,7 @@ $(function() {
 <a href="#nested-classes">Data Structures</a> &#124;
 <a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">filereader.h File Reference</div></div>
 </div><!--header-->
@@ -102,30 +103,34 @@ Macros</h2></td></tr>
 <tr class="memitem:aa12f7f865de64f175c9c2461b28e9d4e" id="r_aa12f7f865de64f175c9c2461b28e9d4e"><td class="memItemLeft" align="right" valign="top"><a id="aa12f7f865de64f175c9c2461b28e9d4e" name="aa12f7f865de64f175c9c2461b28e9d4e"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>KORE_DEBUGDIR</b>&#160;&#160;&#160;&quot;deployment&quot;</td></tr>
 <tr class="separator:aa12f7f865de64f175c9c2461b28e9d4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac64f93b399034c11b225dd6f6ae600d9" id="r_ac64f93b399034c11b225dd6f6ae600d9"><td class="memItemLeft" align="right" valign="top"><a id="ac64f93b399034c11b225dd6f6ae600d9" name="ac64f93b399034c11b225dd6f6ae600d9"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>KORE_FILE_TYPE_ASSET</b>&#160;&#160;&#160;0</td></tr>
-<tr class="separator:ac64f93b399034c11b225dd6f6ae600d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a087f5ede3aa0ff04de18a76cb56c50" id="r_a1a087f5ede3aa0ff04de18a76cb56c50"><td class="memItemLeft" align="right" valign="top"><a id="a1a087f5ede3aa0ff04de18a76cb56c50" name="a1a087f5ede3aa0ff04de18a76cb56c50"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>KORE_FILE_TYPE_SAVE</b>&#160;&#160;&#160;1</td></tr>
-<tr class="separator:a1a087f5ede3aa0ff04de18a76cb56c50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:a2c0c69f167c01ebc3f59284894f9019b" id="r_a2c0c69f167c01ebc3f59284894f9019b"><td class="memItemLeft" align="right" valign="top"><a id="a2c0c69f167c01ebc3f59284894f9019b" name="a2c0c69f167c01ebc3f59284894f9019b"></a>
+typedef enum kore_file_type&#160;</td><td class="memItemRight" valign="bottom"><b>kore_file_type</b></td></tr>
+<tr class="separator:a2c0c69f167c01ebc3f59284894f9019b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5805e78069b55954bb258d2ee0d83375" id="r_a5805e78069b55954bb258d2ee0d83375"><td class="memItemLeft" align="right" valign="top"><a id="a5805e78069b55954bb258d2ee0d83375" name="a5805e78069b55954bb258d2ee0d83375"></a>
 typedef struct <a class="el" href="structkore__file__reader.html">kore_file_reader</a>&#160;</td><td class="memItemRight" valign="bottom"><b>kore_file_reader</b></td></tr>
 <tr class="separator:a5805e78069b55954bb258d2ee0d83375"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:aa301c4748fb46cfb1b507062cf01c5a8" id="r_aa301c4748fb46cfb1b507062cf01c5a8"><td class="memItemLeft" align="right" valign="top"><a id="aa301c4748fb46cfb1b507062cf01c5a8" name="aa301c4748fb46cfb1b507062cf01c5a8"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>kore_file_type</b> { <b>KORE_FILE_TYPE_ASSET</b>
+, <b>KORE_FILE_TYPE_SAVE</b>
+ }</td></tr>
+<tr class="separator:aa301c4748fb46cfb1b507062cf01c5a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a53bb3746f09fedf77452298415611e70" id="r_a53bb3746f09fedf77452298415611e70"><td class="memItemLeft" align="right" valign="top">KORE_FUNC bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="filereader_8h.html#a53bb3746f09fedf77452298415611e70">kore_file_reader_open</a> (<a class="el" href="structkore__file__reader.html">kore_file_reader</a> *reader, const char *filepath, int type)</td></tr>
-<tr class="memdesc:a53bb3746f09fedf77452298415611e70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens a file for reading.  <br /></td></tr>
-<tr class="separator:a53bb3746f09fedf77452298415611e70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb656a189a173492e464207bb1c128d3" id="r_acb656a189a173492e464207bb1c128d3"><td class="memItemLeft" align="right" valign="top">KORE_FUNC bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="filereader_8h.html#acb656a189a173492e464207bb1c128d3">kore_file_reader_open</a> (<a class="el" href="structkore__file__reader.html">kore_file_reader</a> *reader, const char *filepath, kore_file_type type)</td></tr>
+<tr class="memdesc:acb656a189a173492e464207bb1c128d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens a file for reading.  <br /></td></tr>
+<tr class="separator:acb656a189a173492e464207bb1c128d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76039654ac09143780f1fab42bbf8f23" id="r_a76039654ac09143780f1fab42bbf8f23"><td class="memItemLeft" align="right" valign="top">KORE_FUNC bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="filereader_8h.html#a76039654ac09143780f1fab42bbf8f23">kore_file_reader_from_memory</a> (<a class="el" href="structkore__file__reader.html">kore_file_reader</a> *reader, void *data, size_t size)</td></tr>
 <tr class="memdesc:a76039654ac09143780f1fab42bbf8f23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens a memory area for reading using the file reader API.  <br /></td></tr>
 <tr class="separator:a76039654ac09143780f1fab42bbf8f23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54cbf6147810e69930d16c205ac674a4" id="r_a54cbf6147810e69930d16c205ac674a4"><td class="memItemLeft" align="right" valign="top">KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="filereader_8h.html#a54cbf6147810e69930d16c205ac674a4">kore_file_reader_set_callback</a> (bool(*callback)(<a class="el" href="structkore__file__reader.html">kore_file_reader</a> *reader, const char *filename, int type))</td></tr>
-<tr class="memdesc:a54cbf6147810e69930d16c205ac674a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a file reader callback.  <br /></td></tr>
-<tr class="separator:a54cbf6147810e69930d16c205ac674a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a755d9234eba596b7efb857c09a6280bc" id="r_a755d9234eba596b7efb857c09a6280bc"><td class="memItemLeft" align="right" valign="top">KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="filereader_8h.html#a755d9234eba596b7efb857c09a6280bc">kore_file_reader_set_callback</a> (bool(*callback)(<a class="el" href="structkore__file__reader.html">kore_file_reader</a> *reader, const char *filename, kore_file_type type))</td></tr>
+<tr class="memdesc:a755d9234eba596b7efb857c09a6280bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a file reader callback.  <br /></td></tr>
+<tr class="separator:a755d9234eba596b7efb857c09a6280bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46867cf18d9627886eec093ba0dca4d3" id="r_a46867cf18d9627886eec093ba0dca4d3"><td class="memItemLeft" align="right" valign="top">KORE_FUNC bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="filereader_8h.html#a46867cf18d9627886eec093ba0dca4d3">kore_file_reader_close</a> (<a class="el" href="structkore__file__reader.html">kore_file_reader</a> *reader)</td></tr>
 <tr class="memdesc:a46867cf18d9627886eec093ba0dca4d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Closes a file.  <br /></td></tr>
 <tr class="separator:a46867cf18d9627886eec093ba0dca4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -281,8 +286,8 @@ KORE_FUNC int8_t&#160;</td><td class="memItemRight" valign="bottom"><b>kore_read
 
 </div>
 </div>
-<a id="a53bb3746f09fedf77452298415611e70" name="a53bb3746f09fedf77452298415611e70"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53bb3746f09fedf77452298415611e70">&#9670;&#160;</a></span>kore_file_reader_open()</h2>
+<a id="acb656a189a173492e464207bb1c128d3" name="acb656a189a173492e464207bb1c128d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb656a189a173492e464207bb1c128d3">&#9670;&#160;</a></span>kore_file_reader_open()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -302,7 +307,7 @@ KORE_FUNC int8_t&#160;</td><td class="memItemRight" valign="bottom"><b>kore_read
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
+          <td class="paramtype">kore_file_type&#160;</td>
           <td class="paramname"><em>type</em>&#160;</td>
         </tr>
         <tr>
@@ -436,8 +441,8 @@ KORE_FUNC int8_t&#160;</td><td class="memItemRight" valign="bottom"><b>kore_read
 
 </div>
 </div>
-<a id="a54cbf6147810e69930d16c205ac674a4" name="a54cbf6147810e69930d16c205ac674a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54cbf6147810e69930d16c205ac674a4">&#9670;&#160;</a></span>kore_file_reader_set_callback()</h2>
+<a id="a755d9234eba596b7efb857c09a6280bc" name="a755d9234eba596b7efb857c09a6280bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a755d9234eba596b7efb857c09a6280bc">&#9670;&#160;</a></span>kore_file_reader_set_callback()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -445,7 +450,7 @@ KORE_FUNC int8_t&#160;</td><td class="memItemRight" valign="bottom"><b>kore_read
         <tr>
           <td class="memname">KORE_FUNC void kore_file_reader_set_callback </td>
           <td>(</td>
-          <td class="paramtype">bool(*)(<a class="el" href="structkore__file__reader.html">kore_file_reader</a> *reader, const char *filename, int type)&#160;</td>
+          <td class="paramtype">bool(*)(<a class="el" href="structkore__file__reader.html">kore_file_reader</a> *reader, const char *filename, kore_file_type type)&#160;</td>
           <td class="paramname"><em>callback</em></td><td>)</td>
           <td></td>
         </tr>
