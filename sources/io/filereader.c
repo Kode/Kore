@@ -60,8 +60,8 @@ const char *macgetresourcepath(void);
 #define KORE_LINUX
 #endif
 
-static char *fileslocation                                                                    = NULL;
-static bool (*file_reader_callback)(kore_file_reader *reader, const char *filename, int type) = NULL;
+static char *fileslocation                                                                               = NULL;
+static bool (*file_reader_callback)(kore_file_reader *reader, const char *filename, kore_file_type type) = NULL;
 #ifdef KORE_MICROSOFT
 static wchar_t wfilepath[1001];
 #endif
@@ -74,7 +74,7 @@ char *kore_internal_get_files_location(void) {
 	return fileslocation;
 }
 
-bool kore_internal_file_reader_callback(kore_file_reader *reader, const char *filename, int type) {
+bool kore_internal_file_reader_callback(kore_file_reader *reader, const char *filename, kore_file_type type) {
 	return file_reader_callback ? file_reader_callback(reader, filename, type) : false;
 }
 
@@ -131,7 +131,7 @@ static size_t kore_libc_file_reader_pos(kore_file_reader *reader) {
 }
 #endif
 
-bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filename, int type) {
+bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filename, kore_file_type type) {
 	char filepath[1001];
 #ifdef KORE_IOS
 	strcpy(filepath, type == KORE_FILE_TYPE_SAVE ? kore_internal_save_path() : iphonegetresourcepath());
@@ -235,13 +235,13 @@ bool kore_internal_file_reader_open(kore_file_reader *reader, const char *filena
 }
 
 #if !defined(KORE_ANDROID) && !defined(KORE_CONSOLE)
-bool kore_file_reader_open(kore_file_reader *reader, const char *filename, int type) {
+bool kore_file_reader_open(kore_file_reader *reader, const char *filename, kore_file_type type) {
 	memset(reader, 0, sizeof(*reader));
 	return kore_internal_file_reader_callback(reader, filename, type) || kore_internal_file_reader_open(reader, filename, type);
 }
 #endif
 
-void kore_file_reader_set_callback(bool (*callback)(kore_file_reader *reader, const char *filename, int type)) {
+void kore_file_reader_set_callback(bool (*callback)(kore_file_reader *reader, const char *filename, kore_file_type type)) {
 	file_reader_callback = callback;
 }
 

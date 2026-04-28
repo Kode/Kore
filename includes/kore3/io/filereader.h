@@ -25,8 +25,7 @@ struct __sFILE;
 typedef struct __sFILE FILE;
 #endif
 
-#define KORE_FILE_TYPE_ASSET 0
-#define KORE_FILE_TYPE_SAVE  1
+typedef enum kore_file_type { KORE_FILE_TYPE_ASSET, KORE_FILE_TYPE_SAVE } kore_file_type;
 
 typedef struct kore_file_reader {
 	void  *data; // A file handle or a more complex structure
@@ -46,7 +45,7 @@ typedef struct kore_file_reader {
 /// <param name="filepath">A filepath to identify a file</param>
 /// <param name="type">Looks for a regular file (KORE_FILE_TYPE_ASSET) or a save-file (KORE_FILE_TYPE_SAVE)</param>
 /// <returns>Whether the file could be opened</returns>
-KORE_FUNC bool kore_file_reader_open(kore_file_reader *reader, const char *filepath, int type);
+KORE_FUNC bool kore_file_reader_open(kore_file_reader *reader, const char *filepath, kore_file_type type);
 
 /// <summary>
 /// Opens a memory area for reading using the file reader API.
@@ -61,7 +60,7 @@ KORE_FUNC bool kore_file_reader_from_memory(kore_file_reader *reader, void *data
 /// Registers a file reader callback.
 /// </summary>
 /// <param name="callback">The function to call when opening a file</param>
-KORE_FUNC void kore_file_reader_set_callback(bool (*callback)(kore_file_reader *reader, const char *filename, int type));
+KORE_FUNC void kore_file_reader_set_callback(bool (*callback)(kore_file_reader *reader, const char *filename, kore_file_type type));
 
 /// <summary>
 /// Closes a file.
@@ -183,8 +182,8 @@ KORE_FUNC int8_t kore_read_s8(uint8_t *data);
 
 void  kore_internal_set_files_location(char *dir);
 char *kore_internal_get_files_location(void);
-bool  kore_internal_file_reader_callback(kore_file_reader *reader, const char *filename, int type);
-bool  kore_internal_file_reader_open(kore_file_reader *reader, const char *filename, int type);
+bool  kore_internal_file_reader_callback(kore_file_reader *reader, const char *filename, kore_file_type type);
+bool  kore_internal_file_reader_open(kore_file_reader *reader, const char *filename, kore_file_type type);
 
 #ifdef __cplusplus
 }
