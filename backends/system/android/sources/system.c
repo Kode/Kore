@@ -1285,7 +1285,7 @@ static bool kore_aasset_reader_open(kore_file_reader *reader, const char *filena
 	return true;
 }
 
-bool kore_file_reader_open(kore_file_reader *reader, const char *filename, kore_file_reader_open type) {
+bool kore_file_reader_open(kore_file_reader *reader, const char *filename, kore_file_type type) {
 	memset(reader, 0, sizeof(*reader));
 	return kore_internal_file_reader_callback(reader, filename, type) || kore_internal_file_reader_open(reader, filename, type) ||
 	       kore_aasset_reader_open(reader, filename, type);
