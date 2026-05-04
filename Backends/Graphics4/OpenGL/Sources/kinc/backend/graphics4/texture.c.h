@@ -35,6 +35,18 @@
 #define GL_HALF_FLOAT 0x140B
 #endif
 
+#ifndef GL_RGBA_INTEGER
+#define GL_RGBA_INTEGER 0x8D99
+#endif
+
+#ifndef GL_RGBA16UI
+#define GL_RGBA16UI 0x8D76
+#endif
+
+#ifndef GL_UNSIGNED_SHORT
+#define GL_UNSIGNED_SHORT 0x1403
+#endif
+
 #ifndef GL_RED
 #define GL_RED GL_LUMINANCE
 #endif
@@ -93,6 +105,8 @@ static int convertFormat(kinc_image_format_t format) {
 	case KINC_IMAGE_FORMAT_RGBA128:
 	default:
 		return GL_RGBA;
+	case KINC_IMAGE_FORMAT_RGBA64U:
+		return GL_RGBA_INTEGER;
 	case KINC_IMAGE_FORMAT_RGB24:
 		return GL_RGB;
 	case KINC_IMAGE_FORMAT_A32:
@@ -108,6 +122,8 @@ static int convertInternalFormat(kinc_image_format_t format) {
 		return GL_RGBA32F_EXT;
 	case KINC_IMAGE_FORMAT_RGBA64:
 		return GL_RGBA16F_EXT;
+	case KINC_IMAGE_FORMAT_RGBA64U:
+		return GL_RGBA16UI;
 	case KINC_IMAGE_FORMAT_RGBA32:
 		return GL_RGBA8;
 	default:
@@ -142,6 +158,8 @@ static int convertType(kinc_image_format_t format) {
 	case KINC_IMAGE_FORMAT_A32:
 	case KINC_IMAGE_FORMAT_A16:
 		return GL_FLOAT;
+	case KINC_IMAGE_FORMAT_RGBA64U:
+		return GL_UNSIGNED_SHORT;
 	case KINC_IMAGE_FORMAT_RGBA32:
 	default:
 		return GL_UNSIGNED_BYTE;
@@ -246,6 +264,7 @@ static void convertImageToPow2(kinc_image_format_t format, uint8_t *from, int fw
 	case KINC_IMAGE_FORMAT_RGB24:
 	case KINC_IMAGE_FORMAT_RGBA128:
 	case KINC_IMAGE_FORMAT_RGBA64:
+	case KINC_IMAGE_FORMAT_RGBA64U:
 	case KINC_IMAGE_FORMAT_A32:
 	case KINC_IMAGE_FORMAT_A16:
 	case KINC_IMAGE_FORMAT_BGRA32:
@@ -451,13 +470,19 @@ void kinc_g4_texture_init(kinc_g4_texture_t *texture, int width, int height, kin
 	glCheckErrors();
 	glBindTexture(GL_TEXTURE_2D, texture->impl.texture);
 	glCheckErrors();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// Integer formats require GL_NEAREST
+	int texFilter = format == KINC_IMAGE_FORMAT_RGBA64U ? GL_NEAREST : GL_LINEAR;
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texFilter);
 	glCheckErrors();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texFilter);
 	glCheckErrors();
 
 	if (convertType(format) == GL_FLOAT) {
 		glTexImage2D(GL_TEXTURE_2D, 0, convertInternalFormat(format), texture->tex_width, texture->tex_height, 0, convertFormat(format), GL_FLOAT, NULL);
+	}
+	else if (format == KINC_IMAGE_FORMAT_RGBA64U) {
+		glTexImage2D(GL_TEXTURE_2D, 0, convertInternalFormat(format), texture->tex_width, texture->tex_height, 0, convertFormat(format), GL_UNSIGNED_SHORT,
+		             NULL);
 	}
 	else {
 		glTexImage2D(GL_TEXTURE_2D, 0, convertInternalFormat(format), texture->tex_width, texture->tex_height, 0, convertFormat(format), GL_UNSIGNED_BYTE,

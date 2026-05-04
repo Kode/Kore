@@ -109,7 +109,7 @@ static void prepare_texture_image(uint8_t *tex_colors, uint32_t tex_width, uint3
 				}
 			}
 		}
-		else if (tex_format == VK_FORMAT_R16G16B16A16_SFLOAT) {
+		else if (tex_format == VK_FORMAT_R16G16B16A16_SFLOAT || tex_format == VK_FORMAT_R16G16B16A16_UINT) {
 			uint16_t *data16 = (uint16_t *)data;
 			uint16_t *tex_colors16 = (uint16_t *)tex_colors;
 			for (uint32_t y = 0; y < tex_height; y++) {
@@ -171,6 +171,8 @@ static VkFormat convert_image_format(kinc_image_format_t format) {
 		return VK_FORMAT_R32G32B32A32_SFLOAT;
 	case KINC_IMAGE_FORMAT_RGBA64:
 		return VK_FORMAT_R16G16B16A16_SFLOAT;
+	case KINC_IMAGE_FORMAT_RGBA64U:
+		return VK_FORMAT_R16G16B16A16_UINT;
 	case KINC_IMAGE_FORMAT_RGB24:
 		return VK_FORMAT_B8G8R8A8_UNORM;
 	case KINC_IMAGE_FORMAT_A32:
@@ -193,6 +195,7 @@ static int format_byte_size(kinc_image_format_t format) {
 	case KINC_IMAGE_FORMAT_RGBA128:
 		return 16;
 	case KINC_IMAGE_FORMAT_RGBA64:
+	case KINC_IMAGE_FORMAT_RGBA64U:
 		return 8;
 	case KINC_IMAGE_FORMAT_RGB24:
 		return 4;
