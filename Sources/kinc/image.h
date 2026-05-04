@@ -30,7 +30,8 @@ typedef enum kinc_image_format {
 	KINC_IMAGE_FORMAT_RGBA64,
 	KINC_IMAGE_FORMAT_A32,
 	KINC_IMAGE_FORMAT_BGRA32,
-	KINC_IMAGE_FORMAT_A16
+	KINC_IMAGE_FORMAT_A16,
+	KINC_IMAGE_FORMAT_RGBA64U
 } kinc_image_format_t;
 
 typedef struct kinc_image {
@@ -599,6 +600,7 @@ int kinc_image_format_sizeof(kinc_image_format_t format) {
 	case KINC_IMAGE_FORMAT_BGRA32:
 		return 4;
 	case KINC_IMAGE_FORMAT_RGBA64:
+	case KINC_IMAGE_FORMAT_RGBA64U:
 		return 8;
 	case KINC_IMAGE_FORMAT_A32:
 		return 4;
