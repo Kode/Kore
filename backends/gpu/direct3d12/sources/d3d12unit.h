@@ -77,7 +77,7 @@
 #else
 #define COM_CALL_VOID(object, method)            (object)->lpVtbl->method(object)
 #define COM_CALL_VOID_RET(object, method, ret)   (object)->lpVtbl->method((object), &ret)
-#define COM_CALL(object, method, ...)            (object)->lpVtbl->method((object), __VA_ARGS__)
+#define COM_CALL(object, method, ...)            (object)->lpVtbl->method((object), ##__VA_ARGS__)
 #define COM_OUT(id, out)                         &IID_##id, (void **)(out)
 #define COM_CREATE(object, method, id, out, ...) (object)->lpVtbl->method((object), __VA_ARGS__, &IID_##id, (void **)(out))
 #endif
