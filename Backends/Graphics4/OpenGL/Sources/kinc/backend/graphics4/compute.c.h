@@ -41,6 +41,8 @@ static int convertInternalRTFormat(kinc_g4_render_target_format_t format) {
 	switch (format) {
 	case KINC_G4_RENDER_TARGET_FORMAT_64BIT_FLOAT:
 		return GL_RGBA16F;
+	case KINC_G4_RENDER_TARGET_FORMAT_64BIT_INTEGER:
+		return GL_RGBA16UI;
 	case KINC_G4_RENDER_TARGET_FORMAT_32BIT_RED_FLOAT:
 		return GL_R32F;
 	case KINC_G4_RENDER_TARGET_FORMAT_128BIT_FLOAT:
