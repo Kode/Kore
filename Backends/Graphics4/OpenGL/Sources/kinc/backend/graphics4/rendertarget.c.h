@@ -28,6 +28,18 @@
 #define GL_HALF_FLOAT 0x140B
 #endif
 
+#ifndef GL_RGBA_INTEGER
+#define GL_RGBA_INTEGER 0x8D99
+#endif
+
+#ifndef GL_RGBA16UI
+#define GL_RGBA16UI 0x8D76
+#endif
+
+#ifndef GL_UNSIGNED_SHORT
+#define GL_UNSIGNED_SHORT 0x1403
+#endif
+
 #ifndef GL_RED
 #define GL_RED GL_LUMINANCE
 #endif
@@ -201,6 +213,12 @@ void kinc_g4_render_target_init_with_multisampling(kinc_g4_render_target_t *rend
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, renderTarget->texWidth, renderTarget->texHeight, 0, GL_RGBA, GL_HALF_FLOAT, 0);
 #endif
 		break;
+	case KINC_G4_RENDER_TARGET_FORMAT_64BIT_INTEGER:
+		// Integer formats require GL_NEAREST
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16UI, renderTarget->texWidth, renderTarget->texHeight, 0, GL_RGBA_INTEGER, GL_UNSIGNED_SHORT, 0);
+		break;
 	case KINC_G4_RENDER_TARGET_FORMAT_16BIT_DEPTH:
 #ifdef KINC_OPENGL_ES
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -307,6 +325,14 @@ void kinc_g4_render_target_init_cube_with_multisampling(kinc_g4_render_target_t 
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA16F, renderTarget->texWidth, renderTarget->texHeight, 0, GL_RGBA, GL_HALF_FLOAT, 0);
 #endif
 		break;
+	case KINC_G4_RENDER_TARGET_FORMAT_64BIT_INTEGER:
+		// Integer formats require GL_NEAREST
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		for (int i = 0; i < 6; i++)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA16UI, renderTarget->texWidth, renderTarget->texHeight, 0, GL_RGBA_INTEGER,
+			             GL_UNSIGNED_SHORT, 0);
+		break;
 	case KINC_G4_RENDER_TARGET_FORMAT_16BIT_DEPTH:
 #ifdef KINC_OPENGL_ES
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -388,6 +414,9 @@ void kinc_g4_render_target_get_pixels(kinc_g4_render_target_t *renderTarget, uin
 		break;
 	case KINC_G4_RENDER_TARGET_FORMAT_64BIT_FLOAT:
 		glReadPixels(0, 0, renderTarget->texWidth, renderTarget->texHeight, GL_RGBA, GL_HALF_FLOAT, data);
+		break;
+	case KINC_G4_RENDER_TARGET_FORMAT_64BIT_INTEGER:
+		glReadPixels(0, 0, renderTarget->texWidth, renderTarget->texHeight, GL_RGBA_INTEGER, GL_UNSIGNED_SHORT, data);
 		break;
 	case KINC_G4_RENDER_TARGET_FORMAT_8BIT_RED:
 		glReadPixels(0, 0, renderTarget->texWidth, renderTarget->texHeight, GL_RED, GL_UNSIGNED_BYTE, data);
