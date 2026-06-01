@@ -1182,7 +1182,7 @@ void kore_d3d12_device_create_sampler(kore_gpu_device *device, const kore_gpu_sa
 	desc.MipLODBias    = 0.0f;
 	desc.MaxAnisotropy = parameters->max_anisotropy;
 	desc.ComparisonFunc =
-	    parameters->compare == KORE_GPU_COMPARE_FUNCTION_UNDEFINED ? D3D12_COMPARISON_FUNC_ALWAYS : convert_compare_function(parameters->compare);
+	    parameters->compare == KORE_GPU_COMPARE_FUNCTION_UNDEFINED ? D3D12_COMPARISON_FUNC_NONE : convert_compare_function(parameters->compare);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
 	COM_CALL_VOID_RET(device->d3d12.all_samplers, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
