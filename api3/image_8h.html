@@ -98,6 +98,8 @@ Data Structures</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkore__image__read__callbacks.html">kore_image_read_callbacks</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkore__image__info.html">kore_image_info</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -113,6 +115,9 @@ typedef struct <a class="el" href="structkore__image.html">kore_image</a>&#160;<
 <tr class="memitem:ad91739f6b6fd841907aff0f54b3ca108" id="r_ad91739f6b6fd841907aff0f54b3ca108"><td class="memItemLeft" align="right" valign="top"><a id="ad91739f6b6fd841907aff0f54b3ca108" name="ad91739f6b6fd841907aff0f54b3ca108"></a>
 typedef struct <a class="el" href="structkore__image__read__callbacks.html">kore_image_read_callbacks</a>&#160;</td><td class="memItemRight" valign="bottom"><b>kore_image_read_callbacks</b></td></tr>
 <tr class="separator:ad91739f6b6fd841907aff0f54b3ca108"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4af4d42661a251bf4ac08c614c96d19c" id="r_a4af4d42661a251bf4ac08c614c96d19c"><td class="memItemLeft" align="right" valign="top"><a id="a4af4d42661a251bf4ac08c614c96d19c" name="a4af4d42661a251bf4ac08c614c96d19c"></a>
+typedef struct <a class="el" href="structkore__image__info.html">kore_image_info</a>&#160;</td><td class="memItemRight" valign="bottom"><b>kore_image_info</b></td></tr>
+<tr class="separator:a4af4d42661a251bf4ac08c614c96d19c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -144,15 +149,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a6dec7fcc67b3351ce8049cd93a1e634b" id="r_a6dec7fcc67b3351ce8049cd93a1e634b"><td class="memItemLeft" align="right" valign="top">KORE_FUNC size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image_8h.html#a6dec7fcc67b3351ce8049cd93a1e634b">kore_image_init3d</a> (<a class="el" href="structkore__image.html">kore_image</a> *image, void *memory, int width, int height, int depth, kore_image_format format)</td></tr>
 <tr class="memdesc:a6dec7fcc67b3351ce8049cd93a1e634b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a 3D <a class="el" href="structkore__image.html">kore_image</a> in the provided memory.  <br /></td></tr>
 <tr class="separator:a6dec7fcc67b3351ce8049cd93a1e634b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3fd724e32c021b691260100fca1a3c9" id="r_ab3fd724e32c021b691260100fca1a3c9"><td class="memItemLeft" align="right" valign="top">KORE_FUNC size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image_8h.html#ab3fd724e32c021b691260100fca1a3c9">kore_image_size_from_file</a> (const char *filename)</td></tr>
-<tr class="memdesc:ab3fd724e32c021b691260100fca1a3c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Peeks into an image file and figures out the size it will occupy in memory.  <br /></td></tr>
-<tr class="separator:ab3fd724e32c021b691260100fca1a3c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ec7e3636e099fddcb36b75e5825552e" id="r_a2ec7e3636e099fddcb36b75e5825552e"><td class="memItemLeft" align="right" valign="top">KORE_FUNC size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image_8h.html#a2ec7e3636e099fddcb36b75e5825552e">kore_image_size_from_callbacks</a> (<a class="el" href="structkore__image__read__callbacks.html">kore_image_read_callbacks</a> callbacks, void *user_data, const char *format)</td></tr>
-<tr class="memdesc:a2ec7e3636e099fddcb36b75e5825552e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Peeks into an image that is loaded via callback functions and figures out the size it will occupy in memory.  <br /></td></tr>
-<tr class="separator:a2ec7e3636e099fddcb36b75e5825552e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abda1ca9a004e9a98d193dabdfdebc73e" id="r_abda1ca9a004e9a98d193dabdfdebc73e"><td class="memItemLeft" align="right" valign="top">KORE_FUNC size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image_8h.html#abda1ca9a004e9a98d193dabdfdebc73e">kore_image_size_from_encoded_bytes</a> (void *data, size_t data_size, const char *format_hint)</td></tr>
-<tr class="memdesc:abda1ca9a004e9a98d193dabdfdebc73e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Peeks into an image file that resides in memory and figures out the size it will occupy in memory once it is uncompressed.  <br /></td></tr>
-<tr class="separator:abda1ca9a004e9a98d193dabdfdebc73e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09ee2f1b36558c2970dd24b3adc4e6e1" id="r_a09ee2f1b36558c2970dd24b3adc4e6e1"><td class="memItemLeft" align="right" valign="top">KORE_FUNC <a class="el" href="structkore__image__info.html">kore_image_info</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image_8h.html#a09ee2f1b36558c2970dd24b3adc4e6e1">kore_image_info_from_file</a> (const char *filename)</td></tr>
+<tr class="memdesc:a09ee2f1b36558c2970dd24b3adc4e6e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Peeks into an image file and figures out the size it will occupy in memory.  <br /></td></tr>
+<tr class="separator:a09ee2f1b36558c2970dd24b3adc4e6e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a399976409467c4aff1279bbf28c0993f" id="r_a399976409467c4aff1279bbf28c0993f"><td class="memItemLeft" align="right" valign="top">KORE_FUNC <a class="el" href="structkore__image__info.html">kore_image_info</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image_8h.html#a399976409467c4aff1279bbf28c0993f">kore_image_info_from_callbacks</a> (<a class="el" href="structkore__image__read__callbacks.html">kore_image_read_callbacks</a> callbacks, void *user_data, const char *format)</td></tr>
+<tr class="memdesc:a399976409467c4aff1279bbf28c0993f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Peeks into an image that is loaded via callback functions and figures out the size it will occupy in memory.  <br /></td></tr>
+<tr class="separator:a399976409467c4aff1279bbf28c0993f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecbc2a169e6f3493e762a9d1cf488b05" id="r_aecbc2a169e6f3493e762a9d1cf488b05"><td class="memItemLeft" align="right" valign="top">KORE_FUNC <a class="el" href="structkore__image__info.html">kore_image_info</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image_8h.html#aecbc2a169e6f3493e762a9d1cf488b05">kore_image_info_from_encoded_bytes</a> (void *data, size_t data_size, const char *format_hint)</td></tr>
+<tr class="memdesc:aecbc2a169e6f3493e762a9d1cf488b05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Peeks into an image file that resides in memory and figures out the size it will occupy in memory once it is uncompressed.  <br /></td></tr>
+<tr class="separator:aecbc2a169e6f3493e762a9d1cf488b05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2fbee8e98da1b26fd6bfee080e0e9d9" id="r_af2fbee8e98da1b26fd6bfee080e0e9d9"><td class="memItemLeft" align="right" valign="top">KORE_FUNC size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image_8h.html#af2fbee8e98da1b26fd6bfee080e0e9d9">kore_image_init_from_file</a> (<a class="el" href="structkore__image.html">kore_image</a> *image, void *memory, const char *filename)</td></tr>
 <tr class="memdesc:af2fbee8e98da1b26fd6bfee080e0e9d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads an image from a file.  <br /></td></tr>
 <tr class="separator:af2fbee8e98da1b26fd6bfee080e0e9d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -312,6 +317,109 @@ KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><b>kore_image_
 
 <p>Provides access to the image data. </p>
 <dl class="section return"><dt>Returns</dt><dd>A pointer to the image data</dd></dl>
+
+</div>
+</div>
+<a id="a399976409467c4aff1279bbf28c0993f" name="a399976409467c4aff1279bbf28c0993f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a399976409467c4aff1279bbf28c0993f">&#9670;&#160;</a></span>kore_image_info_from_callbacks()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KORE_FUNC <a class="el" href="structkore__image__info.html">kore_image_info</a> kore_image_info_from_callbacks </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structkore__image__read__callbacks.html">kore_image_read_callbacks</a>&#160;</td>
+          <td class="paramname"><em>callbacks</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>user_data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>format</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Peeks into an image that is loaded via callback functions and figures out the size it will occupy in memory. </p>
+<dl class="section return"><dt>Returns</dt><dd>The memory size in bytes that will be used when loading the image</dd></dl>
+
+</div>
+</div>
+<a id="aecbc2a169e6f3493e762a9d1cf488b05" name="aecbc2a169e6f3493e762a9d1cf488b05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecbc2a169e6f3493e762a9d1cf488b05">&#9670;&#160;</a></span>kore_image_info_from_encoded_bytes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KORE_FUNC <a class="el" href="structkore__image__info.html">kore_image_info</a> kore_image_info_from_encoded_bytes </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>data_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>format_hint</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Peeks into an image file that resides in memory and figures out the size it will occupy in memory once it is uncompressed. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>The encoded data</td></tr>
+    <tr><td class="paramname">data_size</td><td>The size of the encoded data</td></tr>
+    <tr><td class="paramname">format_hint</td><td>Something like "png" can help, it also works to just put in the filename</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The memory size in bytes that will be used when loading the image</dd></dl>
+
+</div>
+</div>
+<a id="a09ee2f1b36558c2970dd24b3adc4e6e1" name="a09ee2f1b36558c2970dd24b3adc4e6e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09ee2f1b36558c2970dd24b3adc4e6e1">&#9670;&#160;</a></span>kore_image_info_from_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KORE_FUNC <a class="el" href="structkore__image__info.html">kore_image_info</a> kore_image_info_from_file </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Peeks into an image file and figures out the size it will occupy in memory. </p>
+<dl class="section return"><dt>Returns</dt><dd>The memory size in bytes that will be used when loading the image</dd></dl>
 
 </div>
 </div>
@@ -758,109 +866,6 @@ KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><b>kore_image_
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The memory size in bytes that will be used when loading the image</dd></dl>
-
-</div>
-</div>
-<a id="a2ec7e3636e099fddcb36b75e5825552e" name="a2ec7e3636e099fddcb36b75e5825552e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2ec7e3636e099fddcb36b75e5825552e">&#9670;&#160;</a></span>kore_image_size_from_callbacks()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">KORE_FUNC size_t kore_image_size_from_callbacks </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structkore__image__read__callbacks.html">kore_image_read_callbacks</a>&#160;</td>
-          <td class="paramname"><em>callbacks</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>user_data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>format</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Peeks into an image that is loaded via callback functions and figures out the size it will occupy in memory. </p>
-<dl class="section return"><dt>Returns</dt><dd>The memory size in bytes that will be used when loading the image</dd></dl>
-
-</div>
-</div>
-<a id="abda1ca9a004e9a98d193dabdfdebc73e" name="abda1ca9a004e9a98d193dabdfdebc73e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abda1ca9a004e9a98d193dabdfdebc73e">&#9670;&#160;</a></span>kore_image_size_from_encoded_bytes()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">KORE_FUNC size_t kore_image_size_from_encoded_bytes </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>data_size</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>format_hint</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Peeks into an image file that resides in memory and figures out the size it will occupy in memory once it is uncompressed. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">data</td><td>The encoded data</td></tr>
-    <tr><td class="paramname">data_size</td><td>The size of the encoded data</td></tr>
-    <tr><td class="paramname">format_hint</td><td>Something like "png" can help, it also works to just put in the filename</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The memory size in bytes that will be used when loading the image</dd></dl>
-
-</div>
-</div>
-<a id="ab3fd724e32c021b691260100fca1a3c9" name="ab3fd724e32c021b691260100fca1a3c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3fd724e32c021b691260100fca1a3c9">&#9670;&#160;</a></span>kore_image_size_from_file()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">KORE_FUNC size_t kore_image_size_from_file </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>filename</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Peeks into an image file and figures out the size it will occupy in memory. </p>
 <dl class="section return"><dt>Returns</dt><dd>The memory size in bytes that will be used when loading the image</dd></dl>
 
 </div>
