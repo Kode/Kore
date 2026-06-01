@@ -108,34 +108,38 @@ static _Bool endsWith(const char *str, const char *suffix) {
 	return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
 }
 
-static size_t loadImageSize(kore_image_read_callbacks callbacks, void *user_data, const char *filename) {
+static kore_image_info load_image_info(kore_image_read_callbacks callbacks, void *user_data, const char *filename) {
+	kore_image_info info;
+
 	if (endsWith(filename, "k")) {
 		uint8_t data[4];
 		callbacks.read(user_data, data, 4);
-		int width = kore_read_s32le(data);
+		info.width = (uint32_t)kore_read_s32le(data);
 		callbacks.read(user_data, data, 4);
-		int height = kore_read_s32le(data);
+		info.height = (uint32_t)kore_read_s32le(data);
 
 		char fourcc[5];
 		callbacks.read(user_data, fourcc, 4);
 		fourcc[4] = 0;
 
 		if (strcmp(fourcc, "LZ4 ") == 0) {
-			return width * height * 4;
+			info.data_size = info.width * info.height * 4;
 		}
 		else if (strcmp(fourcc, "LZ4F") == 0) {
-			return width * height * 16;
+			info.data_size = info.width * info.height * 16;
 		}
 		else if (strcmp(fourcc, "ASTC") == 0) {
-			return width * height * 4; // just an upper bound
+			info.data_size = info.width * info.height * 4; // just an upper bound
 		}
 		else if (strcmp(fourcc, "DXT5") == 0) {
-			return width * height; // just an upper bound
+			info.data_size = info.width * info.height; // just an upper bound
 		}
 		else {
 			kore_log(KORE_LOG_LEVEL_ERROR, "Unknown fourcc in .k file.");
-			return 0;
+			info.data_size = 0;
 		}
+
+		return info;
 	}
 	else if (endsWith(filename, "pvr")) {
 		uint8_t data[4];
@@ -145,11 +149,13 @@ static size_t loadImageSize(kore_image_read_callbacks callbacks, void *user_data
 		callbacks.read(user_data, data, 4); // colourSpace
 		callbacks.read(user_data, data, 4); // channelType
 		callbacks.read(user_data, data, 4);
-		uint32_t hh = kore_read_u32le(data);
+		info.height = kore_read_u32le(data);
 		callbacks.read(user_data, data, 4);
-		uint32_t ww = kore_read_u32le(data);
+		info.width = kore_read_u32le(data);
 
-		return ww * hh / 2;
+		info.data_size = info.width * info.height / 2;
+
+		return info;
 	}
 	else if (endsWith(filename, "hdr")) {
 		stbi_io_callbacks stbi_callbacks;
@@ -164,7 +170,12 @@ static size_t loadImageSize(kore_image_read_callbacks callbacks, void *user_data
 		int x, y, comp;
 		stbi_info_from_callbacks(&stbi_callbacks, &reader, &x, &y, &comp);
 		buffer_offset = 0;
-		return x * y * 16;
+
+		info.width     = (uint32_t)x;
+		info.height    = (uint32_t)y;
+		info.data_size = info.width * info.height * 16;
+
+		return info;
 	}
 	else {
 		stbi_io_callbacks stbi_callbacks;
@@ -179,12 +190,17 @@ static size_t loadImageSize(kore_image_read_callbacks callbacks, void *user_data
 		int x, y, comp;
 		stbi_info_from_callbacks(&stbi_callbacks, &reader, &x, &y, &comp);
 		buffer_offset = 0;
-		return x * y * 4;
+
+		info.width     = (uint32_t)x;
+		info.height    = (uint32_t)y;
+		info.data_size = info.width * info.height * 4;
+
+		return info;
 	}
 }
 
-static bool loadImage(kore_image_read_callbacks callbacks, void *user_data, const char *filename, uint8_t *output, size_t *outputSize, int *width, int *height,
-                      kore_image_compression *compression, kore_image_format *format, unsigned *internalFormat, uint32_t forced_stride) {
+static bool load_image(kore_image_read_callbacks callbacks, void *user_data, const char *filename, uint8_t *output, size_t *outputSize, int *width, int *height,
+                       kore_image_compression *compression, kore_image_format *format, unsigned *internalFormat, uint32_t forced_stride) {
 	*format = KORE_IMAGE_FORMAT_RGBA32;
 	if (endsWith(filename, "k")) {
 		uint8_t data[4];
@@ -488,11 +504,11 @@ static void memory_seek_callback(void *user_data, size_t pos) {
 	memory->offset                            = pos;
 }
 
-size_t kore_image_size_from_callbacks(kore_image_read_callbacks callbacks, void *user_data, const char *filename) {
-	return loadImageSize(callbacks, user_data, filename);
+kore_image_info kore_image_info_from_callbacks(kore_image_read_callbacks callbacks, void *user_data, const char *filename) {
+	return load_image_info(callbacks, user_data, filename);
 }
 
-size_t kore_image_size_from_file(const char *filename) {
+kore_image_info kore_image_info_from_file(const char *filename) {
 	kore_file_reader reader;
 	if (kore_file_reader_open(&reader, filename, KORE_FILE_TYPE_ASSET)) {
 		kore_image_read_callbacks callbacks;
@@ -501,14 +517,20 @@ size_t kore_image_size_from_file(const char *filename) {
 		callbacks.pos  = pos_callback;
 		callbacks.seek = seek_callback;
 
-		size_t dataSize = loadImageSize(callbacks, &reader, filename);
+		kore_image_info info = load_image_info(callbacks, &reader, filename);
 		kore_file_reader_close(&reader);
-		return dataSize;
+		return info;
 	}
-	return 0;
+
+	kore_image_info info = {
+	    .width     = 0,
+	    .height    = 0,
+	    .data_size = 0,
+	};
+	return info;
 }
 
-size_t kore_image_size_from_encoded_bytes(void *data, size_t data_size, const char *format) {
+kore_image_info kore_image_info_from_encoded_bytes(void *data, size_t data_size, const char *format) {
 	kore_image_read_callbacks callbacks;
 	callbacks.read = memory_read_callback;
 	callbacks.size = memory_size_callback;
@@ -520,14 +542,14 @@ size_t kore_image_size_from_encoded_bytes(void *data, size_t data_size, const ch
 	image_memory.size   = data_size;
 	image_memory.offset = 0;
 
-	return loadImageSize(callbacks, &image_memory, format);
+	return load_image_info(callbacks, &image_memory, format);
 }
 
 size_t kore_image_init_from_callbacks_with_stride(kore_image *image, void *memory, kore_image_read_callbacks callbacks, void *user_data, const char *filename,
                                                   uint32_t stride) {
 	size_t dataSize = 0;
-	loadImage(callbacks, user_data, filename, memory, &dataSize, &image->width, &image->height, &image->compression, &image->format, &image->internal_format,
-	          stride);
+	load_image(callbacks, user_data, filename, memory, &dataSize, &image->width, &image->height, &image->compression, &image->format, &image->internal_format,
+	           stride);
 	image->data      = memory;
 	image->data_size = dataSize;
 	return dataSize;
@@ -547,8 +569,8 @@ size_t kore_image_init_from_file_with_stride(kore_image *image, void *memory, co
 		callbacks.seek = seek_callback;
 
 		size_t dataSize = 0;
-		loadImage(callbacks, &reader, filename, memory, &dataSize, &image->width, &image->height, &image->compression, &image->format, &image->internal_format,
-		          stride);
+		load_image(callbacks, &reader, filename, memory, &dataSize, &image->width, &image->height, &image->compression, &image->format, &image->internal_format,
+		           stride);
 		kore_file_reader_close(&reader);
 		image->data      = memory;
 		image->data_size = dataSize;
@@ -575,8 +597,8 @@ size_t kore_image_init_from_encoded_bytes_with_stride(kore_image *image, void *m
 	image_memory.offset = 0;
 
 	size_t dataSize = 0;
-	loadImage(callbacks, &image_memory, format, memory, &dataSize, &image->width, &image->height, &image->compression, &image->format, &image->internal_format,
-	          stride);
+	load_image(callbacks, &image_memory, format, memory, &dataSize, &image->width, &image->height, &image->compression, &image->format, &image->internal_format,
+	           stride);
 	image->data      = memory;
 	image->data_size = dataSize;
 	image->depth     = 1;

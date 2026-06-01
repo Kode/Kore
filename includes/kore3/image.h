@@ -50,6 +50,12 @@ typedef struct kore_image_read_callbacks {
 	size_t (*size)(void *user_data);
 } kore_image_read_callbacks;
 
+typedef struct kore_image_info {
+	uint32_t width;
+	uint32_t height;
+	size_t   data_size;
+} kore_image_info;
+
 /// <summary>
 /// Creates a 2D kore_image in the provided memory.
 /// </summary>
@@ -66,13 +72,13 @@ KORE_FUNC size_t kore_image_init3d(kore_image *image, void *memory, int width, i
 /// Peeks into an image file and figures out the size it will occupy in memory.
 /// </summary>
 /// <returns>The memory size in bytes that will be used when loading the image</returns>
-KORE_FUNC size_t kore_image_size_from_file(const char *filename);
+KORE_FUNC kore_image_info kore_image_info_from_file(const char *filename);
 
 /// <summary>
 /// Peeks into an image that is loaded via callback functions and figures out the size it will occupy in memory.
 /// </summary>
 /// <returns>The memory size in bytes that will be used when loading the image</returns>
-KORE_FUNC size_t kore_image_size_from_callbacks(kore_image_read_callbacks callbacks, void *user_data, const char *format);
+KORE_FUNC kore_image_info kore_image_info_from_callbacks(kore_image_read_callbacks callbacks, void *user_data, const char *format);
 
 /// <summary>
 /// Peeks into an image file that resides in memory and figures out the size it will occupy in memory once it is uncompressed.
@@ -81,7 +87,7 @@ KORE_FUNC size_t kore_image_size_from_callbacks(kore_image_read_callbacks callba
 /// <param name="data_size">The size of the encoded data</param>
 /// <param name="format_hint">Something like "png" can help, it also works to just put in the filename</param>
 /// <returns>The memory size in bytes that will be used when loading the image</returns>
-KORE_FUNC size_t kore_image_size_from_encoded_bytes(void *data, size_t data_size, const char *format_hint);
+KORE_FUNC kore_image_info kore_image_info_from_encoded_bytes(void *data, size_t data_size, const char *format_hint);
 
 /// <summary>
 /// Loads an image from a file.
