@@ -48,7 +48,12 @@ function write_string(ptr, str) {
 
 async function init() {
 	let wasm_bytes = null;
-	await fetch("./ShaderTest.wasm").then(res => res.arrayBuffer()).then(buffer => wasm_bytes = new Uint8Array(buffer));
+	await fetch("./ShaderTest.wasm").then(res => res.arrayBuffer()).then(buffer => {
+		wasm_bytes = new Uint8Array(buffer);
+		if (wasm_bytes[0] !== 0x00 || wasm_bytes[1] !== 0x61 || wasm_bytes[2] !== 0x73 || wasm_bytes[3] !== 0x6D) {
+			throw new Error("Invalid WASM binary: magic bytes verification failed");
+		}
+	});
 
 	// Read memory size from wasm file
 	let memory_size = 0;
