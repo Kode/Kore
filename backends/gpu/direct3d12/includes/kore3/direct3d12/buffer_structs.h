@@ -11,7 +11,7 @@ extern "C" {
 
 struct kore_gpu_device;
 
-#define KORE_D3D12_MAX_BUFFER_RANGES 16
+#define KORE_D3D12_MAX_BUFFER_RANGES 4096
 
 // add-ons to kore_gpu_buffer_usage, top 16 bits only
 typedef enum kore_d3d12_buffer_usage {

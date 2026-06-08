@@ -205,7 +205,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	device->d3d12.execution_index = 1;
 
 	{
-		const uint32_t descriptor_count = 1024 * 10;
+		const uint32_t descriptor_count = 1024 * 100;
 
 		D3D12_DESCRIPTOR_HEAP_DESC desc = {0};
 		desc.NumDescriptors             = descriptor_count;
@@ -213,7 +213,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.Flags                      = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateDescriptorHeap, ID3D12DescriptorHeap, &device->d3d12.descriptor_heap, &desc));
 
-		oa_create(&device->d3d12.descriptor_heap_allocator, descriptor_count, 4096);
+		oa_create(&device->d3d12.descriptor_heap_allocator, descriptor_count, 4096 * 4096);
 	}
 
 	{
@@ -225,7 +225,7 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 		desc.Flags                      = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 		kore_microsoft_affirm(COM_CREATE(device->d3d12.device, CreateDescriptorHeap, ID3D12DescriptorHeap, &device->d3d12.sampler_heap, &desc));
 
-		oa_create(&device->d3d12.sampler_heap_allocator, sampler_count, 4096);
+		oa_create(&device->d3d12.sampler_heap_allocator, sampler_count, 4096 * 4096);
 	}
 
 	device->d3d12.render_pipelines_count  = 0;
