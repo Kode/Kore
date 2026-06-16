@@ -25,6 +25,7 @@ KORE_FUNC kore_matrix3x3 kore_matrix3x3_rotation_x(float alpha);
 KORE_FUNC kore_matrix3x3 kore_matrix3x3_rotation_y(float alpha);
 KORE_FUNC kore_matrix3x3 kore_matrix3x3_rotation_z(float alpha);
 KORE_FUNC kore_matrix3x3 kore_matrix3x3_translation(float x, float y);
+KORE_FUNC kore_matrix3x3 kore_matrix3x3_rotation(float rot);
 KORE_FUNC kore_matrix3x3 kore_matrix3x3_scale(float x, float y, float z);
 KORE_FUNC kore_matrix3x3 kore_matrix3x3_multiply(kore_matrix3x3 *a, kore_matrix3x3 *b);
 KORE_FUNC kore_float3    kore_matrix3x3_multiply_vector(kore_matrix3x3 *a, kore_float3 b);
