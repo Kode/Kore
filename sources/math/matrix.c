@@ -73,12 +73,12 @@ kore_matrix3x3 kore_matrix3x3_translation(float x, float y) {
 kore_matrix3x3 kore_matrix3x3_rotation(float rot) {
 	kore_matrix3x3 m;
 
-	kore_matrix3x3_set(&m, 0, 0, cos(rot));
-	kore_matrix3x3_set(&m, 1, 0, -sin(rot));
+	kore_matrix3x3_set(&m, 0, 0, cosf(rot));
+	kore_matrix3x3_set(&m, 1, 0, -sinf(rot));
 	kore_matrix3x3_set(&m, 2, 0, 0.0f);
 
-	kore_matrix3x3_set(&m, 0, 1, sin(rot));
-	kore_matrix3x3_set(&m, 1, 1, cos(rot));
+	kore_matrix3x3_set(&m, 0, 1, sinf(rot));
+	kore_matrix3x3_set(&m, 1, 1, cosf(rot));
 	kore_matrix3x3_set(&m, 2, 1, 0.0f);
 
 	kore_matrix3x3_set(&m, 0, 2, 0.0f);
