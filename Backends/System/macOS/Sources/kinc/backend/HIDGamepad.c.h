@@ -18,7 +18,7 @@ static void initDeviceElements(struct HIDGamepad *gamepad, CFArrayRef elements);
 static void buttonChanged(struct HIDGamepad *gamepad, IOHIDElementRef elementRef, IOHIDValueRef valueRef, int buttonIndex);
 static void axisChanged(struct HIDGamepad *gamepad, IOHIDElementRef elementRef, IOHIDValueRef valueRef, int axisIndex);
 
-// Bit flags for hat switch directions: bit0=Up, bit1=Down, bit2=Left, bit3=Right
+// Bit flags for hat switch directions
 static const uint8_t hatDir[8] = {
 	1,     // 0: Up
 	1|8,   // 1: Up+Right
