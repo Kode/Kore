@@ -56,7 +56,7 @@ void kinc_login(void) {}
 void kinc_unlock_achievement(int id) {}
 
 bool kinc_gamepad_connected(int num) {
-	return true;
+	return num >= 0 && num < KINC_GAMEPAD_MAX_COUNT && gamepadTable[num] != NULL;
 }
 
 void kinc_gamepad_rumble(int gamepad, float left, float right) {}

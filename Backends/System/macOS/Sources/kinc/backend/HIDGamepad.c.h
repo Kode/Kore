@@ -6,6 +6,8 @@
 #include <kinc/log.h>
 #include <kinc/math/core.h>
 
+static struct HIDGamepad *gamepadTable[KINC_GAMEPAD_MAX_COUNT];
+
 static void inputValueCallback(void *inContext, IOReturn inResult, void *inSender, IOHIDValueRef inIOHIDValueRef);
 static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inSender);
 
@@ -215,6 +217,8 @@ void HIDGamepad_bind(struct HIDGamepad *gamepad, IOHIDDeviceRef inDeviceRef, int
 
 	kinc_log(KINC_LOG_LEVEL_INFO, "HIDGamepad.bind: <%p> idx:%d [0x%x:0x%x] [%s] [%s]", inDeviceRef, gamepad->padIndex, gamepad->hidDeviceVendorID,
 	         gamepad->hidDeviceProductID, gamepad->hidDeviceVendor, gamepad->hidDeviceProduct);
+
+	gamepadTable[inPadIndex] = gamepad;
 }
 
 static void initDeviceElements(struct HIDGamepad *gamepad, CFArrayRef elements) {
@@ -303,6 +307,7 @@ void HIDGamepad_unbind(struct HIDGamepad *gamepad) {
 	}
 
 	if (gamepad->padIndex >= 0) {
+		gamepadTable[gamepad->padIndex] = NULL;
 		//**
 		/*Gamepad *gamepad = Gamepad::get(padIndex);
 		gamepad->vendor 	 = nullptr;
@@ -452,9 +457,15 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 }
 
 const char *kinc_gamepad_vendor(int gamepad) {
+	if (gamepad >= 0 && gamepad < KINC_GAMEPAD_MAX_COUNT && gamepadTable[gamepad] != NULL) {
+		return gamepadTable[gamepad]->hidDeviceVendor;
+	}
 	return "unknown";
 }
 
 const char *kinc_gamepad_product_name(int gamepad) {
+	if (gamepad >= 0 && gamepad < KINC_GAMEPAD_MAX_COUNT && gamepadTable[gamepad] != NULL) {
+		return gamepadTable[gamepad]->hidDeviceProduct;
+	}
 	return "unknown";
 }
