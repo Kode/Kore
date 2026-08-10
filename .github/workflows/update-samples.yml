@@ -37,7 +37,7 @@ jobs:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     
     - name: Clone Switch Samples
-      run: git clone https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Switch.git
+      run: git clone --branch v2 https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Switch.git
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     - name: Get Kore-Submodule
@@ -59,7 +59,7 @@ jobs:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
 
     - name: Clone Switch 2 Samples
-      run: git clone https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Switch2.git
+      run: git clone --branch v2 https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Switch2.git
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     - name: Get Kore-Submodule
@@ -125,7 +125,7 @@ jobs:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
 
     - name: Clone Xbox Samples
-      run: git clone https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Xbox.git
+      run: git clone --branch v2 https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/Kore-Samples-Xbox.git
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     - name: Get Kore-Submodule
