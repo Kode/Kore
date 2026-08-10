@@ -6,6 +6,8 @@
 #include <kinc/log.h>
 #include <kinc/math/core.h>
 
+static struct HIDGamepad *gamepadTable[KINC_GAMEPAD_MAX_COUNT];
+
 static void inputValueCallback(void *inContext, IOReturn inResult, void *inSender, IOHIDValueRef inIOHIDValueRef);
 static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inSender);
 
@@ -15,6 +17,18 @@ static void initDeviceElements(struct HIDGamepad *gamepad, CFArrayRef elements);
 
 static void buttonChanged(struct HIDGamepad *gamepad, IOHIDElementRef elementRef, IOHIDValueRef valueRef, int buttonIndex);
 static void axisChanged(struct HIDGamepad *gamepad, IOHIDElementRef elementRef, IOHIDValueRef valueRef, int axisIndex);
+
+// Bit flags for hat switch directions
+static const uint8_t hatDir[8] = {
+	1,     // 0: Up
+	1|8,   // 1: Up+Right
+	8,     // 2: Right
+	2|8,   // 3: Down+Right
+	2,     // 4: Down
+	2|4,   // 5: Down+Left
+	4,     // 6: Left
+	1|4,   // 7: Up+Left
+};
 
 static bool debugButtonInput = false;
 
@@ -113,6 +127,14 @@ static void logAxis(int axisIndex) {
 		kinc_log(KINC_LOG_LEVEL_INFO, "Right trigger");
 		break;
 
+	case 6:
+		kinc_log(KINC_LOG_LEVEL_INFO, "Sim Accelerator (right trigger)");
+		break;
+
+	case 7:
+		kinc_log(KINC_LOG_LEVEL_INFO, "Sim Brake (left trigger)");
+		break;
+
 	default:
 		break;
 	}
@@ -195,6 +217,8 @@ void HIDGamepad_bind(struct HIDGamepad *gamepad, IOHIDDeviceRef inDeviceRef, int
 
 	kinc_log(KINC_LOG_LEVEL_INFO, "HIDGamepad.bind: <%p> idx:%d [0x%x:0x%x] [%s] [%s]", inDeviceRef, gamepad->padIndex, gamepad->hidDeviceVendorID,
 	         gamepad->hidDeviceProductID, gamepad->hidDeviceVendor, gamepad->hidDeviceProduct);
+
+	gamepadTable[inPadIndex] = gamepad;
 }
 
 static void initDeviceElements(struct HIDGamepad *gamepad, CFArrayRef elements) {
@@ -238,6 +262,7 @@ static void initDeviceElements(struct HIDGamepad *gamepad, CFArrayRef elements) 
 				gamepad->axis[5] = cookie;
 				break;
 			case kHIDUsage_GD_Hatswitch:
+				gamepad->hatSwitchCookie = cookie;
 				break;
 			default:
 				break;
@@ -249,6 +274,12 @@ static void initDeviceElements(struct HIDGamepad *gamepad, CFArrayRef elements) 
 				gamepad->buttons[usage - 1] = cookie;
 				// log(Info, "Button %i = %i", usage-1, cookie);
 			}
+			break;
+		case kHIDPage_Simulation:
+			if (usage == kHIDUsage_Sim_Accelerator)
+				gamepad->axis[6] = cookie;
+			if (usage == kHIDUsage_Sim_Brake)
+				gamepad->axis[7] = cookie;
 			break;
 		default:
 			break;
@@ -276,6 +307,7 @@ void HIDGamepad_unbind(struct HIDGamepad *gamepad) {
 	}
 
 	if (gamepad->padIndex >= 0) {
+		gamepadTable[gamepad->padIndex] = NULL;
 		//**
 		/*Gamepad *gamepad = Gamepad::get(padIndex);
 		gamepad->vendor 	 = nullptr;
@@ -296,6 +328,11 @@ static void reset(struct HIDGamepad *gamepad) {
 
 	memset(gamepad->axis, 0, sizeof(gamepad->axis));
 	memset(gamepad->buttons, 0, sizeof(gamepad->buttons));
+	gamepad->hatSwitchCookie = 0;
+	gamepad->hatUp = false;
+	gamepad->hatDown = false;
+	gamepad->hatLeft = false;
+	gamepad->hatRight = false;
 }
 
 static void buttonChanged(struct HIDGamepad *gamepad, IOHIDElementRef elementRef, IOHIDValueRef valueRef, int buttonIndex) {
@@ -356,7 +393,7 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 		// log(Info, "page %i, usage %i cookie %i", page, usage, cookie);
 
 		// Check button
-		for (int i = 0, c = sizeof(pad->buttons); i < c; ++i) {
+		for (int i = 0; i < HID_BUTTON_COUNT; ++i) {
 			if (cookie == pad->buttons[i]) {
 				buttonChanged(pad, elementRef, valueRef, i);
 				break;
@@ -364,10 +401,54 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 		}
 
 		// Check axes
-		for (int i = 0, c = sizeof(pad->axis); i < c; ++i) {
+		for (int i = 0; i < HID_AXIS_COUNT; ++i) {
 			if (cookie == pad->axis[i]) {
 				axisChanged(pad, elementRef, valueRef, i);
 				break;
+			}
+		}
+
+		// Check hat switch
+		if (cookie == pad->hatSwitchCookie) {
+			IOHIDElementRef hatElement = IOHIDValueGetElement(valueRef);
+			int hatValue = (int)IOHIDValueGetIntegerValue(valueRef);
+			int hatMin = (int)IOHIDElementGetLogicalMin(hatElement);
+			int hatMax = (int)IOHIDElementGetLogicalMax(hatElement);
+			int range = hatMax - hatMin + 1;
+
+			if (debugButtonInput) {
+				kinc_log(KINC_LOG_LEVEL_INFO, "Hat raw=%i min=%i max=%i range=%i", hatValue, hatMin, hatMax, range);
+			}
+
+			hatValue -= hatMin;
+			if (range == 4) {
+				hatValue *= 2; // 4-position hat: scale to 8-position
+			}
+			else if (range != 8) {
+				hatValue = -1; // Unknown range: treat as centered
+			}
+
+			uint8_t d = (hatValue >= 0 && hatValue <= 7) ? hatDir[hatValue] : 0;
+			bool up    = d & 1;
+			bool down  = d & 2;
+			bool left  = d & 4;
+			bool right = d & 8;
+
+			if (up != pad->hatUp) {
+				pad->hatUp = up;
+				kinc_internal_gamepad_trigger_button(pad->padIndex, 11, up ? 1.0f : 0.0f); // D-pad Up
+			}
+			if (down != pad->hatDown) {
+				pad->hatDown = down;
+				kinc_internal_gamepad_trigger_button(pad->padIndex, 12, down ? 1.0f : 0.0f); // D-pad Down
+			}
+			if (left != pad->hatLeft) {
+				pad->hatLeft = left;
+				kinc_internal_gamepad_trigger_button(pad->padIndex, 13, left ? 1.0f : 0.0f); // D-pad Left
+			}
+			if (right != pad->hatRight) {
+				pad->hatRight = right;
+				kinc_internal_gamepad_trigger_button(pad->padIndex, 14, right ? 1.0f : 0.0f); // D-pad Right
 			}
 		}
 
@@ -376,9 +457,15 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 }
 
 const char *kinc_gamepad_vendor(int gamepad) {
+	if (gamepad >= 0 && gamepad < KINC_GAMEPAD_MAX_COUNT && gamepadTable[gamepad] != NULL) {
+		return gamepadTable[gamepad]->hidDeviceVendor;
+	}
 	return "unknown";
 }
 
 const char *kinc_gamepad_product_name(int gamepad) {
+	if (gamepad >= 0 && gamepad < KINC_GAMEPAD_MAX_COUNT && gamepadTable[gamepad] != NULL) {
+		return gamepadTable[gamepad]->hidDeviceProduct;
+	}
 	return "unknown";
 }
