@@ -4,7 +4,7 @@
 #include <IOKit/hid/IOHIDKeys.h>
 #include <IOKit/hid/IOHIDManager.h>
 
-#define HID_AXIS_COUNT   8
+#define HID_AXIS_COUNT 8
 #define HID_BUTTON_COUNT 15
 
 struct HIDGamepad {

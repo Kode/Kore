@@ -12,7 +12,7 @@ void HIDManager_init(struct HIDManager *manager) {
 	manager->managerRef = 0x0;
 	for (int i = 0; i < KINC_MAX_HID_DEVICES; ++i) {
 		manager->devices[i].connected = false;
-		manager->devices[i].device    = NULL;
+		manager->devices[i].device = NULL;
 		HIDGamepad_init(&manager->devices[i].pad);
 	}
 	initHIDManager(manager);

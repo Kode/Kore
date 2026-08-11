@@ -20,14 +20,14 @@ static void axisChanged(struct HIDGamepad *gamepad, IOHIDElementRef elementRef, 
 
 // Bit flags for hat switch directions
 static const uint8_t hatDir[8] = {
-	1,     // 0: Up
-	1|8,   // 1: Up+Right
-	8,     // 2: Right
-	2|8,   // 3: Down+Right
-	2,     // 4: Down
-	2|4,   // 5: Down+Left
-	4,     // 6: Left
-	1|4,   // 7: Up+Left
+    1,     // 0: Up
+    1 | 8, // 1: Up+Right
+    8,     // 2: Right
+    2 | 8, // 3: Down+Right
+    2,     // 4: Down
+    2 | 4, // 5: Down+Left
+    4,     // 6: Left
+    1 | 4, // 7: Up+Left
 };
 
 static bool debugButtonInput = false;
@@ -429,9 +429,9 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 			}
 
 			uint8_t d = (hatValue >= 0 && hatValue <= 7) ? hatDir[hatValue] : 0;
-			bool up    = d & 1;
-			bool down  = d & 2;
-			bool left  = d & 4;
+			bool up = d & 1;
+			bool down = d & 2;
+			bool left = d & 4;
 			bool right = d & 8;
 
 			if (up != pad->hatUp) {
