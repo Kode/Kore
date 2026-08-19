@@ -33,6 +33,9 @@ void *kore_opengl_buffer_lock_all(kore_gpu_buffer *buffer) {
 	buffer->opengl.locked_data = glMapBufferRange(buffer->opengl.buffer_type, 0, buffer->opengl.size,
 	                                              buffer->opengl.buffer_type == GL_PIXEL_PACK_BUFFER ? GL_MAP_READ_BIT : GL_MAP_WRITE_BIT);
 	glBindBuffer(buffer->opengl.buffer_type, 0);
+
+	kore_opengl_check_errors();
+
 	return buffer->opengl.locked_data;
 #endif
 }
@@ -53,6 +56,9 @@ void *kore_opengl_buffer_lock(kore_gpu_buffer *buffer, uint64_t offset, uint64_t
 	buffer->opengl.locked_data =
 	    glMapBufferRange(buffer->opengl.buffer_type, offset, size, buffer->opengl.buffer_type == GL_PIXEL_PACK_BUFFER ? GL_MAP_READ_BIT : GL_MAP_WRITE_BIT);
 	glBindBuffer(buffer->opengl.buffer_type, 0);
+
+	kore_opengl_check_errors();
+
 	return buffer->opengl.locked_data;
 #endif
 }
@@ -67,5 +73,7 @@ void kore_opengl_buffer_unlock(kore_gpu_buffer *buffer) {
 	glUnmapBuffer(buffer->opengl.buffer_type);
 	glBindBuffer(buffer->opengl.buffer_type, 0);
 	buffer->opengl.locked_data = NULL;
+
+	kore_opengl_check_errors();
 #endif
 }

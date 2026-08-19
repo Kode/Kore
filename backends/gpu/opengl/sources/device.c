@@ -830,6 +830,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			index_format = data->index_format;
 			glBindBuffer(data->buffer->opengl.buffer_type, data->buffer->opengl.buffer);
 
+			kore_opengl_check_errors();
+
 			break;
 		}
 		case COMMAND_SET_VERTEX_BUFFER: {
@@ -905,6 +907,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				glDisableVertexAttribArray(input_index);
 			}
 
+			kore_opengl_check_errors();
+
 			draw_indexed_data *data = (draw_indexed_data *)&c->data;
 
 			void *start =
@@ -913,6 +917,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			                        data->instance_count);
 
 			memset(vertex_buffer_set, 0, sizeof(vertex_buffer_set));
+
+			kore_opengl_check_errors();
 
 			break;
 		}
@@ -958,6 +964,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 
 			pipeline = data->pipeline;
 
+			kore_opengl_check_errors();
+
 			break;
 		}
 		case COMMAND_SET_UNIFORM_BUFFER: {
@@ -966,6 +974,7 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			glBindBufferRange(GL_UNIFORM_BUFFER, data->buffer->opengl.uniform_buffer, data->buffer->opengl.buffer, data->offset, data->size);
 
 			glUniformBlockBinding(pipeline->program, data->uniform_block_index, data->buffer->opengl.uniform_buffer);
+
 			kore_opengl_check_errors();
 
 			break;
@@ -1146,6 +1155,8 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				}
 			}
 
+			kore_opengl_check_errors();
+
 			break;
 		}
 		case COMMAND_END_RENDER_PASS: {
@@ -1160,6 +1171,7 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 			}
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 			kore_opengl_check_errors();
 
 			break;
@@ -1179,6 +1191,7 @@ void kore_opengl_device_execute_command_list(kore_gpu_device *device, kore_gpu_c
 				}
 			}
 #endif
+			kore_opengl_check_errors();
 		}
 		}
 
