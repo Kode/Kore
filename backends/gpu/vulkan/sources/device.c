@@ -144,7 +144,7 @@ static void check_extensions(extension_request *requests, uint32_t requests_coun
 	}
 }
 
-static VkExtensionProperties instance_extension_properties[256];
+static VkExtensionProperties instance_extension_properties[1024];
 
 static void check_instance_extensions(extension_request *requests, uint32_t requests_count) {
 	uint32_t instance_extension_properties_count = sizeof(instance_extension_properties) / sizeof(instance_extension_properties[0]);
@@ -155,7 +155,7 @@ static void check_instance_extensions(extension_request *requests, uint32_t requ
 	check_extensions(requests, requests_count, instance_extension_properties, instance_extension_properties_count);
 }
 
-static VkExtensionProperties device_extension_properties[256];
+static VkExtensionProperties device_extension_properties[1024];
 
 static void check_device_extensions(extension_request *requests, uint32_t requests_count) {
 	uint32_t device_extension_properties_count = sizeof(device_extension_properties) / sizeof(device_extension_properties[0]);
@@ -751,20 +751,6 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 
 	find_gpu();
 
-	const char *device_layers[64];
-	int         device_layers_count = 0;
-
-	device_layers[device_layers_count++] = "VK_LAYER_KHRONOS_validation";
-
-#ifdef VALIDATE
-	if (check_device_layers(device_layers, device_layers_count)) {
-		validation |= true;
-	}
-	else {
-		--device_layers_count; // Remove VK_LAYER_KHRONOS_validation
-	}
-#endif
-
 #ifndef VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME // For Dave's Debian
 #define VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME "VK_KHR_format_feature_flags2"
 #endif
@@ -911,8 +897,8 @@ void kore_vulkan_device_create(kore_gpu_device *device, const kore_gpu_device_wi
 	    .queueCreateInfoCount = 1,
 	    .pQueueCreateInfos    = &queue_create_info,
 
-	    .enabledLayerCount   = device_layers_count,
-	    .ppEnabledLayerNames = (const char *const *)device_layers,
+	    .enabledLayerCount   = 0,
+	    .ppEnabledLayerNames = NULL,
 
 	    .enabledExtensionCount   = KORE_ARRAY_SIZE(device_extension_names),
 	    .ppEnabledExtensionNames = device_extension_names,
