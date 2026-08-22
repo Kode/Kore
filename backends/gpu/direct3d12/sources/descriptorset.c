@@ -95,7 +95,8 @@ static DXGI_FORMAT convert_d3d12_texture_format(uint32_t format) {
 	}
 }
 
-void kore_d3d12_descriptor_set_set_texture_view_srv(kore_gpu_device *device, uint32_t offset, const kore_gpu_texture_view *texture_view) {
+void kore_d3d12_descriptor_set_set_texture_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
+                                                    uint32_t index) {
 	const D3D12_SHADER_RESOURCE_VIEW_DESC desc = {
 	    .Format                  = convert_d3d12_texture_format(texture_view->texture->d3d12.format),
 	    .ViewDimension           = D3D12_SRV_DIMENSION_TEXTURE2D,
@@ -110,7 +111,7 @@ void kore_d3d12_descriptor_set_set_texture_view_srv(kore_gpu_device *device, uin
 
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
 	COM_CALL_VOID_RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
-	descriptor_handle.ptr += offset * device->d3d12.cbv_srv_uav_increment;
+	descriptor_handle.ptr += (set->allocations[set->current_allocation_index].descriptor_allocation.offset + index) * device->d3d12.cbv_srv_uav_increment;
 
 	COM_CALL(device->d3d12.device, CreateShaderResourceView, texture_view->texture->d3d12.resource, &desc, descriptor_handle);
 }

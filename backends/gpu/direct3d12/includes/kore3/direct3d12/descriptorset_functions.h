@@ -15,7 +15,8 @@ void kore_d3d12_descriptor_set_set_buffer_view_cbv(kore_gpu_device *device, kore
 void kore_d3d12_descriptor_set_set_buffer_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index);
 void kore_d3d12_descriptor_set_set_buffer_view_uav(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_buffer *buffer, uint32_t index);
 void kore_d3d12_descriptor_set_set_bvh_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, kore_gpu_raytracing_hierarchy *bvh, uint32_t index);
-void kore_d3d12_descriptor_set_set_texture_view_srv(kore_gpu_device *device, uint32_t offset, const kore_gpu_texture_view *texture_view);
+void kore_d3d12_descriptor_set_set_texture_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
+                                                    uint32_t index);
 void kore_d3d12_descriptor_set_set_texture_array_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                           uint32_t index);
 void kore_d3d12_descriptor_set_set_texture_cube_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
