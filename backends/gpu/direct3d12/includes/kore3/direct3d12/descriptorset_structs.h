@@ -29,7 +29,7 @@ typedef struct kore_d3d12_descriptor_set_allocation {
 	uint32_t command_list_reference_count;
 } kore_d3d12_descriptor_set_allocation;
 
-#define KORE_D3D12_ALLOCATIONS_PER_DESCRIPTORSET 256
+#define KORE_D3D12_ALLOCATIONS_PER_DESCRIPTORSET 3
 
 typedef struct kore_d3d12_descriptor_set {
 	struct kore_gpu_device              *device;
