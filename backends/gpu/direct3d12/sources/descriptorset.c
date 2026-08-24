@@ -116,6 +116,31 @@ void kore_d3d12_descriptor_set_set_texture_view_srv(kore_gpu_device *device, kor
 	COM_CALL(device->d3d12.device, CreateShaderResourceView, texture_view->texture->d3d12.resource, &desc, descriptor_handle);
 }
 
+void kore_d3d12_descriptor_set_set_bindless_texture_views_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set,
+                                                              const kore_gpu_texture_view *texture_views, uint32_t index_start, size_t count) {
+	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {
+	    .ViewDimension           = D3D12_SRV_DIMENSION_TEXTURE2D,
+	    .Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
+	    .Texture2D =
+	        {
+	            .ResourceMinLODClamp = 0.0f,
+	        },
+	};
+
+	for (uint32_t index = 0; index < count; ++index) {
+		desc.Format                    = convert_d3d12_texture_format(texture_views[index].texture->d3d12.format);
+		desc.Texture2D.MostDetailedMip = texture_views[index].base_mip_level;
+		desc.Texture2D.MipLevels       = texture_views[index].mip_level_count;
+
+		D3D12_CPU_DESCRIPTOR_HANDLE descriptor_handle;
+		COM_CALL_VOID_RET(device->d3d12.descriptor_heap, GetCPUDescriptorHandleForHeapStart, descriptor_handle);
+		descriptor_handle.ptr +=
+		    (set->allocations[set->current_allocation_index].bindless_descriptor_allocation.offset + index_start + index) * device->d3d12.cbv_srv_uav_increment;
+
+		COM_CALL(device->d3d12.device, CreateShaderResourceView, texture_views[index].texture->d3d12.resource, &desc, descriptor_handle);
+	}
+}
+
 void kore_d3d12_descriptor_set_set_texture_array_view_srv(kore_gpu_device *device, kore_d3d12_descriptor_set *set, const kore_gpu_texture_view *texture_view,
                                                           uint32_t index) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {
@@ -199,7 +224,7 @@ void kore_d3d12_descriptor_set_prepare_cbv_buffer(kore_gpu_command_list *list, k
 		    .Transition =
 		        {
 		            .pResource   = buffer->d3d12.resource,
-					.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
+		            .Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
 		            .StateBefore = (D3D12_RESOURCE_STATES)buffer->d3d12.resource_state,
 		            .StateAfter  = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
 		        },
@@ -223,7 +248,7 @@ void kore_d3d12_descriptor_set_prepare_uav_buffer(kore_gpu_command_list *list, k
 		    .Transition =
 		        {
 		            .pResource   = buffer->d3d12.resource,
-					.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
+		            .Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
 		            .StateBefore = (D3D12_RESOURCE_STATES)buffer->d3d12.resource_state,
 		            .StateAfter  = D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
 		        },
