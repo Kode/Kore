@@ -279,7 +279,7 @@ void kore_d3d12_descriptor_set_prepare_srv_texture(kore_gpu_command_list *list, 
 				                                                texture_view->texture->d3d12.depth_or_array_layers),
 				            .StateBefore = (D3D12_RESOURCE_STATES)texture_view->texture->d3d12
 				                               .resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, mip_level, array_layer)],
-				            .StateAfter  = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
+				            .StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
 				        },
 				};
 
@@ -311,7 +311,7 @@ void kore_d3d12_descriptor_set_prepare_uav_texture(kore_gpu_command_list *list, 
 		                                                texture_view->texture->d3d12.depth_or_array_layers),
 		            .StateBefore = (D3D12_RESOURCE_STATES)texture_view->texture->d3d12
 		                               .resource_states[kore_d3d12_texture_resource_state_index(texture_view->texture, texture_view->base_mip_level, 0)],
-		            .StateAfter  = D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+		            .StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
 		        },
 		};
 
