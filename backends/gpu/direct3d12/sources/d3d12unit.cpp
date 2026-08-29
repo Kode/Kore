@@ -73,6 +73,8 @@ static D3D12_FILTER convert_filter(kore_gpu_filter_mode minification, kore_gpu_f
 	return D3D12_FILTER_MIN_MAG_MIP_POINT;
 }
 
+static DXGI_FORMAT convert_texture_format(kore_gpu_texture_format format);
+
 #include "buffer.c"
 #include "commandlist.c"
 #include "descriptorset.c"

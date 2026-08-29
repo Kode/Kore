@@ -399,7 +399,7 @@ void kore_d3d12_command_list_copy_buffer_to_texture(kore_gpu_command_list *list,
 	src.pResource                          = source->buffer->d3d12.resource;
 	src.Type                               = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
 	src.PlacedFootprint.Offset             = source->offset;
-	src.PlacedFootprint.Footprint.Format   = DXGI_FORMAT_R8G8B8A8_UNORM;
+	src.PlacedFootprint.Footprint.Format   = convert_texture_format(destination->texture->format);
 	src.PlacedFootprint.Footprint.RowPitch = source->bytes_per_row;
 	src.PlacedFootprint.Footprint.Width    = width;
 	src.PlacedFootprint.Footprint.Height   = height;
@@ -483,7 +483,7 @@ void kore_d3d12_command_list_copy_texture_to_buffer(kore_gpu_command_list *list,
 	dst.pResource                          = destination->buffer->d3d12.resource;
 	dst.Type                               = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
 	dst.PlacedFootprint.Offset             = destination->offset;
-	dst.PlacedFootprint.Footprint.Format   = DXGI_FORMAT_R8G8B8A8_UNORM;
+	dst.PlacedFootprint.Footprint.Format   = convert_texture_format(source->texture->format);
 	dst.PlacedFootprint.Footprint.RowPitch = destination->bytes_per_row;
 	dst.PlacedFootprint.Footprint.Width    = width;
 	dst.PlacedFootprint.Footprint.Height   = height;
