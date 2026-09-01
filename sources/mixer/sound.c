@@ -103,7 +103,7 @@ static kore_mixer_sound *find_sound(void) {
 	return NULL;
 }
 
-kore_mixer_sound *kore_a1_sound_create_from_buffer(uint8_t *audio_data, const uint32_t size, kore_mixer_audioformat format) {
+kore_mixer_sound *kore_mixer_sound_create_from_samples(int16_t *samples, uint32_t samples_count, uint32_t samples_per_second, bool stereo) {
 	kore_mixer_sound *sound = find_sound();
 	assert(sound != NULL);
 	sound->in_use = true;
@@ -111,7 +111,36 @@ kore_mixer_sound *kore_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 	sound->size   = 0;
 	sound->left   = NULL;
 	sound->right  = NULL;
-	// size_t filenameLength = strlen(filename);
+
+	sound->channel_count      = stereo ? 2 : 1;
+	sound->samples_per_second = samples_per_second;
+	sound->size               = samples_count;
+	sound->bits_per_sample    = 16;
+
+	if (sound->channel_count == 1) {
+		sound->left  = (int16_t *)malloc(sound->size * sizeof(int16_t));
+		sound->right = (int16_t *)malloc(sound->size * sizeof(int16_t));
+		splitMono16(samples, sound->size, sound->left, sound->right);
+	}
+	else {
+		sound->left  = (int16_t *)malloc(sound->size * sizeof(int16_t));
+		sound->right = (int16_t *)malloc(sound->size * sizeof(int16_t));
+		splitStereo16(samples, sound->size / 2, sound->left, sound->right);
+	}
+	sound->sample_rate_pos = kore_audio_samples_per_second() / (float)sound->samples_per_second;
+
+	return sound;
+}
+
+kore_mixer_sound *kore_mixer_sound_create_from_file_buffer(uint8_t *audio_data, uint32_t size, kore_mixer_audioformat format) {
+	kore_mixer_sound *sound = find_sound();
+	assert(sound != NULL);
+	sound->in_use = true;
+	sound->volume = 1.0f;
+	sound->size   = 0;
+	sound->left   = NULL;
+	sound->right  = NULL;
+
 	uint8_t *data = NULL;
 
 	if (format == KORE_MIXER_AUDIOFORMAT_OGG) {
@@ -182,12 +211,15 @@ kore_mixer_sound *kore_a1_sound_create_from_buffer(uint8_t *audio_data, const ui
 		}
 	}
 	sound->sample_rate_pos = kore_audio_samples_per_second() / (float)sound->samples_per_second;
-	free(data);
+
+	if (format == KORE_MIXER_AUDIOFORMAT_OGG) {
+		free(data);
+	}
 
 	return sound;
 }
 
-kore_mixer_sound *kore_a1_sound_create(const char *filename) {
+kore_mixer_sound *kore_mixer_sound_create_from_file(const char *filename) {
 	size_t filenameLength = strlen(filename);
 
 	kore_mixer_audioformat fileformat;
@@ -211,14 +243,14 @@ kore_mixer_sound *kore_a1_sound_create(const char *filename) {
 	kore_file_reader_close(&file);
 	size_t filesize = kore_file_reader_size(&file);
 
-	kore_mixer_sound *sound = kore_a1_sound_create_from_buffer(filedata, (uint32_t)filesize, fileformat);
+	kore_mixer_sound *sound = kore_mixer_sound_create_from_file_buffer(filedata, (uint32_t)filesize, fileformat);
 
 	free(filedata);
 
 	return sound;
 }
 
-void kore_a1_sound_destroy(kore_mixer_sound *sound) {
+void kore_mixer_sound_destroy(kore_mixer_sound *sound) {
 	free(sound->left);
 	free(sound->right);
 	sound->left   = NULL;
@@ -226,10 +258,10 @@ void kore_a1_sound_destroy(kore_mixer_sound *sound) {
 	sound->in_use = false;
 }
 
-float kore_a1_sound_volume(kore_mixer_sound *sound) {
+float kore_mixer_sound_volume(kore_mixer_sound *sound) {
 	return sound->volume;
 }
 
-void kore_a1_sound_set_volume(kore_mixer_sound *sound, float value) {
+void kore_mixer_sound_set_volume(kore_mixer_sound *sound, float value) {
 	sound->volume = value;
 }

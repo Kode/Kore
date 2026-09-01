@@ -34,14 +34,26 @@ typedef enum { KORE_MIXER_AUDIOFORMAT_WAV, KORE_MIXER_AUDIOFORMAT_OGG } kore_mix
 /// </summary>
 /// <param name="filename">Path to a wav or ogg file</param>
 /// <returns>The newly created sound</returns>
-KORE_FUNC kore_mixer_sound *kore_mixer_sound_create(const char *filename);
+KORE_FUNC kore_mixer_sound *kore_mixer_sound_create_from_file(const char *filename);
 
 /// <summary>
-/// Create a sound from a buffer.
+/// Create a sound from the contents of a wav or ogg file.
 /// </summary>
-/// <param name="filename">Path to a wav file</param>
+/// <param name="audio_data">Path to ogg or mp3 data</param>
+/// <param name="size">Size of the audio_data</param>
+/// <param name="format">Type of the audio_data (wav or ogg)</param>
 /// <returns>The newly created sound</returns>
-KORE_FUNC kore_mixer_sound *kore_mixer_sound_create_from_buffer(uint8_t *audio_data, const uint32_t size, kore_mixer_audioformat format);
+KORE_FUNC kore_mixer_sound *kore_mixer_sound_create_from_file_buffer(uint8_t *audio_data, uint32_t size, kore_mixer_audioformat format);
+
+/// <summary>
+/// Create a sound from an array of samples.
+/// </summary>
+/// <param name="samples">The samples</param>
+/// <param name="samples_count">Number of samples</param>
+/// <param name="samples_per_second">The sample rate</param>
+/// <param name="stereo">Whether the samples are interleaved stereo or mono</param>
+/// <returns>The newly created sound</returns>
+KORE_FUNC kore_mixer_sound *kore_mixer_sound_create_from_samples(int16_t *samples, uint32_t samples_count, uint32_t samples_per_second, bool stereo);
 
 /// <summary>
 /// Destroy a sound.
