@@ -93,6 +93,8 @@ static MTLPixelFormat convert_render_target_format(kinc_g5_render_target_format_
 		return MTLPixelFormatRGBA32Float;
 	case KINC_G5_RENDER_TARGET_FORMAT_64BIT_FLOAT:
 		return MTLPixelFormatRGBA16Float;
+	case KINC_G5_RENDER_TARGET_FORMAT_64BIT_INTEGER:
+		return MTLPixelFormatRGBA16Uint;
 	case KINC_G5_RENDER_TARGET_FORMAT_32BIT_RED_FLOAT:
 		return MTLPixelFormatR32Float;
 	case KINC_G5_RENDER_TARGET_FORMAT_16BIT_RED_FLOAT:

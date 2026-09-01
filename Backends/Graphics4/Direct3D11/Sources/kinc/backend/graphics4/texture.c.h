@@ -11,6 +11,8 @@ static DXGI_FORMAT convertFormat(kinc_image_format_t format) {
 		return DXGI_FORMAT_R32G32B32A32_FLOAT;
 	case KINC_IMAGE_FORMAT_RGBA64:
 		return DXGI_FORMAT_R16G16B16A16_FLOAT;
+	case KINC_IMAGE_FORMAT_RGBA64U:
+		return DXGI_FORMAT_R16G16B16A16_UINT;
 	case KINC_IMAGE_FORMAT_RGB24:
 		return DXGI_FORMAT_R8G8B8A8_UNORM;
 	case KINC_IMAGE_FORMAT_A32:
@@ -34,6 +36,7 @@ static int formatByteSize(kinc_image_format_t format) {
 	case KINC_IMAGE_FORMAT_RGBA128:
 		return 16;
 	case KINC_IMAGE_FORMAT_RGBA64:
+	case KINC_IMAGE_FORMAT_RGBA64U:
 		return 8;
 	case KINC_IMAGE_FORMAT_RGB24:
 		return 4;

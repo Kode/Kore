@@ -27,6 +27,8 @@ static MTLPixelFormat convert_image_format(kinc_image_format_t format) {
 		return MTLPixelFormatBGRA8Unorm;
 	case KINC_IMAGE_FORMAT_A16:
 		return MTLPixelFormatR16Float;
+	case KINC_IMAGE_FORMAT_RGBA64U:
+		return MTLPixelFormatRGBA16Uint;
 	}
 }
 
@@ -47,6 +49,8 @@ static int formatByteSize(kinc_image_format_t format) {
 	case KINC_IMAGE_FORMAT_BGRA32:
 	case KINC_IMAGE_FORMAT_RGBA32:
 		return 4;
+	case KINC_IMAGE_FORMAT_RGBA64U:
+		return 8;
 	default:
 		assert(false);
 		return 4;
@@ -90,7 +94,7 @@ void kinc_g5_texture_init(kinc_g5_texture_t *texture, int width, int height, kin
 	texture->texWidth = width;
 	texture->texHeight = height;
 	texture->format = format;
-	texture->impl.data = malloc(width * height * (format == KINC_IMAGE_FORMAT_GREY8 ? 1 : 4));
+	texture->impl.data = malloc(width * height * formatByteSize(format));
 	create(texture, width, height, format, true);
 }
 
@@ -115,7 +119,7 @@ void kinc_g5_texture_init_non_sampled_access(kinc_g5_texture_t *texture, int wid
 	texture->texWidth = width;
 	texture->texHeight = height;
 	texture->format = format;
-	texture->impl.data = malloc(width * height * (format == KINC_IMAGE_FORMAT_GREY8 ? 1 : 4));
+	texture->impl.data = malloc(width * height * formatByteSize(format));
 	create(texture, width, height, format, true);
 }
 
@@ -202,6 +206,8 @@ int kinc_g5_texture_stride(kinc_g5_texture_t *texture) {
 		return texture->texWidth * 2;
 	case KINC_IMAGE_FORMAT_A32:
 		return texture->texWidth * 4;
+	case KINC_IMAGE_FORMAT_RGBA64U:
+		return texture->texWidth * 8;
 	}
 }
 
