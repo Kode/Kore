@@ -389,7 +389,10 @@ void create_swapchain(int window_index) {
 	VkAttachmentDescription attachments[2];
 	attachments[0].format = window->format.format;
 	attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	// On tiled GPU DONT_CARE discards the tile, so that frame stores
+	// garbage over already-rendered content, which generates black flashes
+	// LOAD preserves the content across the re-begin
+	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 	attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 	attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 	attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -494,7 +497,7 @@ void create_render_target_render_pass(struct vk_window *window) {
 	VkAttachmentDescription attachments[2];
 	attachments[0].format = VK_FORMAT_B8G8R8A8_UNORM; // target->impl.format; // TODO
 	attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 	attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 	attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 	attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -1130,6 +1133,7 @@ void kinc_g5_begin(kinc_g5_render_target_t *renderTarget, int window_index) {
 	if (window->resized) {
 		vkDeviceWaitIdle(vk_ctx.device);
 		create_swapchain(window_index);
+		window->resized = false;
 	}
 
 	// Get the index of the next available swapchain image:
