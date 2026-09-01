@@ -111,12 +111,15 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a98208dcc99e05c1d5d44e5ec16203f01" id="r_a98208dcc99e05c1d5d44e5ec16203f01"><td class="memItemLeft" align="right" valign="top">KORE_FUNC <a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sound_8h.html#a98208dcc99e05c1d5d44e5ec16203f01">kore_mixer_sound_create</a> (const char *filename)</td></tr>
-<tr class="memdesc:a98208dcc99e05c1d5d44e5ec16203f01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a sound from a wav or ogg file.  <br /></td></tr>
-<tr class="separator:a98208dcc99e05c1d5d44e5ec16203f01"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4660c0393931f6b36892ce7cb0a96d06" id="r_a4660c0393931f6b36892ce7cb0a96d06"><td class="memItemLeft" align="right" valign="top">KORE_FUNC <a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sound_8h.html#a4660c0393931f6b36892ce7cb0a96d06">kore_mixer_sound_create_from_buffer</a> (uint8_t *audio_data, const uint32_t size, kore_mixer_audioformat format)</td></tr>
-<tr class="memdesc:a4660c0393931f6b36892ce7cb0a96d06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a sound from a buffer.  <br /></td></tr>
-<tr class="separator:a4660c0393931f6b36892ce7cb0a96d06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56376c1574e146fd5f5d8ddb06dece35" id="r_a56376c1574e146fd5f5d8ddb06dece35"><td class="memItemLeft" align="right" valign="top">KORE_FUNC <a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sound_8h.html#a56376c1574e146fd5f5d8ddb06dece35">kore_mixer_sound_create_from_file</a> (const char *filename)</td></tr>
+<tr class="memdesc:a56376c1574e146fd5f5d8ddb06dece35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a sound from a wav or ogg file.  <br /></td></tr>
+<tr class="separator:a56376c1574e146fd5f5d8ddb06dece35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bc644e97c8eedfbe014997a1ac975b1" id="r_a1bc644e97c8eedfbe014997a1ac975b1"><td class="memItemLeft" align="right" valign="top">KORE_FUNC <a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sound_8h.html#a1bc644e97c8eedfbe014997a1ac975b1">kore_mixer_sound_create_from_file_buffer</a> (uint8_t *audio_data, uint32_t size, kore_mixer_audioformat format)</td></tr>
+<tr class="memdesc:a1bc644e97c8eedfbe014997a1ac975b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a sound from the contents of a wav or ogg file.  <br /></td></tr>
+<tr class="separator:a1bc644e97c8eedfbe014997a1ac975b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc10ad03a1985e09a68607fa94c98030" id="r_afc10ad03a1985e09a68607fa94c98030"><td class="memItemLeft" align="right" valign="top">KORE_FUNC <a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sound_8h.html#afc10ad03a1985e09a68607fa94c98030">kore_mixer_sound_create_from_samples</a> (int16_t *samples, uint32_t samples_count, uint32_t samples_per_second, bool stereo)</td></tr>
+<tr class="memdesc:afc10ad03a1985e09a68607fa94c98030"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a sound from an array of samples.  <br /></td></tr>
+<tr class="separator:afc10ad03a1985e09a68607fa94c98030"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35e9e5f213b605a430ee5fcfb9ec950f" id="r_a35e9e5f213b605a430ee5fcfb9ec950f"><td class="memItemLeft" align="right" valign="top">KORE_FUNC void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sound_8h.html#a35e9e5f213b605a430ee5fcfb9ec950f">kore_mixer_sound_destroy</a> (<a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> *sound)</td></tr>
 <tr class="memdesc:a35e9e5f213b605a430ee5fcfb9ec950f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a sound.  <br /></td></tr>
 <tr class="separator:a35e9e5f213b605a430ee5fcfb9ec950f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,14 +133,14 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Sounds are pre-decoded on load and therefore primarily useful for playing sound-effects. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a98208dcc99e05c1d5d44e5ec16203f01" name="a98208dcc99e05c1d5d44e5ec16203f01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98208dcc99e05c1d5d44e5ec16203f01">&#9670;&#160;</a></span>kore_mixer_sound_create()</h2>
+<a id="a56376c1574e146fd5f5d8ddb06dece35" name="a56376c1574e146fd5f5d8ddb06dece35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56376c1574e146fd5f5d8ddb06dece35">&#9670;&#160;</a></span>kore_mixer_sound_create_from_file()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">KORE_FUNC <a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> * kore_mixer_sound_create </td>
+          <td class="memname">KORE_FUNC <a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> * kore_mixer_sound_create_from_file </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>filename</em></td><td>)</td>
@@ -157,14 +160,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a4660c0393931f6b36892ce7cb0a96d06" name="a4660c0393931f6b36892ce7cb0a96d06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4660c0393931f6b36892ce7cb0a96d06">&#9670;&#160;</a></span>kore_mixer_sound_create_from_buffer()</h2>
+<a id="a1bc644e97c8eedfbe014997a1ac975b1" name="a1bc644e97c8eedfbe014997a1ac975b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bc644e97c8eedfbe014997a1ac975b1">&#9670;&#160;</a></span>kore_mixer_sound_create_from_file_buffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">KORE_FUNC <a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> * kore_mixer_sound_create_from_buffer </td>
+          <td class="memname">KORE_FUNC <a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> * kore_mixer_sound_create_from_file_buffer </td>
           <td>(</td>
           <td class="paramtype">uint8_t *&#160;</td>
           <td class="paramname"><em>audio_data</em>, </td>
@@ -172,7 +175,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const uint32_t&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>size</em>, </td>
         </tr>
         <tr>
@@ -189,10 +192,64 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Create a sound from a buffer. </p>
+<p>Create a sound from the contents of a wav or ogg file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filename</td><td>Path to a wav file</td></tr>
+    <tr><td class="paramname">audio_data</td><td>Path to ogg or mp3 data</td></tr>
+    <tr><td class="paramname">size</td><td>Size of the audio_data</td></tr>
+    <tr><td class="paramname">format</td><td>Type of the audio_data (wav or ogg)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The newly created sound</dd></dl>
+
+</div>
+</div>
+<a id="afc10ad03a1985e09a68607fa94c98030" name="afc10ad03a1985e09a68607fa94c98030"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc10ad03a1985e09a68607fa94c98030">&#9670;&#160;</a></span>kore_mixer_sound_create_from_samples()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KORE_FUNC <a class="el" href="structkore__mixer__sound.html">kore_mixer_sound</a> * kore_mixer_sound_create_from_samples </td>
+          <td>(</td>
+          <td class="paramtype">int16_t *&#160;</td>
+          <td class="paramname"><em>samples</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>samples_count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>samples_per_second</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>stereo</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a sound from an array of samples. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">samples</td><td>The samples</td></tr>
+    <tr><td class="paramname">samples_count</td><td>Number of samples</td></tr>
+    <tr><td class="paramname">samples_per_second</td><td>The sample rate</td></tr>
+    <tr><td class="paramname">stereo</td><td>Whether the samples are interleaved stereo or mono</td></tr>
   </table>
   </dd>
 </dl>
