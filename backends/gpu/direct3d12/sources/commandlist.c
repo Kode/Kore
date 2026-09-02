@@ -13,11 +13,11 @@
 
 #include <kore3/util/align.h>
 
-#include <assert.h>
-
 #ifdef KORE_PIX
-#include <WinPixEventRuntime/pix3.h>
+#include "pixunit.h"
 #endif
+
+#include <assert.h>
 
 void kore_d3d12_command_list_destroy(kore_gpu_command_list *list) {
 	kore_d3d12_device_destroy_command_list(list->d3d12.device, list);
@@ -775,19 +775,19 @@ void kore_d3d12_command_list_set_name(kore_gpu_command_list *list, const char *n
 
 void kore_d3d12_command_list_push_debug_group(kore_gpu_command_list *list, const char *name) {
 #ifdef KORE_PIX
-	PIXBeginEvent(list->d3d12.list, 0, "%s", name);
+	kore_pix_push_debug_group((struct ID3D12GraphicsCommandList2 *)list->d3d12.list, name);
 #endif
 }
 
 void kore_d3d12_command_list_pop_debug_group(kore_gpu_command_list *list) {
 #ifdef KORE_PIX
-	PIXEndEvent(list->d3d12.list);
+	kore_pix_pop_debug_group((struct ID3D12GraphicsCommandList2 *)list->d3d12.list);
 #endif
 }
 
 void kore_d3d12_command_list_insert_debug_marker(kore_gpu_command_list *list, const char *name) {
 #ifdef KORE_PIX
-	PIXSetMarker(list->d3d12.list, 0, "%s", name);
+	kore_pix_insert_debug_marker((struct ID3D12GraphicsCommandList2 *)list->d3d12.list, name);
 #endif
 }
 

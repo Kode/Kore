@@ -118,6 +118,7 @@ if (platform === Platform.Windows) {
 			addKoreDefine('PIX');
 			project.addIncludeDir('backends/gpu/direct3d12/libs/pix/Include');
 			project.addLib('backends/gpu/direct3d12/libs/pix/bin/x64/WinPixEventRuntime');
+			project.addFile('backends/gpu/direct3d12/sources/pixunit.cpp');
 		}
 	}
 	else if (graphics === GraphicsApi.Vulkan) {
