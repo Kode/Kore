@@ -166,8 +166,21 @@ void kinc_g5_command_list_set_blend_constant(kinc_g5_command_list_t *list, float
 	[encoder setBlendColorRed:r green:g blue:b alpha:a];
 }
 
-void kinc_g5_command_list_set_vertex_buffers(kinc_g5_command_list_t *list, struct kinc_g5_vertex_buffer **buffers, int *offsets, int count) {
-	kinc_g5_internal_vertex_buffer_set(buffers[0], offsets[0]);
+void kinc_g5_command_list_set_vertex_buffers(kinc_g5_command_list_t *list, struct kinc_g5_vertex_buffer **vertexBuffers, int *offsets_, int count) {
+	// The only thing kinc_g5_internal_vertex_buffer_set really does is
+	// store a pointer to a single current vertex buffer, but with the
+	// new implementation there can more than one current buffer so I
+	// think this can be removed.
+	//kinc_g5_internal_vertex_buffer_set(buffers[0], offsets[0]);
+	id<MTLRenderCommandEncoder> encoder = getMetalEncoder();
+	// Array to store Metal buffers and offsets in bytes
+	id<MTLBuffer> buffers[count];
+	NSUInteger offsets[count];
+    for (int i = 0; i < count; ++i) {
+		buffers[i] = (__bridge id<MTLBuffer>)vertexBuffers[i]->impl.mtlBuffer;
+		offsets[i] = (NSUInteger)(offsets_[i] * kinc_g5_vertex_buffer_stride(vertexBuffers[i]));
+    }
+    [encoder setVertexBuffers:buffers offsets:offsets withRange:NSMakeRange(1, count)];
 }
 
 void kinc_g5_command_list_set_index_buffer(kinc_g5_command_list_t *list, struct kinc_g5_index_buffer *buffer) {
@@ -269,7 +282,7 @@ void kinc_g5_command_list_wait_for_execution_to_finish(kinc_g5_command_list_t *l
 void kinc_g5_command_list_set_vertex_constant_buffer(kinc_g5_command_list_t *list, struct kinc_g5_constant_buffer *buffer, int offset, size_t size) {
 	id<MTLBuffer> buf = (__bridge id<MTLBuffer>)buffer->impl._buffer;
 	id<MTLRenderCommandEncoder> encoder = getMetalEncoder();
-	[encoder setVertexBuffer:buf offset:offset atIndex:1];
+	[encoder setVertexBuffer:buf offset:offset atIndex:0];
 }
 
 void kinc_g5_command_list_set_fragment_constant_buffer(kinc_g5_command_list_t *list, struct kinc_g5_constant_buffer *buffer, int offset, size_t size) {
