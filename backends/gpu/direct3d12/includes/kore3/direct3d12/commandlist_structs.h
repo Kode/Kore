@@ -23,7 +23,7 @@ struct ID3D12Fence;
 
 // Allocators can not be re-used while a command-list is executing. We carry along a bag of allocators so we only have to wait when we ran out of in-flight
 // allocators. Increasing this value exchanges more memory against potentially less wait-times (depending on actual command-list usage).
-#define KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT 3
+#define KORE_D3D12_COMMAND_LIST_ALLOCATOR_COUNT 12
 
 #define KORE_D3D12_COMMAND_LIST_DYNAMIC_DESCRIPTORS_COUNT 64
 
