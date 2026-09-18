@@ -134,8 +134,9 @@ static void kore_mixer_mix_callback(kore_audio_buffer *buffer, uint32_t samples,
 
 void kore_mixer_init(void) {
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
-		channels[i].sound    = NULL;
-		channels[i].position = 0;
+		channels[i].sound      = NULL;
+		channels[i].position   = 0;
+		channels[i].generation = 0;
 	}
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
 		streamchannels[i].stream   = NULL;
@@ -165,7 +166,11 @@ kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, fl
 				channels[i].loop     = loop;
 				channels[i].pitch    = pitch;
 				channels[i].volume   = volume;
-				channel              = &channels[i];
+
+				channels[i].generation += 1;
+
+				channel = &channels[i];
+
 				break;
 			}
 		}
@@ -180,6 +185,9 @@ void kore_mixer_stop_sound(kore_mixer_sound *sound) {
 		if (channels[i].sound == sound) {
 			channels[i].sound    = NULL;
 			channels[i].position = 0;
+
+			channels[i].generation += 1;
+
 			break;
 		}
 	}

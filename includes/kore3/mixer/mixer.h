@@ -30,6 +30,7 @@ typedef struct kore_mixer_channel {
 	bool              loop;
 	volatile float    volume;
 	float             pitch;
+	uint64_t          generation;
 } kore_mixer_channel;
 
 /// <summary>
