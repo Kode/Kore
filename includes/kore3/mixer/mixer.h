@@ -18,14 +18,19 @@ extern "C" {
 
 struct kore_internal_video_sound_stream;
 
-struct kore_mixer_channel;
-typedef struct kore_mixer_channel kore_mixer_channel;
-
 struct kore_mixer_stream_channel;
 typedef struct kore_mixer_stream_channel kore_mixer_stream_channel;
 
 struct kore_internal_video_channel;
 typedef struct kore_internal_video_channel kore_internal_video_channel;
+
+typedef struct kore_mixer_channel {
+	kore_mixer_sound *sound;
+	double            position;
+	bool              loop;
+	volatile float    volume;
+	float             pitch;
+} kore_mixer_channel;
 
 /// <summary>
 /// Initialize the Mixer-API.
@@ -37,11 +42,12 @@ KORE_FUNC void kore_mixer_init(void);
 /// </summary>
 /// <param name="sound">The sound to play</param>
 /// <param name="loop">Whether or not to automatically loop the sound</param>
-/// <param name="pitch">Changes the pitch by providing a value that's not 1.0f</param>
+/// <param name="volume">Scales the volume</param>
+/// <param name="pitch">Scales the pitch</param>
 /// <param name="unique">Makes sure that a sound is not played more than once at the same time</param>
 /// <returns>A channel object that can be used to control the playing sound. Please be aware that NULL is returned when the maximum number of simultaneously
 /// played channels was reached.</returns>
-KORE_FUNC kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, float pitch, bool unique);
+KORE_FUNC kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, float volume, float pitch, bool unique);
 
 /// <summary>
 /// Stops the sound from playing.

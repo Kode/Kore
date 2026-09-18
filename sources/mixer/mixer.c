@@ -147,7 +147,7 @@ void kore_mixer_init(void) {
 	kore_audio_set_callback(kore_mixer_mix_callback, NULL);
 }
 
-kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, float pitch, bool unique) {
+kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, float volume, float pitch, bool unique) {
 	kore_mixer_channel *channel = NULL;
 	kore_mutex_lock(&mutex);
 	bool found = false;
@@ -164,7 +164,7 @@ kore_mixer_channel *kore_mixer_play_sound(kore_mixer_sound *sound, bool loop, fl
 				channels[i].position = 0;
 				channels[i].loop     = loop;
 				channels[i].pitch    = pitch;
-				channels[i].volume   = 1.0f;
+				channels[i].volume   = volume;
 				channel              = &channels[i];
 				break;
 			}
