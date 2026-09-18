@@ -109,7 +109,7 @@ var searchData=
   ['kore_5fmixer_5fchannel_5fset_5fvolume_106',['kore_mixer_channel_set_volume',['../mixer_8h.html#a719f084d327078410fa3d4349d5ed1af',1,'mixer.h']]],
   ['kore_5fmixer_5finit_107',['kore_mixer_init',['../mixer_8h.html#ab90e2b3d48c97dcac9bb0502d808488d',1,'mixer.h']]],
   ['kore_5fmixer_5fmix_108',['kore_mixer_mix',['../mixer_8h.html#a4a21175affe6ba20efdd13b78c9b47ba',1,'mixer.h']]],
-  ['kore_5fmixer_5fplay_5fsound_109',['kore_mixer_play_sound',['../mixer_8h.html#a8b7e561286f72e8756efc97dbfe1ff77',1,'mixer.h']]],
+  ['kore_5fmixer_5fplay_5fsound_109',['kore_mixer_play_sound',['../mixer_8h.html#adde21228f3a8462c06a2e128663a94e8',1,'mixer.h']]],
   ['kore_5fmixer_5fplay_5fsound_5fstream_110',['kore_mixer_play_sound_stream',['../mixer_8h.html#aa3faef52e3fbc7e41f649d8848168564',1,'mixer.h']]],
   ['kore_5fmixer_5fsound_5fcreate_5ffrom_5ffile_111',['kore_mixer_sound_create_from_file',['../sound_8h.html#a56376c1574e146fd5f5d8ddb06dece35',1,'sound.h']]],
   ['kore_5fmixer_5fsound_5fcreate_5ffrom_5ffile_5fbuffer_112',['kore_mixer_sound_create_from_file_buffer',['../sound_8h.html#a1bc644e97c8eedfbe014997a1ac975b1',1,'sound.h']]],
