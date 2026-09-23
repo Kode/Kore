@@ -114,6 +114,19 @@ void kore_d3d12_device_create(kore_gpu_device *device, const kore_gpu_device_wis
 	NvAPI_D3D12_RegisterRaytracingValidationMessageCallback(device->d3d12.device, &nvidia_raytracing_validation_message_callback, nullptr, &handle);
 #endif
 
+	/*
+	#ifndef NDEBUG
+	    {
+	        ID3D12InfoQueue *info_queue;
+	        kore_microsoft_affirm(COM_CALL(device->d3d12.device, QueryInterface, &IID_ID3D12InfoQueue, &info_queue));
+
+	        COM_CALL(info_queue, SetBreakOnSeverity, D3D12_MESSAGE_SEVERITY_WARNING, TRUE);
+	        COM_CALL(info_queue, SetBreakOnSeverity, D3D12_MESSAGE_SEVERITY_ERROR, TRUE);
+	        COM_CALL(info_queue, SetBreakOnSeverity, D3D12_MESSAGE_SEVERITY_CORRUPTION, TRUE);
+	    }
+	#endif
+	*/
+
 	{
 		D3D12_COMMAND_QUEUE_DESC desc = {0};
 		desc.Flags                    = D3D12_COMMAND_QUEUE_FLAG_NONE;
