@@ -123,9 +123,10 @@ kore_mixer_sound *kore_mixer_sound_create_from_samples(int16_t *samples, uint32_
 		splitMono16(samples, sound->size, sound->left, sound->right);
 	}
 	else {
+		sound->size /= 2;
 		sound->left  = (int16_t *)malloc(sound->size * sizeof(int16_t));
 		sound->right = (int16_t *)malloc(sound->size * sizeof(int16_t));
-		splitStereo16(samples, sound->size / 2, sound->left, sound->right);
+		splitStereo16(samples, sound->size, sound->left, sound->right);
 	}
 	sound->sample_rate_pos = kore_audio_samples_per_second() / (float)sound->samples_per_second;
 
