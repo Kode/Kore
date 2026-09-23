@@ -40,6 +40,12 @@ typedef struct kore_gpu_buffer {
 	uint32_t usage_flags;
 #endif
 	KORE_GPU_IMPL(buffer);
+
+#ifdef __cplusplus
+	kore_gpu_buffer()                                   = default;
+	kore_gpu_buffer(const kore_gpu_buffer &)            = delete;
+	kore_gpu_buffer &operator=(const kore_gpu_buffer &) = delete;
+#endif
 } kore_gpu_buffer;
 
 KORE_FUNC void  kore_gpu_buffer_set_name(kore_gpu_buffer *buffer, const char *name);

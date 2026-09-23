@@ -40,6 +40,12 @@ typedef struct kore_gpu_texture {
 	kore_gpu_texture_format format;
 
 	KORE_GPU_IMPL(texture);
+
+#ifdef __cplusplus
+	kore_gpu_texture()                                    = default;
+	kore_gpu_texture(const kore_gpu_texture &)            = delete;
+	kore_gpu_texture &operator=(const kore_gpu_texture &) = delete;
+#endif
 } kore_gpu_texture;
 
 typedef enum kore_gpu_texture_view_dimension {
