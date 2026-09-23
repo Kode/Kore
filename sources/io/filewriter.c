@@ -39,7 +39,11 @@ bool kore_file_writer_open(kore_file_writer *writer, const char *filepath) {
 #else
 	writer->file = fopen(path, "wb");
 #endif
+#ifdef KORE_WINDOWS
+	if (writer->file == INVALID_HANDLE_VALUE) {
+#else
 	if (writer->file == NULL) {
+#endif
 		kore_log(KORE_LOG_LEVEL_WARNING, "Could not open file %s.", filepath);
 		return false;
 	}
