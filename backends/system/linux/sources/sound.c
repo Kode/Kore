@@ -138,6 +138,8 @@ void *doAudio(void *arg) {
 		return NULL;
 	}
 
+	snd_pcm_hw_params_get_buffer_size(hw_params, &bufferSize);
+
 	snd_pcm_hw_params_free(hw_params);
 
 	/* tell ALSA to wake us up whenever 4096 or more frames
@@ -153,7 +155,9 @@ void *doAudio(void *arg) {
 		fprintf(stderr, "cannot initialize software parameters structure (%s)\n", snd_strerror(err));
 		return NULL;
 	}
-	if ((err = snd_pcm_sw_params_set_avail_min(playback_handle, sw_params, 4096)) < 0) {
+	// avail_min has to stay well below the buffer size or snd_pcm_wait can fail
+	snd_pcm_uframes_t avail_min = bufferSize / 2 < 4096 ? bufferSize / 2 : 4096;
+	if ((err = snd_pcm_sw_params_set_avail_min(playback_handle, sw_params, avail_min)) < 0) {
 		fprintf(stderr, "cannot set minimum available count (%s)\n", snd_strerror(err));
 		return NULL;
 	}
