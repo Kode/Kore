@@ -34,6 +34,8 @@ kore_display_mode kore_display_available_mode(int display, int mode) {
 	kore_display_mode dm;
 	dm.width          = 800;
 	dm.height         = 600;
+	dm.useableWidth = dm.width;
+	dm.useableHeight = dm.height;
 	dm.frequency      = 60;
 	dm.bits_per_pixel = 32;
 	return dm;
@@ -58,6 +60,8 @@ kore_display_mode kore_display_current_mode(int display) {
 	kore_display_mode dm;
 	dm.width          = screenRect.size.width;
 	dm.height         = screenRect.size.height;
+	dm.useableWidth = dm.width;
+	dm.useableHeight = dm.height;
 	dm.frequency      = 60;
 	dm.bits_per_pixel = 32;
 
