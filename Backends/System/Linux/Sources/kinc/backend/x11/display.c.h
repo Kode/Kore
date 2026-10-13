@@ -92,6 +92,8 @@ kinc_display_mode_t kinc_x11_display_current_mode(int display_index) {
 	mode.y = 0;
 	mode.width = display->width;
 	mode.height = display->height;
+	mode.useableWidth = mode.width;
+	mode.useableHeight = mode.height;
 	mode.frequency = 60;
 	mode.bits_per_pixel = 32;
 	mode.pixels_per_inch = 96;
@@ -125,6 +127,8 @@ kinc_display_mode_t kinc_x11_display_current_mode(int display_index) {
 		mode.y = display->y;
 		mode.width = mode_info->width;
 		mode.height = mode_info->height;
+		mode.useableWidth = mode.width;
+		mode.useableHeight = mode.height;
 		mode.pixels_per_inch = 96;
 		mode.bits_per_pixel = 32;
 		if (mode_info->hTotal && mode_info->vTotal) {
@@ -171,6 +175,8 @@ kinc_display_mode_t kinc_x11_display_available_mode(int display_index, int mode_
 	mode.y = 0;
 	mode.width = display->width;
 	mode.height = display->height;
+	mode.useableWidth = mode.width;
+	mode.useableHeight = mode.height;
 	mode.frequency = 60;
 	mode.bits_per_pixel = 32;
 	mode.pixels_per_inch = 96;
@@ -205,6 +211,8 @@ kinc_display_mode_t kinc_x11_display_available_mode(int display_index, int mode_
 		mode.y = display->y;
 		mode.width = mode_info->width;
 		mode.height = mode_info->height;
+		mode.useableWidth = mode.width;
+		mode.useableHeight = mode.height;
 		mode.pixels_per_inch = 96;
 		mode.bits_per_pixel = 32;
 		if (mode_info->hTotal && mode_info->vTotal) {

@@ -17,6 +17,8 @@ typedef struct kinc_display_mode {
 	int y;
 	int width;
 	int height;
+	int useableWidth;
+	int useableHeight;
 	int pixels_per_inch;
 	int frequency;
 	int bits_per_pixel;
