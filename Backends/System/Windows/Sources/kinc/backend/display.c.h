@@ -12,7 +12,7 @@ typedef struct {
 	struct HMONITOR__ *monitor;
 	char name[32];
 	bool primary, available, mode_changed;
-	int index, x, y, width, height, useableWidth, useableHeight, ppi, frequency, bpp;
+	int index, x, y, width, height, ppi, frequency, bpp;
 } DisplayData;
 
 static DisplayData displays[MAXIMUM_DISPLAYS];
@@ -55,8 +55,6 @@ static BOOL CALLBACK EnumerationCallback(HMONITOR monitor, HDC hdc_unused, LPREC
 	display->y = info.rcMonitor.top;
 	display->width = info.rcMonitor.right - info.rcMonitor.left;
 	display->height = info.rcMonitor.bottom - info.rcMonitor.top;
-	display->useableWidth = display->width;
-	display->useableHeight = display->height;
 
 	HDC hdc = CreateDCA(NULL, display->name, NULL, NULL);
 	display->ppi = GetDeviceCaps(hdc, LOGPIXELSX);
