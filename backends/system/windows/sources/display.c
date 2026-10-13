@@ -198,8 +198,8 @@ kore_display_mode kore_display_current_mode(int display_index) {
 	mode.y               = display->y;
 	mode.width           = display->width;
 	mode.height          = display->height;
-	mode.useableWidth = display->useableWidth;
-	mode.useableHeight = display->useableHeight;
+	mode.useableWidth = mode.width;
+	mode.useableHeight = mode.height;
 	mode.pixels_per_inch = display->ppi;
 	mode.frequency       = display->frequency;
 	mode.bits_per_pixel  = display->bpp;
