@@ -51,6 +51,14 @@ int Display::height() {
 	return kinc_display_current_mode(_index).height;
 }
 
+int Display::useableWidth() {
+	return kinc_display_current_mode(_index).useableWidth;
+}
+
+int Display::useableHeight() {
+	return kinc_display_current_mode(_index).useableHeight;
+}
+
 int Display::frequency() {
 	return kinc_display_current_mode(_index).frequency;
 }

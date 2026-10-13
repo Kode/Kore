@@ -21,6 +21,8 @@ namespace Kore {
 		int y();
 		int width();
 		int height();
+		int useableWidth();
+		int useableHeight();
 		int frequency();
 		int pixelsPerInch();
 
