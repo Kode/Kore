@@ -129,8 +129,8 @@ kore_display_mode kore_x11_display_current_mode(int display_index) {
 		mode.y               = display->y;
 		mode.width           = mode_info->width;
 		mode.height          = mode_info->height;
-		mode.useableWidth = mode_info->width;
-		mode.useableHeight = mode_info->height;
+		mode.useableWidth = mode.width;
+		mode.useableHeight = mode.height;
 		mode.pixels_per_inch = 96;
 		mode.bits_per_pixel  = 32;
 		if (mode_info->hTotal && mode_info->vTotal) {
