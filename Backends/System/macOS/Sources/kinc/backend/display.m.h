@@ -34,6 +34,8 @@ kinc_display_mode_t kinc_display_available_mode(int display, int mode) {
 	kinc_display_mode_t dm;
 	dm.width = 800;
 	dm.height = 600;
+	dm.useableWidth = dm.width;
+	dm.useableHeight = dm.height;
 	dm.frequency = 60;
 	dm.bits_per_pixel = 32;
 	return dm;
@@ -58,6 +60,8 @@ kinc_display_mode_t kinc_display_current_mode(int display) {
 	kinc_display_mode_t dm;
 	dm.width = screenRect.size.width;
 	dm.height = screenRect.size.height;
+	dm.useableWidth = dm.width;
+	dm.useableHeight = dm.height;
 	dm.frequency = 60;
 	dm.bits_per_pixel = 32;
 

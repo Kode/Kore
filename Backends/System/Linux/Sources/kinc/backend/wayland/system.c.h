@@ -138,6 +138,8 @@ static void wl_output_handle_mode(void *data, struct wl_output *wl_output, uint3
 		mode->y = 0;
 		mode->width = width;
 		mode->height = height;
+		mode->useableWidth = width;
+		mode->useableHeight = height;
 		mode->bits_per_pixel = 32;
 		mode->pixels_per_inch = 96;
 		mode->frequency = (refresh / 1000);

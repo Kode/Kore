@@ -9,6 +9,8 @@ kinc_display_mode_t kinc_display_available_mode(int display, int mode) {
 	kinc_display_mode_t dm;
 	dm.width = kinc_window_width(0);
 	dm.height = kinc_window_height(0);
+	dm.useableWidth = dm.width;
+	dm.useableHeight = dm.height;
 	dm.frequency = 60;
 	dm.bits_per_pixel = 32;
 	return dm;
@@ -30,6 +32,8 @@ kinc_display_mode_t kinc_display_current_mode(int display) {
 	kinc_display_mode_t dm;
 	dm.width = kinc_window_width(0);
 	dm.height = kinc_window_height(0);
+	dm.useableWidth = dm.width;
+	dm.useableHeight = dm.height;
 	dm.frequency = (int)[[UIScreen mainScreen] maximumFramesPerSecond];
 	dm.bits_per_pixel = 32;
 	return dm;

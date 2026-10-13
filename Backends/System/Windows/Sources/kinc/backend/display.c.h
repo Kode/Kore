@@ -12,7 +12,7 @@ typedef struct {
 	struct HMONITOR__ *monitor;
 	char name[32];
 	bool primary, available, mode_changed;
-	int index, x, y, width, height, ppi, frequency, bpp;
+	int index, x, y, width, height, useableWidth, useableHeight, ppi, frequency, bpp;
 } DisplayData;
 
 static DisplayData displays[MAXIMUM_DISPLAYS];
@@ -55,6 +55,8 @@ static BOOL CALLBACK EnumerationCallback(HMONITOR monitor, HDC hdc_unused, LPREC
 	display->y = info.rcMonitor.top;
 	display->width = info.rcMonitor.right - info.rcMonitor.left;
 	display->height = info.rcMonitor.bottom - info.rcMonitor.top;
+	display->useableWidth = display->width;
+	display->useableHeight = display->height;
 
 	HDC hdc = CreateDCA(NULL, display->name, NULL, NULL);
 	display->ppi = GetDeviceCaps(hdc, LOGPIXELSX);
@@ -127,6 +129,8 @@ kinc_display_mode_t kinc_display_available_mode(int display_index, int mode_inde
 	mode.y = displays[display_index].y;
 	mode.width = dev_mode.dmPelsWidth;
 	mode.height = dev_mode.dmPelsHeight;
+	mode.useableWidth = mode.width;
+	mode.useableHeight = mode.height;
 	mode.frequency = dev_mode.dmDisplayFrequency;
 	mode.bits_per_pixel = dev_mode.dmBitsPerPel;
 	mode.pixels_per_inch = displays[display_index].ppi * mode.width / original_modes[display_index].dmPelsWidth;
@@ -194,6 +198,8 @@ kinc_display_mode_t kinc_display_current_mode(int display_index) {
 	mode.y = display->y;
 	mode.width = display->width;
 	mode.height = display->height;
+	mode.useableWidth = display->useableWidth;
+	mode.useableHeight = display->useableHeight;
 	mode.pixels_per_inch = display->ppi;
 	mode.frequency = display->frequency;
 	mode.bits_per_pixel = display->bpp;

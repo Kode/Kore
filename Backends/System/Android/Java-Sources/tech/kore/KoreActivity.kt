@@ -98,6 +98,24 @@ class KoreActivity: NativeActivity(), KeyEvent.Callback {
 		}
 
 		@JvmStatic
+		fun getDisplayUseableWidth(): Int {
+			val context: Context = instance!!.applicationContext
+			val manager: WindowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+			val size: android.graphics.Point = android.graphics.Point()
+			manager.defaultDisplay.getSize(size)
+			return size.x
+		}
+
+		@JvmStatic
+		fun getDisplayUseableHeight(): Int {
+			val context: Context = instance!!.applicationContext
+			val manager: WindowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+			val size: android.graphics.Point = android.graphics.Point()
+			manager.defaultDisplay.getSize(size)
+			return size.y
+		}
+
+		@JvmStatic
 		fun stop() {
 			instance!!.runOnUiThread {
 				fun run() {

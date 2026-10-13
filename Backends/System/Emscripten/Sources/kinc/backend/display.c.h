@@ -24,6 +24,8 @@ kinc_display_mode_t kinc_display_current_mode(int display_index) {
 	mode.y = 0;
 	mode.width = 800;
 	mode.height = 600;
+	mode.useableWidth = mode.width;
+	mode.useableHeight = mode.height;
 	mode.pixels_per_inch = 96;
 	mode.frequency = 60;
 	mode.bits_per_pixel = 32;
@@ -40,6 +42,8 @@ kinc_display_mode_t kinc_display_available_mode(int display_index, int mode_inde
 	mode.y = 0;
 	mode.width = 800;
 	mode.height = 600;
+	mode.useableWidth = mode.width;
+	mode.useableHeight = mode.height;
 	mode.pixels_per_inch = 96;
 	mode.frequency = 60;
 	mode.bits_per_pixel = 32;
