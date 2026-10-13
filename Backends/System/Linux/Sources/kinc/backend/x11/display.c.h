@@ -40,8 +40,6 @@ void kinc_x11_display_init(void) {
 		display->y = crtc_info->y;
 		display->width = crtc_info->width;
 		display->height = crtc_info->height;
-		display->useableWidth = display->width;
-		display->useableHeight = display->height;
 		display->primary = screen_resources->outputs[i] == primary_output;
 		display->crtc = output_info->crtc;
 		display->output = screen_resources->outputs[i];
