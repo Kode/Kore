@@ -18,18 +18,6 @@ typedef struct kore_thread {
 } kore_thread;
 
 /// <summary>
-/// Initializes the threading system. This has to be called before calling any kore_thread functions.
-/// </summary>
-KORE_FUNC void kore_threads_init(void);
-
-/// <summary>
-/// Shuts down the threading system.
-/// </summary>
-/// <param name=""></param>
-/// <returns></returns>
-KORE_FUNC void kore_threads_quit(void);
-
-/// <summary>
 /// Starts a thread via the provided function.
 /// </summary>
 /// <param name="thread">The thread-object to initialize with the new thread</param>
