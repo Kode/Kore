@@ -7,8 +7,6 @@ extern "C" {
 
 typedef struct {
 	void *handle;
-	void *param;
-	void (*func)(void *param);
 } kore_thread_impl;
 
 #ifdef __cplusplus

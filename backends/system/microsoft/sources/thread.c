@@ -8,36 +8,32 @@
 #include <Superluminal/PerformanceAPI_capi.h>
 #endif
 
-void kore_threads_init() {}
-
-void kore_threads_quit() {}
-
-struct thread_start {
-	void (*thread)(void *param);
+typedef struct thread_start_params {
+	void (*func)(void *param);
 	void *param;
-};
+} thread_start_params;
 
-#define THREAD_STARTS 64
-static struct thread_start starts[THREAD_STARTS];
-static int                 thread_start_index = 0;
+static DWORD WINAPI thread_start(LPVOID arg) {
+	thread_start_params *params = (thread_start_params *)arg;
 
-static DWORD WINAPI ThreadProc(LPVOID arg) {
-	intptr_t start_index = (intptr_t)arg;
-	starts[start_index].thread(starts[start_index].param);
+	void (*func)(void *param) = params->func;
+	void *param = params->param;
+
+	free(params);
+
+	func(param);
+
 	return 0;
 }
 
 void kore_thread_init(kore_thread *thread, void (*func)(void *param), void *param) {
-	thread->impl.func  = func;
-	thread->impl.param = param;
+	thread_start_params *params = (thread_start_params *)malloc(sizeof(thread_start_params));
+	assert(params != NULL);
 
-	intptr_t start_index = thread_start_index++;
-	if (thread_start_index >= THREAD_STARTS) {
-		thread_start_index = 0;
-	}
-	starts[start_index].thread = func;
-	starts[start_index].param  = param;
-	thread->impl.handle        = CreateThread(0, 65536, ThreadProc, (LPVOID)start_index, 0, 0);
+	params->func = func;
+	params->param = param;
+
+	thread->impl.handle = CreateThread(0, 65536, thread_start, params, 0, 0);
 	assert(thread->impl.handle != NULL);
 }
 
