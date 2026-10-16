@@ -17,7 +17,7 @@ static DWORD WINAPI thread_start(LPVOID arg) {
 	thread_start_params *params = (thread_start_params *)arg;
 
 	void (*func)(void *param) = params->func;
-	void *param = params->param;
+	void *param               = params->param;
 
 	free(params);
 
@@ -30,7 +30,7 @@ void kore_thread_init(kore_thread *thread, void (*func)(void *param), void *para
 	thread_start_params *params = (thread_start_params *)malloc(sizeof(thread_start_params));
 	assert(params != NULL);
 
-	params->func = func;
+	params->func  = func;
 	params->param = param;
 
 	thread->impl.handle = CreateThread(0, 65536, thread_start, params, 0, 0);
