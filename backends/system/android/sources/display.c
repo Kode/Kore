@@ -45,7 +45,7 @@ static int height() {
 	return height;
 }
 
-static int useableWidth() {
+static int useable_width() {
 	JNIEnv *env;
 	JavaVM *vm = kinc_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
@@ -56,7 +56,7 @@ static int useableWidth() {
 	return width;
 }
 
-static int useableHeight() {
+static int useable_height() {
 	JNIEnv *env;
 	JavaVM *vm = kinc_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
@@ -97,8 +97,8 @@ kore_display_mode kore_display_available_mode(int display_index, int mode_index)
 	mode.y               = 0;
 	mode.width           = width();
 	mode.height          = height();
-	mode.useable_width = useableWidth();
-	mode.useable_height = useableHeight();
+	mode.useable_width = useable_width();
+	mode.useable_height = useable_height();
 	mode.frequency       = refreshRate();
 	mode.bits_per_pixel  = 32;
 	mode.pixels_per_inch = pixelsPerInch();
@@ -115,8 +115,8 @@ kore_display_mode kore_display_current_mode(int display) {
 	mode.y               = 0;
 	mode.width           = width();
 	mode.height          = height();
-	mode.useable_width = useableWidth();
-	mode.useable_height = useableHeight();
+	mode.useable_width = useable_width();
+	mode.useable_height = useable_height();
 	mode.frequency       = refreshRate();
 	mode.bits_per_pixel  = 32;
 	mode.pixels_per_inch = pixelsPerInch();

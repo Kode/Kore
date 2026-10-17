@@ -127,8 +127,8 @@ kore_display_mode kore_display_available_mode(int display_index, int mode_index)
 	mode.y               = displays[display_index].y;
 	mode.width           = dev_mode.dmPelsWidth;
 	mode.height          = dev_mode.dmPelsHeight;
-	mode.useableWidth = mode.width;
-	mode.useableHeight = mode.height;
+	mode.useable_width = mode.width;
+	mode.useable_height = mode.height;
 	mode.frequency       = dev_mode.dmDisplayFrequency;
 	mode.bits_per_pixel  = dev_mode.dmBitsPerPel;
 	mode.pixels_per_inch = displays[display_index].ppi * mode.width / original_modes[display_index].dmPelsWidth;
@@ -196,8 +196,8 @@ kore_display_mode kore_display_current_mode(int display_index) {
 	mode.y               = display->y;
 	mode.width           = display->width;
 	mode.height          = display->height;
-	mode.useableWidth = mode.width;
-	mode.useableHeight = mode.height;
+	mode.useable_width = mode.width;
+	mode.useable_height = mode.height;
 	mode.pixels_per_inch = display->ppi;
 	mode.frequency       = display->frequency;
 	mode.bits_per_pixel  = display->bpp;
