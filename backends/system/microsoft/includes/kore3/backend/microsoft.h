@@ -21,6 +21,8 @@ void kore_microsoft_affirm_message(HRESULT result, const char *format, ...);
 void kore_microsoft_format(const char *format, va_list args, wchar_t *buffer);
 void kore_microsoft_convert_string(wchar_t *destination, const char *source, int num);
 
+void kore_microsoft_init(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -52,21 +52,11 @@ bool kore_thread_try_to_destroy(kore_thread *thread) {
 	return false;
 }
 
-typedef HRESULT(WINAPI *SetThreadDescriptionType)(HANDLE hThread, PCWSTR lpThreadDescription);
-static SetThreadDescriptionType MySetThreadDescription        = NULL;
-static bool                     set_thread_description_loaded = false;
-
 void kore_thread_set_name(const char *name) {
-	if (!set_thread_description_loaded) {
-		HMODULE kernel32              = LoadLibraryA("kernel32.dll");
-		MySetThreadDescription        = (SetThreadDescriptionType)GetProcAddress(kernel32, "SetThreadDescription");
-		set_thread_description_loaded = true;
-	}
-
-	if (MySetThreadDescription != NULL) {
+	if (set_thread_description != NULL) {
 		wchar_t wide_name[256];
 		MultiByteToWideChar(CP_ACP, 0, name, -1, wide_name, 256);
-		MySetThreadDescription(GetCurrentThread(), wide_name);
+		set_thread_description(GetCurrentThread(), wide_name);
 	}
 
 #ifdef KORE_VTUNE

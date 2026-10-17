@@ -29,15 +29,15 @@ typedef void        *LPVOID;
 typedef char         CHAR;
 typedef const CHAR  *LPCSTR;
 typedef wchar_t      WCHAR;
-typedef const WCHAR *LPCWSTR;
-typedef CONST CHAR  *LPCCH, *PCCH;
+typedef const WCHAR *LPCWSTR, *PCWSTR;
+typedef const CHAR  *LPCCH, *PCCH;
 #define CP_UTF8 65001
 typedef wchar_t     WCHAR;
 typedef WCHAR      *LPWSTR;
 typedef void       *PVOID;
 typedef long        LONG;
 typedef LONG       *PLONG;
-typedef CONST void *LPCVOID;
+typedef const void *LPCVOID;
 
 #define GENERIC_READ  (0x80000000L)
 #define GENERIC_WRITE (0x40000000L)

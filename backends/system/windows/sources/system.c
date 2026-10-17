@@ -1367,6 +1367,8 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 	kore_itt_domain = __itt_domain_create(name);
 #endif
 
+	kore_microsoft_init();
+
 	// Pen functions are only in Windows 8 and later, so load them dynamically
 	HMODULE user32              = LoadLibraryA("user32.dll");
 	MyGetPointerInfo            = (GetPointerInfoType)GetProcAddress(user32, "GetPointerInfo");

@@ -51,6 +51,7 @@
 #include "fiber.c"
 #include "microsoft.c"
 #include "mutex.c"
+#include "optional.c"
 #include "semaphore.c"
 #include "thread.c"
 #include "threadlocal.c"

@@ -1,5 +1,6 @@
 #include <kore3/backend/microsoft.h>
 
+#include <kore3/backend/optional.h>
 #include <kore3/error.h>
 
 #define S_OK ((HRESULT)0L)
@@ -46,4 +47,8 @@ void kore_microsoft_format(const char *format, va_list args, wchar_t *buffer) {
 
 void kore_microsoft_convert_string(wchar_t *destination, const char *source, int num) {
 	MultiByteToWideChar(CP_UTF8, 0, source, -1, destination, num);
+}
+
+void kore_microsoft_init(void) {
+	kore_microsoft_optional_init();
 }
