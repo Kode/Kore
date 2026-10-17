@@ -5,16 +5,6 @@
 extern "C" {
 #endif
 
-typedef long         LONG;
-typedef LONG         HRESULT;
-typedef void        *HANDLE;
-typedef wchar_t      WCHAR;
-typedef const WCHAR *LPCWSTR, *PCWSTR;
-
-#ifndef WINAPI
-#define WINAPI __stdcall
-#endif
-
 typedef HRESULT(WINAPI *set_thread_description_type)(HANDLE hThread, PCWSTR lpThreadDescription);
 extern set_thread_description_type set_thread_description;
 

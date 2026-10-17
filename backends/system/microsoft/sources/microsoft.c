@@ -1,7 +1,8 @@
 #include <kore3/backend/microsoft.h>
 
-#include <kore3/backend/optional.h>
 #include <kore3/error.h>
+
+#include "optional.h"
 
 #define S_OK ((HRESULT)0L)
 

@@ -33,24 +33,11 @@
 __itt_domain *kore_itt_domain;
 #endif
 
-#ifdef KORE_G4ONG5
-#define Graphics Graphics5
-#elif KORE_G4
-#define Graphics Graphics4
-#else
-#define Graphics Graphics3
-#endif
+#include <assert.h>
 
 __declspec(dllexport) unsigned long NvOptimusEnablement                  = 0x00000001;
 __declspec(dllexport) int           AmdPowerXpressRequestHighPerformance = 1;
 void                                kore_internal_resize(int window, int width, int height);
-
-typedef BOOL(WINAPI *GetPointerInfoType)(UINT32 pointerId, POINTER_INFO *pointerInfo);
-static GetPointerInfoType MyGetPointerInfo = NULL;
-typedef BOOL(WINAPI *GetPointerPenInfoType)(UINT32 pointerId, POINTER_PEN_INFO *penInfo);
-static GetPointerPenInfoType MyGetPointerPenInfo = NULL;
-typedef BOOL(WINAPI *EnableNonClientDpiScalingType)(HWND hwnd);
-static EnableNonClientDpiScalingType MyEnableNonClientDpiScaling = NULL;
 
 #define MAX_TOUCH_POINTS 10
 
@@ -322,8 +309,8 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 
 	switch (msg) {
 	case WM_NCCREATE:
-		if (MyEnableNonClientDpiScaling != NULL) {
-			MyEnableNonClientDpiScaling(hWnd);
+		if (enable_non_client_dpi_scaling != NULL) {
+			enable_non_client_dpi_scaling(hWnd);
 		}
 		break;
 	case WM_DPICHANGED: {
@@ -468,30 +455,39 @@ LRESULT WINAPI KoreWindowsMessageProcedure(HWND hWnd, UINT msg, WPARAM wParam, L
 		kore_internal_mouse_trigger_scroll(kore_windows_window_index_from_hwnd(hWnd), GET_WHEEL_DELTA_WPARAM(wParam) / -120);
 		break;
 	case WM_POINTERDOWN:
+		assert(get_pointer_info != NULL && get_pointer_pen_info != NULL);
+
 		pointerId = GET_POINTERID_WPARAM(wParam);
-		MyGetPointerInfo(pointerId, &pointerInfo);
+		get_pointer_info(pointerId, &pointerInfo);
+
 		if (pointerInfo.pointerType == PT_PEN) {
-			MyGetPointerPenInfo(pointerId, &penInfo);
+			get_pointer_pen_info(pointerId, &penInfo);
 			ScreenToClient(hWnd, &pointerInfo.ptPixelLocation);
 			kore_internal_pen_trigger_press(kore_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
 			                                penInfo.pressure / 1024.0f);
 		}
 		break;
 	case WM_POINTERUP:
+		assert(get_pointer_info != NULL && get_pointer_pen_info != NULL);
+
 		pointerId = GET_POINTERID_WPARAM(wParam);
-		MyGetPointerInfo(pointerId, &pointerInfo);
+		get_pointer_info(pointerId, &pointerInfo);
+
 		if (pointerInfo.pointerType == PT_PEN) {
-			MyGetPointerPenInfo(pointerId, &penInfo);
+			get_pointer_pen_info(pointerId, &penInfo);
 			ScreenToClient(hWnd, &pointerInfo.ptPixelLocation);
 			kore_internal_pen_trigger_release(kore_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
 			                                  penInfo.pressure / 1024.0f);
 		}
 		break;
 	case WM_POINTERUPDATE:
+		assert(get_pointer_info != NULL && get_pointer_pen_info != NULL);
+
 		pointerId = GET_POINTERID_WPARAM(wParam);
-		MyGetPointerInfo(pointerId, &pointerInfo);
+		get_pointer_info(pointerId, &pointerInfo);
+
 		if (pointerInfo.pointerType == PT_PEN) {
-			MyGetPointerPenInfo(pointerId, &penInfo);
+			get_pointer_pen_info(pointerId, &penInfo);
 			ScreenToClient(hWnd, &pointerInfo.ptPixelLocation);
 			kore_internal_pen_trigger_move(kore_windows_window_index_from_hwnd(hWnd), pointerInfo.ptPixelLocation.x, pointerInfo.ptPixelLocation.y,
 			                               penInfo.pressure / 1024.0f);
@@ -1368,12 +1364,8 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 #endif
 
 	kore_microsoft_init();
+	kore_windows_optional_init();
 
-	// Pen functions are only in Windows 8 and later, so load them dynamically
-	HMODULE user32              = LoadLibraryA("user32.dll");
-	MyGetPointerInfo            = (GetPointerInfoType)GetProcAddress(user32, "GetPointerInfo");
-	MyGetPointerPenInfo         = (GetPointerPenInfoType)GetProcAddress(user32, "GetPointerPenInfo");
-	MyEnableNonClientDpiScaling = (EnableNonClientDpiScalingType)GetProcAddress(user32, "EnableNonClientDpiScaling");
 	initKeyTranslation();
 	for (int i = 0; i < 256; ++i) {
 		keyPressed[i] = false;
@@ -1406,8 +1398,6 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 		win->title = name;
 	}
 
-	// kore_g4_internal_init(); // TODO
-
 	int window = kore_window_create(win, frame);
 	loadXInput();
 	initializeDirectInput();
@@ -1419,7 +1409,6 @@ void kore_internal_shutdown() {
 	kore_windows_hide_windows();
 	kore_internal_shutdown_callback();
 	kore_windows_destroy_windows();
-	// kore_g4_internal_destroy(); // TODO
 	kore_windows_restore_displays();
 }
 
