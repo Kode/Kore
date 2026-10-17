@@ -47,9 +47,9 @@ static int height() {
 
 static int useable_width() {
 	JNIEnv *env;
-	JavaVM *vm = kinc_android_get_activity()->vm;
+	JavaVM *vm = kore_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kore.KoreActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jmethodID koreActivityGetScreenDpi = (*env)->GetStaticMethodID(env, koreActivityClass, "getDisplayUseableWidth", "()I");
 	int width = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
 	(*vm)->DetachCurrentThread(vm);
@@ -58,9 +58,9 @@ static int useable_width() {
 
 static int useable_height() {
 	JNIEnv *env;
-	JavaVM *vm = kinc_android_get_activity()->vm;
+	JavaVM *vm = kore_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
-	jclass koreActivityClass = kinc_android_find_class(env, "tech.kore.KoreActivity");
+	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jmethodID koreActivityGetScreenDpi = (*env)->GetStaticMethodID(env, koreActivityClass, "getDisplayUseableHeight", "()I");
 	int height = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
 	(*vm)->DetachCurrentThread(vm);
