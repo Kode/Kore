@@ -55,7 +55,7 @@ void kore_login(void) {}
 void kore_unlock_achievement(int id) {}
 
 bool kore_gamepad_connected(int num) {
-	return true;
+	return num >= 0 && num < KORE_GAMEPAD_MAX_COUNT && gamepadTable[num] != NULL;
 }
 
 void kore_gamepad_rumble(int gamepad, float left, float right) {}
