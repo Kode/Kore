@@ -6,7 +6,7 @@
 #include <kore3/log.h>
 #include <kore3/math/core.h>
 
-static struct HIDGamepad *gamepadTable[KINC_GAMEPAD_MAX_COUNT];
+static struct HIDGamepad *gamepadTable[KORE_GAMEPAD_MAX_COUNT];
 
 static void inputValueCallback(void *inContext, IOReturn inResult, void *inSender, IOHIDValueRef inIOHIDValueRef);
 static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inSender);
@@ -128,11 +128,11 @@ static void logAxis(int axisIndex) {
 		break;
 
 	case 6:
-		kinc_log(KINC_LOG_LEVEL_INFO, "Sim Accelerator (right trigger)");
+		kore_log(KORE_LOG_LEVEL_INFO, "Sim Accelerator (right trigger)");
 		break;
 
 	case 7:
-		kinc_log(KINC_LOG_LEVEL_INFO, "Sim Brake (left trigger)");
+		kore_log(KORE_LOG_LEVEL_INFO, "Sim Brake (left trigger)");
 		break;
 
 	default:
@@ -417,7 +417,7 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 			int range = hatMax - hatMin + 1;
 
 			if (debugButtonInput) {
-				kinc_log(KINC_LOG_LEVEL_INFO, "Hat raw=%i min=%i max=%i range=%i", hatValue, hatMin, hatMax, range);
+				kore_log(KORE_LOG_LEVEL_INFO, "Hat raw=%i min=%i max=%i range=%i", hatValue, hatMin, hatMax, range);
 			}
 
 			hatValue -= hatMin;
@@ -436,19 +436,19 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 
 			if (up != pad->hatUp) {
 				pad->hatUp = up;
-				kinc_internal_gamepad_trigger_button(pad->padIndex, 11, up ? 1.0f : 0.0f); // D-pad Up
+				kore_internal_gamepad_trigger_button(pad->padIndex, 11, up ? 1.0f : 0.0f); // D-pad Up
 			}
 			if (down != pad->hatDown) {
 				pad->hatDown = down;
-				kinc_internal_gamepad_trigger_button(pad->padIndex, 12, down ? 1.0f : 0.0f); // D-pad Down
+				kore_internal_gamepad_trigger_button(pad->padIndex, 12, down ? 1.0f : 0.0f); // D-pad Down
 			}
 			if (left != pad->hatLeft) {
 				pad->hatLeft = left;
-				kinc_internal_gamepad_trigger_button(pad->padIndex, 13, left ? 1.0f : 0.0f); // D-pad Left
+				kore_internal_gamepad_trigger_button(pad->padIndex, 13, left ? 1.0f : 0.0f); // D-pad Left
 			}
 			if (right != pad->hatRight) {
 				pad->hatRight = right;
-				kinc_internal_gamepad_trigger_button(pad->padIndex, 14, right ? 1.0f : 0.0f); // D-pad Right
+				kore_internal_gamepad_trigger_button(pad->padIndex, 14, right ? 1.0f : 0.0f); // D-pad Right
 			}
 		}
 
@@ -457,14 +457,14 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 }
 
 const char *kore_gamepad_vendor(int gamepad) {
-	if (gamepad >= 0 && gamepad < KINC_GAMEPAD_MAX_COUNT && gamepadTable[gamepad] != NULL) {
+	if (gamepad >= 0 && gamepad < KORE_GAMEPAD_MAX_COUNT && gamepadTable[gamepad] != NULL) {
 		return gamepadTable[gamepad]->hidDeviceVendor;
 	}
 	return "unknown";
 }
 
 const char *kore_gamepad_product_name(int gamepad) {
-	if (gamepad >= 0 && gamepad < KINC_GAMEPAD_MAX_COUNT && gamepadTable[gamepad] != NULL) {
+	if (gamepad >= 0 && gamepad < KORE_GAMEPAD_MAX_COUNT && gamepadTable[gamepad] != NULL) {
 		return gamepadTable[gamepad]->hidDeviceProduct;
 	}
 	return "unknown";
