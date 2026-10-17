@@ -73,7 +73,7 @@ static BOOL CALLBACK EnumerationCallback(HMONITOR monitor, HDC hdc_unused, LPREC
 	return TRUE;
 }
 
-void kore_display_init() {
+void kore_display_init(void) {
 	if (display_initialized) {
 		return;
 	}
@@ -94,11 +94,11 @@ int kore_windows_get_display_for_monitor(struct HMONITOR__ *monitor) {
 	return -1;
 }
 
-int kore_count_displays() {
+int kore_count_displays(void) {
 	return screen_counter;
 }
 
-int kore_primary_display() {
+int kore_primary_display(void) {
 	for (int i = 0; i < MAXIMUM_DISPLAYS; ++i) {
 		DisplayData *display = &displays[i];
 
@@ -165,7 +165,7 @@ void kore_windows_restore_display(int display) {
 	}
 }
 
-void kore_windows_restore_displays() {
+void kore_windows_restore_displays(void) {
 	for (int i = 0; i < MAXIMUM_DISPLAYS; ++i) {
 		kore_windows_restore_display(i);
 	}

@@ -88,7 +88,7 @@ static void ReleaseTouchIndex(int dwID) {
 	}
 }
 
-static void initKeyTranslation() {
+static void initKeyTranslation(void) {
 	for (int i = 0; i < 256; ++i)
 		keyTranslated[i] = KORE_KEY_UNKNOWN;
 
@@ -861,7 +861,7 @@ LCleanup:
 }
 
 // TODO (DK) this should probably be called from somewhere?
-static void cleanupDirectInput() {
+static void cleanupDirectInput(void) {
 	for (int padIndex = 0; padIndex < KORE_DINPUT_MAX_COUNT; ++padIndex) {
 		cleanupPad(padIndex);
 	}
@@ -963,7 +963,7 @@ static BOOL CALLBACK enumerateJoysticksCallback(LPCDIDEVICEINSTANCEW ddi, LPVOID
 	return DIENUM_CONTINUE;
 }
 
-static void initializeDirectInput() {
+static void initializeDirectInput(void) {
 	HINSTANCE hinstance = GetModuleHandleW(NULL);
 
 	memset(&di_pads, 0, sizeof(IDirectInputDevice8) * KORE_DINPUT_MAX_COUNT);
@@ -1108,7 +1108,7 @@ const char *kore_gamepad_product_name(int gamepad) {
 	}
 }
 
-bool kore_internal_handle_messages() {
+bool kore_internal_handle_messages(void) {
 	MSG message;
 
 	while (PeekMessageW(&message, 0, 0, 0, PM_REMOVE)) {
@@ -1181,15 +1181,15 @@ bool kore_internal_handle_messages() {
 static bool keyboardshown = false;
 static char language[3]   = {0};
 
-void kore_keyboard_show() {
+void kore_keyboard_show(void) {
 	keyboardshown = true;
 }
 
-void kore_keyboard_hide() {
+void kore_keyboard_hide(void) {
 	keyboardshown = false;
 }
 
-bool kore_keyboard_active() {
+bool kore_keyboard_active(void) {
 	return keyboardshown;
 }
 
@@ -1212,9 +1212,10 @@ void kore_load_url(const char *url) {
 }
 
 void kore_set_keep_screen_on(bool on) {}
+
 void kore_vibrate(int ms) {}
 
-const char *kore_language() {
+const char *kore_language(void) {
 	wchar_t wlanguage[3] = {0};
 
 	if (GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SISO639LANGNAME, wlanguage, 3)) {
@@ -1224,7 +1225,7 @@ const char *kore_language() {
 	return "en";
 }
 
-const char *kore_system_id() {
+const char *kore_system_id(void) {
 	return "Windows";
 }
 
@@ -1240,7 +1241,7 @@ void kore_windows_co_initialize(void) {
 static wchar_t savePathw[2048] = {0};
 static char    savePath[2048]  = {0};
 
-static void findSavePath() {
+static void findSavePath(void) {
 	kore_windows_co_initialize();
 	IKnownFolderManager *folders = NULL;
 	CoCreateInstance(&CLSID_KnownFolderManager, NULL, CLSCTX_INPROC_SERVER, &IID_IKnownFolderManager, (LPVOID *)&folders);
@@ -1266,7 +1267,7 @@ static void findSavePath() {
 	// CoUninitialize();
 }
 
-const char *kore_internal_save_path() {
+const char *kore_internal_save_path(void) {
 	if (savePath[0] == 0)
 		findSavePath();
 	return savePath;
@@ -1276,7 +1277,7 @@ static const char   *videoFormats[] = {"ogv", NULL};
 static LARGE_INTEGER frequency;
 static LARGE_INTEGER startCount;
 
-const char **kore_video_formats() {
+const char **kore_video_formats(void) {
 	return videoFormats;
 }
 
@@ -1298,7 +1299,7 @@ void kore_gamepad_rumble(int gamepad, float left, float right) {
 	}
 }
 
-double kore_frequency() {
+double kore_frequency(void) {
 	return (double)frequency.QuadPart;
 }
 
@@ -1405,7 +1406,7 @@ int kore_init(const char *name, int width, int height, kore_window_parameters *w
 	return window;
 }
 
-void kore_internal_shutdown() {
+void kore_internal_shutdown(void) {
 	kore_windows_hide_windows();
 	kore_internal_shutdown_callback();
 	kore_windows_destroy_windows();

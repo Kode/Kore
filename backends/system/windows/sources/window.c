@@ -127,7 +127,7 @@ int kore_windows_window_index_from_hwnd(struct HWND__ *handle) {
 	return -1;
 }
 
-int kore_count_windows() {
+int kore_count_windows(void) {
 	return window_counter;
 }
 

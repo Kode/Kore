@@ -23,13 +23,13 @@ bool kore_mouse_can_lock(void) {
 	return true;
 }
 
-void kore_mouse_show() {
+void kore_mouse_show(void) {
 	// Work around the internal counter of ShowCursor
 	while (ShowCursor(true) < 0) {
 	}
 }
 
-void kore_mouse_hide() {
+void kore_mouse_hide(void) {
 	// Work around the internal counter of ShowCursor
 	while (ShowCursor(false) >= 0) {
 	}
