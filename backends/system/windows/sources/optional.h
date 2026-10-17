@@ -75,6 +75,8 @@ enum tagPOINTER_INPUT_TYPE {
 	PT_TOUCHPAD = 5, // Touchpad
 };
 
+typedef enum { MDT_EFFECTIVE_DPI = 0, MDT_ANGULAR_DPI = 1, MDT_RAW_DPI = 2, MDT_DEFAULT = MDT_EFFECTIVE_DPI } MONITOR_DPI_TYPE;
+
 typedef BOOL(WINAPI *get_pointer_info_type)(UINT32 pointerId, POINTER_INFO *pointerInfo);
 get_pointer_info_type get_pointer_info;
 
@@ -83,6 +85,9 @@ get_pointer_pen_info_type get_pointer_pen_info;
 
 typedef BOOL(WINAPI *enable_non_client_dpi_scaling_type)(HWND hwnd);
 enable_non_client_dpi_scaling_type enable_non_client_dpi_scaling;
+
+typedef HRESULT(WINAPI *get_dpi_for_monitor_type)(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY);
+get_dpi_for_monitor_type get_dpi_for_monitor;
 
 void kore_windows_optional_init(void);
 

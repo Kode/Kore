@@ -20,10 +20,6 @@ static DEVMODEA    original_modes[MAXIMUM_DISPLAYS];
 static int         screen_counter      = 0;
 static bool        display_initialized = false;
 
-typedef enum { MDT_EFFECTIVE_DPI = 0, MDT_ANGULAR_DPI = 1, MDT_RAW_DPI = 2, MDT_DEFAULT = MDT_EFFECTIVE_DPI } MONITOR_DPI_TYPE;
-typedef HRESULT(WINAPI *GetDpiForMonitorType)(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY);
-static GetDpiForMonitorType MyGetDpiForMonitor = NULL;
-
 static BOOL CALLBACK EnumerationCallback(HMONITOR monitor, HDC hdc_unused, LPRECT rect_unused, LPARAM lparam) {
 	MONITORINFOEXA info;
 	memset(&info, 0, sizeof(MONITORINFOEXA));
@@ -61,9 +57,9 @@ static BOOL CALLBACK EnumerationCallback(HMONITOR monitor, HDC hdc_unused, LPREC
 	int scale    = GetDeviceCaps(hdc, SCALINGFACTORX);
 	DeleteDC(hdc);
 
-	if (MyGetDpiForMonitor != NULL) {
+	if (get_dpi_for_monitor != NULL) {
 		unsigned dpiX, dpiY;
-		MyGetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+		get_dpi_for_monitor(monitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
 		display->ppi = (int)dpiX;
 	}
 
@@ -81,10 +77,7 @@ void kore_display_init() {
 	if (display_initialized) {
 		return;
 	}
-	HMODULE shcore = LoadLibraryA("Shcore.dll");
-	if (shcore != NULL) {
-		MyGetDpiForMonitor = (GetDpiForMonitorType)GetProcAddress(shcore, "GetDpiForMonitor");
-	}
+
 	memset(displays, 0, sizeof(DisplayData) * MAXIMUM_DISPLAYS);
 	EnumDisplayMonitors(NULL, NULL, EnumerationCallback, 0);
 	display_initialized = true;
@@ -127,8 +120,8 @@ kore_display_mode kore_display_available_mode(int display_index, int mode_index)
 	mode.y               = displays[display_index].y;
 	mode.width           = dev_mode.dmPelsWidth;
 	mode.height          = dev_mode.dmPelsHeight;
-	mode.useable_width = mode.width;
-	mode.useable_height = mode.height;
+	mode.useable_width   = mode.width;
+	mode.useable_height  = mode.height;
 	mode.frequency       = dev_mode.dmDisplayFrequency;
 	mode.bits_per_pixel  = dev_mode.dmBitsPerPel;
 	mode.pixels_per_inch = displays[display_index].ppi * mode.width / original_modes[display_index].dmPelsWidth;
@@ -196,8 +189,8 @@ kore_display_mode kore_display_current_mode(int display_index) {
 	mode.y               = display->y;
 	mode.width           = display->width;
 	mode.height          = display->height;
-	mode.useable_width = mode.width;
-	mode.useable_height = mode.height;
+	mode.useable_width   = mode.width;
+	mode.useable_height  = mode.height;
 	mode.pixels_per_inch = display->ppi;
 	mode.frequency       = display->frequency;
 	mode.bits_per_pixel  = display->bpp;
