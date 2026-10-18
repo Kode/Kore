@@ -49,9 +49,9 @@ static int useable_width() {
 	JNIEnv *env;
 	JavaVM *vm = kore_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
+	jclass    koreActivityClass        = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jmethodID koreActivityGetScreenDpi = (*env)->GetStaticMethodID(env, koreActivityClass, "getDisplayUseableWidth", "()I");
-	int width = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
+	int       width                    = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
 	(*vm)->DetachCurrentThread(vm);
 	return width;
 }
@@ -60,9 +60,9 @@ static int useable_height() {
 	JNIEnv *env;
 	JavaVM *vm = kore_android_get_activity()->vm;
 	(*vm)->AttachCurrentThread(vm, &env, NULL);
-	jclass koreActivityClass = kore_android_find_class(env, "tech.kore.KoreActivity");
+	jclass    koreActivityClass        = kore_android_find_class(env, "tech.kore.KoreActivity");
 	jmethodID koreActivityGetScreenDpi = (*env)->GetStaticMethodID(env, koreActivityClass, "getDisplayUseableHeight", "()I");
-	int height = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
+	int       height                   = (*env)->CallStaticIntMethod(env, koreActivityClass, koreActivityGetScreenDpi);
 	(*vm)->DetachCurrentThread(vm);
 	return height;
 }
@@ -97,8 +97,8 @@ kore_display_mode kore_display_available_mode(int display_index, int mode_index)
 	mode.y               = 0;
 	mode.width           = width();
 	mode.height          = height();
-	mode.useable_width = useable_width();
-	mode.useable_height = useable_height();
+	mode.useable_width   = useable_width();
+	mode.useable_height  = useable_height();
 	mode.frequency       = refreshRate();
 	mode.bits_per_pixel  = 32;
 	mode.pixels_per_inch = pixelsPerInch();
@@ -115,8 +115,8 @@ kore_display_mode kore_display_current_mode(int display) {
 	mode.y               = 0;
 	mode.width           = width();
 	mode.height          = height();
-	mode.useable_width = useable_width();
-	mode.useable_height = useable_height();
+	mode.useable_width   = useable_width();
+	mode.useable_height  = useable_height();
 	mode.frequency       = refreshRate();
 	mode.bits_per_pixel  = 32;
 	mode.pixels_per_inch = pixelsPerInch();

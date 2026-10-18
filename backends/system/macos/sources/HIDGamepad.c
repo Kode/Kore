@@ -20,14 +20,14 @@ static void axisChanged(struct HIDGamepad *gamepad, IOHIDElementRef elementRef, 
 
 // Bit flags for hat switch directions
 static const uint8_t hatDir[8] = {
-	1,     // 0: Up
-	1|8,   // 1: Up+Right
-	8,     // 2: Right
-	2|8,   // 3: Down+Right
-	2,     // 4: Down
-	2|4,   // 5: Down+Left
-	4,     // 6: Left
-	1|4,   // 7: Up+Left
+    1,     // 0: Up
+    1 | 8, // 1: Up+Right
+    8,     // 2: Right
+    2 | 8, // 3: Down+Right
+    2,     // 4: Down
+    2 | 4, // 5: Down+Left
+    4,     // 6: Left
+    1 | 4, // 7: Up+Left
 };
 
 static bool debugButtonInput = false;
@@ -329,10 +329,10 @@ static void reset(struct HIDGamepad *gamepad) {
 	memset(gamepad->axis, 0, sizeof(gamepad->axis));
 	memset(gamepad->buttons, 0, sizeof(gamepad->buttons));
 	gamepad->hatSwitchCookie = 0;
-	gamepad->hatUp = false;
-	gamepad->hatDown = false;
-	gamepad->hatLeft = false;
-	gamepad->hatRight = false;
+	gamepad->hatUp           = false;
+	gamepad->hatDown         = false;
+	gamepad->hatLeft         = false;
+	gamepad->hatRight        = false;
 }
 
 static void buttonChanged(struct HIDGamepad *gamepad, IOHIDElementRef elementRef, IOHIDValueRef valueRef, int buttonIndex) {
@@ -411,10 +411,10 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 		// Check hat switch
 		if (cookie == pad->hatSwitchCookie) {
 			IOHIDElementRef hatElement = IOHIDValueGetElement(valueRef);
-			int hatValue = (int)IOHIDValueGetIntegerValue(valueRef);
-			int hatMin = (int)IOHIDElementGetLogicalMin(hatElement);
-			int hatMax = (int)IOHIDElementGetLogicalMax(hatElement);
-			int range = hatMax - hatMin + 1;
+			int             hatValue   = (int)IOHIDValueGetIntegerValue(valueRef);
+			int             hatMin     = (int)IOHIDElementGetLogicalMin(hatElement);
+			int             hatMax     = (int)IOHIDElementGetLogicalMax(hatElement);
+			int             range      = hatMax - hatMin + 1;
 
 			if (debugButtonInput) {
 				kore_log(KORE_LOG_LEVEL_INFO, "Hat raw=%i min=%i max=%i range=%i", hatValue, hatMin, hatMax, range);
@@ -428,11 +428,11 @@ static void valueAvailableCallback(void *inContext, IOReturn inResult, void *inS
 				hatValue = -1; // Unknown range: treat as centered
 			}
 
-			uint8_t d = (hatValue >= 0 && hatValue <= 7) ? hatDir[hatValue] : 0;
-			bool up    = d & 1;
-			bool down  = d & 2;
-			bool left  = d & 4;
-			bool right = d & 8;
+			uint8_t d     = (hatValue >= 0 && hatValue <= 7) ? hatDir[hatValue] : 0;
+			bool    up    = d & 1;
+			bool    down  = d & 2;
+			bool    left  = d & 4;
+			bool    right = d & 8;
 
 			if (up != pad->hatUp) {
 				pad->hatUp = up;

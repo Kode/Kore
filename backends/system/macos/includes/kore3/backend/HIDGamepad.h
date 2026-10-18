@@ -20,7 +20,7 @@ struct HIDGamepad {
 	IOHIDElementCookie axis[HID_AXIS_COUNT];
 	IOHIDElementCookie buttons[HID_BUTTON_COUNT];
 	IOHIDElementCookie hatSwitchCookie;
-	bool hatUp, hatDown, hatLeft, hatRight;
+	bool               hatUp, hatDown, hatLeft, hatRight;
 };
 
 void HIDGamepad_init(struct HIDGamepad *gamepad);
