@@ -1082,14 +1082,23 @@ bool kinc_internal_handle_messages(void) {
 		}
 	}
 
-	if (activityJustResized && app->window != NULL) {
-		activityJustResized = false;
+	// onNativeWindowResized is not fired on every android, some only send APP_CMD_CONFIG_CHANGED
+	// poll actual surface size and resize when it changes
+	static int32_t last_window_width = -1;
+	static int32_t last_window_height = -1;
+	if (app->window != NULL) {
 		int32_t width = kinc_android_width();
 		int32_t height = kinc_android_height();
+		bool size_changed = last_window_width != -1 && (width != last_window_width || height != last_window_height);
+		last_window_width = width;
+		last_window_height = height;
+		if (activityJustResized || size_changed) {
+			activityJustResized = false;
 #ifdef KINC_VULKAN
-		kinc_internal_resize(0, width, height);
+			kinc_internal_resize(0, width, height);
 #endif
-		kinc_internal_call_resize_callback(0, width, height);
+			kinc_internal_call_resize_callback(0, width, height);
+		}
 	}
 
 	// Get screen rotation
