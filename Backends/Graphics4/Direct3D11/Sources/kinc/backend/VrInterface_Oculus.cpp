@@ -60,9 +60,9 @@ struct DepthBuffer {
 struct Camera {
 	XMVECTOR Pos;
 	XMVECTOR Rot;
-	Camera(){};
-	Camera(XMVECTOR *pos, XMVECTOR *rot) : Pos(*pos), Rot(*rot){};
-	Camera(const XMVECTOR &pos, const XMVECTOR &rot) : Pos(pos), Rot(rot){};
+	Camera() {};
+	Camera(XMVECTOR *pos, XMVECTOR *rot) : Pos(*pos), Rot(*rot) {};
+	Camera(const XMVECTOR &pos, const XMVECTOR &rot) : Pos(pos), Rot(rot) {};
 	XMMATRIX GetViewMatrix() {
 		XMVECTOR forward = XMVector3Rotate(XMVectorSet(0, 0, -1, 0), Rot);
 		return (XMMatrixLookAtRH(Pos, XMVectorAdd(Pos, forward), XMVector3Rotate(XMVectorSet(0, 1, 0, 0), Rot)));

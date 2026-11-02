@@ -54,7 +54,8 @@
 
 #ifdef NDEBUG
 #define glCheckErrors()                                                                                                                                        \
-	{}
+	{                                                                                                                                                          \
+	}
 #else
 #define glCheckErrors()                                                                                                                                        \
 	{                                                                                                                                                          \

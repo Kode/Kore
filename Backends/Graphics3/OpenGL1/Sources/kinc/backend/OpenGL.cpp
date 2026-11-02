@@ -170,7 +170,9 @@ void Graphics3::init(int windowId, int depthBufferBits, int stencilBufferBits, b
 	}
 	else
 #endif
-	{ glContexts[windowId] = tempGlContext; }
+	{
+		glContexts[windowId] = tempGlContext;
+	}
 
 	ShowWindow(windowHandle, SW_SHOW);
 	SetForegroundWindow(windowHandle); // Slightly Higher Priority

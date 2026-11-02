@@ -51,7 +51,8 @@
 
 #if defined(NDEBUG) || defined(KINC_OSX) || defined(KINC_IOS) || defined(KINC_ANDROID) || 1 // Calling glGetError too early means trouble
 #define glCheckErrors()                                                                                                                                        \
-	{}
+	{                                                                                                                                                          \
+	}
 #else
 #define glCheckErrors()                                                                                                                                        \
 	{                                                                                                                                                          \
