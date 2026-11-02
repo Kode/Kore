@@ -59,13 +59,13 @@ namespace {
 
 class CTextureRenderer : public CBaseVideoRenderer {
 public:
-	CTextureRenderer(LPUNKNOWN pUnk, HRESULT *phr);
+	CTextureRenderer(LPUNKNOWN pUnk, HRESULT * phr);
 	~CTextureRenderer();
 
 public:
-	HRESULT CheckMediaType(const CMediaType *pmt);      // Format acceptable?
-	HRESULT SetMediaType(const CMediaType *pmt);        // Video format notification
-	HRESULT DoRenderSample(IMediaSample *pMediaSample); // New video sample
+	HRESULT CheckMediaType(const CMediaType *pmt);       // Format acceptable?
+	HRESULT SetMediaType(const CMediaType *pmt);         // Video format notification
+	HRESULT DoRenderSample(IMediaSample * pMediaSample); // New video sample
 
 	// BOOL m_bUseDynamicTextures;
 	// LONG m_lVidWidth;   // Video width

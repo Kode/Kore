@@ -17,7 +17,7 @@
 #elif defined(KORE_CONSOLE)
 #include <kore3/console/raytracing_functions.h>
 #else
-#error("Unknown GPU backend")
+#error ("Unknown GPU backend")
 #endif
 
 void kore_gpu_raytracing_volume_destroy(kore_gpu_raytracing_volume *volume) {

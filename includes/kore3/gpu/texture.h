@@ -23,7 +23,7 @@
 #elif defined(KORE_CONSOLE)
 #include <kore3/console/texture_structs.h>
 #else
-#error("Unknown GPU backend")
+#error ("Unknown GPU backend")
 #endif
 
 /*! \file texture.h

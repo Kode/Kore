@@ -25,8 +25,7 @@ void kore_kompjuta_init_heap(void) {
 #ifdef KORE_WASM
 __attribute__((export_name("malloc")))
 #endif
-void *
-malloc(size_t size) {
+void *malloc(size_t size) {
 #if defined(KORE_WASM)
 	// Align to 4 bytes to make js typed arrays work
 	if (size % 4 != 0) {

@@ -776,9 +776,9 @@ void zwp_tablet_tool_v2_handle_type(void *data, struct zwp_tablet_tool_v2 *zwp_t
 }
 
 #ifdef KORE_LITTLE_ENDIAN
-#define HI_LO_TO_64(hi, lo) (uint64_t) lo | ((uint64_t)hi << 32)
+#define HI_LO_TO_64(hi, lo) (uint64_t)lo | ((uint64_t)hi << 32)
 #else
-#define HI_LO_TO_64(hi, lo) (uint64_t) hi | ((uint64_t)lo << 32)
+#define HI_LO_TO_64(hi, lo) (uint64_t)hi | ((uint64_t)lo << 32)
 #endif
 
 void zwp_tablet_tool_v2_handle_hardware_serial(void *data, struct zwp_tablet_tool_v2 *zwp_tablet_tool_v2, uint32_t hardware_serial_hi,

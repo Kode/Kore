@@ -22,7 +22,7 @@
 #elif defined(KORE_CONSOLE)
 #include <kore3/console/buffer_structs.h>
 #else
-#error("Unknown GPU backend")
+#error ("Unknown GPU backend")
 #endif
 
 #include <stdint.h>
