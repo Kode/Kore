@@ -980,7 +980,9 @@ int kore_android_width() {
 	//}
 	// else
 #endif
-	{ return ANativeWindow_getWidth(app->window); }
+	{
+		return ANativeWindow_getWidth(app->window);
+	}
 }
 
 int kore_android_height() {
@@ -995,7 +997,9 @@ int kore_android_height() {
 	//}
 	// else
 #endif
-	{ return ANativeWindow_getHeight(app->window); }
+	{
+		return ANativeWindow_getHeight(app->window);
+	}
 }
 
 const char *kore_internal_save_path() {
