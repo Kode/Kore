@@ -285,6 +285,8 @@ void kore_vulkan_command_list_begin_render_pass(kore_gpu_command_list *list, con
 }
 
 void kore_vulkan_command_list_end_render_pass(kore_gpu_command_list *list) {
+	resume_render_pass(list);
+
 	if (list->vulkan.render_pass_status == KORE_VULKAN_RENDER_PASS_STATUS_ACTIVE) {
 		if (list->vulkan.has_dynamic_rendering) {
 			vulkanCmdEndRendering(list->vulkan.command_buffers[list->vulkan.active_command_buffer]);
