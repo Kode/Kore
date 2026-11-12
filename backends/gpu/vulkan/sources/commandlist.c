@@ -152,6 +152,8 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 	VkRenderingAttachmentInfo depth_attachment_info;
 
 	if (parameters->depth_stencil_attachment.texture != NULL) {
+		kore_vulkan_texture_transition(list, parameters->depth_stencil_attachment.texture, VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL, 0, 1, 0, 1);
+
 		VkImageViewCreateInfo depth_view_create_info = {
 		    .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		    .pNext      = NULL,
