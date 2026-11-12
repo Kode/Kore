@@ -35,7 +35,7 @@ jobs:
       working-directory: ./Tests/Shader/Deployment
       run: xvfb-run ./ShaderTest
     - name: Check Test 1
-      run: compare-im6 -metric mae Tests/Shader/reference.png Tests/Shader/Deployment/test.png difference.png
+      run: compare-im7 -metric mae Tests/Shader/reference.png Tests/Shader/Deployment/test.png difference.png
     - name: Compile Test 2 (SIMD)
       run: ./make -g opengl --kore . --from Tests/SIMD --compile
     - name: Copy Test 2
