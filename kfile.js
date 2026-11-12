@@ -462,7 +462,15 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 		g4 = true;
 		g5 = true;
 		addBackend('Graphics5/Vulkan');
-		project.addLib('vulkan');
+		
+		if (process.env.VULKAN_SDK) {
+			project.addIncludeDir(path.resolve(process.env.VULKAN_SDK, 'include'));
+			project.addLib(path.resolve(process.env.VULKAN_SDK, 'lib', 'vulkan'));
+		}
+		else {
+			project.addLib('vulkan');
+		}
+
 		addKincDefine('VULKAN');
 	}
 	else if (graphics === GraphicsApi.OpenGL || (platform === Platform.FreeBSD && graphics === GraphicsApi.Default)) {
