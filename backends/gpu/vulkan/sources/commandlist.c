@@ -100,7 +100,9 @@ static void resume_render_pass(kore_gpu_command_list *list) {
 
 	for (size_t attachment_index = 0; attachment_index < parameters->color_attachments_count; ++attachment_index) {
 		textures[attachment_index] = parameters->color_attachments[attachment_index].texture.texture;
-		kore_vulkan_texture_transition(list, textures[attachment_index], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, 0, 1, 0, 1);
+		kore_vulkan_texture_transition(list, textures[attachment_index], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		                               parameters->color_attachments[attachment_index].texture.base_array_layer, 1,
+		                               parameters->color_attachments[attachment_index].texture.base_mip_level, 1);
 
 		if (textures[attachment_index]->vulkan.is_framebuffer) {
 			list->vulkan.framebuffer_access = true;
