@@ -26,18 +26,33 @@ extern "C" {
 
 #else
 
+#if defined(__SSE4_2__)
+#define KORE_SSE4_2
+#endif
+
+#if defined(__SSE4_1__) || defined(KORE_SSE4_2)
+#define KORE_SSE4_1
+#endif
+
+#if defined(__SSSE3__) || defined(KORE_SSE4_1)
+#define KORE_SSSE3
+#endif
+
+#if defined(__SSE3__) || defined(KORE_SSSE3)
+#define KORE_SSE3
+#endif
+
 // SSE2 Capability check
 // Note for Windows:
 //	_M_IX86_FP checks SSE2 and SSE for 32bit Windows programs only, and is unset if not a 32bit program.
 //	SSE2 and earlier is --guaranteed-- to be active for any 64bit Windows program
-#if defined(__SSE2__) || (_M_IX86_FP == 2) || ((defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)) && defined(KORE_64) && !defined(__aarch64__))
+#if defined(__SSE2__) || (_M_IX86_FP == 2) || ((defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)) && defined(KORE_64) && !defined(__aarch64__)) || defined(KORE_SSE3)
 #define KORE_SSE2
 #endif
 
 // SSE Capability check
 #if defined(__SSE__) || _M_IX86_FP == 2 || _M_IX86_FP == 1 || (defined(KORE_WINDOWS) && !defined(__aarch64__)) || \
-    (defined(KORE_WINDOWSAPP) && !defined(__aarch64__)) || (defined(KORE_MACOS) && __x86_64)
-
+    (defined(KORE_WINDOWSAPP) && !defined(__aarch64__)) || (defined(KORE_MACOS) && __x86_64) || defined(KORE_SSE2)
 #define KORE_SSE
 #endif
 
@@ -62,7 +77,18 @@ extern "C" {
 
 // SSE_## related headers include earlier revisions, IE
 // SSE2 contains all of SSE
+
+#if defined(KORE_SSE4_2)
+#include <nmmintrin.h>
+#elif defined(KORE_SSE4_1)
+#include <smmintrin.h>
+#elif defined(KORE_SSSE3)
+#include <tmmintrin.h>
+#elif defined(KORE_SSE3)
+#include <pmmintrin.h>
+#else
 #include <emmintrin.h>
+#endif
 
 typedef __m128 kore_float32x4;
 typedef __m128 kore_float32x4_mask;
