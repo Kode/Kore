@@ -89,7 +89,7 @@ static void find_pipeline_render_pass(VkDevice device, VkFormat formats[8], uint
 
 static void find_render_pass(VkDevice device, const render_pass_parameters *parameters, VkRenderPass *render_pass);
 
-static void find_framebuffer(VkDevice device, uint32_t width, uint32_t height, VkImageView image_views[9], uint32_t image_views_count, VkRenderPass render_pass,
+static void find_framebuffer(VkDevice device, uint32_t width, uint32_t height, VkImageView image_views[8], uint32_t image_views_count, VkRenderPass render_pass,
                              VkFramebuffer *framebuffer);
 
 struct kore_gpu_device;

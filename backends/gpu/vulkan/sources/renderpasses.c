@@ -7,7 +7,7 @@ typedef struct stored_framebuffer {
 	int nothing;
 } stored_framebuffer;
 
-static void find_framebuffer(VkDevice device, uint32_t width, uint32_t height, VkImageView image_views[9], uint32_t image_views_count, VkRenderPass render_pass,
+static void find_framebuffer(VkDevice device, uint32_t width, uint32_t height, VkImageView image_views[8], uint32_t image_views_count, VkRenderPass render_pass,
                              VkFramebuffer *framebuffer) {
 	VkFramebufferCreateInfo framebuffer_create_info = {
 	    .sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
