@@ -450,7 +450,15 @@ else if (platform === Platform.Linux || platform === Platform.FreeBSD) {
 
 	if (graphics === GraphicsApi.Vulkan || (platform === Platform.Linux && graphics === GraphicsApi.Default)) {
 		addBackend('gpu/vulkan');
-		project.addLib('vulkan');
+
+		if (process.env.VULKAN_SDK) {
+			project.addIncludeDir(path.resolve(process.env.VULKAN_SDK, 'include'));
+			project.addLib(path.resolve(process.env.VULKAN_SDK, 'lib', 'vulkan'));
+		}
+		else {
+			project.addLib('vulkan');
+		}
+		
 		addKoreDefine('VULKAN');
 		project.addDefine('VK_USE_PLATFORM_WAYLAND_KHR');
 		project.addDefine('VK_USE_PLATFORM_XLIB_KHR');
