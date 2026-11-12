@@ -46,7 +46,8 @@ extern "C" {
 // Note for Windows:
 //	_M_IX86_FP checks SSE2 and SSE for 32bit Windows programs only, and is unset if not a 32bit program.
 //	SSE2 and earlier is --guaranteed-- to be active for any 64bit Windows program
-#if defined(__SSE2__) || (_M_IX86_FP == 2) || ((defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)) && defined(KORE_64) && !defined(__aarch64__)) || defined(KORE_SSE3)
+#if defined(__SSE2__) || (_M_IX86_FP == 2) || ((defined(KORE_WINDOWS) || defined(KORE_WINDOWSAPP)) && defined(KORE_64) && !defined(__aarch64__)) || \
+    defined(KORE_SSE3)
 #define KORE_SSE2
 #endif
 
