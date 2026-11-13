@@ -289,6 +289,14 @@ void kinc_g5_command_list_begin(kinc_g5_command_list_t *list) {
 	err = vkBeginCommandBuffer(list->impl._buffer, &cmd_buf_info);
 	assert(!err);
 
+	// Between-frame leftover list: the current image was just presented and not re-acquired,
+	// so don't touch it - that black-screens FIFO on strict drivers (Mali)
+	// The backbuffer pass opens next frame after acquire.
+	if (!began) {
+		in_render_pass = false;
+		return;
+	}
+
 	VkImageMemoryBarrier prePresentBarrier = {0};
 	prePresentBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 	prePresentBarrier.pNext = NULL;
@@ -325,6 +333,14 @@ void kinc_g5_command_list_begin(kinc_g5_command_list_t *list) {
 }
 
 void kinc_g5_command_list_end(kinc_g5_command_list_t *list) {
+	// Leftover list (see kinc_g5_command_list_begin): no pass was opened
+	// so just close the buffer - no end-pass, no present barrier
+	if (!began) {
+		VkResult err = vkEndCommandBuffer(list->impl._buffer);
+		assert(!err);
+		return;
+	}
+
 	vkCmdEndRenderPass(list->impl._buffer);
 
 	VkImageMemoryBarrier prePresentBarrier = {0};
@@ -593,7 +609,7 @@ void kinc_g5_command_list_set_render_targets(kinc_g5_command_list_t *list, struc
 		for (int i = 0; i < count; ++i) {
 			attachments[i].format = targets[i]->impl.format;
 			attachments[i].samples = VK_SAMPLE_COUNT_1_BIT;
-			attachments[i].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			attachments[i].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 			attachments[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 			attachments[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			attachments[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
